@@ -1,0 +1,103 @@
+{
+  "name": "react-project-openai-jarvis",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@fortawesome/fontawesome-svg-core": "^6.5.1",
+    "@fortawesome/free-solid-svg-icons": "^6.5.1",
+    "@fortawesome/react-fontawesome": "^0.2.0",
+    "@google-cloud/speech": "^6.1.0",
+    "@google-cloud/text-to-speech": "^5.0.2",
+    "@leecheuk/react-google-login": "^5.4.1",
+    "@mui/material": "^5.15.2",
+    "@react-oauth/google": "^0.12.1",
+    "@speechly/speech-recognition-polyfill": "^1.3.0",
+    "@stripe/react-stripe-js": "^2.4.0",
+    "@stripe/stripe-js": "^2.3.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^20.9.0",
+    "@types/react": "^18.2.46",
+    "@types/react-dom": "^18.2.18",
+    "axios": "^1.6.2",
+    "bcrypt": "^5.1.1",
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.20.2",
+    "bootstrap": "^5.3.2",
+    "canvas": "^2.11.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "file-saver": "^2.0.5",
+    "gapi-script": "^1.2.0",
+    "google-auth-library": "^9.4.1",
+    "html2canvas": "^1.4.1",
+    "jsonwebtoken": "^9.0.2",
+    "jwt-decode": "^4.0.0",
+    "latest": "^0.2.0",
+    "mdb-react-ui-kit": "^7.0.0",
+    "mongoose": "^8.0.2",
+    "multer": "^1.4.5-lts.1",
+    "nodemailer": "^6.9.8",
+    "nodemon": "^3.0.2",
+    "openai": "^4.20.1",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0",
+    "react": "^18.2.0",
+    "react-audio-voice-recorder": "^2.2.0",
+    "react-bootstrap": "^2.9.2",
+    "react-dom": "^18.2.0",
+    "react-google-recaptcha": "^3.1.0",
+    "react-modal": "^3.16.1",
+    "react-router-dom": "^6.20.1",
+    "react-scripts": "^5.0.1",
+    "react-signature-canvas": "^1.0.6",
+    "react-speech-recognition": "^3.10.0",
+    "react-swipeable": "^7.0.1",
+    "react-use-clipboard": "^1.0.9",
+    "sharp": "^0.33.1",
+    "shortid": "^2.2.16",
+    "socket.io": "^4.7.4",
+    "socket.io-client": "^4.7.4",
+    "stream-browserify": "^3.0.0",
+    "stripe": "^14.11.0",
+    "typescript": "^4.9.5",
+    "util": "^0.12.5",
+    "uuid": "^9.0.1",
+    "web-vitals": "^2.1.4"
+  },
+  "scripts": {
+    "start:frontend": "react-scripts start",
+    "start:backend": "nodemon server/server.js",
+    "start:serverdb": "nodemon backend/server/mongodb.js",
+    "start:socket": "nodemon backend/server/socket.js",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "dotenv": "^16.3.1",
+    "ora": "^7.0.1"
+  }
+}

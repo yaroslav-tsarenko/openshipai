@@ -1,0 +1,246 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+}
+
+.sign-in-wrapper {
+    display: flex;
+}
+
+.left-side {
+    display: flex; /* Make the left-side a flex container */
+    justify-content: center; /* Center children horizontally */
+    align-items: center; /* Center children vertically */
+    flex-direction: column; /* Stack children vertically */
+    max-width: 700px;
+    width: 100%;
+    background-color: #ffffff;
+}
+
+.previous-button{
+    background-color: #6e6e6e;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    margin-top: 20px;
+}
+
+.carrier-customer{
+    display: flex;
+    justify-content: space-between;
+    margin: 25px 0 25px 0;
+}
+
+.next-button {
+    background-color: #007c0c;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+    margin-top: 20px;
+}
+
+.next-button-container{
+    display: flex;
+    justify-content: flex-end;
+    width: 100%;
+}
+
+.checkbox-container{
+
+    display: flex;
+   justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 10px 0;
+}
+
+.checkbox-container input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+.checkbox-container-factoring-company input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+input#isFactoringCompany{
+    width: 20px;
+    height: 20px;
+    float: left;
+}
+
+.checkbox-container-factoring-company{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 10px 0 10px 0;
+}
+
+.input-field-name option{
+    color: #343541;
+    font-weight: 500;
+    font-size: 1.5rem;
+}
+
+.previous-next-button{
+       display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+}
+
+.progress-bar-container {
+    width: 70%;
+    height: 20px;
+    background-color: #f3f3f3;
+    border-radius: 50px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 33%;
+    height: 100%;
+    background-color: #0000ff; /* Change this to your desired color */
+    border-radius: 50px;
+}
+
+.right-side {
+    width: 100vw;
+    height: 100vh;
+    background: url("../../../src/assets/isometric-view-san-francisco-s-ferry-building.jpg") no-repeat center;
+    background-size: cover;
+
+}
+
+.h2-title {
+    font-size: 3.5rem;
+    font-weight: 600;
+    margin: 20px 0 20px 0;
+    color: #343541;
+}
+
+.h3-title {
+    font-size: 2rem;
+    margin: 20px 0 20px 0;
+    font-weight: 500;
+    color: #707070;
+}
+
+.label-text{
+    color: #343541;
+    font-weight: 500;
+    font-size: 1.2rem;
+}
+
+.question-p {
+    font-size: 1.5rem;
+    margin: 20px 0 20px 0;
+    font-weight: 500;
+    color: #707070;
+}
+
+.question-div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.sign-in-link {
+    color: #383838;
+    font-weight: 600;
+    font-size: 1.5rem;
+    margin-left: 5px;
+    text-decoration: none;
+}
+
+.input-field-name, .input-field-second-name, .input-field-email, .input-field-password, .input-field-phone-number {
+    position: relative;
+    margin: 10px 0 10px 0;
+    background-color: #f2f2f2;
+    color: #343541;
+    height: 5vh;
+    font-weight: 500;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    width: 100%;
+    border: 1px solid #d7d7d7;
+    max-width: 500px;
+}
+.input-field:hover{
+    background-color: #f0f0f0; /* Light grey background on hover */
+    border: 1px solid #a2a2a2; /* Solid border on hover */
+    outline: none; /* Remove outline on hover (optional) */
+}
+
+.sign-up-custom-form {
+    position: relative;
+    display: block; /* Block display to allow margins to be auto */
+    max-width: 500px;
+    width: 100%;
+    margin: 0 15px 0 15px;
+    padding: 0 15px 0 15px;
+}
+
+.sign-up-custom-form h2{
+    font-size: 2rem;
+    font-weight: 600;
+    margin: 20px 0 20px 0;
+    color: #343541;
+}
+
+.sign-in-button {
+    margin: 10px 0 10px 0;
+    background-color: #f66711;
+    border: none;
+    height: 5vh;
+    font-weight: 500;
+    font-size: 1.5rem;
+    border-radius: 5px;
+    transition: 0.3s ease-out;
+    width: 100%;
+}
+
+
+.login-with-google-button{
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.sign-up-button{
+    margin: 15px 0 15px 0;
+    width: 100%;
+    font-weight: bold;
+    font-size: 1.2rem;
+    background-color: #f66711;
+    border-radius: 6px;
+}
+.sign-in-link-sign-up{
+    text-decoration: none;
+    font-size: 1.3rem;
+    margin: 0 0 0 10px;
+    font-weight: bold;
+    color: #595959;
+}
+
+.recaptcha-checkbox{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+@media only screen and (max-width: 694px) {
+    .right-side{
+        display: none;
+    }
+}
