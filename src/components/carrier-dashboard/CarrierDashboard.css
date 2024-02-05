@@ -1036,5 +1036,66 @@
     flex-direction: column;
 }
 
+.message-role-name {
+    display: flex;
+    justify-content: space-between;
+}
+
+.message-wrapper {
+    display: flex;
+}
+
+.message-carrier {
+    align-self: flex-end;
+    background-color: blue;
+    color: white;
+}
+
+.user-message-name {
+    margin: 0;
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.user-message-status {
+    margin: 0 0 10px 0;
+    color: #8d8d8d;
+}
+
+.message {
+    width: 300px;
+    margin: 10px;
+    padding: 10px;
+    color: #717171;
+    line-height: 1.5;
+    border-radius: 10px;
+    align-items: flex-start;
+}
+
+.message-text{
+    text-align: left;
+    font-weight: normal;
+}
+
+
+.message-date {
+    font-size: 0.8em;
+    color: #888;
+    align-items: flex-end;
+    text-align: end;
+
+}
+
+.message.currentUser {
+    background-color: #0b93f6;
+    align-self: flex-end;
+}
+
+.message:not(.currentUser) {
+    background-color: #6c6c6c;
+    color: black;
+    align-self: flex-start;
+}
 
 

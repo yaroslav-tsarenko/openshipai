@@ -353,11 +353,11 @@ const AdminDashboard = () => {
                 <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>User's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to="/admin-dashboard" className="navigation-button-2"><FontAwesomeIcon
+                    <Link to={`/admin-dashboard/${personalEndpoint}`} className="navigation-button-2"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Loads</Link>
                     <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faDollarSign}/>My Bids</Link>
-                    <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/chat/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Carrier</Link>
                     <Link to={`/jarvis-chat/${personalEndpoint}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
