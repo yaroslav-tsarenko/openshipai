@@ -13,7 +13,6 @@ import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
-
 const stripePromise = loadStripe('your-stripe-public-key');
 const stripe = await stripePromise;
 

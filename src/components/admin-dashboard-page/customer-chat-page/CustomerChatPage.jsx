@@ -12,7 +12,6 @@ import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
-
 const stripePromise = loadStripe('your-stripe-public-key');
 const stripe = await stripePromise;
 
@@ -73,6 +72,7 @@ const CustomerChatPage = () => {
         };
     }, []);
 
+
     const sendMessage = (message) => {
         const newMessage = {
             text: message,
@@ -86,6 +86,13 @@ const CustomerChatPage = () => {
                 setChatMessages((messages) => [...messages, newMessage]);
             }
         });
+    };
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevents the default action to be taken
+            sendMessage(inputMessage);
+            setInputMessage(''); // Clears the input field
+        }
     };
 
     useEffect(() => {
@@ -483,14 +490,21 @@ const CustomerChatPage = () => {
                     <div className="messaging-chat-wrapper">
                         <div className="chat-messages">
                             {chatMessages.map((message, index) => (
-                                <div key={index}
-                                     className={`chat-message ${message.sender === currentUser ? "right" : ""}`}>
-                                    {message.text}
-                                    <div className="message-date">
-                                        {isNaN(Date.parse(message.date)) ? "Invalid date" : new Intl.DateTimeFormat('en-US', {
-                                            dateStyle: 'medium',
-                                            timeStyle: 'short'
-                                        }).format(new Date(Date.parse(message.date)))}
+                                <div className="message-wrapper">
+                                    <UserAvatarComponent className="user-message-avatar"/>
+                                    <div key={message.id}
+                                         className={`message ${message.sender === currentUser ? "currentUser" : "message-customer"}`}>
+                                        <div className="message-role-name">
+                                            <p className="user-message-name">{user ? user.name : 'S.H Robinson'}</p>
+                                            <p className="user-status">Customer</p>
+                                        </div>
+                                        <p className="message-text">{message.text}</p>
+                                        <div className="message-date">
+                                            {isNaN(Date.parse(message.date)) ? "Invalid date" : new Intl.DateTimeFormat('en-US', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short'
+                                            }).format(new Date(Date.parse(message.date)))}
+                                        </div>
                                     </div>
                                 </div>
                             ))}
@@ -502,6 +516,7 @@ const CustomerChatPage = () => {
                                 placeholder="Type your message here..."
                                 value={inputMessage}
                                 onChange={e => setInputMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
                             />
                             <button
                                 className="chat-send-button"

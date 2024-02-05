@@ -4,14 +4,13 @@ import {faComment} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
-import {faDollarSign} from '@fortawesome/free-solid-svg-icons';
 import html2canvas from 'html2canvas';
 import "../CarrierDashboard.css";
 import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
-
+import io from 'socket.io-client';
 const CarrierChatPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -49,8 +48,14 @@ const CarrierChatPage = () => {
     const [bids, setBids] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedBid, setSelectedBid] = useState(null);
+    const [chatMessages, setChatMessages] = useState([]);
     const [carrier, setCarrier] = useState(null);
+    const {carrierPersonalEndpoint} = useParams();
     const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
+    const socketRef = useRef();
+    const [currentUser, setCurrentUser] = useState(null);
+    const [inputMessage, setInputMessage] = useState("");
+
 
     const enableChatButton = () => {
         setIsChatButtonDisabled(false);
@@ -62,6 +67,8 @@ const CarrierChatPage = () => {
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
+
+
     useEffect(() => {
         axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
             .then(response => {
@@ -97,8 +104,6 @@ const CarrierChatPage = () => {
             console.error('Error submitting bid:', error);
         }
     };
-
-
 
     useEffect(() => {
         if (selectedBid && selectedBid.carrierPersonalEndpoint) {
@@ -148,7 +153,15 @@ const CarrierChatPage = () => {
                 console.error('Error fetching bids:', error);
             });
     }, []);
-
+    useEffect(() => {
+        socketRef.current = io.connect('http://localhost:8083');
+        socketRef.current.on('chat message', (message) => {
+            setChatMessages((messages) => [...messages, message]);
+        });
+        return () => {
+            socketRef.current.disconnect();
+        };
+    }, []);
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -184,6 +197,28 @@ const CarrierChatPage = () => {
                 })
                 .catch(error => console.error(error));
         });
+    };
+
+    const sendMessage = (message) => {
+        const newMessage = {
+            text: message,
+            date: new Date(),
+        };
+        socketRef.current.emit('chat message', newMessage, (error) => {
+            if (error) {
+                console.error('Error sending message:', error);
+            } else {
+                setChatMessages((messages) => [...messages, newMessage]);
+            }
+        });
+    };
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevents the default action to be taken
+            sendMessage(inputMessage);
+            setInputMessage(''); // Clears the input field
+        }
     };
 
     const handlePay = async (amount) => {
@@ -415,16 +450,23 @@ const CarrierChatPage = () => {
     return (
         <div className="admin-dashboard-wrapper">
             <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
-                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>User's
+                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Carrier's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/admin-dashboard/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faTruck}/>My Loads</Link>
-                    <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faDollarSign}/>My Bids</Link>
-                    <Link to={`/chat/${personalEndpoint}`} className="navigation-button-2"><FontAwesomeIcon
-                        className="navigation-icon" icon={faComment}/>Chat with Carrier</Link>
-                    <Link to={`/jarvis-chat/${personalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/carrier-dashboard/${carrierPersonalEndpoint}`}
+                          className="navigation-button"><FontAwesomeIcon
+                        className="navigation-icon" icon={faTruck}/>My Shipments</Link>
+                    <Link
+                        to={`/carrier-drivers/${carrierPersonalEndpoint}`}
+                        className="navigation-button">
+                        <FontAwesomeIcon
+                            className="navigation-icon"
+                            icon={faTruck}/>
+                        Drivers
+                    </Link>
+                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button-2"><FontAwesomeIcon
+                        className="navigation-icon" icon={faComment}/>Chat with Customer </Link>
+                    <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
@@ -456,11 +498,44 @@ const CarrierChatPage = () => {
                     </div>
                     <div className="messaging-chat-wrapper">
                         <div className="chat-messages">
-
+                            {chatMessages.map((message, index) => (
+                                <div className="message-wrapper">
+                                    <UserAvatarComponent className="user-message-avatar"/>
+                                    <div key={message.id}
+                                         className={`message ${message.sender === currentUser ? "currentUser message-carrier" : ""}`}>
+                                        <div className="message-role-name">
+                                            <p className="user-message-name">{user ? user.name : 'S.H Robinson'}</p>
+                                            <p className="user-status">Carrier</p>
+                                        </div>
+                                        <p className="message-text">{message.text}</p>
+                                        <div className="message-date">
+                                            {isNaN(Date.parse(message.date)) ? "Invalid date" : new Intl.DateTimeFormat('en-US', {
+                                                dateStyle: 'medium',
+                                                timeStyle: 'short'
+                                            }).format(new Date(Date.parse(message.date)))}
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                         <div className="chat-input-area">
-                            <input type="text" className="chat-input" placeholder="Type your message here..."/>
-                            <button className="chat-send-button">Send</button>
+                            <input
+                                type="text"
+                                className="chat-input"
+                                placeholder="Type your message here..."
+                                value={inputMessage}
+                                onChange={e => setInputMessage(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                            />
+                            <button
+                                className="chat-send-button"
+                                onClick={() => {
+                                    sendMessage(inputMessage);
+                                    setInputMessage("");
+                                }}
+                            >
+                                Send
+                            </button>
                         </div>
                     </div>
 

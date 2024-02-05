@@ -408,7 +408,7 @@ const CarrierDashboard = () => {
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
                     <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page

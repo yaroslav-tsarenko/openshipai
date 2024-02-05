@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faComment, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
@@ -432,7 +432,9 @@ const CarrierDrivers = () => {
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/jarvis-chat/${personalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                        className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
+                    <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
