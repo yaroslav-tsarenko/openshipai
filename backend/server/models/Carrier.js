@@ -1,44 +1,17 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
-const crypto = require('crypto');
+const shortid = require('shortid');
 
 const CarrierSchema = new Schema({
-    carrierPrequalification: {
-        usDocket: String,
-        usDotNumber: String,
-        intrastateCarrier: String
-    },
-    contactInformation: {
-        name: String,
-        phoneNumber: String,
-        email: String
-    },
-    salesContactInformation: {
-        name: String,
-        phoneNumber: String,
-        email: String
-    },
-    contactAndPayInformation: {
-        companyName: String,
-        zipCode: String,
-        stateProvince: String,
-        country: String,
-        city: String,
-        isFactoringCompany: Boolean
-    },
-    payInformation: {
-        companyName: String,
-        zipCode: String,
-        stateProvince: String,
-        country: String,
-        city: String,
-        email: String,
-        dunsNumber: String
-    },
-    carrierPersonalEndpoint: {
-        type: String,
-        default: () => crypto.randomBytes(32).toString('hex')
-    }
+    name: String,
+    secondName: String,
+    companyName: String,
+    usDocket: String,
+    usDotNumber: String,
+    email: String,
+    phoneNumber: String,
+    dunsNumber: String,
+    carrierID: { type: String, default: shortid.generate }
 });
 
 const Carrier = mongoose.model('Carrier', CarrierSchema);

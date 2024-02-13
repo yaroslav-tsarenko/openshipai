@@ -5,8 +5,8 @@ const http = require('http').createServer(app);
 const cors = require('cors');
 const io = require('socket.io')(http, {
     cors: {
-        origin: "http://localhost:3000",
-        methods: ["GET", "POST"]
+        origin: '*',
+        methods: ['GET', 'POST']
     }
 });
 
@@ -17,8 +17,11 @@ app.use(cors({
 io.on('connection', (socket) => {
     console.log('a user connected');
 
-    socket.on('chat message', (msg) => {
-        io.emit('chat message', msg);
+    socket.on('carrier message', (data) => {
+        io.emit('carrier message', data);
+    });
+    socket.on('customer message', (data) => {
+        io.emit('customer message', data);
     });
 
     socket.on('disconnect', () => {

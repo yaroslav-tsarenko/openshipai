@@ -21,9 +21,11 @@ const CarrierDashboard = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
+    const [carrier, setCarrier] = useState(null);
     const navigate = useNavigate();
     const [chatEndpoint, setChatEndpoint] = useState(null);
     const {personalEndpoint} = useParams();
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
     const [vehicleLoads, setVehicleLoads] = useState([]);
     const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
     const [commercialTruckLoads, setCommercialTruckLoads] = useState([]);
@@ -31,22 +33,17 @@ const CarrierDashboard = () => {
     const [constructionEquipmentLoads, setConstructionEquipmentLoads] = useState([]); // Add this line
     const [heavyEquipmentLoads, setHeavyEquipmentLoads] = useState([]); // Add this line
     const [data, setData] = useState([]);
-    const [isExpanded, setIsExpanded] = useState(false);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
     const sidebarRef = useRef(null);
     const minSwipeDistance = 50;
-    const {carrierPersonalEndpoint} = useParams();
+    const {carrierID} = useParams();
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
-    const [editingLoad, setEditingLoad] = useState(null); // Holds the load currently being edited
-    const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [formData, setFormData] = useState(null);
     const [showEditForm, setShowEditForm] = useState(false);
-    const [isPopupVisible, setIsPopupVisible] = useState(false);
     const sigCanvas = useRef({});
     const [selectedDropdown, setSelectedDropdown] = useState(null);
     const dropdownRef = useRef(null);
@@ -81,6 +78,8 @@ const CarrierDashboard = () => {
                 });
         });
     }, [commercialTruckLoads]);
+
+
     useEffect(() => {
         axios.get('http://localhost:8080/get-drivers')
             .then(response => {
@@ -108,7 +107,7 @@ const CarrierDashboard = () => {
             loadType: 'Commercial Truck Load',
             pickupLocation: load.pickupLocation,
             deliveryLocation: load.deliveryLocation,
-            carrierPersonalEndpoint: carrierPersonalEndpoint,
+            carrierID: carrierID,
             assignedDriver: selectedDriver,
         })
             .then(response => {
@@ -324,7 +323,19 @@ const CarrierDashboard = () => {
             .catch(error => {
                 console.error('Error fetching Construction Equipment loads:', error);
             });
-    }, []); // Empty dependency array means this effect runs once on component mount
+    }, []);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    setCarrier(response.data);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching carrier data:', error);
+            });
+    }, [carrierID]);
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-boat-loads')
             .then(response => {
@@ -397,20 +408,20 @@ const CarrierDashboard = () => {
                 <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Carrier's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierPersonalEndpoint}`}
+                    <Link to={`/carrier-dashboard/${carrierID}`}
                           className="navigation-button-2"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Shipments</Link>
                     <Link
-                        to={`/carrier-drivers/${carrierPersonalEndpoint}`}
+                        to={`/carrier-drivers/${carrierID}`}
                         className="navigation-button">
                         <FontAwesomeIcon
                             className="navigation-icon"
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/carrier-chat/${carrierID}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
-                    <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
@@ -422,6 +433,7 @@ const CarrierDashboard = () => {
                     </Link>
                 </div>
             </div>
+
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
@@ -441,8 +453,8 @@ const CarrierDashboard = () => {
                         <div className="user-details-wrapper">
                             <UserAvatarComponent className="user-avatar"/>
                             <div className="user-details">
-                                <p className="user-name">{user ? user.name : 'Loading...'}</p>
-                                <p className="user-status">Customer</p>
+                                <p className="user-name">{carrier?.companyName}</p>
+                                <p className="user-status">Carrier</p>
                             </div>
                             <BellComponent className="bell-icon"/>
                         </div>

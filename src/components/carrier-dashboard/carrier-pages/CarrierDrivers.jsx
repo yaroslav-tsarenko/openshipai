@@ -57,7 +57,7 @@ const CarrierDrivers = () => {
     const [newBid, setNewBid] = useState(null);
     const [isAddDriverEnabled, setIsAddDriverEnabled] = useState(false);
     const [isAddDriverPopupVisible, setIsAddDriverPopupVisible] = useState(false);
-    const {carrierPersonalEndpoint} = useParams();
+    const {carrierID} = useParams();
     const [drivers, setDrivers] = useState([]);
     const handleBidClick = (tableId) => {
         setCurrentTable(tableId);
@@ -289,7 +289,7 @@ const CarrierDrivers = () => {
         event.preventDefault();
         const newDriver = {
             driverID: uuidv4(),
-            carrierId: carrierPersonalEndpoint,
+            carrierId: carrierID,
             firstName: event.target.firstName.value,
             lastName: event.target.lastName.value,
             phoneNumber: event.target.phoneNumber.value,
@@ -421,20 +421,20 @@ const CarrierDrivers = () => {
             <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
                 <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Drivers</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierPersonalEndpoint}`}
+                    <Link to={`/carrier-dashboard/${carrierID}`}
                           className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Shipments</Link>
                     <Link
-                        to={`/carrier-drivers/${carrierPersonalEndpoint}`}
+                        to={`/carrier-drivers/${carrierID}`}
                         className="navigation-button-2">
                         <FontAwesomeIcon
                             className="navigation-icon"
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/carrier-deal-chat-conversation/${carrierID}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
-                    <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
