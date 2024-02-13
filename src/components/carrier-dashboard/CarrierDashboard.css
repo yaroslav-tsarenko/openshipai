@@ -35,6 +35,7 @@
     font-size: 1.2rem;
     transition: 0.3s ease-in-out;
 }
+
 .dropdown {
     position: relative;
     display: inline-block;
@@ -57,6 +58,7 @@
 .dropdown:hover .dropdown-content {
     display: block;
 }
+
 .navigation-button-2 {
     text-decoration: none;
     padding: 20px;
@@ -255,7 +257,7 @@
     justify-content: space-between;
 }
 
-.table-item div{
+.table-item div {
     text-align: left;
     width: 100px;
     margin: 0 0 0 10px;
@@ -275,7 +277,7 @@
     box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
 }
 
-.add-driver-wrapper{
+.add-driver-wrapper {
     margin: 0 auto;
     margin-top: 20px;
     padding: 10px;
@@ -290,7 +292,7 @@
     justify-items: center;
 }
 
-.add-driver-button{
+.add-driver-button {
     align-items: center;
     align-content: center;
     text-align: center;
@@ -304,14 +306,14 @@
     border: 2px dotted #07b900;
 }
 
-.add-driver-text{
+.add-driver-text {
     color: rgb(227, 227, 227);
     font-size: 1.2rem;
     margin: 0 auto;
     text-align: center;
 }
 
-.add-driver-button:hover{
+.add-driver-button:hover {
     background-color: rgba(7, 185, 0, 0.15);
     transition: 0.3s ease-in-out;
     transform: scale(1.01);
@@ -324,7 +326,7 @@
     margin: 5px;
 }
 
-.submit-bid-button{
+.submit-bid-button {
     transition: 0.3s ease-in-out;
     border: none;
     font-size: 1.2rem;
@@ -334,12 +336,12 @@
     border-radius: 5px;
 }
 
-.toggle-button{
+.toggle-button {
     border: none;
     background: #434343;
 }
 
-.submit-bid-button:hover{
+.submit-bid-button:hover {
     background-color: #005d06;
     transition: 0.3s ease-in-out;
 }
@@ -395,7 +397,7 @@
     text-decoration: none;
 }
 
-.message-document-wrapper{
+.message-document-wrapper {
     margin: 0 auto;
     margin-top: 20px;
 
@@ -418,8 +420,7 @@
 }
 
 
-
-.pay-load-button{
+.pay-load-button {
     margin: 20px;
     border-radius: 5px;
     background-color: #0b7000;
@@ -427,7 +428,7 @@
     font-size: 1.5rem;
 }
 
-.close-button{
+.close-button {
     position: absolute;
     top: 10px;
     right: 10px;
@@ -437,7 +438,7 @@
     border-radius: 5px;
 }
 
-.save-doc-button{
+.save-doc-button {
     position: absolute;
     top: 50px;
     right: 10px;
@@ -447,7 +448,7 @@
     border-radius: 5px;
 }
 
-.clear-signature{
+.clear-signature {
     position: absolute;
     top: 10px;
     right: 65px;
@@ -457,7 +458,7 @@
     border-radius: 5px;
 }
 
-.doc-wrapper{
+.doc-wrapper {
     margin: 0 auto;
     width: 576px;
     height: 811px;
@@ -905,7 +906,7 @@
     background-color: rgba(103, 103, 103, 0.45);
 }
 
-.p-price-bid{
+.p-price-bid {
     cursor: pointer;
     width: 100px;
     margin: 0 0 0 10px;
@@ -916,7 +917,7 @@
     transition: 0.3s ease-in-out;
 }
 
-.p-price-bid p{
+.p-price-bid p {
     margin: 0;
     padding: 5px;
     text-align: center;
@@ -927,7 +928,7 @@
     font-weight: 600;
 }
 
-.p-price-bid:hover{
+.p-price-bid:hover {
     background-color: #005d06;
     transition: 0.3s ease-in-out;
 }
@@ -955,7 +956,8 @@
     justify-content: center;
     align-items: center;
 }
-.bit-input{
+
+.bit-input {
     width: 100%;
     margin: 10px 0 10px 0;
     padding: 5px;
@@ -965,12 +967,13 @@
     color: #424242;
     background: #e7e7e7;
 }
+
 .close-icon {
     cursor: pointer;
 }
 
 
-.bid-submit{
+.bid-submit {
     width: 100%;
     margin: 10px 0 10px 0;
     padding: 5px;
@@ -983,7 +986,7 @@
     transition: 0.3s ease-in-out;
 }
 
-.bid-submit:hover{
+.bid-submit:hover {
     background-color: #005d06;
     border: 2px solid #005d06;
     transition: 0.3s ease-in-out;
@@ -1009,7 +1012,7 @@
     z-index: 999;
 }
 
-.driver-select{
+.driver-select {
     width: 100%;
     margin: 10px 0 10px 0;
     padding: 5px;
@@ -1020,7 +1023,7 @@
     background: #e7e7e7;
 }
 
-.driver-select option{
+.driver-select option {
     width: 100%;
     margin: 10px 0 10px 0;
     padding: 5px;
@@ -1041,14 +1044,22 @@
     justify-content: space-between;
 }
 
-.message-wrapper {
+
+.carrier-message-wrapper {
     display: flex;
+    justify-content: end;
 }
 
 .message-carrier {
-    align-self: flex-end;
-    background-color: blue;
-    color: white;
+    align-self: flex-start;
+    width: 300px;
+    margin: 10px;
+    padding: 10px;
+    line-height: 1.5;
+    border-radius: 10px;
+    align-items: flex-start;
+    background-color: rgba(114, 114, 114, 0.52);
+    color: black;
 }
 
 .user-message-name {
@@ -1073,7 +1084,7 @@
     align-items: flex-start;
 }
 
-.message-text{
+.message-text {
     text-align: left;
     font-weight: normal;
 }
@@ -1098,4 +1109,115 @@
     align-self: flex-start;
 }
 
+.choose-chat-conversation {
+    margin: 230px 0 0 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.choose-chat-conversation p {
+    border-radius: 5px;
+    padding: 15px;
+    background: rgba(77, 77, 77, 0.73);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); /* Add this line */
+}
+
+.chat-id-container {
+    display: flex;
+    margin: 20px 0 0 0;
+}
+
+
+.message-right {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.message-left {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.message {
+    background-color: #0084FF;
+    color: white;
+    padding: 10px;
+    border-radius: 10px;
+    max-width: 60%;
+    margin: 10px;
+}
+
+.message-received {
+    background-color: #F3F3F3;
+    color: black;
+}
+
+.user-role {
+
+    text-align: end;
+    align-items: end;
+    color: rgba(73, 73, 73, 0.84);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+
+.user-role-name {
+    display: flex;
+    color: rgba(73, 73, 73, 0.84);
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.user-customer-role {
+    display: flex;
+    color: rgba(182, 182, 182, 0.96);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 0 10px 20px;
+}
+
+.user-customer-name {
+    display: flex;
+    color: rgba(182, 182, 182, 0.96);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 20px 10px 0;
+}
+
+.user-carrier-role {
+    display: flex;
+    color: rgba(171, 171, 171, 0.96);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 0 10px 20px;
+}
+
+.user-carrier-name {
+    display: flex;
+    color: rgba(114, 114, 114, 0.96);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 20px 10px 0;
+}
+
+.user-carrier-name p{
+    color: rgba(114, 114, 114, 0.96);
+    font-weight: bold;
+    font-size: 1.1rem;
+    margin: 0 20px 10px 0;
+
+}
+
+.deal-conversation-message-text {
+    color: #545454;
+    font-weight: bold;
+    font-size: 1.3rem;
+}
+
+.p-user-carrier-name{
+    color: darkgrey;
+    font-weight: bold;
+}
 

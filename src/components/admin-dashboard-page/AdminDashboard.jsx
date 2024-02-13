@@ -357,7 +357,7 @@ const AdminDashboard = () => {
                         className="navigation-icon" icon={faTruck}/>My Loads</Link>
                     <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faDollarSign}/>My Bids</Link>
-                    <Link to={`/chat/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/customer-deal-chat-conversation/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Carrier</Link>
                     <Link to={`/jarvis-chat/${personalEndpoint}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page

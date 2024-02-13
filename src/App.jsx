@@ -21,11 +21,13 @@ function App() {
                 <Route path="/jarvis-chat/:personalEndpoint/:chatEndpoint" element={<JarvisChatPage />} />
                 <Route path="/sign-in" element={<LoginForm/>}/>
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
-                <Route path="/carrier-dashboard/:carrierPersonalEndpoint" element={<CarrierDashboard/>}/>
-                <Route path="/carrier-drivers/:carrierPersonalEndpoint" element={<CarrierDrivers/>}/>
+                <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
+                <Route path="/carrier-drivers/:carrierID" element={<CarrierDrivers/>}/>
                 <Route path="/bids-page/:personalEndpoint" element={<BidsPage/>}/>
-                <Route path="/chat/:personalEndpoint" element={<CustomerChatPage/>}/>
-                <Route path="/carrier-chat/:carrierPersonalEndpoint" element={<CarrierChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:personalEndpoint" element={<CustomerChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:personalEndpoint/:chatID" element={<CustomerChatPage/>}/>
+                <Route path="/carrier-deal-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
+                <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/" element={<SignUpForm/>}/>
                 <Route path="/admin-dashboard/:personalEndpoint" element={<AdminDashboard/>}/>
                 <Route path="/super-admin-dashboard/:personalEndpoint" element={<SuperAdminDashboard/>}/>

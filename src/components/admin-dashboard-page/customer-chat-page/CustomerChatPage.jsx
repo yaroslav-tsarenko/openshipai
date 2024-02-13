@@ -12,6 +12,7 @@ import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
+
 const stripePromise = loadStripe('your-stripe-public-key');
 const stripe = await stripePromise;
 
@@ -40,6 +41,7 @@ const CustomerChatPage = () => {
     const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
+    const [selectedChatID, setSelectedChatID] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [formData, setFormData] = useState(null);
@@ -51,42 +53,112 @@ const CustomerChatPage = () => {
     const [bid, setBid] = useState(null);
     const [isBidApplied, setIsBidApplied] = useState(false);
     const [bids, setBids] = useState([]);
+    const {chatID} = useParams();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedBid, setSelectedBid] = useState(null);
     const [carrier, setCarrier] = useState(null);
     const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
     const [inputMessage, setInputMessage] = useState("");
-
+    const [conversations, setConversations] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
     const socketRef = useRef();
+    const [userName, setUserName] = useState(""); // State variable to store the user's name
+    const fetchUserData = async () => {
+        try {
+            const response = await axios.get(`/get-user/${chatID}`);
+            setUserName(response.data.name);
+        } catch (error) {
+            console.error("Failed to fetch user data:", error);
+        }
+    };
 
+    useEffect(() => {
+        const fetchCarrier = async () => {
+            try {
+                const dealChatConversationResponse = await axios.get(`/get-deal-chat-conversation/${chatID}`);
+                const dealChatConversation = dealChatConversationResponse.data;
+
+                const carrierResponse = await axios.get(`/get-carrier/${dealChatConversation.carrierID}`);
+                const carrier = carrierResponse.data;
+
+                setCarrier(carrier);
+            } catch (error) {
+                console.error('Failed to fetch carrier:', error);
+            }
+        };
+
+        fetchCarrier();
+    }, [chatID]);
+    useEffect(() => {
+        fetchUserData();
+    }, [chatID]);
     useEffect(() => {
         socketRef.current = io.connect('http://localhost:8083');
 
-        socketRef.current.on('chat message', (message) => {
-            setChatMessages((messages) => [...messages, message]);
+        socketRef.current.on('carrier message', (data) => {
+            if (data.chatID === selectedChatID) {
+                setChatMessages((oldMessages) => [...oldMessages, data.message]);
+            }
         });
 
         return () => {
             socketRef.current.disconnect();
         };
-    }, []);
+    }, [selectedChatID]);
 
+    useEffect(() => {
+        axios.get(`http://localhost:8080/deal-conversation-messages-history/${chatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [chatID]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [selectedChatID]);
 
     const sendMessage = (message) => {
         const newMessage = {
             text: message,
             date: new Date(),
+            sender: 'personalEndpoint',
         };
-
-        socketRef.current.emit('chat message', newMessage, (error) => {
-            if (error) {
-                console.error('Error sending message:', error);
-            } else {
-                setChatMessages((messages) => [...messages, newMessage]);
-            }
-        });
+        socketRef.current.emit('customer message', { message: newMessage, chatID: selectedChatID, customer: 'personalEndpoint' });
+        setInputMessage('');
+        setChatMessages((oldMessages) => [...oldMessages, newMessage]);
+        axios.post('http://localhost:8080/save-chat-message', {
+            chatID: selectedChatID,
+            receiver: 'carrierID',
+            sender: 'personalEndpoint',
+            text: message,
+            date: new Date()
+        })
+            .catch(error => {
+                console.error('Error saving chat message:', error);
+            });
     };
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [chatID]);
+
+
+
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault(); // Prevents the default action to be taken
@@ -94,7 +166,15 @@ const CustomerChatPage = () => {
             setInputMessage(''); // Clears the input field
         }
     };
-
+    useEffect(() => {
+        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+            .then(response => {
+                setConversations(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching conversations:', error);
+            });
+    }, []);
     useEffect(() => {
         axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
             .then(response => {
@@ -131,8 +211,17 @@ const CustomerChatPage = () => {
         }
     };
 
-
-
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-user/${personalEndpoint}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    setUser(response.data);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching user data:', error);
+            });
+    }, [personalEndpoint]);
     useEffect(() => {
         if (selectedBid && selectedBid.carrierPersonalEndpoint) {
             axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
@@ -146,6 +235,28 @@ const CustomerChatPage = () => {
                 });
         }
     }, [selectedBid]);
+
+    useEffect(() => {
+        const fetchChatMessages = async () => {
+            try {
+                // Fetch the chat messages
+                const response = await axios.get(`/get-chat-messages/${chatID}`);
+                setChatMessages(response.data);
+
+                // Fetch the chat conversation to get the carrierID
+                const chatConversationResponse = await axios.get(`/get-user/${chatID}`);
+                const carrierID = chatConversationResponse.data.carrierID;
+
+                // Fetch the carrier using the carrierID
+                const carrierResponse = await axios.get(`/get-carrier/${carrierID}`);
+                setCarrier(carrierResponse.data);
+            } catch (error) {
+                console.error('Error fetching chat messages:', error);
+            }
+        };
+
+        fetchChatMessages();
+    }, [chatID]);
 
     useEffect(() => {
         axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-commercial-truck-loads`)
@@ -417,7 +528,6 @@ const CustomerChatPage = () => {
                 console.error('Error fetching vehicle loads:', error);
             });
     }, [personalEndpoint]);
-
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-moto-equipment-loads')
             .then(response => {
@@ -432,7 +542,20 @@ const CustomerChatPage = () => {
             });
     }, []);
 
-
+    const handleChatSelection = async (chatID) => {
+        setSelectedChatID(chatID);
+        try {
+            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+            if (response.status === 200) {
+                console.log(response.data);
+                navigate(`/customer-deal-chat-conversation/${personalEndpoint}/${chatID}`);
+            } else {
+                console.error('Error fetching chat data:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching chat data:', error);
+        }
+    };
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -468,44 +591,77 @@ const CustomerChatPage = () => {
                         className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
                 </div>
             </div>
+            <div className="deal-conversations-sidebar">
+                <h3>Your active Deals</h3>
+                {conversations.map((conversation, index) => (
+                    <div key={index} className="chat-id-container" onClick={() => handleChatSelection(conversation.chatID)}>
+                        <h5>Deal Conversation ID:</h5>
+                        <h4>{conversation.chatID}</h4>
+                        <h6 className="chat-id-number">{conversation.chatID}</h6>
+                    </div>
+                ))}
+            </div>
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
-            <div className="admin-content">
-                <div className="admin-content-wrapper">
-                    <div className="admin-inner-content-second">
-                        <div className="inner-content-second-text">
-                            <p className="inner-content-second-text-first">Start Messaging with Carrier!</p>
-                            <p className="inner-content-second-text-second">Be careful due scammers</p>
-                        </div>
-                        <div className="user-details-wrapper">
-                            <UserAvatarComponent className="user-avatar"/>
-                            <div className="user-details">
-                                <p className="user-name">{user ? user.name : 'Loading...'}</p>
-                                <p className="user-status">Customer</p>
-                            </div>
-                            <BellComponent className="bell-icon"/>
-                        </div>
+
+            <div className="customer-chat-content">
+                <div className="customer-chat-admin-inner-content-second">
+                    <div className="inner-content-second-text">
+                        <p className="inner-content-second-text-first">Start Messaging with Carrier!</p>
+                        <p className="inner-content-second-text-second">Be careful due scammers</p>
                     </div>
+                    <div className="user-details-wrapper">
+                        <UserAvatarComponent className="user-avatar"/>
+                        <div className="user-details">
+                            <p className="user-name">{user ? user.name : 'Loading...'}</p>
+                            <p className="user-status">Customer</p>
+                        </div>
+                        <BellComponent className="bell-icon"/>
+                    </div>
+                </div>
+                {chatID ? (
                     <div className="messaging-chat-wrapper">
                         <div className="chat-messages">
                             {chatMessages.map((message, index) => (
-                                <div className="message-wrapper">
-                                    <UserAvatarComponent className="user-message-avatar"/>
-                                    <div key={message.id}
-                                         className={`message ${message.sender === currentUser ? "currentUser" : "message-customer"}`}>
-                                        <div className="message-role-name">
-                                            <p className="user-message-name">{user ? user.name : 'S.H Robinson'}</p>
-                                            <p className="user-status">Customer</p>
+                                <div key={index} style={{ display: 'flex', justifyContent: message.sender === 'personalEndpoint' ? 'flex-end' : 'flex-start' }}>
+                                    {message.sender !== 'personalEndpoint' && <UserAvatarComponent />}
+                                    <div style={{
+                                        backgroundColor: message.sender === 'personalEndpoint' ? '#0084FF' : '#F3F3F3',
+                                        color: message.sender === 'personalEndpoint' ? '#f3f3f3' : '#707070',
+                                        alignItems: 'start',
+                                        textAlign: 'left',
+                                        fontSize: '1.3rem',
+                                        padding: '10px',
+                                        borderRadius: '10px',
+                                        margin: '10px'
+                                    }}>
+                                        <div className="user-role-name">
+                                            {message.sender === 'carrierID' &&
+                                                <div >{carrier ? <p>{carrier.companyName}</p> : <p className="p-user-carrier-name">S.H Robinson</p>}</div>}
+                                            {message.sender !== 'personalEndpoint' &&
+                                                <div className="user-carrier-role">Carrier</div>}
                                         </div>
-                                        <p className="message-text">{message.text}</p>
-                                        <div className="message-date">
-                                            {isNaN(Date.parse(message.date)) ? "Invalid date" : new Intl.DateTimeFormat('en-US', {
-                                                dateStyle: 'medium',
-                                                timeStyle: 'short'
-                                            }).format(new Date(Date.parse(message.date)))}
+                                        <div className="user-role-name">
+                                            {message.sender === 'personalEndpoint' &&
+                                                <div className="user-customer-name">{user ? <p>{user.name}</p> : <p>Loading...</p>}</div>}
+                                            {message.sender === 'personalEndpoint' &&
+                                                <div className="user-customer-role">Customer</div>}
                                         </div>
+
+                                        {message.text}
+                                        <div style={{
+                                            color: message.sender === 'personalEndpoint' ? 'white' : 'darkgrey',
+                                            alignItems: 'end',
+                                            textAlign: 'end',
+                                        }}
+                                        >{new Date(message.date).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit',
+                                            hour12: false
+                                        })}</div>
                                     </div>
+                                    {message.sender === 'personalEndpoint' && <UserAvatarComponent/>}
                                 </div>
                             ))}
                         </div>
@@ -529,8 +685,11 @@ const CustomerChatPage = () => {
                             </button>
                         </div>
                     </div>
-
-                </div>
+                ) : (
+                    <div className="choose-chat-conversation">
+                        <p>Choose chat to start speaking with carrier!</p>
+                    </div>
+                )}
             </div>
         </div>
     );

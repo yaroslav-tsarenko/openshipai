@@ -9,6 +9,13 @@
     display: flex;
 }
 
+.sign-in-wrapper h2{
+    font-size: 3.5rem;
+    font-weight: 600;
+    margin: 20px 0 20px 0;
+    color: #343541;
+}
+
 .left-side {
     display: flex; /* Make the left-side a flex container */
     justify-content: center; /* Center children horizontally */

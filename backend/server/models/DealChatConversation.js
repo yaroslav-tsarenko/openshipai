@@ -1,6 +1,11 @@
 const mongoose = require('mongoose');
 
 const DealChatConversationSchema = new mongoose.Schema({
+    chatID: {
+        type: String,
+        required: true,
+        unique: true
+    },
     loadType: String,
     currency: String,
     pickupLocation: String,
@@ -8,7 +13,7 @@ const DealChatConversationSchema = new mongoose.Schema({
     bidPrice: Number,
     loadID: String,
     personalEndpoint: String,
-    carrierPersonalEndpoint: String,
+    carrierID: String,
 });
 
 module.exports = mongoose.model('DealChatConversation', DealChatConversationSchema);

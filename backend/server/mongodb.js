@@ -9,7 +9,9 @@ const router = express.Router();
 const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
+const User = require('./models/User');
 const ChatHistory = require('./models/ChatHistory');
+const DealConversationChatHistoryMessage = require('./models/DealConversationChatHistoryMessage');
 const Carrier = require('./models/Carrier');
 const CommercialTruckLoad = require('./models/CommercialTruckLoad');
 const CarOrLightTruckLoad = require('./models/CarOrLightTruckLoad');
@@ -36,6 +38,7 @@ const CorporateMoving = require('./models/CorporateMoving');
 const StudentMoving = require('./models/StudentMoving');
 const SubmittedBid = require('./models/SubmittedBid');
 const DealChatConversation = require('./models/DealChatConversation');
+
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const Photo = require('./models/Photo');
@@ -60,8 +63,6 @@ const storage = multer.diskStorage({
         cb(null, new Date().toISOString() + file.originalname);
     }
 });
-
-//
 
 function generatePersonalEndpoint() {
     return shortid.generate();
@@ -147,6 +148,7 @@ app.get('/all-user-loads', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+
 app.post('/upload-photos', upload.array('images'), async (req, res) => {
     try {
         const images = req.files.map(file => {
@@ -176,6 +178,15 @@ router.put('/update-commercial-truck-load/:id', (req, res) => {
             res.status(200).json(load);
         }
     });
+});
+
+app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
+    try {
+        const conversation = await DealChatConversation.findOne({ chatID: req.params.chatID });
+        res.status(200).send(conversation);
+    } catch (error) {
+        res.status(500).send(error);
+    }
 });
 
 app.post('/submit-bid', async (req, res) => {
@@ -208,6 +219,15 @@ app.post('/create-deal-chat-conversation', async (req, res) => {
     }
 });
 
+app.get('/get-all-deal-chat-conversations', async (req, res) => {
+    try {
+        const conversations = await DealChatConversation.find();
+        res.json(conversations);
+    } catch (error) {
+        res.json({ message: error });
+    }
+});
+
 app.get('/get-all-carriers', async (req, res) => {
     try {
         const carriers = await Carrier.find({});
@@ -232,6 +252,56 @@ app.get('/get-carrier-by-load/:commercialLoadID', async (req, res) => {
         res.status(500).send();
     }
 });
+app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
+    try {
+        const conversation = await DealChatConversation.findOne({ chatID: req.params.chatID });
+        res.json(conversation);
+    } catch (error) {
+        res.json({ message: error });
+    }
+});
+
+app.get('/get-user/:personalEndpoint', async (req, res) => {
+    try {
+        const user = await User.findOne({ personalEndpoint: req.params.personalEndpoint });
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/get-user/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+
+    try {
+        // Find the chat conversation by chatID
+        const chatConversation = await DealChatConversation.findOne({ chatID: chatID });
+
+        if (!chatConversation) {
+            return res.status(404).json({ message: 'Chat conversation not found' });
+        }
+
+        // Extract the personalEndpoint from the chat conversation
+        const { personalEndpoint } = chatConversation;
+
+        // Find the user by personalEndpoint
+        const user = await UserModel.findOne({ personalEndpoint: personalEndpoint });
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        // Send the user data in the response
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
 
 app.post('/apply-bid', async (req, res) => {
     const bidData = req.body;
@@ -277,18 +347,58 @@ app.get('/get-bids-by-user/:userID', async (req, res) => {
         res.status(500).json({ message: 'Error fetching bids:', error });
     }
 });
-app.get('/get-carrier/:carrierPersonalEndpoint', async (req, res) => {
-    const { carrierPersonalEndpoint } = req.params;
-    try {
-        const carrier = await Carrier.findOne({ carrierPersonalEndpoint: carrierPersonalEndpoint });
-        if (!carrier) {
-            return res.status(404).json({ message: 'Carrier not found' });
-        }
 
-        res.status(200).json({ companyName: carrier.companyName });
+app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+    try {
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+        res.json(dealChatConversation);
     } catch (error) {
-        console.error('Error fetching carrier data:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ message: error.message });
+    }
+});
+app.post('/save-chat-message', async (req, res) => {
+    const { chatID, receiver, sender, text, date } = req.body;
+    const message = new DealConversationChatHistoryMessage({ chatID, receiver, sender, text, date });
+    try {
+        await message.save();
+        res.status(200).json({ message: 'Chat message saved successfully.' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// Create the endpoint to fetch chat history by chatID
+app.get('/get-chat-history/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+    try {
+        const chatHistory = await DealConversationChatHistoryMessage.find({ chatID: chatID });
+        res.json(chatHistory);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+app.get('/get-carrier-by-id/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+    try {
+        const carrier = await Carrier.findOne({ _id: carrierID });
+        res.json(carrier);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+app.get('/get-carrier/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+
+    try {
+        const carrier = await Carrier.findById(carrierID);
+        if (!carrier) {
+            return res.status(404).json({ message: 'No carrier found with this ID.' });
+        }
+        res.status(200).json(carrier);
+    } catch (error) {
+        console.error('Error fetching carrier:', error);
+        res.status(500).json({ message: 'Server error.' });
     }
 });
 
@@ -317,19 +427,13 @@ app.get('/get-bid/:commercialLoadID', async (req, res) => {
 });
 app.post('/save-carrier-data', async (req, res) => {
     const carrierData = req.body;
+    const newCarrier = new Carrier(carrierData);
 
     try {
-        const carrier = await Carrier.findOneAndUpdate(
-            { carrierPersonalEndpoint: carrierData.carrierPersonalEndpoint },
-            carrierData,
-            { upsert: true, new: true, setDefaultsOnInsert: true }
-        );
-        carrier.carrierPersonalEndpoint = generatePersonalEndpoint();
-        await carrier.save();
-
-        res.json({ status: 'Success', carrier: carrier });
+        const savedCarrier = await newCarrier.save();
+        res.json({ status: 'Success', carrier: savedCarrier });
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: error });
+        res.status(500).json({ status: 'Error', message: error.message });
     }
 });
 

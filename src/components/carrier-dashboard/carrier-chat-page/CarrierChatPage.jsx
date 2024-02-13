@@ -4,9 +4,7 @@ import {faComment} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
-import html2canvas from 'html2canvas';
 import "../CarrierDashboard.css";
-import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
@@ -17,7 +15,6 @@ const CarrierChatPage = () => {
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [chatEndpoint, setChatEndpoint] = useState(null);
-    const {personalEndpoint} = useParams();
     const [vehicleLoads, setVehicleLoads] = useState([]);
     const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
     const [commercialTruckLoads, setCommercialTruckLoads] = useState([]); // Add this line
@@ -30,6 +27,7 @@ const CarrierChatPage = () => {
     const [touchEnd, setTouchEnd] = useState(null);
     const sidebarRef = useRef(null);
     const minSwipeDistance = 50;
+    const [selectedChatID, setSelectedChatID] = useState(null);
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
     const [editingLoad, setEditingLoad] = useState(null); // Holds the load currently being edited
     const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
@@ -44,70 +42,33 @@ const CarrierChatPage = () => {
     const [selectedDropdown, setSelectedDropdown] = useState(null);
     const dropdownRef = useRef(null);
     const [bid, setBid] = useState(null);
+    const [conversations, setConversations] = useState([]);
     const [isBidApplied, setIsBidApplied] = useState(false);
     const [bids, setBids] = useState([]);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedBid, setSelectedBid] = useState(null);
     const [chatMessages, setChatMessages] = useState([]);
     const [carrier, setCarrier] = useState(null);
-    const {carrierPersonalEndpoint} = useParams();
+    const {carrierID} = useParams();
+    const { chatID } = useParams();
     const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
     const socketRef = useRef();
     const [currentUser, setCurrentUser] = useState(null);
     const [inputMessage, setInputMessage] = useState("");
-
-
-    const enableChatButton = () => {
-        setIsChatButtonDisabled(false);
-    };
-
-    const disableChatButton = () => {
-        setIsChatButtonDisabled(true);
-    };
-    const togglePopup = () => {
-        setIsPopupOpen(!isPopupOpen);
-    };
-
-
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
+        axios.get(`http://localhost:8080/get-user/${chatID}`)
             .then(response => {
-                const bids = response.data;
-                setBids(bids);
-                console.log(bids);
+                if (response.data && response.status === 200) {
+                    setUser(response.data);
+                }
             })
             .catch(error => {
-                console.error('Error fetching bids:', error);
+                console.error('Error fetching user data:', error);
             });
-    }, [personalEndpoint]);
-    const handleBidApply = async () => {
-        const bidData = {
-            carrier: selectedBid.carrier,
-            loadType: selectedBid.loadType,
-            currency: selectedBid.currency,
-            pickupLocation: selectedBid.pickupLocation,
-            deliveryLocation: selectedBid.deliveryLocation,
-            status: "Applied",
-            bidPrice: selectedBid.bid,
-            assignedDriver: selectedBid.assignedDriver,
-            commercialLoadID: selectedBid.commercialLoadID,
-            submitBidID: Math.floor(Math.random() * 100000000000),
-            userID: personalEndpoint,
-        };
-
-        try {
-            await axios.post('http://localhost:8080/apply-bid', bidData);
-            alert('Bid submitted successfully');
-            setIsBidApplied(true);
-            setIsPopupOpen(false);
-        } catch (error) {
-            console.error('Error submitting bid:', error);
-        }
-    };
-
+    }, [chatID]);
     useEffect(() => {
-        if (selectedBid && selectedBid.carrierPersonalEndpoint) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
+        if (selectedBid && selectedBid.carrierID) {
+            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -144,6 +105,16 @@ const CarrierChatPage = () => {
             });
     }, []);
 
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+            .then(response => {
+                setConversations(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching conversations:', error);
+            });
+    }, []);
     useEffect(() => {
         axios.get('http://localhost:8080/get-all-bids')
             .then(response => {
@@ -155,13 +126,33 @@ const CarrierChatPage = () => {
     }, []);
     useEffect(() => {
         socketRef.current = io.connect('http://localhost:8083');
-        socketRef.current.on('chat message', (message) => {
-            setChatMessages((messages) => [...messages, message]);
+
+        socketRef.current.on('customer message', (data) => {
+            if (data.chatID === selectedChatID) {
+                setChatMessages((oldMessages) => [...oldMessages, data.message]); // Add the received message to the chatMessages state
+            }
         });
+
         return () => {
             socketRef.current.disconnect();
         };
-    }, []);
+    }, [selectedChatID]);
+    const handleChatSelection = async (chatID) => {
+        setSelectedChatID(chatID);
+
+        try {
+            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+
+            if (response.status === 200) {
+                console.log(response.data);
+                navigate(`/carrier-deal-chat-conversation/${carrierID}/${chatID}`);
+            } else {
+                console.error('Error fetching chat data:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching chat data:', error);
+        }
+    };
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -174,44 +165,79 @@ const CarrierChatPage = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-    const saveSignature = () => {
-        const docWrapper = document.querySelector('.doc-wrapper');
-        html2canvas(docWrapper).then(canvas => {
-            const imgData = canvas.toDataURL(); // Convert the canvas to a Base64 string
-            axios.post('https://jarvis-ai-logistic-db-server.onrender.com/api/save-signature', {
-                imgData,
-                userEndpoint: user.personalEndpoint,
-                email: user.email,
-                signed: true,
+
+    useEffect(() => {
+        // Fetch the carrier object
+        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    setCarrier(response.data);
+                }
             })
-                .then(response => {
-                    console.log(response);
-                    // Download the signature
-                    const imgBlob = atob(imgData.split(',')[1]);
-                    const array = [];
-                    for (let i = 0; i < imgBlob.length; i++) {
-                        array.push(imgBlob.charCodeAt(i));
-                    }
-                    const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-                    saveAs(file, 'signature.png');
-                })
-                .catch(error => console.error(error));
-        });
-    };
+            .catch(error => {
+                console.error('Error fetching carrier data:', error);
+            });
+    }, [carrierID]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    axios.get(`http://localhost:8080/get-user/${response.data.personalEndpoint}`)
+                        .then(userResponse => {
+                            if (userResponse.data && userResponse.status === 200) {
+                                setUser(userResponse.data);
+                            }
+                        })
+                        .catch(userError => {
+                            console.error('Error fetching user data:', userError);
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching chat conversation:', error);
+            });
+    }, [chatID]);
+    useEffect(() => {
+        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [selectedChatID]);
 
     const sendMessage = (message) => {
         const newMessage = {
             text: message,
             date: new Date(),
+            sender: 'carrierID',
         };
-        socketRef.current.emit('chat message', newMessage, (error) => {
-            if (error) {
-                console.error('Error sending message:', error);
-            } else {
-                setChatMessages((messages) => [...messages, newMessage]);
-            }
-        });
+        socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
+        setInputMessage('');
+        setChatMessages((oldMessages) => [...oldMessages, newMessage]);
+        axios.post('http://localhost:8080/save-chat-message', {
+            chatID: selectedChatID,
+            receiver: 'personalEndpoint',
+            sender: 'carrierID',
+            text: message,
+            date: new Date()
+        })
+            .catch(error => {
+                console.error('Error saving chat message:', error);
+            });
     };
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [chatID]);
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
@@ -220,6 +246,7 @@ const CarrierChatPage = () => {
             setInputMessage(''); // Clears the input field
         }
     };
+
 
     const handlePay = async (amount) => {
         const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
@@ -303,19 +330,7 @@ const CarrierChatPage = () => {
             target.removeEventListener('touchmove', handleTouchMove);
         };
     }, []);
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user/${personalEndpoint}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setUser(response.data); // Set the user state with the fetched data
-                } else {
-                    console.error('Error fetching user data:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error);
-            });
-    }, []);
+
     useEffect(() => {
         if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
@@ -407,18 +422,16 @@ const CarrierChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/submit-vehicle-load/${personalEndpoint}`)
+        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    setVehicleLoads(response.data);
-                } else {
-                    console.error('No vehicle loads found');
+                    setCarrier(response.data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching vehicle loads:', error);
+                console.error('Error fetching carrier data:', error);
             });
-    }, [personalEndpoint]);
+    }, [carrierID]);
 
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-moto-equipment-loads')
@@ -453,20 +466,21 @@ const CarrierChatPage = () => {
                 <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Carrier's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierPersonalEndpoint}`}
+                    <Link to={`/carrier-dashboard/${carrierID}`}
                           className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Shipments</Link>
                     <Link
-                        to={`/carrier-drivers/${carrierPersonalEndpoint}`}
+                        to={`/carrier-drivers/${carrierID}`}
                         className="navigation-button">
                         <FontAwesomeIcon
                             className="navigation-icon"
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/carrier-chat/${carrierPersonalEndpoint}`} className="navigation-button-2"><FontAwesomeIcon
+                    <Link to={`/carrier-chat/${carrierID}`}
+                          className="navigation-button-2"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer </Link>
-                    <Link to={`/jarvis-chat/${carrierPersonalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
@@ -477,69 +491,105 @@ const CarrierChatPage = () => {
                         className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
                 </div>
             </div>
+            <div className="deal-conversations-sidebar">
+                <h3>Your active Deals</h3>
+                {conversations.map((conversation, index) => (
+                    <div key={index} className="chat-id-container"
+                         onClick={() => handleChatSelection(conversation.chatID)}>
+                        <h5>Deal Conversation ID:</h5>
+                        <h4>{conversation.chatID}</h4>
+                        <h6 className="chat-id-number">{conversation.chatID}</h6>
+                    </div>
+                ))}
+            </div>
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
-            <div className="admin-content">
-                <div className="admin-content-wrapper">
-                    <div className="admin-inner-content-second">
-                        <div className="inner-content-second-text">
-                            <p className="inner-content-second-text-first">Start Messaging with Carrier!</p>
-                            <p className="inner-content-second-text-second">Be careful due scammers</p>
-                        </div>
-                        <div className="user-details-wrapper">
-                            <UserAvatarComponent className="user-avatar"/>
-                            <div className="user-details">
-                                <p className="user-name">{user ? user.name : 'Loading...'}</p>
-                                <p className="user-status">Customer</p>
-                            </div>
-                            <BellComponent className="bell-icon"/>
-                        </div>
+            <div className="customer-chat-content">
+                <div className="customer-chat-admin-inner-content-second">
+                    <div className="inner-content-second-text">
+                        <p className="inner-content-second-text-first">Start Messaging with Customer!</p>
+                        <p className="inner-content-second-text-second">Be careful due scammers</p>
                     </div>
-                    <div className="messaging-chat-wrapper">
-                        <div className="chat-messages">
-                            {chatMessages.map((message, index) => (
-                                <div className="message-wrapper">
-                                    <UserAvatarComponent className="user-message-avatar"/>
-                                    <div key={message.id}
-                                         className={`message ${message.sender === currentUser ? "currentUser message-carrier" : ""}`}>
-                                        <div className="message-role-name">
-                                            <p className="user-message-name">{user ? user.name : 'S.H Robinson'}</p>
-                                            <p className="user-status">Carrier</p>
-                                        </div>
-                                        <p className="message-text">{message.text}</p>
-                                        <div className="message-date">
-                                            {isNaN(Date.parse(message.date)) ? "Invalid date" : new Intl.DateTimeFormat('en-US', {
-                                                dateStyle: 'medium',
-                                                timeStyle: 'short'
-                                            }).format(new Date(Date.parse(message.date)))}
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
+                    <div className="user-details-wrapper">
+                        <UserAvatarComponent className="user-avatar"/>
+                        <div className="user-details">
+                            <p>{carrier?.companyName}</p>
+                            <p className="user-status">Carrier</p>
                         </div>
-                        <div className="chat-input-area">
-                            <input
-                                type="text"
-                                className="chat-input"
-                                placeholder="Type your message here..."
-                                value={inputMessage}
-                                onChange={e => setInputMessage(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                            />
-                            <button
-                                className="chat-send-button"
-                                onClick={() => {
-                                    sendMessage(inputMessage);
-                                    setInputMessage("");
-                                }}
-                            >
-                                Send
-                            </button>
-                        </div>
+                        <BellComponent className="bell-icon"/>
                     </div>
-
                 </div>
+                {chatID ? (
+                <div className="messaging-chat-wrapper">
+                    <div className="chat-messages">
+                        {chatMessages.map((message, index) => (
+                            <div key={index} style={{ display: 'flex', justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start' }}>
+                                {message.sender !== 'carrierID' && <UserAvatarComponent />}
+                                <div style={{
+                                    backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
+                                    color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
+                                    alignItems: 'start',
+                                    textAlign: 'left',
+                                    padding: '10px',
+                                    borderRadius: '10px',
+                                    margin: '10px'
+                                }}>
+                                    <div className="user-role-name">
+                                        {message.sender === 'personalEndpoint' &&
+                                            <div className="user-carrier-name">{user ? <p>{user.name}</p> : <p>Loading...</p>}</div>}
+                                        {message.sender !== 'carrierID' &&
+                                            <div className="user-carrier-role">Customer</div>}
+                                    </div>
+                                    <div className="user-role-name">
+                                        {message.sender === 'carrierID' &&
+                                            <div style={{
+                                                color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',
+                                            }}>{carrier.companyName}</div>}
+                                        {message.sender === 'carrierID' &&
+                                            <div className="user-carrier-role">Carrier</div>}
+                                    </div>
+                                    {message.text}
+                                    <div style={{
+                                        color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
+                                        alignItems: 'end',
+                                        textAlign: 'right',
+                                    }}
+                                    >{new Date(message.date).toLocaleTimeString([], {
+                                        hour: '2-digit',
+                                        minute: '2-digit',
+                                        hour12: false
+                                    })}</div>
+                                </div>
+                                {message.sender === 'carrierID' && <UserAvatarComponent/>}
+                            </div>
+                        ))}
+                    </div>
+                    <div className="chat-input-area">
+                        <input
+                            type="text"
+                            className="chat-input"
+                            placeholder="Type your message here..."
+                            value={inputMessage}
+                            onChange={e => setInputMessage(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                        />
+                        <button
+                            className="chat-send-button"
+                            onClick={() => {
+                                sendMessage(inputMessage);
+                                setInputMessage("");
+                            }}
+                        >
+                            Send
+                        </button>
+                    </div>
+                </div>
+                ) : (
+                <div className="choose-chat-conversation">
+                    <p>Choose chat to start speaking with customer!</p>
+                </div>
+                )}
             </div>
         </div>
     );
