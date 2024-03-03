@@ -92,7 +92,7 @@
     "start:frontend": "react-scripts start",
     "start:backend": "nodemon server/server.js",
     "start:serverdb": "nodemon backend/server/mongodb.js",
-    "start:socket": "nodemon backend/server/socket.js",
+    "start:socketserver": "nodemon backend/server/socket.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
