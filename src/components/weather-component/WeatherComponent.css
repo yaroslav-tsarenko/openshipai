@@ -1,0 +1,17 @@
+.weather-data-container{
+    width: 120px;
+    background: rgba(255, 255, 255, 0);
+    backdrop-filter: blur(10px);
+    flex-direction: column;
+    align-items: center;
+    padding: 8px;
+    border-radius: 10px;
+}
+
+.weather-data-container label{
+    font-size: 12px;
+    font-weight: bold;
+    color: #5d5d5d;
+    text-align: start;
+    float: left;
+}

@@ -2,9 +2,6 @@
 const mongoose = require('mongoose');
 
 const BoatLoadSchema = new mongoose.Schema({
-    // Define the fields for Boat Load here
-    // You can use the same fields as in MotoEquipmentLoad and CarOrLightTruckLoad
-    // For example:
     boatType: String,
     boatModel: String,
     boatYear: String,

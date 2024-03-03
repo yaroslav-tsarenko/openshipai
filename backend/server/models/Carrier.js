@@ -11,6 +11,10 @@ const CarrierSchema = new Schema({
     email: String,
     phoneNumber: String,
     dunsNumber: String,
+    carrierAvatar: String,
+    password: String,
+    address: String,
+    role: { type: String, enum: ['customer', 'carrier', 'super-admin'], default: 'carrier' },
     carrierID: { type: String, default: shortid.generate }
 });
 

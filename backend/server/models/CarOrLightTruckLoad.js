@@ -17,7 +17,7 @@ const CarOrLightTruckLoadSchema = new mongoose.Schema({
     enclosedTransport: Boolean,
     termsAgreed: Boolean,
     deliveryDate: Date,
-    userEndpoint: String, // Add this line to link the load to a user
+    userEndpoint: String,
 });
 
 module.exports = mongoose.model('CarOrLightTruckLoad', CarOrLightTruckLoadSchema);

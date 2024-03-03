@@ -409,13 +409,7 @@ const BidsPage = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
     const [searchQuery, setSearchQuery] = useState("");
-    const handleSearch = () => {
-        console.log(searchQuery);
-    };
-    const handleLogout = () => {
-        setUser(null);
-        navigate('/sign-in');
-    };
+
 
     return (
         <div className="admin-dashboard-wrapper">

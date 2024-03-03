@@ -18,20 +18,22 @@ function LoginForm() {
         axios.post('http://localhost:8080/sign-in', {email, password})
             .then(result => {
                 if (result.data.status === "Success") {
-                    const personalEndpoint = result.data.user.personalEndpoint;
-                    const role = result.data.user.role; // Get the user's role
+                    const carrierID = result.data.carrier ? result.data.carrier.carrierID : null;
+                    const role = result.data.role;
                     if (role === 'super-admin') {
-                        navigate(`/super-admin-dashboard/${personalEndpoint}`);
-                    } else {
-                        axios.post('http://localhost:8080/create-chat-session', { userEndpoint: personalEndpoint })
+                        navigate(`/super-admin-dashboard/${carrierID}`);
+                    } else if (role === 'user') {
+                        axios.post('http://localhost:8080/create-chat-session', { userEndpoint: carrierID })
                             .then(response => {
                                 if (response.data.status === "Success") {
-                                    navigate(`/jarvis-chat/${personalEndpoint}/${response.data.chatEndpoint}`);
+                                    navigate(`/jarvis-chat/${carrierID}/${response.data.chatEndpoint}`);
                                 }
                             })
                             .catch(err => {
                                 console.error('Error creating chat session:', err);
                             });
+                    } else if (role === 'carrier') {
+                        navigate(`/carrier-dashboard/${carrierID}`);
                     }
                 } else {
                     console.error('Login failed:', result.data.message);

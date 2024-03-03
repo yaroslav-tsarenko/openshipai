@@ -1,15 +1,16 @@
 import React, {useEffect, useState, useRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComment} from "@fortawesome/free-solid-svg-icons";
+import {faComment, faFilter, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
-import "../CarrierDashboard.css";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
 import io from 'socket.io-client';
-const CarrierChatPage = () => {
+import {ClipLoader, PuffLoader} from "react-spinners";
+import {TailSpin} from "react-loader-spinner";
+const DriverDetails = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
@@ -50,12 +51,26 @@ const CarrierChatPage = () => {
     const [chatMessages, setChatMessages] = useState([]);
     const [carrier, setCarrier] = useState(null);
     const {carrierID} = useParams();
+    const {driverID} = useParams();
     const { chatID } = useParams();
     const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
     const socketRef = useRef();
-    const [currentUser, setCurrentUser] = useState(null);
-    const [inputMessage, setInputMessage] = useState("");
-    const [sendBOLDocument, setSendBOLDocument] = useState(false);
+    const [drivers, setDrivers] = useState([]);
+    const [currentDriver, setCurrentDriver] = useState(null);
+
+    useEffect(() => {
+        const fetchDrivers = async () => {
+            const response = await axios.get('http://localhost:8080/get-all-drivers');
+            setDrivers(response.data);
+        };
+
+        fetchDrivers();
+    }, []);
+
+    useEffect(() => {
+        const driver = drivers.find(driver => driver.driverID === driverID);
+        setCurrentDriver(driver);
+    }, [drivers, driverID]);
     useEffect(() => {
         axios.get(`http://localhost:8080/get-user/${chatID}`)
             .then(response => {
@@ -209,26 +224,7 @@ const CarrierChatPage = () => {
             });
     }, [selectedChatID]);
 
-    const sendMessage = (message) => {
-        const newMessage = {
-            text: message,
-            date: new Date(),
-            sender: 'carrierID',
-        };
-        socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
-        setInputMessage('');
-        setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('http://localhost:8080/save-chat-message', {
-            chatID: selectedChatID,
-            receiver: 'personalEndpoint',
-            sender: 'carrierID',
-            text: message,
-            date: new Date()
-        })
-            .catch(error => {
-                console.error('Error saving chat message:', error);
-            });
-    };
+
 
     useEffect(() => {
         axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
@@ -239,14 +235,6 @@ const CarrierChatPage = () => {
                 console.error('Error fetching chat messages:', error);
             });
     }, [chatID]);
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault(); // Prevents the default action to be taken
-            sendMessage(inputMessage);
-            setInputMessage(''); // Clears the input field
-        }
-    };
 
 
     const handlePay = async (amount) => {
@@ -463,144 +451,64 @@ const CarrierChatPage = () => {
 
     return (
         <div className="admin-dashboard-wrapper">
+
             <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
-                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Carrier's
+                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Driver's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierID}`}
+                    <Link to={`/driver-dashboard/${driverID}`}
                           className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Shipments</Link>
-                    <Link
-                        to={`/carrier-drivers/${carrierID}`}
-                        className="navigation-button">
-                        <FontAwesomeIcon
-                            className="navigation-icon"
-                            icon={faTruck}/>
-                        Drivers
-                    </Link>
-                    <Link to={`/carrier-chat/${carrierID}`}
-                          className="navigation-button-2"><FontAwesomeIcon
-                        className="navigation-icon" icon={faComment}/>Chat with Customer </Link>
-                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/driver-chat/${driverID}`} className="navigation-button"><FontAwesomeIcon
+                        className="navigation-icon" icon={faComment}/>Chat with Carrier</Link>
+                    <Link to={`/driver-details/${driverID}`} className="navigation-button-2"><FontAwesomeIcon
+                        className="navigation-icon" icon={faUser}/>Driver Details</Link>
+                    <Link to={`/jarvis-chat/${driverID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
+
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-settings/${carrierID}`} className="navigation-button-settings"><FontAwesomeIcon
+                    <Link to={`/driver-settings/${driverID}`} className="navigation-button-settings"><FontAwesomeIcon
                         className="navigation-icon" icon={faCog}/>Settings</Link>
-                    <Link to="/jarvis-chat" className="navigation-button-logout"><FontAwesomeIcon
-                        className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
+                    <Link to="/sign-in" className="navigation-button-logout">
+                        <FontAwesomeIcon className="navigation-icon" icon={faSignOutAlt}/>Logout
+                    </Link>
                 </div>
             </div>
-            <div className="deal-conversations-sidebar">
-                <h3>Your active Deals</h3>
-                {conversations.map((conversation, index) => (
-                    <div key={index} className="chat-id-container"
-                         onClick={() => handleChatSelection(conversation.chatID)}>
-                        <h5>Deal Conversation ID:</h5>
-                        <h4>{conversation.chatID}</h4>
-                        <h6 className="chat-id-number">{conversation.chatID}</h6>
-                    </div>
-                ))}
-            </div>
+
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
-            <div className="customer-chat-content">
-                <div className="customer-chat-admin-inner-content-second">
-                    <div className="inner-content-second-text">
-                        <p className="inner-content-second-text-first">Start Messaging with Customer!</p>
-                        <p className="inner-content-second-text-second">Be careful due scammers</p>
-                    </div>
-                    <div className="user-details-wrapper">
-                        <UserAvatarComponent className="user-avatar"/>
-                        <div className="user-details">
-                            <p>{carrier?.companyName}</p>
-                            <p className="user-status">Carrier</p>
-                        </div>
-                        <BellComponent className="bell-icon"/>
-                    </div>
-                </div>
-                {chatID ? (
-                    <div className="messaging-chat-wrapper">
-                        <div className="chat-messages">
-                            {chatMessages.map((message, index) => (
-                                <div key={index} style={{
-                                    display: 'flex',
-                                    justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
-                                }}>
-                                    {message.sender !== 'carrierID' && <UserAvatarComponent/>}
-                                    <div style={{
-                                        backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
-                                        color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
-                                        alignItems: 'start',
-                                        textAlign: 'left',
-                                        padding: '10px',
-                                        borderRadius: '10px',
-                                        margin: '10px'
-                                    }}>
-                                        <div className="user-role-name">
-                                            {message.sender === 'personalEndpoint' &&
-                                                <div className="user-carrier-name">{user ? <p>{user.name}</p> :
-                                                    <p>Loading...</p>}</div>}
-                                            {message.sender !== 'carrierID' &&
-                                                <div className="user-carrier-role">Customer</div>}
-                                        </div>
-                                        <div className="user-role-name">
-                                            {message.sender === 'carrierID' &&
-                                                <div style={{
-                                                    color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',
-                                                }}>{carrier.companyName}</div>}
-                                            {message.sender === 'carrierID' &&
-                                                <div className="user-carrier-role">Carrier</div>}
-                                        </div>
-                                        {message.text}
-                                        <div style={{
-                                            color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
-                                            alignItems: 'end',
-                                            textAlign: 'right',
-                                        }}
-                                        >{new Date(message.date).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: false
-                                        })}</div>
-                                    </div>
-                                    {message.sender === 'carrierID' && <UserAvatarComponent/>}
-                                </div>
-                            ))}
-                        </div>
-                        <button className="bol-doc-button" onClick={() => setSendBOLDocument(true)}>Send a BOL
-                            document
-                        </button>
-                        <div className="chat-input-area">
+            <div className="admin-content">
+                <div className="admin-content-wrapper">
+                    <div className="admin-inner-content-first">
+                        <div className="search-bar">
+                            <FontAwesomeIcon icon={faSearch} className="search-icon"/>
                             <input
                                 type="text"
-                                className="chat-input"
-                                placeholder="Type your message here..."
-                                value={inputMessage}
-                                onChange={e => setInputMessage(e.target.value)}
-                                onKeyDown={handleKeyDown}
+                                className="search-input"
+                                placeholder="Search all loads, drivers, etc."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
                             />
-                            <button
-                                className="chat-send-button"
-                                onClick={() => {
-                                    sendMessage(inputMessage);
-                                    setInputMessage("");
-                                }}
-                            >
-                                Send
-                            </button>
+                        </div>
+                        <div className="user-details-wrapper">
+                            <UserAvatarComponent className="user-avatar"/>
+                            <div className="user-details">
+                                {currentDriver ? currentDriver.firstName : <ClipLoader color={"#e7e7e7"} loading={true} size={25} />}
+                                <p className="user-status">Driver</p>
+                            </div>
+                            <BellComponent className="bell-icon"/>
                         </div>
                     </div>
-                ) : (
-                    <div className="choose-chat-conversation">
-                    <p>Choose chat to start speaking with customer!</p>
+                    <div className="loader-container">
+                       <TailSpin color="#fff"/>
+                    </div>
                 </div>
-                )}
             </div>
         </div>
     );
 };
 
-export default CarrierChatPage;
+export default DriverDetails;

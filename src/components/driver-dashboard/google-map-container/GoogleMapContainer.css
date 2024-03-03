@@ -1,0 +1,20 @@
+.google-map-container{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #646464;
+    background-color: #ffffff;
+    overflow: hidden;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+}
+
+.google-map-text{
+    background: #e1e1e1;
+    display: inline-block;
+    padding: 10px;
+    margin: 10px;
+    color: #9d9d9d;
+    font-weight: 800;
+    border-radius: 8px;
+}
