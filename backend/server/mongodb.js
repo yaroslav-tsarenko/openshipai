@@ -10,6 +10,8 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
 const User = require('./models/User');
+const ConfirmedLoad = require('./models/ConfirmedLoad');
+const TakenLoad = require('./models/TakenLoad');
 const ChatHistory = require('./models/ChatHistory');
 const DealConversationChatHistoryMessage = require('./models/DealConversationChatHistoryMessage');
 const Carrier = require('./models/Carrier');
@@ -38,7 +40,6 @@ const CorporateMoving = require('./models/CorporateMoving');
 const StudentMoving = require('./models/StudentMoving');
 const SubmittedBid = require('./models/SubmittedBid');
 const DealChatConversation = require('./models/DealChatConversation');
-
 const multer = require('multer');
 const upload = multer({ dest: 'uploads/' });
 const Photo = require('./models/Photo');
@@ -148,7 +149,29 @@ app.get('/all-user-loads', async (req, res) => {
         res.status(500).json({ message: 'Server error' });
     }
 });
+app.get('/get-confirmed-load-by-commercial-load-id/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+    try {
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+        if (!dealChatConversation) {
+            return res.status(404).json({ message: 'Chat not found' });
+        }
 
+        const confirmedLoad = await ConfirmedLoad.findOne({ loadID: dealChatConversation.commercialLoadID });
+        if (!confirmedLoad) {
+            return res.status(404).json({ message: 'Confirmed load not found' });
+        }
+
+        if (dealChatConversation.commercialLoadID === confirmedLoad.loadID) {
+            console.log(confirmedLoad);
+        }
+
+        res.json(confirmedLoad);
+    } catch (error) {
+        console.error('Failed to fetch confirmed load:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 app.post('/upload-photos', upload.array('images'), async (req, res) => {
     try {
         const images = req.files.map(file => {
@@ -180,6 +203,33 @@ router.put('/update-commercial-truck-load/:id', (req, res) => {
     });
 });
 
+app.get('/get-all-deal-chat-conversation/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+    try {
+        const dealChatConversation = await DealChatConversation.find({ chatID: chatID });
+        if (dealChatConversation.length === 0) {
+            return res.status(404).json({ message: 'No conversation found for this chatID' });
+        }
+        res.json(dealChatConversation);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+app.get('/get-confirmed-load/:loadID', async (req, res) => {
+    const { loadID } = req.params;
+
+    try {
+        const confirmedLoad = await ConfirmedLoad.findOne({ loadID: loadID });
+
+        if (!confirmedLoad) {
+            return res.status(404).json({ message: 'No confirmed load found for this loadID' });
+        }
+
+        res.status(200).json(confirmedLoad);
+    } catch (error) {
+        res.status(500).json({ error: 'There was an error fetching the confirmed load' });
+    }
+});
 app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
     try {
         const conversation = await DealChatConversation.findOne({ chatID: req.params.chatID });
@@ -190,22 +240,23 @@ app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
 });
 
 app.post('/submit-bid', async (req, res) => {
-    const { commercialLoadID, bid, loadType, pickupLocation, deliveryLocation, carrierPersonalEndpoint, assignedDriver } = req.body;
+    const { commercialLoadID, bid, loadType, pickupLocation, deliveryLocation, carrierID, assignedDriver } = req.body;
     const newBid = new Bid({
         commercialLoadID,
         bid,
         loadType,
         pickupLocation,
         deliveryLocation,
-        carrierPersonalEndpoint,
-        assignedDriver // add this line
+        carrierID,
+        assignedDriver
     });
     try {
         await newBid.save();
         res.status(200).send({ message: 'Bid submitted successfully' });
         console.log(newBid);
     } catch (error) {
-        res.status(500).send({ error: 'Error submitting bid' });
+        console.error(error);
+        res.status(500).send({ error: error.toString() });
     }
 });
 
@@ -236,6 +287,47 @@ app.get('/get-all-carriers', async (req, res) => {
         res.status(500).send(error);
     }
 });
+app.put('/update-carrier/:carrierID', upload.single('carrierAvatar'), async (req, res) => {
+    const { carrierID } = req.params;
+    const updatedCarrier = req.body;
+    if (req.file) {
+        updatedCarrier.carrierAvatar = req.file.path;
+    }
+    try {
+        const carrier = await Carrier.findOneAndUpdate(
+            { carrierID: carrierID }, // find a document with this filter
+            updatedCarrier, // document to insert when nothing was found
+            { new: true, upsert: true }, // options
+        );
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+        res.status(200).json(carrier);
+    } catch (error) {
+        console.error('Error updating carrier:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+app.put('/update-carrier-password/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+    const { password } = req.body;
+    try {
+        const carrier = await Carrier.findOneAndUpdate(
+            { carrierID: carrierID },
+            { password: password },
+            { new: true } // This option returns the updated document
+        );
+
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        res.status(200).json(carrier);
+    } catch (error) {
+        console.error('Error updating carrier password:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
 app.get('/get-carrier-by-load/:commercialLoadID', async (req, res) => {
     try {
@@ -243,7 +335,7 @@ app.get('/get-carrier-by-load/:commercialLoadID', async (req, res) => {
         if (!bid) {
             return res.status(404).send();
         }
-        const carrier = await Carrier.findOne({ carrierPersonalEndpoint: bid.carrier });
+        const carrier = await Carrier.findOne({ carrierID: bid.carrier });
         if (!carrier) {
             return res.status(404).send();
         }
@@ -275,33 +367,33 @@ app.get('/get-user/:personalEndpoint', async (req, res) => {
 
 app.get('/get-user/:chatID', async (req, res) => {
     const { chatID } = req.params;
-
     try {
-        // Find the chat conversation by chatID
         const chatConversation = await DealChatConversation.findOne({ chatID: chatID });
-
         if (!chatConversation) {
             return res.status(404).json({ message: 'Chat conversation not found' });
         }
-
-        // Extract the personalEndpoint from the chat conversation
         const { personalEndpoint } = chatConversation;
-
-        // Find the user by personalEndpoint
         const user = await UserModel.findOne({ personalEndpoint: personalEndpoint });
-
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
         }
-
-        // Send the user data in the response
-        res.json(user);
+         res.json(user);
     } catch (error) {
         res.status(500).json({ message: 'Server error' });
     }
 });
 
-
+app.post('/save-taken-load', (req, res) => {
+    const { lat, lng, ...otherFields } = req.body;
+    const takenLoad = new TakenLoad({
+        ...otherFields,
+        lat,
+        lng
+    });
+    takenLoad.save()
+        .then(() => res.json({ status: 'Success' }))
+        .catch(error => res.json({ status: 'Error', message: error.message }));
+});
 
 app.post('/apply-bid', async (req, res) => {
     const bidData = req.body;
@@ -387,18 +479,35 @@ app.get('/get-carrier-by-id/:carrierID', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
-app.get('/get-carrier/:carrierID', async (req, res) => {
-    const { carrierID } = req.params;
+
+app.put('/update-user/:personalEndpoint', async (req, res) => {
+    const { personalEndpoint } = req.params;
+    const updatedUser = req.body;
 
     try {
-        const carrier = await Carrier.findById(carrierID);
-        if (!carrier) {
-            return res.status(404).json({ message: 'No carrier found with this ID.' });
+        const user = await UserModel.findOneAndUpdate(
+            { personalEndpoint: personalEndpoint },
+            updatedUser,
+            { new: true } // This option returns the updated document
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
         }
-        res.status(200).json(carrier);
+
+        res.json(user);
     } catch (error) {
-        console.error('Error fetching carrier:', error);
-        res.status(500).json({ message: 'Server error.' });
+        console.error('Error updating user data:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/get-carrier/:carrierID', async (req, res) => {
+    try {
+        const carrier = await Carrier.findOne({ carrierID: req.params.carrierID });
+        res.json(carrier);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 });
 
@@ -697,6 +806,20 @@ app.post('/submit-long-distance-moving', async (req, res) => {
     }
 });
 
+app.get('/get-load-id/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+    try {
+        const chatSession = await DealChatConversation.findOne({ chatID: chatID });
+        if (!chatSession) {
+            return res.status(404).json({ message: 'Chat session not found' });
+        }
+        const loadID = chatSession.loadID;
+        res.status(200).json({ loadID });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.get('/get-long-distance-moving', async (req, res) => {
     try {
         const moving = await LongDistanceMoving.find();
@@ -863,6 +986,30 @@ app.post('/create-driver', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+app.get('/get-driver/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    try {
+        const driver = await Driver.findOne({ _id: driverID });
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
+        res.json(driver);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-all-taken-loads', async (req, res) => {
+    try {
+        const takenLoads = await TakenLoad.find();
+        res.status(200).json(takenLoads);
+    } catch (error) {
+        console.error('Error fetching all taken loads:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.get('/get-drivers', async (req, res) => {
     try {
         const drivers = await Driver.find();
@@ -887,6 +1034,17 @@ app.get('/get-all-drivers', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+app.get('/get-bids-by-driver/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    try {
+        const bids = await SubmittedBid.find({ driverID: driverID, assignedDriver: driverID });
+        res.status(200).json(bids);
+    } catch (error) {
+        res.status(500).send('Error fetching bids');
+    }
+});
+
 app.delete('/delete-driver/:driverID', async (req, res) => {
     try {
         const driver = await Driver.findOneAndDelete({ driverID: req.params.driverID });
@@ -927,12 +1085,13 @@ app.get('/get-last-carrier', (req, res) => {
             });
         });
 });
-app.get('/get-all-bids', async (req, res) => {
+
+app.get('/get-all-submitted-bids', async (req, res) => {
     try {
-        const bids = await Bid.find({});
-        res.status(200).json(bids);
+        const bids = await SubmittedBid.find();
+        res.json(bids);
     } catch (error) {
-        res.status(500).send('Error fetching bids');
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -1039,7 +1198,7 @@ app.post('/create-checkout-session', async (req, res) => {
                 product_data: {
                     name: 'Commercial Truck Load',
                 },
-                unit_amount: amount * 100, // Stripe uses cents instead of dollars
+                unit_amount: amount * 100,
             },
             quantity: 1,
         }],
@@ -1049,6 +1208,29 @@ app.post('/create-checkout-session', async (req, res) => {
     });
 
     res.json({ sessionId: session.id });
+});
+
+app.post('/save-confirmed-arrival', async (req, res) => {
+    const { loadID, status, payment } = req.body;
+    try {
+        const confirmedLoad = new ConfirmedLoad({
+            loadID,
+            status,
+            payment
+        });
+        const savedConfirmedLoad = await confirmedLoad.save();
+        res.json({
+            status: 'Success',
+            message: 'Data saved successfully',
+            data: savedConfirmedLoad
+        });
+    } catch (error) {
+        res.status(500).json({
+            status: 'Failed',
+            message: 'Error saving data',
+            error: error.message
+        });
+    }
 });
 app.get('/users', async (req, res) => {
     try {
@@ -1285,21 +1467,28 @@ app.post('/sign-up', (req, res) => {
         });
 });
 
-app.post("/sign-in", (req, res) => {
-    const {email, password} = req.body;
-    UserModel.findOne({email: email})
-        .then(user => {
-            if (user) {
-                if (user.password === password) {
-                    res.json({status: "Success", user: user});
-                } else {
-                    res.json({status: "Error", message: "Wrong password"});
-                }
+app.post("/sign-in", async (req, res) => {
+    const { email, password } = req.body;
+    const user = await UserModel.findOne({ email: email });
+    if (user) {
+        if (user.password === password) {
+            res.json({ status: "Success", user: user, role: "user" });
+        } else {
+            res.json({ status: "Error", message: "Wrong password" });
+        }
+    } else {
+        const carrier = await Carrier.findOne({ email: email });
+        if (carrier) {
+            if (carrier.password === password) {
+                res.json({ status: "Success", carrier: carrier, role: "carrier" });
             } else {
-                res.json("Not found")
+                res.json({ status: "Error", message: "Wrong password" });
             }
-        })
-})
+        } else {
+            res.json({ status: "Error", message: "Email not found" });
+        }
+    }
+});
 
 /*WORKING CODE*/
 

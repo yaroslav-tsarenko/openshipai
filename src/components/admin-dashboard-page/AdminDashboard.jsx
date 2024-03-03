@@ -364,7 +364,7 @@ const AdminDashboard = () => {
                     </Link>
                 </div>
                 <div className="admin-side-bar-navigation">
-                    <Link to="/admin-dashboard" className="navigation-button-settings"><FontAwesomeIcon
+                    <Link to={`/customer-settings/${personalEndpoint}`} className="navigation-button-settings"><FontAwesomeIcon
                         className="navigation-icon" icon={faCog}/>Settings</Link>
                     <Link to="/jarvis-chat" className="navigation-button-logout"><FontAwesomeIcon
                         className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
@@ -535,8 +535,8 @@ const AdminDashboard = () => {
                                             <div className="popup">
                                                 <div className="doc-wrapper">
                                                     <SignatureCanvas ref={sigCanvas} penColor='black' canvasProps={{
-                                                        width: 576,
-                                                        height: 811,
+                                                        width: 770,
+                                                        height: 1024,
                                                         className: 'sigCanvas'
                                                     }}/>
                                                 </div>

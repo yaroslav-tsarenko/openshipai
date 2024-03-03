@@ -1,23 +1,25 @@
 import React, {useEffect, useState, useRef} from "react";
-import './CarrierDashboard.css';
+import "../CarrierDashboard.css"
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {faComment, faSearch} from "@fortawesome/free-solid-svg-icons";
 import {faFilter} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
-import {ReactComponent as UserAvatarComponent} from "../../assets/userAvatar2.svg";
-import {ReactComponent as BellComponent} from "../../assets/bell.svg";
-import SignatureCanvas from 'react-signature-canvas';
-import {faEdit, faTrashAlt, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
+import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
+import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
+import {ReactComponent as OriginAndDestinationComponent} from "../../../assets/from1to2.svg";
 import html2canvas from 'html2canvas';
 import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
+import {ClipLoader} from "react-spinners";
+import ShowLocation from "../../show-location/ShowLocation";
+import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 
 const stripePromise = loadStripe('your-stripe-public-key');
 const stripe = await stripePromise;
 
-const CarrierDashboard = () => {
+const CarrierDriverDetails = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
@@ -38,6 +40,7 @@ const CarrierDashboard = () => {
     const sidebarRef = useRef(null);
     const minSwipeDistance = 50;
     const {carrierID} = useParams();
+    const {driverID} = useParams();
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
@@ -55,6 +58,45 @@ const CarrierDashboard = () => {
     const [currentLoadID, setCurrentLoadID] = useState(null);
     const [newBid, setNewBid] = useState(null);
     const [drivers, setDrivers] = useState([]);
+    const [driver, setDriver] = useState(null);
+    const [takenLoads, setTakenLoads] = useState([]);
+    const [showSuccess, setShowSuccess] = useState(false); // Add this line at the beginning of your component
+
+    const handleConfirmArrival = (load) => {
+        const data = {
+            loadID: load.commercialLoadID,
+            status: 'Confirmed',
+            payment: false
+        };
+
+        axios.post('http://localhost:8080/save-confirmed-arrival', data)
+            .then(response => {
+                if (response.data.status === 'Success') {
+                    console.log('Data saved successfully');
+                    setShowSuccess(true); // Set the showSuccess state to true
+                } else {
+                    console.error('Error saving data:', response.data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error saving data:', error);
+            });
+    };
+    useEffect(() => {
+        axios.get('http://localhost:8080/get-all-taken-loads')
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    const allTakenLoads = response.data;
+                    const filteredTakenLoads = allTakenLoads.filter(load => load.assignedDriver === driverID);
+                    setTakenLoads(filteredTakenLoads);
+                } else {
+                    console.error('Error fetching taken loads:', response);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching taken loads:', error);
+            });
+    }, [driverID]); // Dependency array ensures this runs when driverID changes
     const handleBidClick = (tableId) => {
         setCurrentTable(tableId);
         setShowBidPopup(true);
@@ -92,7 +134,20 @@ const CarrierDashboard = () => {
                 console.error('Error fetching carriers:', error);
             });
     }, [carrierID]);
-
+    useEffect(() => {
+        // Fetch the driver data when the component mounts
+        axios.get(`http://localhost:8080/get-driver/${driverID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    setDriver(response.data.driver); // Set the driver data in state
+                } else {
+                    console.error('Error fetching driver:', response);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching driver:', error);
+            });
+    }, [driverID]); // Dependency array ensures this runs when driverID changes
     useEffect(() => {
         axios.get('http://localhost:8080/get-drivers')
             .then(response => {
@@ -401,7 +456,22 @@ const CarrierDashboard = () => {
                 console.error('Error fetching Moto Equipment loads:', error);
             });
     }, []);
-
+    useEffect(() => {
+        // Fetch all drivers data when the component mounts
+        axios.get('http://localhost:8080/get-all-drivers')
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    // Filter drivers by driverID and set the state with the filtered driver
+                    const filteredDriver = response.data.filter(driver => driver.driverID === driverID);
+                    setDriver(filteredDriver[0]);
+                } else {
+                    console.error('Error fetching drivers:', response);
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching drivers:', error);
+            });
+    }, [driverID]); // Dependency array ensures this runs when driverID changes
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -421,15 +491,15 @@ const CarrierDashboard = () => {
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
                     <Link to={`/carrier-dashboard/${carrierID}`}
-                          className="navigation-button-2"><FontAwesomeIcon
+                          className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faTruck}/>My Shipments</Link>
                     <Link
                         to={`/carrier-drivers/${carrierID}`}
-                        className="navigation-button">
+                        className="navigation-button-2">
                         <FontAwesomeIcon
                             className="navigation-icon"
                             icon={faTruck}/>
-                        Drivers
+                        Current Driver
                     </Link>
                     <Link to={`/carrier-chat/${carrierID}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
@@ -445,7 +515,6 @@ const CarrierDashboard = () => {
                     </Link>
                 </div>
             </div>
-
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
@@ -473,8 +542,9 @@ const CarrierDashboard = () => {
                     </div>
                     <div className="admin-inner-content-second">
                         <div className="inner-content-second-text">
-                            <p className="inner-content-second-text-first">Drivers</p>
-                            <p className="inner-content-second-text-second">Monitor drivers, status, payments etc.</p>
+                            <p className="inner-content-second-text-first">Driver
+                                - {driver ? driver.firstName : 'Loading...'}</p>
+                            <p className="inner-content-second-text-second">Monitor driver load, status</p>
                         </div>
                         <div className="data-operations-wrapper">
                             <div className="little-search-bar">
@@ -491,238 +561,57 @@ const CarrierDashboard = () => {
                             </button>
                         </div>
                     </div>
-                    <div className="table-wrapper">
-                        <div className="table-columns-titles">
-                            <div>LOAD TYPE</div>
-                            <div>PICKUP</div>
-                            <div>DESTINATION</div>
-                            <div>LOAD STATUS</div>
-                            <div>GOODS</div>
-                            <div>PRICE</div>
-                            <div>INFO</div>
-                        </div>
-
-                        {commercialTruckLoads.map((load, index) => (
-                            <div className="table-items-wrapper">
-                                <div className={`table-item ${load === selectedLoad ? 'selected' : ''}`}
-                                     key={index}>
-                                    <div>{load.vehicleType}</div>
-                                    <div>{load.pickupLocation}</div>
-                                    <div>{load.deliveryLocation}</div>
-                                    <div>Pending</div>
-                                    <div>{load.commercialLoadID}</div>
-                                    <div className="p-price-bid">
-                                        <p onClick={() => handleBidClick(index)}>
-                                            {bids[load.commercialLoadID] ? `$${bids[load.commercialLoadID]}` : 'Bid'}
-                                        </p>
+                    <div className="taken-loads-wrapper">
+                        {takenLoads.map(load => (
+                            <div className="taken-load-container" key={load._id}>
+                                <div className="load-container-left">
+                                    <div className="current-load-price">
+                                        {load.bidPrice}
+                                        {load.currency}
                                     </div>
-                                    <div className="dropdown" onClick={() => {
-                                        toggleOpen(index);
-                                        toggleDropdown();
-                                    }}>
-                                        <button className="dropdown-button">&#8942;</button>
-                                        {selectedDropdown === index && isOpen && (
-                                            <div className="dropdown-menu-buttons">
-                                                <a href="#/action-1" onClick={() => handleEdit(load)}>Edit
-                                                    Load <FontAwesomeIcon className="icon-a" icon={faEdit}/></a>
-                                                <a href="#/action-2" onClick={() => handleDetails(load)}>More
-                                                    Details <FontAwesomeIcon className="icon-a" icon={faEllipsisH}/></a>
-                                                <a href="#/action-3" onClick={() => handleDelete(load)}>Delete
-                                                    Load <FontAwesomeIcon className="icon-a" icon={faTrashAlt}/></a>
-                                            </div>
-                                        )}
+                                    <h5>
+                                        <label className="load-metrics">Load ID:</label>
+                                        {load.commercialLoadID}
+                                        <div className="load-metrics">
+                                            Dry Van (V)
+                                        </div>
+                                        <div className="load-metrics">
+                                            3k lbs
+                                        </div>
+                                    </h5>
+                                    <div className="destination-wrapper">
+                                        <OriginAndDestinationComponent className="origin-destination-component"/>
+                                        <div className="destination-text-wrapper">
+                                            <p className="origin-location">
+                                                {load.pickupLocation}
+                                            </p>
+                                            <p className="destination-location">
+                                                {load.deliveryLocation}
+                                            </p>
+                                        </div>
+                                    </div>
+                                    <div className="button-wrapper">
+                                        <button
+                                            className="submit-bid-button"
+                                            onClick={() => handleConfirmArrival(load)}
+                                        >
+                                            Confirm Arrival
+                                        </button>
+                                        <button className="edit-form-cancel">Decline Arrival</button>
                                     </div>
                                 </div>
-                                {showDetails && selectedLoad === load && (
-                                    <div className="load-details-wrapper">
-                                        <div className="load-details">
-                                            <label>
-                                                <h2>Vehicle Type</h2>
-                                                <p>{selectedLoad.vehicleType}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Vehicle Model</h2>
-                                                <p>{selectedLoad.vehicleModel}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Vehicle Year</h2>
-                                                <p>{selectedLoad.vehicleYear}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Vehicle Color</h2>
-                                                <p>{selectedLoad.vehicleColor}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Vehicle License Plate</h2>
-                                                <p>{selectedLoad.vehicleLicensePlate}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Vehicle Vin</h2>
-                                                <p>{selectedLoad.vehicleVin}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Pickup Location</h2>
-                                                <p>{selectedLoad.pickupLocation}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Delivery Location</h2>
-                                                <p>{selectedLoad.deliveryLocation}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Is Convertible</h2>
-                                                <p>{selectedLoad.isConvertible ? 'Yes' : 'No'}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Is Modified</h2>
-                                                <p>{selectedLoad.isModified ? 'Yes' : 'No'}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Is Inoperable</h2>
-                                                <p>{selectedLoad.isInoperable ? 'Yes' : 'No'}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Service Level</h2>
-                                                <p>{selectedLoad.serviceLevel}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Enclosed Transport</h2>
-                                                <p>{selectedLoad.enclosedTransport ? 'Yes' : 'No'}</p>
-                                            </label>
-                                            <label>
-                                                <h2>Terms Agreed</h2>
-                                                <p>{selectedLoad.termsAgreed ? 'Yes' : 'No'}</p>
-                                            </label>
-                                        </div>
-                                        <button className="hide-details-button"
-                                                onClick={() => setShowDetails(false)}>Hide
-                                        </button>
-                                    </div>
-                                )}
-                                {/*<div className="message-document-wrapper">
-                                    <a onClick={handleOpenPopup}>You need to sign a document!</a>
-                                    {isPopupVisible && (
-                                        <div className="popup-overlay">
-                                            <div className="popup">
-                                                <div className="doc-wrapper">
-                                                    <SignatureCanvas ref={sigCanvas} penColor='black' canvasProps={{
-                                                        width: 576,
-                                                        height: 811,
-                                                        className: 'sigCanvas'
-                                                    }}/>
-                                                </div>
-                                                <button className="clear-signature" onClick={clearSignature}>Clear
-                                                    Signature
-                                                </button>
-                                                <button className="close-button" onClick={handleClosePopup}>Close
-                                                </button>
-                                                <button className="save-doc-button" onClick={saveSignature}>Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>*/}
-                                {/* <button className="pay-load-button" onClick={() => handlePay(555)}>Pay load</button>*/}
-                                {showBidPopup && currentTable === index && (
-                                    <div className="bid-popup-background" onClick={handleBidClick}>
-                                        <div className="bid-popup" onClick={e => e.stopPropagation()}>
-                                            <FontAwesomeIcon icon={faTimes} className="close-icon"
-                                                             onClick={handleCloseBidPopup}/>
-                                            <form onSubmit={handleBidSubmit}>
-                                                <select className="driver-select">
-                                                    <option value="">Assign Driver</option>
-                                                    {drivers.map(driver => (
-                                                        <option
-                                                            key={driver.driverID}
-                                                            value={driver.driverID}>
-                                                            {driver.firstName} {driver.lastName} ({driver.email})
-                                                        </option>
-                                                    ))}
-                                                </select>
-                                                <input
-                                                    className="bit-input"
-                                                    type="text"
-                                                    placeholder="Place bid $:"
-                                                    value={bid}
-                                                    onChange={handleBidChange}
-                                                />
-                                                <button className="submit-bid-button"
-                                                        onClick={(e) => handleBidSubmit(load, e)}>Submit Bid
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                )}
-                                {showEditForm && selectedLoad === load && (
-                                    <div className="load-edit-form-wrapper">
-                                        <div className="load-edit-form">
-                                            <form onSubmit={handleFormSubmit}>
-                                                <label>
-                                                    Vehicle Type:
-                                                    <input type="text" name="vehicleType"
-                                                           value={formData.vehicleType} onChange={handleFormChange}
-                                                           placeholder={formData.vehicleType}/>
-                                                </label>
-                                                <label>
-                                                    Vehicle Model:
-                                                    <input type="text" name="vehicleModel"
-                                                           value={formData.vehicleModel} onChange={handleFormChange}
-                                                           placeholder={formData.vehicleModel}/>
-                                                </label>
-                                                <label>
-                                                    Vehicle Year:
-                                                    <input type="text" name="vehicleYear"
-                                                           value={formData.vehicleYear} onChange={handleFormChange}
-                                                           placeholder={formData.vehicleYear}/>
-                                                </label>
-                                                <label>
-                                                    Vehicle Color:
-                                                    <input type="text" name="vehicleColor"
-                                                           value={formData.vehicleColor} onChange={handleFormChange}
-                                                           placeholder={formData.vehicleColor}/>
-                                                </label>
-                                                <label>
-                                                    Vehicle License Plate:
-                                                    <input type="text" name="vehicleLicensePlate"
-                                                           value={formData.vehicleLicensePlate}
-                                                           onChange={handleFormChange}
-                                                           placeholder={formData.vehicleLicensePlate}/>
-                                                </label>
-                                                <label>
-                                                    Vehicle Vin:
-                                                    <input type="text" name="vehicleVin" value={formData.vehicleVin}
-                                                           onChange={handleFormChange}
-                                                           placeholder={formData.vehicleVin}/>
-                                                </label>
-                                                <label>
-                                                    Pickup Location:
-                                                    <input type="text" name="pickupLocation"
-                                                           value={formData.pickupLocation}
-                                                           onChange={handleFormChange}
-                                                           placeholder={formData.pickupLocation}/>
-                                                </label>
-                                                <label>
-                                                    Delivery Location:
-                                                    <input type="text" name="deliveryLocation"
-                                                           value={formData.deliveryLocation}
-                                                           onChange={handleFormChange}
-                                                           placeholder={formData.deliveryLocation}/>
-                                                </label>
-                                            </form>
-                                        </div>
-                                        <button className="edit-form-submit" type="submit">Submit</button>
-                                        <button className="edit-form-cancel" type="button"
-                                                onClick={handleCancel}>Cancel
-                                        </button>
-                                    </div>
-                                )}
+                                <div className="load-container-right">
+                                <ShowLocation lat={load.lat} lng={load.lng}/>
+                                </div>
                             </div>
+
                         ))}
                     </div>
-
+                    {showSuccess && <FloatingWindowSuccess text="Load confirmed!" />}
                 </div>
             </div>
         </div>
     );
 };
 
-export default CarrierDashboard;
+export default CarrierDriverDetails;

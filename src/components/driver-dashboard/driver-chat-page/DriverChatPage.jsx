@@ -1,28 +1,20 @@
 import React, {useEffect, useState, useRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComment, faSearch} from "@fortawesome/free-solid-svg-icons";
-import "../AdminDashboard.css";
-import io from 'socket.io-client';
+import {faComment} from "@fortawesome/free-solid-svg-icons";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
-import {faDollarSign} from '@fortawesome/free-solid-svg-icons';
-import html2canvas from 'html2canvas';
-import {saveAs} from 'file-saver';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
-
-const stripePromise = loadStripe('your-stripe-public-key');
-const stripe = await stripePromise;
-
-const CustomerChatPage = () => {
+import io from 'socket.io-client';
+import {ClipLoader, PuffLoader} from "react-spinners";
+const DriverChatPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [chatEndpoint, setChatEndpoint] = useState(null);
-    const {personalEndpoint} = useParams();
     const [vehicleLoads, setVehicleLoads] = useState([]);
     const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
     const [commercialTruckLoads, setCommercialTruckLoads] = useState([]); // Add this line
@@ -35,13 +27,12 @@ const CustomerChatPage = () => {
     const [touchEnd, setTouchEnd] = useState(null);
     const sidebarRef = useRef(null);
     const minSwipeDistance = 50;
-    const [currentUser, setCurrentUser] = useState("user1");
+    const [selectedChatID, setSelectedChatID] = useState(null);
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
     const [editingLoad, setEditingLoad] = useState(null); // Holds the load currently being edited
     const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
-    const [selectedChatID, setSelectedChatID] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [showDetails, setShowDetails] = useState(false);
     const [formData, setFormData] = useState(null);
@@ -51,214 +42,41 @@ const CustomerChatPage = () => {
     const [selectedDropdown, setSelectedDropdown] = useState(null);
     const dropdownRef = useRef(null);
     const [bid, setBid] = useState(null);
+    const [conversations, setConversations] = useState([]);
     const [isBidApplied, setIsBidApplied] = useState(false);
     const [bids, setBids] = useState([]);
-    const {chatID} = useParams();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [selectedBid, setSelectedBid] = useState(null);
-    const [carrier, setCarrier] = useState(null);
-    const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
-    const [inputMessage, setInputMessage] = useState("");
-    const [conversations, setConversations] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
+    const [carrier, setCarrier] = useState(null);
+    const {carrierID} = useParams();
+    const {driverID} = useParams();
+    const { chatID } = useParams();
+    const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
     const socketRef = useRef();
-    const [userName, setUserName] = useState("");
-    const [loadID, setLoadID] = useState(null);
-    const [dealChatConversations, setDealChatConversations] = useState([]);
-    const [confirmedLoad, setConfirmedLoad] = useState(null);
-    const [conversationLoadID, setConversationLoadID] = useState(null);
-    const [showBOLContainer, setShowBOLContainer] = useState(false); //test
+    const [currentUser, setCurrentUser] = useState(null);
+    const [inputMessage, setInputMessage] = useState("");
+
+    const [drivers, setDrivers] = useState([]);
+    const [currentDriver, setCurrentDriver] = useState(null);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-confirmed-load/${conversationLoadID}`)
-            .then(response => {
-                setConfirmedLoad(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching confirmed load:', error);
-            });
-    }, [loadID]);
-    useEffect(() => {
-        const fetchDealChatConversations = async () => {
-            try {
-                const response = await axios.get('http://localhost:8080/get-all-deal-chat-conversations');
-                const allDealChatConversations = response.data;
-                const filteredDealChatConversations = allDealChatConversations.filter(conversation => conversation.chatID === chatID);
-                setDealChatConversations(filteredDealChatConversations);
-            } catch (error) {
-                console.error('Error fetching deal chat conversations:', error);
-            }
+        const fetchDrivers = async () => {
+            const response = await axios.get('http://localhost:8080/get-all-drivers');
+            setDrivers(response.data);
         };
 
-        fetchDealChatConversations();
-    }, [chatID]);
-    useEffect(() => {
-        const fetchLoadID = async () => {
-            try {
-                const response = await axios.get(`/get-load-id/${chatID}`);
-                setLoadID(response.data.loadID);
-            } catch (error) {
-                console.error(error);
-            }
-        };
-
-        fetchLoadID();
-    }, [chatID]);
-    const fetchUserData = async () => {
-        try {
-            const response = await axios.get(`/get-user/${chatID}`);
-            setUserName(response.data.name);
-        } catch (error) {
-            console.error("Failed to fetch user data:", error);
-        }
-    };
-
-    useEffect(() => {
-        const fetchCarrier = async () => {
-            try {
-                const dealChatConversationResponse = await axios.get(`/get-deal-chat-conversation/${chatID}`);
-                const dealChatConversation = dealChatConversationResponse.data;
-
-                const carrierResponse = await axios.get(`/get-carrier/${dealChatConversation.carrierID}`);
-                const carrier = carrierResponse.data;
-
-                setCarrier(carrier);
-            } catch (error) {
-                console.error('Failed to fetch carrier:', error);
-            }
-        };
-
-        fetchCarrier();
-    }, [chatID]);
-    useEffect(() => {
-        fetchUserData();
-    }, [chatID]);
-    useEffect(() => {
-        socketRef.current = io.connect('http://localhost:8083');
-
-        socketRef.current.on('carrier message', (data) => {
-            if (data.chatID === selectedChatID) {
-                setChatMessages((oldMessages) => [...oldMessages, data.message]);
-            }
-        });
-
-        return () => {
-            socketRef.current.disconnect();
-        };
-    }, [selectedChatID]);
-
-    useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${chatID}`)
-            .then(response => {
-                setChatMessages(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error);
-            });
-    }, [chatID]);
-
-    useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
-            .then(response => {
-                setChatMessages(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error);
-            });
-    }, [selectedChatID]);
-
-    const sendMessage = (message) => {
-        const newMessage = {
-            text: message,
-            date: new Date(),
-            sender: 'personalEndpoint',
-        };
-        socketRef.current.emit('customer message', {
-            message: newMessage,
-            chatID: selectedChatID,
-            customer: 'personalEndpoint'
-        });
-        setInputMessage('');
-        setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('http://localhost:8080/save-chat-message', {
-            chatID: selectedChatID,
-            receiver: 'carrierID',
-            sender: 'personalEndpoint',
-            text: message,
-            date: new Date()
-        })
-            .catch(error => {
-                console.error('Error saving chat message:', error);
-            });
-    };
-
-    useEffect(() => {
-        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
-            .then(response => {
-                setChatMessages(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error);
-            });
-    }, [chatID]);
-
-    const handleKeyDown = (event) => {
-        if (event.key === 'Enter') {
-            event.preventDefault();
-            sendMessage(inputMessage);
-            setInputMessage('');
-        }
-    };
-
-    useEffect(() => {
-        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
-            .then(response => {
-                setConversations(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching conversations:', error);
-            });
+        fetchDrivers();
     }, []);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
-            .then(response => {
-                const bids = response.data;
-                setBids(bids);
-                console.log(bids);
-            })
-            .catch(error => {
-                console.error('Error fetching bids:', error);
-            });
-    }, [personalEndpoint]);
+        const driver = drivers.find(driver => driver.driverID === driverID);
+        setCurrentDriver(driver);
+    }, [drivers, driverID]);
 
-    const handleBidApply = async () => {
-        const bidData = {
-            carrier: selectedBid.carrier,
-            loadType: selectedBid.loadType,
-            currency: selectedBid.currency,
-            pickupLocation: selectedBid.pickupLocation,
-            deliveryLocation: selectedBid.deliveryLocation,
-            status: "Applied",
-            bidPrice: selectedBid.bid,
-            assignedDriver: selectedBid.assignedDriver,
-            commercialLoadID: selectedBid.commercialLoadID,
-            submitBidID: Math.floor(Math.random() * 100000000000),
-            userID: personalEndpoint,
-        };
-
-        try {
-            await axios.post('http://localhost:8080/apply-bid', bidData);
-            alert('Bid submitted successfully');
-            setIsBidApplied(true);
-            setIsPopupOpen(false);
-        } catch (error) {
-            console.error('Error submitting bid:', error);
-        }
-    };
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-user/${personalEndpoint}`)
+        axios.get(`http://localhost:8080/get-user/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -267,10 +85,10 @@ const CustomerChatPage = () => {
             .catch(error => {
                 console.error('Error fetching user data:', error);
             });
-    }, [personalEndpoint]);
+    }, [chatID]);
     useEffect(() => {
-        if (selectedBid && selectedBid.carrierPersonalEndpoint) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
+        if (selectedBid && selectedBid.carrierID) {
+            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -281,23 +99,6 @@ const CustomerChatPage = () => {
                 });
         }
     }, [selectedBid]);
-
-    useEffect(() => {
-        const fetchChatMessages = async () => {
-            try {
-                const response = await axios.get(`/get-chat-messages/${chatID}`);
-                setChatMessages(response.data);
-                const chatConversationResponse = await axios.get(`/get-user/${chatID}`);
-                const carrierID = chatConversationResponse.data.carrierID;
-                const carrierResponse = await axios.get(`/get-carrier/${carrierID}`);
-                setCarrier(carrierResponse.data);
-            } catch (error) {
-                console.error('Error fetching chat messages:', error);
-            }
-        };
-
-        fetchChatMessages();
-    }, [chatID]);
 
     useEffect(() => {
         axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-commercial-truck-loads`)
@@ -324,6 +125,16 @@ const CustomerChatPage = () => {
             });
     }, []);
 
+
+    useEffect(() => {
+        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+            .then(response => {
+                setConversations(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching conversations:', error);
+            });
+    }, []);
     useEffect(() => {
         axios.get('http://localhost:8080/get-all-bids')
             .then(response => {
@@ -333,7 +144,35 @@ const CustomerChatPage = () => {
                 console.error('Error fetching bids:', error);
             });
     }, []);
+    useEffect(() => {
+        socketRef.current = io.connect('http://localhost:8083');
 
+        socketRef.current.on('customer message', (data) => {
+            if (data.chatID === selectedChatID) {
+                setChatMessages((oldMessages) => [...oldMessages, data.message]); // Add the received message to the chatMessages state
+            }
+        });
+
+        return () => {
+            socketRef.current.disconnect();
+        };
+    }, [selectedChatID]);
+    const handleChatSelection = async (chatID) => {
+        setSelectedChatID(chatID);
+
+        try {
+            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+
+            if (response.status === 200) {
+                console.log(response.data);
+                navigate(`/carrier-deal-chat-conversation/${carrierID}/${chatID}`);
+            } else {
+                console.error('Error fetching chat data:', response);
+            }
+        } catch (error) {
+            console.error('Error fetching chat data:', error);
+        }
+    };
     useEffect(() => {
         function handleClickOutside(event) {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -346,30 +185,88 @@ const CustomerChatPage = () => {
             document.removeEventListener("mousedown", handleClickOutside);
         };
     }, []);
-    const saveSignature = () => {
-        const docWrapper = document.querySelector('.doc-wrapper');
-        html2canvas(docWrapper).then(canvas => {
-            const imgData = canvas.toDataURL(); // Convert the canvas to a Base64 string
-            axios.post('https://jarvis-ai-logistic-db-server.onrender.com/api/save-signature', {
-                imgData,
-                userEndpoint: user.personalEndpoint,
-                email: user.email,
-                signed: true,
+
+    useEffect(() => {
+        // Fetch the carrier object
+        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    setCarrier(response.data);
+                }
             })
-                .then(response => {
-                    console.log(response);
-                    // Download the signature
-                    const imgBlob = atob(imgData.split(',')[1]);
-                    const array = [];
-                    for (let i = 0; i < imgBlob.length; i++) {
-                        array.push(imgBlob.charCodeAt(i));
-                    }
-                    const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-                    saveAs(file, 'signature.png');
-                })
-                .catch(error => console.error(error));
-        });
+            .catch(error => {
+                console.error('Error fetching carrier data:', error);
+            });
+    }, [carrierID]);
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`)
+            .then(response => {
+                if (response.data && response.status === 200) {
+                    axios.get(`http://localhost:8080/get-user/${response.data.personalEndpoint}`)
+                        .then(userResponse => {
+                            if (userResponse.data && userResponse.status === 200) {
+                                setUser(userResponse.data);
+                            }
+                        })
+                        .catch(userError => {
+                            console.error('Error fetching user data:', userError);
+                        });
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching chat conversation:', error);
+            });
+    }, [chatID]);
+    useEffect(() => {
+        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [selectedChatID]);
+
+    const sendMessage = (message) => {
+        const newMessage = {
+            text: message,
+            date: new Date(),
+            sender: 'carrierID',
+        };
+        socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
+        setInputMessage('');
+        setChatMessages((oldMessages) => [...oldMessages, newMessage]);
+        axios.post('http://localhost:8080/save-chat-message', {
+            chatID: selectedChatID,
+            receiver: 'personalEndpoint',
+            sender: 'carrierID',
+            text: message,
+            date: new Date()
+        })
+            .catch(error => {
+                console.error('Error saving chat message:', error);
+            });
     };
+
+    useEffect(() => {
+        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+            .then(response => {
+                setChatMessages(response.data);
+            })
+            .catch(error => {
+                console.error('Error fetching chat messages:', error);
+            });
+    }, [chatID]);
+
+    const handleKeyDown = (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault(); // Prevents the default action to be taken
+            sendMessage(inputMessage);
+            setInputMessage(''); // Clears the input field
+        }
+    };
+
 
     const handlePay = async (amount) => {
         const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
@@ -405,11 +302,11 @@ const CustomerChatPage = () => {
         setShowEditForm(true);
     };
     const handleCancel = () => {
-        setShowEditForm(false);
+        setShowEditForm(false); // Close the edit form
     };
     const handleDetails = (load) => {
         setSelectedLoad(load);
-        setFormData(load);
+        setFormData(load); // Set the formData state to the current load
         setShowDetails(!showDetails);
     };
     const handleDelete = (load) => {
@@ -453,19 +350,7 @@ const CustomerChatPage = () => {
             target.removeEventListener('touchmove', handleTouchMove);
         };
     }, []);
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user/${personalEndpoint}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setUser(response.data);
-                } else {
-                    console.error('Error fetching user data:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error);
-            });
-    }, []);
+
     useEffect(() => {
         if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
@@ -488,11 +373,14 @@ const CustomerChatPage = () => {
     }, []);
     const handleFormSubmit = (e) => {
         e.preventDefault();
+
+        // Send a PUT request to the server to update the load
         axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-commercial-truck-load/${selectedLoad._id}`, formData)
             .then(response => {
                 if (response.data && response.status === 200) {
+                    // Update the load in the state
                     setCommercialTruckLoads(commercialTruckLoads.map(load => load._id === selectedLoad._id ? response.data : load));
-                    setShowDetails(false);
+                    setShowDetails(false); // Close the details div
                 } else {
                     console.error('Error updating load:', response);
                 }
@@ -502,23 +390,10 @@ const CustomerChatPage = () => {
             });
     };
     useEffect(() => {
-        const fetchCommercialLoadID = async () => {
-            try {
-                const response = await axios.get(`http://localhost:8080/get-confirmed-load-by-commercial-load-id/${chatID}`);
-                console.log("Confirmed load: ");
-                console.log(response.data);
-            } catch (error) {
-                console.error('Failed to fetch commercialLoadID:', error);
-            }
-        };
-
-        fetchCommercialLoadID();
-    }, [chatID]);
-    useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-heavy-equipment-loads')
             .then(response => {
                 if (response.data && response.status === 200) {
-                    setHeavyEquipmentLoads(response.data.loads);
+                    setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
                 } else {
                     console.error('Error fetching Heavy Equipment loads:', response);
                 }
@@ -526,7 +401,7 @@ const CustomerChatPage = () => {
             .catch(error => {
                 console.error('Error fetching Heavy Equipment loads:', error);
             });
-    }, []);
+    }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-construction-equipment-loads')
             .then(response => {
@@ -539,7 +414,7 @@ const CustomerChatPage = () => {
             .catch(error => {
                 console.error('Error fetching Construction Equipment loads:', error);
             });
-    }, []);
+    }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-boat-loads')
             .then(response => {
@@ -567,18 +442,17 @@ const CustomerChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/submit-vehicle-load/${personalEndpoint}`)
+        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    setVehicleLoads(response.data);
-                } else {
-                    console.error('No vehicle loads found');
+                    setCarrier(response.data);
                 }
             })
             .catch(error => {
-                console.error('Error fetching vehicle loads:', error);
+                console.error('Error fetching carrier data:', error);
             });
-    }, [personalEndpoint]);
+    }, [carrierID]);
+
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-moto-equipment-loads')
             .then(response => {
@@ -593,20 +467,7 @@ const CustomerChatPage = () => {
             });
     }, []);
 
-    const handleChatSelection = async (chatID) => {
-        setSelectedChatID(chatID);
-        try {
-            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
-            if (response.status === 200) {
-                console.log(response.data);
-                navigate(`/customer-deal-chat-conversation/${personalEndpoint}/${chatID}`);
-            } else {
-                console.error('Error fetching chat data:', response);
-            }
-        } catch (error) {
-            console.error('Error fetching chat data:', error);
-        }
-    };
+
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -619,33 +480,33 @@ const CustomerChatPage = () => {
         navigate('/sign-in');
     };
 
-
-
     return (
         <div className="admin-dashboard-wrapper">
             <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
-                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>User's
+                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Driver's
                     dashboard</p>
                 <div className="admin-side-bar-navigation">
-                    <Link to={`/admin-dashboard/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faTruck}/>My Loads</Link>
-                    <Link to={`/bids-page/${personalEndpoint}`} className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faDollarSign}/>My Bids</Link>
-                    <Link to={`/chat/${personalEndpoint}`} className="navigation-button-2"><FontAwesomeIcon
+                    <Link to={`/driver-dashboard/${driverID}`}
+                          className="navigation-button"><FontAwesomeIcon
+                        className="navigation-icon" icon={faTruck}/>My Shipments</Link>
+                    <Link to={`/driver-chat/${driverID}`} className="navigation-button-2"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Carrier</Link>
-                    <Link to={`/jarvis-chat/${personalEndpoint}/${chatEndpoint}`} className="navigation-button">
+                    <Link to={`/driver-details/${driverID}`} className="navigation-button"><FontAwesomeIcon
+                        className="navigation-icon" icon={faUser}/>Driver Details</Link>
+                    <Link to={`/jarvis-chat/${driverID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
                     </Link>
                 </div>
                 <div className="admin-side-bar-navigation">
-                    <Link to="/admin-dashboard" className="navigation-button-settings"><FontAwesomeIcon
+                    <Link to={`/driver-settings/${driverID}`} className="navigation-button-settings"><FontAwesomeIcon
                         className="navigation-icon" icon={faCog}/>Settings</Link>
-                    <Link to="/jarvis-chat" className="navigation-button-logout"><FontAwesomeIcon
-                        className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
+                    <Link to="/sign-in" className="navigation-button-logout">
+                        <FontAwesomeIcon className="navigation-icon" icon={faSignOutAlt}/>Logout
+                    </Link>
                 </div>
             </div>
             <div className="deal-conversations-sidebar">
-                <h3>Your active Deals</h3>
+                <h3>Chat with Carrier</h3>
                 {conversations.map((conversation, index) => (
                     <div key={index} className="chat-id-container"
                          onClick={() => handleChatSelection(conversation.chatID)}>
@@ -658,7 +519,6 @@ const CustomerChatPage = () => {
             <button className="toggle-button" onClick={toggleSidebar}>
                 <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
             </button>
-
             <div className="customer-chat-content">
                 <div className="customer-chat-admin-inner-content-second">
                     <div className="inner-content-second-text">
@@ -668,8 +528,8 @@ const CustomerChatPage = () => {
                     <div className="user-details-wrapper">
                         <UserAvatarComponent className="user-avatar"/>
                         <div className="user-details">
-                            <p className="user-name">{user ? user.name : 'Loading...'}</p>
-                            <p className="user-status">Customer</p>
+                            {currentDriver ? currentDriver.firstName : <ClipLoader color={"#e7e7e7"} loading={true} size={25} />}
+                            <p className="user-status">Driver</p>
                         </div>
                         <BellComponent className="bell-icon"/>
                     </div>
@@ -680,38 +540,37 @@ const CustomerChatPage = () => {
                             {chatMessages.map((message, index) => (
                                 <div key={index} style={{
                                     display: 'flex',
-                                    justifyContent: message.sender === 'personalEndpoint' ? 'flex-end' : 'flex-start'
+                                    justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
                                 }}>
-                                    {message.sender !== 'personalEndpoint' && <UserAvatarComponent/>}
+                                    {message.sender !== 'carrierID' && <UserAvatarComponent/>}
                                     <div style={{
-                                        backgroundColor: message.sender === 'personalEndpoint' ? '#0084FF' : '#F3F3F3',
-                                        color: message.sender === 'personalEndpoint' ? '#f3f3f3' : '#707070',
+                                        backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
+                                        color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
                                         alignItems: 'start',
                                         textAlign: 'left',
-                                        fontSize: '1.3rem',
                                         padding: '10px',
                                         borderRadius: '10px',
                                         margin: '10px'
                                     }}>
                                         <div className="user-role-name">
-                                            {message.sender === 'carrierID' &&
-                                                <div>{carrier ? <p>{carrier.companyName}</p> :
-                                                    <p className="p-user-carrier-name">S.H Robinson</p>}</div>}
-                                            {message.sender !== 'personalEndpoint' &&
-                                                <div className="user-carrier-role">Carrier</div>}
+                                            {message.sender === 'personalEndpoint' &&
+                                                <div className="user-carrier-name">{user ? <p>{user.name}</p> : <p>Loading...</p>}</div>}
+                                            {message.sender !== 'carrierID' &&
+                                                <div className="user-carrier-role">Customer</div>}
                                         </div>
                                         <div className="user-role-name">
-                                            {message.sender === 'personalEndpoint' &&
-                                                <div className="user-customer-name">{user ? <p>{user.name}</p> :
-                                                    <p>Loading...</p>}</div>}
-                                            {message.sender === 'personalEndpoint' &&
-                                                <div className="user-customer-role">Customer</div>}
+                                            {message.sender === 'carrierID' &&
+                                                <div style={{
+                                                    color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',
+                                                }}>{carrier.companyName}</div>}
+                                            {message.sender === 'carrierID' &&
+                                                <div className="user-carrier-role">Carrier</div>}
                                         </div>
-                                        {showBOLContainer ? <div>Your BOL document container here</div> : message.text}
+                                        {message.text}
                                         <div style={{
-                                            color: message.sender === 'personalEndpoint' ? 'white' : 'darkgrey',
+                                            color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
                                             alignItems: 'end',
-                                            textAlign: 'end',
+                                            textAlign: 'right',
                                         }}
                                         >{new Date(message.date).toLocaleTimeString([], {
                                             hour: '2-digit',
@@ -719,7 +578,7 @@ const CustomerChatPage = () => {
                                             hour12: false
                                         })}</div>
                                     </div>
-                                    {message.sender === 'personalEndpoint' && <UserAvatarComponent/>}
+                                    {message.sender === 'carrierID' && <UserAvatarComponent/>}
                                 </div>
                             ))}
                         </div>
@@ -745,7 +604,7 @@ const CustomerChatPage = () => {
                     </div>
                 ) : (
                     <div className="choose-chat-conversation">
-                        <p>Choose chat to start speaking with carrier!</p>
+                        <p>Choose chat to start speaking with customer!</p>
                     </div>
                 )}
             </div>
@@ -753,4 +612,4 @@ const CustomerChatPage = () => {
     );
 };
 
-export default CustomerChatPage;
+export default DriverChatPage;

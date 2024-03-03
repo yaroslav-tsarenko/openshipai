@@ -25,7 +25,7 @@ const BidSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    carrierPersonalEndpoint: {
+    carrierID: {
         type: String,
         required: true
     },
