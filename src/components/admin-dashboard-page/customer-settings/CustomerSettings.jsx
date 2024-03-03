@@ -96,7 +96,7 @@ const CustomerSetings = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setDrivers(response.data.drivers); // Set the drivers in state
@@ -141,7 +141,7 @@ const CustomerSetings = () => {
         };
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-user/${personalEndpoint}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${personalEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data); // Set the user state with the fetched data
@@ -201,7 +201,7 @@ const CustomerSetings = () => {
             truck: event.target.truck.value
         };
         try {
-            const response = await axios.post('http://localhost:8080/create-driver', newDriver);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', newDriver);
             console.log(response.data);
             setIsAddDriverPopupVisible(false);
             window.location.reload();
@@ -222,7 +222,7 @@ const CustomerSetings = () => {
             };
 
             // Make a PUT request to the server
-            axios.put(`http://localhost:8080/update-user/${personalEndpoint}`, updatedUser)
+            axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-user/${personalEndpoint}`, updatedUser)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setUser(response.data); // Update the user state with the updated data

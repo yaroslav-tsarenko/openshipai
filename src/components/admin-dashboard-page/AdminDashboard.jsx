@@ -65,7 +65,7 @@ const AdminDashboard = () => {
 
                     // Fetch the bid for each load
                     response.data.loads.forEach(load => {
-                        axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                             .then(response => {
                                 if (response.data && response.status === 200) {
                                     setBid(response.data); // Set the bid in state
@@ -121,7 +121,7 @@ const AdminDashboard = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;

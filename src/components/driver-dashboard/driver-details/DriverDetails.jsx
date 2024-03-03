@@ -60,7 +60,7 @@ const DriverDetails = () => {
 
     useEffect(() => {
         const fetchDrivers = async () => {
-            const response = await axios.get('http://localhost:8080/get-all-drivers');
+            const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers');
             setDrivers(response.data);
         };
 
@@ -72,7 +72,7 @@ const DriverDetails = () => {
         setCurrentDriver(driver);
     }, [drivers, driverID]);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-user/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -84,7 +84,7 @@ const DriverDetails = () => {
     }, [chatID]);
     useEffect(() => {
         if (selectedBid && selectedBid.carrierID) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -102,7 +102,7 @@ const DriverDetails = () => {
                 if (response.data && response.status === 200) {
                     setCommercialTruckLoads(response.data.loads);
                     response.data.loads.forEach(load => {
-                        axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                             .then(response => {
                                 if (response.data && response.status === 200) {
                                     setBid(response.data);
@@ -123,7 +123,7 @@ const DriverDetails = () => {
 
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
             .then(response => {
                 setConversations(response.data);
             })
@@ -132,7 +132,7 @@ const DriverDetails = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-bids')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
             .then(response => {
                 setBids(response.data);
             })
@@ -157,7 +157,7 @@ const DriverDetails = () => {
         setSelectedChatID(chatID);
 
         try {
-            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+            const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`);
 
             if (response.status === 200) {
                 console.log(response.data);
@@ -184,7 +184,7 @@ const DriverDetails = () => {
 
     useEffect(() => {
         // Fetch the carrier object
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -196,10 +196,10 @@ const DriverDetails = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    axios.get(`http://localhost:8080/get-user/${response.data.personalEndpoint}`)
+                    axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${response.data.personalEndpoint}`)
                         .then(userResponse => {
                             if (userResponse.data && userResponse.status === 200) {
                                 setUser(userResponse.data);
@@ -215,7 +215,7 @@ const DriverDetails = () => {
             });
     }, [chatID]);
     useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${selectedChatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -227,7 +227,7 @@ const DriverDetails = () => {
 
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -238,7 +238,7 @@ const DriverDetails = () => {
 
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -411,7 +411,7 @@ const DriverDetails = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);

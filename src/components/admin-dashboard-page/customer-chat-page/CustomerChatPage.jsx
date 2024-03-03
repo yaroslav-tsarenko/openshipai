@@ -70,7 +70,7 @@ const CustomerChatPage = () => {
     const [showBOLContainer, setShowBOLContainer] = useState(false); //test
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-confirmed-load/${conversationLoadID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-confirmed-load/${conversationLoadID}`)
             .then(response => {
                 setConfirmedLoad(response.data);
             })
@@ -81,7 +81,7 @@ const CustomerChatPage = () => {
     useEffect(() => {
         const fetchDealChatConversations = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/get-all-deal-chat-conversations');
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations');
                 const allDealChatConversations = response.data;
                 const filteredDealChatConversations = allDealChatConversations.filter(conversation => conversation.chatID === chatID);
                 setDealChatConversations(filteredDealChatConversations);
@@ -134,7 +134,7 @@ const CustomerChatPage = () => {
         fetchUserData();
     }, [chatID]);
     useEffect(() => {
-        socketRef.current = io.connect('http://localhost:8083');
+        socketRef.current = io.connect('https://socket-chat-server.onrender.com');
 
         socketRef.current.on('carrier message', (data) => {
             if (data.chatID === selectedChatID) {
@@ -148,7 +148,7 @@ const CustomerChatPage = () => {
     }, [selectedChatID]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -158,7 +158,7 @@ const CustomerChatPage = () => {
     }, [chatID]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${selectedChatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -180,7 +180,7 @@ const CustomerChatPage = () => {
         });
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('http://localhost:8080/save-chat-message', {
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-chat-message', {
             chatID: selectedChatID,
             receiver: 'carrierID',
             sender: 'personalEndpoint',
@@ -193,7 +193,7 @@ const CustomerChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -211,7 +211,7 @@ const CustomerChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
             .then(response => {
                 setConversations(response.data);
             })
@@ -221,7 +221,7 @@ const CustomerChatPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bids-by-user/${personalEndpoint}`)
             .then(response => {
                 const bids = response.data;
                 setBids(bids);
@@ -248,7 +248,7 @@ const CustomerChatPage = () => {
         };
 
         try {
-            await axios.post('http://localhost:8080/apply-bid', bidData);
+            await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/apply-bid', bidData);
             alert('Bid submitted successfully');
             setIsBidApplied(true);
             setIsPopupOpen(false);
@@ -258,7 +258,7 @@ const CustomerChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-user/${personalEndpoint}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${personalEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -270,7 +270,7 @@ const CustomerChatPage = () => {
     }, [personalEndpoint]);
     useEffect(() => {
         if (selectedBid && selectedBid.carrierPersonalEndpoint) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -305,7 +305,7 @@ const CustomerChatPage = () => {
                 if (response.data && response.status === 200) {
                     setCommercialTruckLoads(response.data.loads);
                     response.data.loads.forEach(load => {
-                        axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                             .then(response => {
                                 if (response.data && response.status === 200) {
                                     setBid(response.data);
@@ -325,7 +325,7 @@ const CustomerChatPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-bids')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
             .then(response => {
                 setBids(response.data);
             })
@@ -372,7 +372,7 @@ const CustomerChatPage = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -504,7 +504,7 @@ const CustomerChatPage = () => {
     useEffect(() => {
         const fetchCommercialLoadID = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/get-confirmed-load-by-commercial-load-id/${chatID}`);
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-confirmed-load-by-commercial-load-id/${chatID}`);
                 console.log("Confirmed load: ");
                 console.log(response.data);
             } catch (error) {
@@ -596,7 +596,7 @@ const CustomerChatPage = () => {
     const handleChatSelection = async (chatID) => {
         setSelectedChatID(chatID);
         try {
-            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+            const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`);
             if (response.status === 200) {
                 console.log(response.data);
                 navigate(`/customer-deal-chat-conversation/${personalEndpoint}/${chatID}`);

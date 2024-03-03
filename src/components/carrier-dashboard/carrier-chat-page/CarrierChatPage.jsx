@@ -57,7 +57,7 @@ const CarrierChatPage = () => {
     const [inputMessage, setInputMessage] = useState("");
     const [sendBOLDocument, setSendBOLDocument] = useState(false);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-user/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -69,7 +69,7 @@ const CarrierChatPage = () => {
     }, [chatID]);
     useEffect(() => {
         if (selectedBid && selectedBid.carrierID) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -87,7 +87,7 @@ const CarrierChatPage = () => {
                 if (response.data && response.status === 200) {
                     setCommercialTruckLoads(response.data.loads);
                     response.data.loads.forEach(load => {
-                        axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                             .then(response => {
                                 if (response.data && response.status === 200) {
                                     setBid(response.data);
@@ -108,7 +108,7 @@ const CarrierChatPage = () => {
 
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-deal-chat-conversations')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
             .then(response => {
                 setConversations(response.data);
             })
@@ -117,7 +117,7 @@ const CarrierChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-bids')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
             .then(response => {
                 setBids(response.data);
             })
@@ -126,7 +126,7 @@ const CarrierChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        socketRef.current = io.connect('http://localhost:8083');
+        socketRef.current = io.connect('https://socket-chat-server.onrender.com');
 
         socketRef.current.on('customer message', (data) => {
             if (data.chatID === selectedChatID) {
@@ -142,7 +142,7 @@ const CarrierChatPage = () => {
         setSelectedChatID(chatID);
 
         try {
-            const response = await axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`);
+            const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`);
 
             if (response.status === 200) {
                 console.log(response.data);
@@ -169,7 +169,7 @@ const CarrierChatPage = () => {
 
     useEffect(() => {
         // Fetch the carrier object
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -181,10 +181,10 @@ const CarrierChatPage = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-deal-chat-conversation/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    axios.get(`http://localhost:8080/get-user/${response.data.personalEndpoint}`)
+                    axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${response.data.personalEndpoint}`)
                         .then(userResponse => {
                             if (userResponse.data && userResponse.status === 200) {
                                 setUser(userResponse.data);
@@ -200,7 +200,7 @@ const CarrierChatPage = () => {
             });
     }, [chatID]);
     useEffect(() => {
-        axios.get(`http://localhost:8080/deal-conversation-messages-history/${selectedChatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${selectedChatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -218,7 +218,7 @@ const CarrierChatPage = () => {
         socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('http://localhost:8080/save-chat-message', {
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-chat-message', {
             chatID: selectedChatID,
             receiver: 'personalEndpoint',
             sender: 'carrierID',
@@ -231,7 +231,7 @@ const CarrierChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-chat-history/${chatID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -250,7 +250,7 @@ const CarrierChatPage = () => {
 
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -423,7 +423,7 @@ const CarrierChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -570,7 +570,7 @@ const CarrierChatPage = () => {
                                 </div>
                             ))}
                         </div>
-                        <button className="bol-doc-button" onClick={() => setSendBOLDocument(true)}>Send a BOL
+                        <button className="bol-doc-button" onClick={() => setSendBOLDocument(true)}>
                             document
                         </button>
                         <div className="chat-input-area">

@@ -67,7 +67,7 @@ const BidsPage = () => {
         setIsPopupOpen(!isPopupOpen);
     };
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-bids-by-user/${personalEndpoint}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bids-by-user/${personalEndpoint}`)
             .then(response => {
                 const bids = response.data;
                 setBids(bids);
@@ -103,7 +103,7 @@ const BidsPage = () => {
             carrierPersonalEndpoint: selectedBid.carrierPersonalEndpoint,
         };
         try {
-            await axios.post('http://localhost:8080/apply-bid', bidData);
+            await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/apply-bid', bidData);
             alert('Bid submitted successfully');
             setIsBidApplied(true);
             setIsPopupOpen(false);
@@ -111,7 +111,7 @@ const BidsPage = () => {
             console.error('Error submitting bid:', error);
         }
         try {
-            await axios.post('http://localhost:8080/create-deal-chat-conversation', chatData);
+            await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-deal-chat-conversation', chatData);
             alert('Deal chat conversation created successfully');
         } catch (error) {
             console.error('Error creating deal chat conversation:', error);
@@ -121,7 +121,7 @@ const BidsPage = () => {
 
     useEffect(() => {
         if (selectedBid && selectedBid.carrierPersonalEndpoint) {
-            axios.get(`http://localhost:8080/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierPersonalEndpoint}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -139,7 +139,7 @@ const BidsPage = () => {
                 if (response.data && response.status === 200) {
                     setCommercialTruckLoads(response.data.loads);
                     response.data.loads.forEach(load => {
-                        axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                             .then(response => {
                                 if (response.data && response.status === 200) {
                                     setBid(response.data);
@@ -159,7 +159,7 @@ const BidsPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-bids')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
             .then(response => {
                 setBids(response.data);
             })
@@ -366,7 +366,7 @@ const BidsPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-carriers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
             .then(response => {
                 console.log(response.data);
             })

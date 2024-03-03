@@ -75,7 +75,7 @@ const CarrierDrivers = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setDrivers(response.data.drivers); // Set the drivers in state
@@ -91,7 +91,7 @@ const CarrierDrivers = () => {
         const fetchDrivers = async () => {
             setIsLoading(true);
             try {
-                const response = await axios.get('http://localhost:8080/get-all-drivers');
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers');
                 setDrivers(response.data);
                 setIsLoading(false);
             } catch (error) {
@@ -104,7 +104,7 @@ const CarrierDrivers = () => {
     }, []);
     useEffect(() => {
         commercialTruckLoads.forEach(load => {
-            axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                 .then(response => {
                     setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
                 })
@@ -116,13 +116,13 @@ const CarrierDrivers = () => {
 
     const handleBidSubmit = (load, e) => {
         e.preventDefault();
-        axios.post('http://localhost:8080/submit-bid', {commercialLoadID: load.commercialLoadID, bid})
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-bid', {commercialLoadID: load.commercialLoadID, bid})
             .then(response => {
                 console.log("Bid submitted successfully");
                 setBid('');
 
                 // Fetch the bid by commercialLoadID from the database
-                axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                     .then(response => {
                         // Update the bids state with the fetched bid
                         setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
@@ -173,7 +173,7 @@ const CarrierDrivers = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -215,7 +215,7 @@ const CarrierDrivers = () => {
     };
     const handleDelete = (driver) => {
         if (window.confirm('Are you sure you want to delete this driver?')) {
-            axios.delete(`http://localhost:8080/delete-driver/${driver.driverID}`)
+            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/delete-driver/${driver.driverID}`)
                 .then(response => {
                     if (response.status === 200) {
                         // Remove the deleted driver from the state
@@ -303,7 +303,7 @@ const CarrierDrivers = () => {
             truck: event.target.truck.value
         };
         try {
-            const response = await axios.post('http://localhost:8080/create-driver', newDriver);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', newDriver);
             console.log(response.data);
             setIsAddDriverPopupVisible(false);
             window.location.reload();
@@ -410,7 +410,7 @@ const CarrierDrivers = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-carriers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     const carriers = response.data;
