@@ -81,7 +81,7 @@ const CarrierSettings = () => {
         formData.append('usDocket', e.target.usDocket.value);
         formData.append('usDotNumber', e.target.usDotNumber.value);
         formData.append('carrierAvatar', document.getElementById('hiddenFileInput').files[0]);
-        axios.put(`http://localhost:8080/update-carrier/${carrierID}`, formData, {
+        axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-carrier/${carrierID}`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data'
             }
@@ -120,7 +120,7 @@ const CarrierSettings = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setDrivers(response.data.drivers); // Set the drivers in state
@@ -133,7 +133,7 @@ const CarrierSettings = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setDrivers(response.data); // Set the drivers in state
@@ -147,7 +147,7 @@ const CarrierSettings = () => {
     }, []);
     useEffect(() => {
         commercialTruckLoads.forEach(load => {
-            axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                 .then(response => {
                     setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
                 })
@@ -159,13 +159,13 @@ const CarrierSettings = () => {
 
     const handleBidSubmit = (load, e) => {
         e.preventDefault();
-        axios.post('http://localhost:8080/submit-bid', {commercialLoadID: load.commercialLoadID, bid})
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-bid', {commercialLoadID: load.commercialLoadID, bid})
             .then(response => {
                 console.log("Bid submitted successfully");
                 setBid('');
 
                 // Fetch the bid by commercialLoadID from the database
-                axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                     .then(response => {
                         // Update the bids state with the fetched bid
                         setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
@@ -216,7 +216,7 @@ const CarrierSettings = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -258,7 +258,7 @@ const CarrierSettings = () => {
     };
     const handleDelete = (driver) => {
         if (window.confirm('Are you sure you want to delete this driver?')) {
-            axios.delete(`http://localhost:8080/delete-driver/${driver.driverID}`)
+            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/delete-driver/${driver.driverID}`)
                 .then(response => {
                     if (response.status === 200) {
                         // Remove the deleted driver from the state
@@ -312,7 +312,7 @@ const CarrierSettings = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -358,7 +358,7 @@ const CarrierSettings = () => {
             truck: event.target.truck.value
         };
         try {
-            const response = await axios.post('http://localhost:8080/create-driver', newDriver);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', newDriver);
             console.log(response.data);
             setIsAddDriverPopupVisible(false);
             window.location.reload();
@@ -368,7 +368,7 @@ const CarrierSettings = () => {
     };
     const handlePasswordChange = (e) => {
         e.preventDefault();
-        axios.put(`http://localhost:8080/update-carrier-password/${carrierID}`, { password: newPassword })
+        axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-carrier-password/${carrierID}`, { password: newPassword })
             .then(response => {
                 if (response.data && response.status === 200) {
                     console.log("Password updated successfully");
@@ -379,7 +379,7 @@ const CarrierSettings = () => {
             });
     };
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-carriers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     const carriers = response.data;

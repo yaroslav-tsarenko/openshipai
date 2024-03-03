@@ -87,7 +87,7 @@ const DriverDashboard = () => {
         lat: 44.0, lng: -120.5 // Coordinates for Oregon
     }
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-submitted-bids')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-submitted-bids')
             .then(response => {
                 setSubmittedBids(response.data);
             })
@@ -98,7 +98,7 @@ const DriverDashboard = () => {
     useEffect(() => {
         const fetchDriver = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/get-driver/${driverID}`);
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-driver/${driverID}`);
                 setDriver(response.data);
             } catch (error) {
                 console.error('Failed to fetch driver:', error);
@@ -119,7 +119,7 @@ const DriverDashboard = () => {
 
     useEffect(() => {
         const fetchDrivers = async () => {
-            const response = await axios.get('http://localhost:8080/get-all-drivers');
+            const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers');
             setDrivers(response.data);
         };
         fetchDrivers();
@@ -202,7 +202,7 @@ const DriverDashboard = () => {
     useEffect(() => {
         const fetchBids = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/get-bids-by-driver/${driverID}`);
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bids-by-driver/${driverID}`);
                 setBids(response.data);
             } catch (error) {
                 console.error('Failed to fetch bids:', error);
@@ -213,7 +213,7 @@ const DriverDashboard = () => {
     }, [driverID]);
     useEffect(() => {
         commercialTruckLoads.forEach(load => {
-            axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                 .then(response => {
                     console.log("Bid fetched successfully")
                     setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
@@ -225,7 +225,7 @@ const DriverDashboard = () => {
     }, [commercialTruckLoads]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-carriers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     const carriers = response.data;
@@ -239,7 +239,7 @@ const DriverDashboard = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
             .then(response => {
                 if (Array.isArray(response.data)) {
                     setDrivers(response.data);
@@ -290,7 +290,7 @@ const DriverDashboard = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -459,7 +459,7 @@ const DriverDashboard = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);

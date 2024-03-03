@@ -68,7 +68,7 @@ const CarrierDashboard = () => {
     };
     useEffect(() => {
         commercialTruckLoads.forEach(load => {
-            axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                 .then(response => {
                     console.log("Bid fetched successfully")
                     setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
@@ -80,7 +80,7 @@ const CarrierDashboard = () => {
     }, [commercialTruckLoads]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-carriers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
             .then(response => {
                 if (response.data && response.status === 200) {
                     const carriers = response.data;
@@ -94,7 +94,7 @@ const CarrierDashboard = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-drivers')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
             .then(response => {
                 if (Array.isArray(response.data)) {
                     setDrivers(response.data);
@@ -113,7 +113,7 @@ const CarrierDashboard = () => {
             console.error(`No driver found with ID: ${selectedDriver}`);
             return;
         }
-        axios.post('http://localhost:8080/submit-bid', {
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-bid', {
             commercialLoadID: load.commercialLoadID,
             bid,
             loadType: 'Commercial Truck Load',
@@ -125,7 +125,7 @@ const CarrierDashboard = () => {
             .then(response => {
                 console.log("Bid submitted successfully");
                 setBid('');
-                axios.get(`http://localhost:8080/get-bid/${load.commercialLoadID}`)
+                axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
                     .then(response => {
                         console.log("Bid fetched successfully")
                         console.log(selectedDriver);
@@ -176,7 +176,7 @@ const CarrierDashboard = () => {
     };
 
     const handlePay = async (amount) => {
-        const response = await axios.post('http://localhost:8080/create-checkout-session', {amount});
+        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -337,7 +337,7 @@ const CarrierDashboard = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get(`http://localhost:8080/get-carrier/${carrierID}`)
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
