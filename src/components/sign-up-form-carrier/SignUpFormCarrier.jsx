@@ -34,7 +34,7 @@ function SignCarrierUpForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:8080/save-carrier-data', formData)
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-carrier-data', formData)
             .then(response => {
                 console.log(response);
                 navigate(`/carrier-dashboard/${response.data.carrier._id}`);
