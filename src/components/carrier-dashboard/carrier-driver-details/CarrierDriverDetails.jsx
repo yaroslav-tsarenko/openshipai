@@ -501,7 +501,7 @@ const CarrierDriverDetails = () => {
                             icon={faTruck}/>
                         Current Driver
                     </Link>
-                    <Link to={`/carrier-chat/${carrierID}`} className="navigation-button"><FontAwesomeIcon
+                    <Link to={`/carrier-deal-chat-conversation/${carrierID}`} className="navigation-button"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
                     <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
                         <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page

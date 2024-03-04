@@ -121,9 +121,8 @@ function SignUpForm() {
                         required
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lct7YgpAAAAAOe5YWrM483SJtkzpmtT1aJkUgnh" onChange={handleCaptchaChange} />
+                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0" onChange={handleCaptchaChange} />
                     <button type="submit" className="sign-up-button">SIGN UP</button>
-
                     <div className="question-div">
                         <p className="question-p">Already have an account?</p>
                         <Link to="/sign-in" className="sign-in-link-sign-up">Sign in now</Link>
