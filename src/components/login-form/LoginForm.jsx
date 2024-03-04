@@ -15,7 +15,7 @@ function LoginForm() {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        axios.post('http://localhost:8080/sign-in', {email, password})
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/sign-in', {email, password})
             .then(result => {
                 if (result.data.status === "Success") {
                     const carrierID = result.data.carrier ? result.data.carrier.carrierID : null;
@@ -23,7 +23,7 @@ function LoginForm() {
                     if (role === 'super-admin') {
                         navigate(`/super-admin-dashboard/${carrierID}`);
                     } else if (role === 'user') {
-                        axios.post('http://localhost:8080/create-chat-session', { userEndpoint: carrierID })
+                        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: carrierID })
                             .then(response => {
                                 if (response.data.status === "Success") {
                                     navigate(`/jarvis-chat/${carrierID}/${response.data.chatEndpoint}`);
@@ -50,14 +50,14 @@ function LoginForm() {
         const email = decoded.email; // Extract email from the decoded token
 
         // First, fetch all users
-        axios.get('http://localhost:8080/all-users')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/all-users')
             .then(response => {
                 // Filter the user with the given email
                 const user = response.data.find(user => user.email === email);
 
                 if (user) {
                     // User exists, proceed with login
-                    axios.post('http://localhost:8080/google-login', {token: credential})
+                    axios.post('https://jarvis-ai-logistic-db-server.onrender.com/google-login', {token: credential})
                         .then(response => {
                             if (response.data.status === "Success") {
                                 const personalEndpoint = response.data.user.personalEndpoint;

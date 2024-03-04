@@ -26,7 +26,7 @@ function SignUpForm() {
             return;
         }
 
-        axios.post('http://localhost:8080/sign-up', {name, secondName, phoneNumber, email, password})
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/sign-up', {name, secondName, phoneNumber, email, password})
             .then(result => {
                 if (result.data.status === "Success") {
                     navigate('/sign-in');
@@ -41,11 +41,11 @@ function SignUpForm() {
     const handleGoogleLoginSignUpSuccess = (credentialResponse) => {
         const credential = credentialResponse.credential;
 
-        axios.post('http://localhost:8080/google-login', {token: credential})
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/google-login', {token: credential})
             .then(response => {
                 if (response.data.status === "Success") {
                     const personalEndpoint = response.data.user.personalEndpoint;
-                    axios.post('http://localhost:8080/create-chat-session', { userEndpoint: personalEndpoint })
+                    axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: personalEndpoint })
                         .then(response => {
                             if (response.data.status === "Success") {
                                 // Redirect to '/jarvis-chat' + personalEndpoint + chatEndpoint
@@ -84,8 +84,6 @@ function SignUpForm() {
                         required
                         onChange={(e) => setName(e.target.value)}
                     />
-
-
                     <label htmlFor="second-name" className="label-text">Second Name</label>
                     <input
                         type="text"
@@ -123,7 +121,7 @@ function SignUpForm() {
                         required
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6LcsaEgpAAAAADTbchGJZHFaS6EhEYjoBSd6Nwmd" onChange={handleCaptchaChange} />
+                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lct7YgpAAAAAOe5YWrM483SJtkzpmtT1aJkUgnh" onChange={handleCaptchaChange} />
                     <button type="submit" className="sign-up-button">SIGN UP</button>
 
                     <div className="question-div">

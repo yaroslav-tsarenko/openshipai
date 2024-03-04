@@ -67,7 +67,7 @@ const SuperAdminDashboard = () => {
     const handleDelete = (user) => {
         const confirmation = window.confirm(`Are you sure you want to delete user ${user.name}?`);
         if (confirmation) {
-            axios.delete(`http://localhost:8080/user-email/${user.email}`)
+            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/user-email/${user.email}`)
                 .then(response => {
                     setUsers(users.filter(u => u.email !== user.email));
                     window.alert('User successfully deleted'); // Alert the user
@@ -80,7 +80,7 @@ const SuperAdminDashboard = () => {
     };
 
     useEffect(() => {
-        axios.get('http://localhost:8080/users')
+        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/users')
             .then(response => {
                 setUsers(response.data);
             })
