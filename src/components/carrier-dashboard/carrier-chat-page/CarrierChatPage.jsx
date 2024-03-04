@@ -478,7 +478,7 @@ const CarrierChatPage = () => {
                             icon={faTruck}/>
                         Drivers
                     </Link>
-                    <Link to={`/carrier-chat/${carrierID}`}
+                    <Link to={`/carrier-deal-chat-conversation/${carrierID}`}
                           className="navigation-button-2"><FontAwesomeIcon
                         className="navigation-icon" icon={faComment}/>Chat with Customer </Link>
                     <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">

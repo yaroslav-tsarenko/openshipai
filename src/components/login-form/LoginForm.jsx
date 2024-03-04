@@ -22,15 +22,22 @@ function LoginForm() {
                     const role = result.data.role;
                     if (role === 'super-admin') {
                         navigate(`/super-admin-dashboard/${carrierID}`);
-                    } else if (role === 'user') {
-                        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: carrierID })
-                            .then(response => {
-                                if (response.data.status === "Success") {
-                                    navigate(`/jarvis-chat/${carrierID}/${response.data.chatEndpoint}`);
-                                }
+                    }else if (role === 'customer' || !role) {
+                        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/user', { params: { email: email } })
+                            .then(userResponse => {
+                                const personalEndpoint = userResponse.data.personalEndpoint;
+                                axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: carrierID })
+                                    .then(chatResponse => {
+                                        if (chatResponse.data.status === "Success") {
+                                            navigate(`/jarvis-chat/${personalEndpoint}/${chatResponse.data.chatEndpoint}`);
+                                        }
+                                    })
+                                    .catch(err => {
+                                        console.error('Error creating chat session:', err);
+                                    });
                             })
                             .catch(err => {
-                                console.error('Error creating chat session:', err);
+                                console.error('Error retrieving user:', err);
                             });
                     } else if (role === 'carrier') {
                         navigate(`/carrier-dashboard/${carrierID}`);
@@ -49,14 +56,11 @@ function LoginForm() {
         const decoded = jwtDecode(credential);
         const email = decoded.email; // Extract email from the decoded token
 
-        // First, fetch all users
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/all-users')
             .then(response => {
-                // Filter the user with the given email
                 const user = response.data.find(user => user.email === email);
 
                 if (user) {
-                    // User exists, proceed with login
                     axios.post('https://jarvis-ai-logistic-db-server.onrender.com/google-login', {token: credential})
                         .then(response => {
                             if (response.data.status === "Success") {
@@ -70,7 +74,6 @@ function LoginForm() {
                             console.error('Error during login:', error);
                         });
                 } else {
-                    // User does not exist, handle accordingly
                     console.error('User not found:', email);
                 }
             })
@@ -78,7 +81,6 @@ function LoginForm() {
                 console.error('Error during user check:', error);
             });
     };
-
 
     return (
         <div className="sign-in-wrapper">
