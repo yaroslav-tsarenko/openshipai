@@ -4,7 +4,6 @@ import {Link} from "react-router-dom";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {GoogleLogin} from '@react-oauth/google';
-import {jwtDecode} from 'jwt-decode';
 import ReCAPTCHA from "react-google-recaptcha";
 
 function SignUpForm() {
@@ -121,13 +120,13 @@ function SignUpForm() {
                         required
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0" onChange={handleCaptchaChange} />
                     <button type="submit" className="sign-up-button">SIGN UP</button>
                     <div className="question-div">
                         <p className="question-p">Already have an account?</p>
                         <Link to="/sign-in" className="sign-in-link-sign-up">Sign in now</Link>
                     </div>
                     <div className="login-with-google-button">
+                        <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0" onChange={handleCaptchaChange} />
                         <GoogleLogin
                             onSuccess={handleGoogleLoginSignUpSuccess}
                             onError={() => {

@@ -19,6 +19,7 @@ import DriverChatPage from "./components/driver-dashboard/driver-chat-page/Drive
 import DriverSettings from "./components/driver-dashboard/driver-settings-page/DriverSettings";
 import DriverDetails from "./components/driver-dashboard/driver-details/DriverDetails";
 import CarrierDriverDetails from "./components/carrier-dashboard/carrier-driver-details/CarrierDriverDetails";
+import ChoosingRolePage from "./components/choosing-role-page/ChoosingRolePage";
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/customer-deal-chat-conversation/:personalEndpoint/:chatID" element={<CustomerChatPage/>}/>
                 <Route path="/carrier-deal-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
                 <Route path="/carrier-settings/:carrierID" element={<CarrierSettings/>}/>
+                <Route path="/sign-up" element={<ChoosingRolePage/>}/>
                 <Route path="/customer-settings/:personalEndpoint" element={<CustomerSettings/>}/>
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/" element={<SignUpForm/>}/>
