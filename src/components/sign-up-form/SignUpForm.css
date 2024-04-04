@@ -19,26 +19,17 @@
     background-color: #ffffff;
 }
 
-.right-side {
+.sign-up-right-side {
     width: 100vw;
     height: 100vh;
-    background: url("../../../src/assets/isometric-view-san-francisco-s-ferry-building.jpg") no-repeat center;
+    background: url("../../../src/assets/background-image.svg") no-repeat center;
     background-size: cover;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    align-items: center;
 
-}
-
-.h2-title {
-    font-size: 3.5rem;
-    font-weight: 600;
-    margin: 20px 0 20px 0;
-    color: #343541;
-}
-
-.h3-title {
-    font-size: 2rem;
-    margin: 20px 0 20px 0;
-    font-weight: 500;
-    color: #707070;
 }
 
 .label-text {
@@ -55,6 +46,7 @@
 }
 
 .question-div {
+    height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -89,7 +81,7 @@
 }
 
 .sign-in-link {
-    color: #383838;
+    color: var(--royal-blue);
     font-weight: 600;
     font-size: 1.5rem;
     margin-left: 5px;
@@ -111,25 +103,28 @@
 }
 
 .input-field:hover {
-    background-color: #f0f0f0; /* Light grey background on hover */
-    border: 1px solid #a2a2a2; /* Solid border on hover */
-    outline: none; /* Remove outline on hover (optional) */
+    background-color: #f0f0f0;
+    border: 1px solid #a2a2a2;
+    outline: none;
 }
 
 .sign-up-custom-form {
     position: relative;
-    display: block; /* Block display to allow margins to be auto */
     max-width: 500px;
     width: 100%;
     margin: 0 15px 0 15px;
     padding: 0 15px 0 15px;
 }
 
-.sign-up-custom-form h2 {
-    font-size: 2rem;
-    margin: 20px 0 20px 0;
-    font-weight: 500;
-    color: #313131;
+.registration-block-wrapper{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.registration-block{
+    position: relative;
+    width: 48%;
 }
 
 .sign-up-custom-form p {
@@ -137,35 +132,37 @@
     margin: 20px 0 20px 0;
     font-weight: 500;
     color: #6b6b6b;
-
 }
-
-.sign-in-button {
-    margin: 10px 0 10px 0;
-    background-color: #f66711;
-    border: none;
-    height: 5vh;
-    font-weight: 500;
-    font-size: 1.5rem;
-    border-radius: 5px;
-    transition: 0.3s ease-out;
-    width: 100%;
-}
-
 
 .login-with-google-button {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    margin: 20px 0 20px 0;
 }
 
 .sign-up-button {
-    margin: 15px 0 15px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 190px;
     width: 100%;
+    height: 50px;
+    background: var(--royal-blue);
+    padding: 10px 20px;
     font-weight: bold;
-    font-size: 1.2rem;
-    background-color: #f66711;
-    border-radius: 6px;
+    font-size: 1.5rem;
+    border-radius: 60px;
+    cursor: pointer;
+    border: none;
+    justify-items: center;
+    align-content: center;
+    margin: 10px auto;
+    transition: 0.3s ease-in-out;
+}
+
+.sign-up-button:hover {
+    transition: 0.3s ease-in-out;
+    background: var(--royal-blue-hovered);
 }
 
 .sign-in-link-sign-up {
@@ -173,17 +170,34 @@
     font-size: 1.3rem;
     margin: 0 0 0 10px;
     font-weight: bold;
-    color: #595959;
+    color: var(--royal-blue);
+}
+
+.h2-title-sign-up{
+    font-size: 3rem;
+    margin: 0 0 5px 0;
+    font-weight: 600;
+    color: var(--royal-blue);
+}
+
+.h3-title-sign-up{
+    font-size: 1.5rem;
+    margin: 0 0 20px 0;
+    font-weight: 500;
+    color: var(--grey);
 }
 
 .recaptcha-checkbox {
     display: flex;
     justify-content: center;
     align-items: center;
+transform: scale(0.7);
+    position: relative;
+    border-radius: 55px;
 }
 
 @media only screen and (max-width: 694px) {
-    .right-side {
+    .sign-up-right-side {
         display: none;
     }
 }

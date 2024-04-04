@@ -1,6 +1,6 @@
 .floating-window-component {
     z-index: 1000;
-    background: #0b7000;
+    background: var(--royal-green);
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     font-weight: bold;
     color: #fff;

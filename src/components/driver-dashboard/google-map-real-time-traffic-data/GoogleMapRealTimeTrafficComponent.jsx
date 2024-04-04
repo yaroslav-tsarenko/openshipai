@@ -1,11 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, TrafficLayer, Marker, InfoWindow } from '@react-google-maps/api';
-import './GoogleMapRealTimeTrafficComponent.css';
-import WeatherComponent from "../../weather-component/WeatherComponent";
 
 const containerStyle = {
-    width: '70%',
-    height: '35vh'
+    width: '100%',
+    height: '100%',
+    borderRadius: '30px',
 };
 
 function GoogleMapRealTimeTrafficComponent({ origin, destination }) {

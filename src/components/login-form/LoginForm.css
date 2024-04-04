@@ -15,23 +15,46 @@
 .right-side-login {
     width: 100vw;
     height: 100vh;
-    background: url("../../../src/assets/isometric-view-san-francisco-s-bridge.jpg") no-repeat center;
+    background: url("../../../src/assets/background-image.svg") no-repeat center;
     background-size: cover;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+
+.right-side-login-section{
 
 }
 
-.h2-title {
+.right-side-login-side-title{
+    text-transform: uppercase;
+    font-size: 9.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--royal-white), var(--royal-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.right-side-login-side-description{
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--light-grey);
+}
+
+.h2-title-login-form {
     font-size: 3.5rem;
     font-weight: 600;
     margin: 20px 0 20px 0;
-    color: #343541;
+    color: var(--royal-blue);
 }
 
-.h3-title {
+.h3-title-login-form {
     font-size: 2rem;
-    margin: 20px 0 20px 0;
+    margin: 0 0 20px 0;
     font-weight: 500;
-    color: #707070;
+    color: var(--grey);
 }
 
 .label-text{
@@ -47,14 +70,8 @@
     color: #707070;
 }
 
-.question-div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .sign-in-link {
-    color: #383838;
+    color: var(--royal-blue);
     font-weight: 600;
     font-size: 1.5rem;
     margin-left: 5px;
@@ -73,17 +90,11 @@
     border: 1px solid #d7d7d7;
 }
 
-input[type="email"]:hover, input[type="password"]:hover {
-    /* Your hover styles go here */
-    background-color: #f0f0f0; /* Light grey background on hover */
-    border: 1px solid #a2a2a2; /* Solid border on hover */
-    outline: none; /* Remove outline on hover (optional) */
-}
-
-
 .login-custom-form {
     position: relative;
-    display: block; /* Block display to allow margins to be auto */
+    display: flex;
+    flex-direction: column;
+    text-align: left;
     max-width: 500px;
     width: 100%;
     margin: 0 15px 0 15px;
@@ -91,28 +102,22 @@ input[type="email"]:hover, input[type="password"]:hover {
 }
 
 .sign-in-button {
-    margin: 10px 0 10px 0;
-    background-color: #f66711;
+    margin: 10px auto;
+    background-color: var(--royal-blue);
     border: none;
-    height: 5vh;
+    height: 50px;
     font-weight: 500;
     font-size: 1.5rem;
-    border-radius: 5px;
+    border-radius: 35px;
     transition: 0.3s ease-out;
-    width: 100%;
+    width: 200px;
 }
 
 .sign-in-button:hover {
-    background-color: #ff8133;
+    background-color: var(--royal-blue-hovered);
     transition: 0.3s ease-out;
 }
 
-.login-with-google-button{
-    color: #343541;
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
 
 @media only screen and (max-width: 694px) {
     .right-side-login{

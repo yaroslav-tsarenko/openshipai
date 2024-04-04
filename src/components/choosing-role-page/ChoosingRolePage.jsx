@@ -1,11 +1,15 @@
-import React, {useState} from 'react'
+import React, {useState, useEffect} from 'react'
 import "./ChoosingRolePage.css";
-import {FaBoxes} from "react-icons/fa";
-import {FaTruckLoading} from "react-icons/fa";
+import {Link} from "react-router-dom";
+import {
+    ReactComponent as BoxIcon
+} from "../../assets/boxes-vector.svg";
+import {
+    ReactComponent as TruckIcon
+} from "../../assets/truck-vector.svg";
+import Typewriter from 'typewriter-effect';
 
 function ChoosingRolePage() {
-
-
     return (
         <div className="sign-in-wrapper-choosing-role">
             <div className="choosing-role-left-side">
@@ -13,32 +17,58 @@ function ChoosingRolePage() {
                     <h2>Let's Get Started</h2>
                     <p>Select the user type that best fits your role</p>
                     <div className="role-buttons-container">
-                        <div className="role-button">
+                        <Link to={"/sign-up-shipper"} className="role-button">
                             <section>
                                 <h2>I'm Shipper</h2>
                                 <p>I have stuff i need to get from A to B</p>
                             </section>
-                            <FaBoxes className="role-button-color"/>
-                        </div>
-                        <div className="role-button">
+                            <BoxIcon/>
+                        </Link>
+                        <Link to={"/sign-up-carrier"} className="role-button">
                             <section>
                                 <h2>I'm Carrier</h2>
                                 <p>I have empty space in my truck</p>
                             </section>
-                            <FaTruckLoading className="role-button-color"/>
-                        </div>
+                            <TruckIcon/>
+                        </Link>
                     </div>
+                    <div className="policy-agreement-container">
+                        <input type="checkbox"/>
+                        <p>I agree to the <Link to={"/"}>Terms of Service</Link> and <Link to={"/"}>Privacy
+                            Policy</Link></p>
+                    </div>
+
                     <button className="get-started-button">Get Started</button>
+                    <h4 className="question-p-sign-up">Already have an account? <Link className="question-p-sign-in"
+                                                                                      to={"/sign-in"}>Sign In</Link>
+                    </h4>
                 </div>
             </div>
             <div className="choosing-role-right-side">
-                <section>
-                    <h1 className="choosing-role-right-side-title">I'm Shipper</h1>
-                    <p className="choosing-role-right-side-description">I need to get my stuff from A to B</p>
+                <section className="choosing-role-section">
+                    <h1 className="choosing-role-right-side-title">
+                        <Typewriter
+                            options={{
+                                strings: ["I'm Shipper", "I'm Carrier"],
+                                autoStart: true,
+                                loop: true,
+                                pauseFor: 4500,
+                            }}
+                        />
+                    </h1>
+                    <p className="choosing-role-right-side-description">
+                        <Typewriter
+                            options={{
+                                strings: ["I have stuff i need to get from A to B", "I have empty space in my truck"],
+                                autoStart: true,
+                                loop: true,
+                            }}
+                        />
+                    </p>
                 </section>
+
             </div>
         </div>
-
     )
 }
 

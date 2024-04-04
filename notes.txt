@@ -1,2 +1,73 @@
 Google Client ID = 510644109835-2cmcgd431ia2uhbhdv4suitadmgih8vp.apps.googleusercontent.com
 Client Secret = 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
+
+
+
+
+<section className="advantages-select-button">
+                <button onClick={() => setSelectedComponent(<LeftAdvantageContainer title="Lightning-Fast Logistics"
+                                                                                              description="Expect exceptional
+                                                                                              speed and reliability with openship.ai's On-Demand Delivery.
+                                                                                              Our AI-driven logistics ensure your shipments are
+                                                                                              prioritized, dispatched, and delivered promptly to meet the pace of your business."
+                                                                                              image="https://via.placeholder.com/750x450"/>)}>On-Demand Delivery</button>
+                <button onClick={() => setSelectedComponent(<RightAdvantageContainer title="Data-Driven Decisions"
+                                                                                     description="Empower your enterprise
+                                                                                     with actionable
+                                                                                     insights from openship.ai.
+                                                                                     Our Business Intelligence tools analyze shipping trends, optimize routes, and forecast costs, leading to smarter, more profitable decisions."
+                                                                                     image="https://via.placeholder.com/750x450"/>)}>Business Intelligence</button>
+                <button onClick={() => setSelectedComponent(<LeftAdvantageContainer title="Precision Auto Transport"
+                                                                                    description="openship.ai provides specialized logistics solutions for the automotive industry. Whether it's parts distribution or vehicle transport, we deliver with the precision and care that automotive logistics demand."
+                                                                                    image="https://via.placeholder.com/750x450"/>)}>Automotive</button>
+                <button onClick={() => setSelectedComponent(<RightAdvantageContainer title="Adaptive Weather Planning"
+                                                                                     description="Don’t let the elements slow you down. OpenShip.ai's advanced weather tracking adapts your shipping plans to real-time conditions, reducing delays and safeguarding your deliveries against the unexpected."
+                                                                                     image="https://via.placeholder.com/750x450"/>)}>Weather</button>
+            </section>
+
+
+
+
+
+
+
+            <nav className="nav-menu-container">
+                            <a href="#">Company<DropDownIcon className="drop-down-icon"/>
+                                <div className="dropdown-content">
+                                    <a href="#">Company Link 1</a>
+                                    <a href="#">Company Link 2</a>
+                                    <a href="#">Company Link 3</a>
+                                </div>
+                            </a>
+                            <a href="#">Services<DropDownIcon className="drop-down-icon"/>
+                                <div className="dropdown-content">
+                                    <a href="#">Services Link 1</a>
+                                    <a href="#">Services Link 2</a>
+                                    <a href="#">Services Link 3</a>
+                                </div>
+                            </a>
+                            <a href="#">Solutions
+                                <DropDownIcon className="drop-down-icon"/>
+                                <div className="dropdown-content">
+                                    <a href="#">Solutions Link 1</a>
+                                    <a href="#">Solutions Link 2</a>
+                                    <a href="#">Solutions Link 3</a>
+                                </div>
+                            </a>
+                            <a href="#">Industries
+                                <DropDownIcon className="drop-down-icon"/>
+                                <div className="dropdown-content">
+                                    <a href="#">Industries Link 1</a>
+                                    <a href="#">Industries Link 2</a>
+                                    <a href="#">Industries Link 3</a>
+                                </div>
+                            </a>
+                            <a href="#">About us
+                                <DropDownIcon className="drop-down-icon"/>
+                                <div className="dropdown-content">
+                                    <a href="#">About us Link 1</a>
+                                    <a href="#">About us Link 2</a>
+                                    <a href="#">About us Link 3</a>
+                                </div>
+                            </a>
+                        </nav>

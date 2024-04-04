@@ -10,6 +10,7 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
 const User = require('./models/User');
+const Shipper = require('./models/Shipper');
 const ConfirmedLoad = require('./models/ConfirmedLoad');
 const TakenLoad = require('./models/TakenLoad');
 const ChatHistory = require('./models/ChatHistory');
@@ -537,7 +538,6 @@ app.get('/get-bid/:commercialLoadID', async (req, res) => {
 app.post('/save-carrier-data', async (req, res) => {
     const carrierData = req.body;
     const newCarrier = new Carrier(carrierData);
-
     try {
         const savedCarrier = await newCarrier.save();
         res.json({ status: 'Success', carrier: savedCarrier });
@@ -545,7 +545,16 @@ app.post('/save-carrier-data', async (req, res) => {
         res.status(500).json({ status: 'Error', message: error.message });
     }
 });
-
+app.post('/save-shipper-data', async (req, res) => {
+    const shipperData = req.body;
+    const newShipper = new Shipper(shipperData);
+    try {
+        const savedShipper = await newShipper.save();
+        res.json({ status: 'Success', shipper: savedShipper });
+    } catch (error) {
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
 app.post('/api/save-signature', (req, res) => {
     const newSignature = new Signature({
         imgData: req.body.imgData,
@@ -1451,13 +1460,12 @@ app.post('/sign-up', (req, res) => {
         phoneNumber,
         email,
         password,
-        personalEndpoint, // Save the personal endpoint
+        personalEndpoint,
     });
 
     newUser
         .save()
         .then(() => {
-            // Send an email after successful registration
             sendEmail(email, 'Welcome to Our Service', 'Thank you for signing up!');
             res.json({ status: 'Success', message: 'User registered successfully' });
         })
@@ -1467,26 +1475,20 @@ app.post('/sign-up', (req, res) => {
         });
 });
 
-app.post("/sign-in", async (req, res) => {
+app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
-    const user = await UserModel.findOne({ email: email });
-    if (user) {
-        if (user.password === password) {
-            res.json({ status: "Success", user: user, role: "user" });
-        } else {
-            res.json({ status: "Error", message: "Wrong password" });
-        }
+    const carrier = await Carrier.findOne({ carrierAccountAccountEmail: email });
+    const shipper = await Shipper.findOne({ userShipperEmail: email });
+    const driver = await Driver.findOne({ email: email });
+
+    if (carrier && carrier.carrierAccountPassword === password) {
+        res.json({ status: 'Success', role: 'carrier', id: carrier.carrierID });
+    } else if (shipper && shipper.userShipperPassword === password) {
+        res.json({ status: 'Success', role: 'shipper', id: shipper.userShipperID });
+    } else if (driver && driver.password === password) {
+        res.json({ status: 'Success', role: 'driver', id: driver.driverID });
     } else {
-        const carrier = await Carrier.findOne({ email: email });
-        if (carrier) {
-            if (carrier.password === password) {
-                res.json({ status: "Success", carrier: carrier, role: "carrier" });
-            } else {
-                res.json({ status: "Error", message: "Wrong password" });
-            }
-        } else {
-            res.json({ status: "Error", message: "Email not found" });
-        }
+        res.json({ status: 'Error', message: 'Invalid email or password' });
     }
 });
 
