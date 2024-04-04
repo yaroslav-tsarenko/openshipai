@@ -9,24 +9,129 @@
     display: flex;
 }
 
-.sign-in-wrapper h2{
-    font-size: 3.5rem;
-    font-weight: 600;
-    margin: 20px 0 20px 0;
-    color: #343541;
-}
-
-.left-side {
-    display: flex; /* Make the left-side a flex container */
-    justify-content: center; /* Center children horizontally */
-    align-items: center; /* Center children vertically */
-    flex-direction: column; /* Stack children vertically */
-    max-width: 700px;
+.carrier-sign-up-left-side-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 900px;
     width: 100%;
     background-color: #ffffff;
 }
 
-.previous-button{
+.progress-bar-container {
+    display: flex;
+    width: 270px;
+    height: 100dvh;
+    background: var(--royal-blue-transparent);
+    justify-content: center;
+    align-items: center;
+    padding: 25px;
+}
+
+.carrier-sign-up-left-side-content {
+    width: 500px;
+}
+
+.registration-carrier-block {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 700px;
+    width: 100%;
+    background-color: #ffffff;
+
+}
+
+.h2-title-sign-up-carrier {
+    font-size: 3.5rem;
+    font-weight: 600;
+    color: var(--royal-blue);
+}
+
+.h3-title-sign-up-carrier {
+    font-size: 2rem;
+    font-weight: 500;
+    color: var(--grey);
+}
+
+.h5-title-carrier-sign-up{
+    margin: 15px 0 0 0;
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--royal-blue);
+}
+
+.carrier-sign-up-p-text{
+    font-size: 1.5rem;
+    margin: 20px 0 20px 0;
+    font-weight: 600;
+    color: var(--grey);
+
+}
+
+.next-button-carrier-sign-up {
+    background-color: var(--royal-blue);
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border: none;
+    padding: 10px;
+    width: 150px;
+    height: 45px;
+    float: right;
+    border-radius: 22px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s ease-in-out;
+}
+
+.next-button-carrier-sign-up:hover {
+    background-color: var(--royal-blue-hovered);
+    transition: 0.3s ease-in-out;
+}
+
+.next-button-carrier-submit-button{
+    background-color: var(--royal-green);
+    color: white;
+    font-weight: bold;
+    font-size: 1.5rem;
+    border: none;
+    padding: 10px;
+    width: 150px;
+    height: 45px;
+    float: right;
+    border-radius: 22px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s ease;
+}
+
+.next-button-carrier-submit-button:hover{
+    background-color: var(--royal-green-hovered);
+    transition: 0.3s ease;
+}
+
+.previous-button-carrier-sign-up{
+    color: var(--royal-blue);
+    font-weight: bold;
+    font-size: 1.5rem;
+    border: none;
+    padding: 10px;
+    width: 45px;
+    height: 45px;
+    float: left;
+    border-radius: 22px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: 0.3s ease-in-out;
+}
+
+.previous-button-carrier-sign-up:hover {
+    background-color: #eeeeee;
+    transition: 0.3s ease-in-out;
+}
+
+.previous-button {
     background-color: #6e6e6e;
     color: white;
     border: none;
@@ -37,7 +142,7 @@
     margin-top: 20px;
 }
 
-.carrier-customer{
+.carrier-customer {
     display: flex;
     justify-content: space-between;
     margin: 25px 0 25px 0;
@@ -54,64 +159,36 @@
     margin-top: 20px;
 }
 
-.next-button-container{
+.next-button-container {
     display: flex;
     justify-content: flex-end;
     width: 100%;
 }
 
-.checkbox-container{
-
-    display: flex;
-   justify-content: space-between;
-    align-items: center;
-    margin: 10px 0 10px 0;
-}
-
-.checkbox-container input[type="checkbox"]{
+input#isFactoringCompany {
     width: 20px;
     height: 20px;
     float: left;
 }
 
-.checkbox-container-factoring-company input[type="checkbox"]{
-    width: 20px;
-    height: 20px;
-    float: left;
-}
-
-input#isFactoringCompany{
-    width: 20px;
-    height: 20px;
-    float: left;
-}
-
-.checkbox-container-factoring-company{
+.checkbox-container-factoring-company {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin: 10px 0 10px 0;
 }
 
-.input-field-name option{
+.input-field-name option {
     color: #343541;
     font-weight: 500;
     font-size: 1.5rem;
 }
 
-.previous-next-button{
-       display: flex;
-        justify-content: space-between;
-        align-items: center;
-        width: 100%;
-}
-
-.progress-bar-container {
-    width: 70%;
-    height: 20px;
-    background-color: #f3f3f3;
-    border-radius: 50px;
-    overflow: hidden;
+.previous-next-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 }
 
 .progress-bar {
@@ -121,29 +198,37 @@ input#isFactoringCompany{
     border-radius: 50px;
 }
 
-.right-side {
+.carrier-sign-up-right-side {
     width: 100vw;
     height: 100vh;
-    background: url("../../../src/assets/isometric-view-san-francisco-s-ferry-building.jpg") no-repeat center;
+    background: url("../../../src/assets/background-image.svg") no-repeat center;
     background-size: cover;
-
+    align-content: center;
+    text-align: center;
+    display: flex;
+    align-items: center;
 }
 
-.h2-title {
-    font-size: 3.5rem;
+.carrier-sign-up-right-side-section {
+    margin: 0 auto;
+}
+
+.carrier-sign-up-right-side-title {
+    text-transform: uppercase;
+    font-size: 9.5rem;
+    font-weight: 700;
+    background: linear-gradient(90deg, var(--royal-white), var(--royal-blue));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.carrier-sign-up-right-side-description {
+    font-size: 2.5rem;
     font-weight: 600;
-    margin: 20px 0 20px 0;
-    color: #343541;
+    color: var(--light-grey);
 }
 
-.h3-title {
-    font-size: 2rem;
-    margin: 20px 0 20px 0;
-    font-weight: 500;
-    color: #707070;
-}
-
-.label-text{
+.label-text {
     color: #343541;
     font-weight: 500;
     font-size: 1.2rem;
@@ -156,14 +241,8 @@ input#isFactoringCompany{
     color: #707070;
 }
 
-.question-div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
 .sign-in-link {
-    color: #383838;
+    color: var(--royal-blue);
     font-weight: 600;
     font-size: 1.5rem;
     margin-left: 5px;
@@ -183,71 +262,87 @@ input#isFactoringCompany{
     border: 1px solid #d7d7d7;
     max-width: 500px;
 }
-.input-field:hover{
-    background-color: #f0f0f0; /* Light grey background on hover */
-    border: 1px solid #a2a2a2; /* Solid border on hover */
-    outline: none; /* Remove outline on hover (optional) */
+
+.input-field:hover {
+    background-color: #f0f0f0;
+    border: 1px solid #a2a2a2;
+    outline: none;
 }
 
-.sign-up-custom-form {
-    position: relative;
-    display: block; /* Block display to allow margins to be auto */
-    max-width: 500px;
-    width: 100%;
-    margin: 0 15px 0 15px;
-    padding: 0 15px 0 15px;
-}
-
-.sign-up-custom-form h2{
-    font-size: 2rem;
-    font-weight: 600;
-    margin: 20px 0 20px 0;
-    color: #343541;
-}
-
-.sign-in-button {
-    margin: 10px 0 10px 0;
-    background-color: #f66711;
-    border: none;
-    height: 5vh;
-    font-weight: 500;
-    font-size: 1.5rem;
-    border-radius: 5px;
-    transition: 0.3s ease-out;
-    width: 100%;
-}
-
-
-.login-with-google-button{
-    display: flex;
-    justify-content: center;
-    margin-top: 20px;
-}
-
-.sign-up-button{
-    margin: 15px 0 15px 0;
-    width: 100%;
-    font-weight: bold;
-    font-size: 1.2rem;
-    background-color: #f66711;
-    border-radius: 6px;
-}
-.sign-in-link-sign-up{
-    text-decoration: none;
-    font-size: 1.3rem;
-    margin: 0 0 0 10px;
-    font-weight: bold;
-    color: #595959;
-}
-
-.recaptcha-checkbox{
-    display: flex;
-    justify-content: center;
+.checkbox-container-wrapper{
+    justify-content: space-between;
     align-items: center;
+    margin: 40px 0 10px 0;
+
 }
+
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+    padding-left: 35px;
+    margin-bottom: 12px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    user-select: none;
+}
+
+.checkbox-text{
+    margin: 1px 0 0 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--grey);
+}
+
+.checkbox-container input {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.checkmark {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 25px;
+    width: 25px;
+    background-color: #eee;
+    border-radius: 4px;
+}
+
+.checkbox-container:hover input ~ .checkmark {
+    background-color: #ccc;
+}
+
+.checkbox-container input:checked ~ .checkmark {
+    background-color: #2196F3;
+}
+
+.checkmark:after {
+    content: "";
+    position: absolute;
+    display: none;
+}
+
+.checkbox-container input:checked ~ .checkmark:after {
+    display: block;
+}
+
+.checkbox-container .checkmark:after {
+    left: 9px;
+    top: 7px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    transform: rotate(45deg);
+}
+
 
 @media only screen and (max-width: 694px) {
-    .right-side{
+    .right-side {
         display: none;
     }
 }

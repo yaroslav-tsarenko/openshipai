@@ -16,6 +16,7 @@
     align-items: center;
     flex-direction: column;
     max-width: 700px;
+    padding: 15px;
     width: 100%;
     background-color: #ffffff;
 }
@@ -52,7 +53,7 @@
     align-items: center;
 }
 
-.choosing-role-right-side-title{
+.choosing-role-right-side-title {
     text-transform: uppercase;
     font-size: 9.5rem;
     font-weight: 700;
@@ -67,7 +68,63 @@
     color: var(--light-grey);
 }
 
+.google-input-wrapper {
+    position: relative;
+    width: 100%;
+    margin-top: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.google-style-input {
+    width: 100%;
+    padding: 10px;
+    height: 50px;
+    border: 2px solid var(--light-grey);
+    border-radius: 7px;
+    color: var(--dark-grey);
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: 0.1s ease-in-out;
+}
+
+.google-style-input:focus{
+    transition: 0.1s ease-in-out;
+    border: 2px solid var(--royal-blue);
+
+}
+
+.google-style-input:hover{
+    transition: 0.1s ease-in-out;
+    border: 2px solid var(--royal-blue);
+}
+
+.google-style-input-label {
+    position: absolute;
+    top: 5px;
+    font-weight: bold;
+    font-size: 1.5rem;
+    left: 10px;
+    padding: 10px;
+    transition: 0.3s;
+    pointer-events: none;
+    color: var(--light-grey);
+    background-color: transparent;
+}
+
+.google-style-input:valid + .google-style-input-label,
+.google-style-input:focus + .google-style-input-label,
+.google-style-input:-webkit-autofill + .google-style-input-label{
+    top: -11px;
+    transition: 0.25s;
+    color: var(--royal-blue);
+    background-color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding: 0 5px;
+}
+
 .role-button {
+    text-decoration: none;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -100,6 +157,7 @@
 .role-button:hover {
     transition: 0.3s ease-in-out;
     border: 2px solid var(--royal-blue);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .role-button .role-button-color {
@@ -119,7 +177,7 @@
     padding: 10px 20px;
     font-weight: bold;
     font-size: 2rem;
-    border-radius: 30px;
+    border-radius: 60px;
     cursor: pointer;
     border: none;
     justify-items: center;
@@ -133,7 +191,60 @@
     background: var(--royal-blue-hovered);
 }
 
+.policy-agreement-container {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    text-decoration: none;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.policy-agreement-container p {
+    font-size: 1.4rem;
+    font-weight: 500;
+    align-content: center;
+    justify-content: center;
+    text-decoration: none;
+    color: var(--grey);
+    margin: 15px 0 0 15px;
+}
+
+.policy-agreement-container input[type="checkbox"] {
+    margin: 0;
+    width: 30px;
+}
+
+.question-p-sign-up {
+    font-size: 2rem;
+    text-align: center;
+    margin: 50px 0 20px 0;
+    font-weight: 500;
+    color: #707070;
+}
+
+.question-p-sign-in {
+    text-decoration: none;
+}
+
+.choosing-role-section {
+    transition: opacity 1s ease-in-out;
+}
+
+.show {
+    opacity: 1;
+}
+
+.hide {
+    opacity: 0;
+}
+
 @media only screen and (max-width: 694px) {
+
+    .choosing-role-left-side {
+        height: 100dvh;
+    }
+
     .choosing-role-right-side {
         display: none;
     }

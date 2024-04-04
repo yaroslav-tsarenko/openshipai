@@ -37,7 +37,8 @@ const DriverSchema = new mongoose.Schema({
     truck: {
         type: String,
         required: true
-    }
+    },
+    role: { type: String, default: 'driver' },
 });
 
 module.exports = mongoose.model('Driver', DriverSchema);

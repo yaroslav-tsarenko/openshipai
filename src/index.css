@@ -1,19 +1,34 @@
-*{
+* {
     font-family: "Google Sans", "sans-serif";
 }
 
-body{
+html {
+    font-size: 62.5%;
+}
+
+body {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
     font-family: "Google Sans", "sans-serif";
 }
 
-:root{
+:root {
     --royal-blue: #024ec9;
     --royal-blue-hovered: #0061ff;
+    --royal-blue-light: #4d93ff;
+    --royal-blue-light-transparent: rgba(77, 147, 255, 0.11);
+    --royal-green: #19b66a;
+    --royal-green-hovered: #009f52;
+    --royal-red: #d83025;
+    --royal-red-hovered: #ea3528;
+    --royal-blue-transparent: rgba(2, 78, 201, 0.31);
     --royal-white: #ffffff;
-    --dark-grey: #343541;
+    --dark-grey: #3B3B3B;
     --grey: #707070;
     --light-grey: #cacaca;
+    --light-grey-hovered: #e5e5e5;
+    --light-grey-hovered-transparent: rgba(229, 229, 229, 0.23);
+    --search-bar-background: #efefef;
+    --search-bar-placeholder-color: #B4B4B4;
 }

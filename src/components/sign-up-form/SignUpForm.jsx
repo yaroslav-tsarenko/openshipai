@@ -5,36 +5,49 @@ import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import {GoogleLogin} from '@react-oauth/google';
 import ReCAPTCHA from "react-google-recaptcha";
+import Typewriter from "typewriter-effect";
+import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import {CircularProgress} from "@mui/material";
 
 function SignUpForm() {
-    const [name, setName] = useState(null)
-    const [secondName, setSecondName] = useState(null)
-    const [phoneNumber, setPhoneNumber] = useState(null)
-    const [email, setEmail] = useState(null)
-    const [password, setPassword] = useState(null)
     const [captchaValue, setCaptchaValue] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState(null);
     const navigate = useNavigate()
+    const [formData, setFormData] = useState({
+        userShipperName: '',
+        userShipperSecondName: '',
+        userShipperPhoneNumber: '',
+        userShipperEmail: '',
+        userShipperPassword: '',
+        userShipperRole: 'shipper',
+        userShipperID: Math.random().toString(20).substring(2, 20) + Math.random().toString(20).substring(2, 20),
+    });
+    const handleChange = (input) => (e) => {
+        setFormData({...formData, [input]: e.target.value});
+    };
     const handleCaptchaChange = (value) => {
         setCaptchaValue(value);
     };
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        if (!captchaValue) {
-            alert('Please complete the CAPTCHA');
-            return;
-        }
-
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/sign-up', {name, secondName, phoneNumber, email, password})
-            .then(result => {
-                if (result.data.status === "Success") {
-                    navigate('/sign-in');
-                } else {
-                    console.error('Registration failed:', result.data.message);
+        setIsLoading(true);
+        axios.post('http://localhost:8080/save-shipper-data', formData)
+            .then(response => {
+                console.log(response);
+                if (response.status === 200) {
+                    setTimeout(() => {
+                        setMessage("Shipper Account created successfully!");
+                        setIsLoading(false);
+                        setTimeout(() => {
+                            navigate(`/sign-in`);
+                        }, 1500);
+                    }, 500);
                 }
             })
-            .catch(err => {
-                console.error('Error during registration:', err);
+            .catch(error => {
+                console.log('Error:', error);
+                setIsLoading(false);
             });
     };
     const handleGoogleLoginSignUpSuccess = (credentialResponse) => {
@@ -47,7 +60,6 @@ function SignUpForm() {
                     axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: personalEndpoint })
                         .then(response => {
                             if (response.data.status === "Success") {
-                                // Redirect to '/jarvis-chat' + personalEndpoint + chatEndpoint
                                 navigate(`/jarvis-chat/${personalEndpoint}/${response.data.chatEndpoint}`);
                             } else {
                                 console.error('Error creating chat session:', response.data.message);
@@ -66,67 +78,83 @@ function SignUpForm() {
     };
     return (
         <div className="sign-in-wrapper">
+            {message && <FloatingWindowSuccess text={message}/>}
+
             <div className="left-side">
-                <div className="carrier-customer">
-                    <Link to="/sign-up-carrier" className="is-carrier">I'm carrier</Link>
-                    <Link to="/" className="is-customer">I'm customer</Link>
-                </div>
                 <form onSubmit={handleSubmit} className="sign-up-custom-form">
-                    <h2 className="h2-title">Create your first account</h2>
-                    <h3 className="h3-title">You won't regret it</h3>
-                    <label htmlFor="name" className="label-text">Name</label>
-                    <input
-                        type="text"
-                        autoComplete="off"
-                        className="input-field-name"
-                        id="name"
-                        required
-                        onChange={(e) => setName(e.target.value)}
-                    />
-                    <label htmlFor="second-name" className="label-text">Second Name</label>
-                    <input
-                        type="text"
-                        autoComplete="off"
-                        className="input-field-second-name"
-                        id="name"
-                        required
-                        onChange={(e) => setSecondName(e.target.value)}
-                    />
-
-                    <label htmlFor="phone-number" className="label-text">Phone Number</label>
-                    <input
-                        type="text"
-                        autoComplete="off"
-                        className="input-field-phone-number"
-                        id="name"
-                        required
-                        onChange={(e) => setPhoneNumber(e.target.value)}
-                    />
-
-                    <label htmlFor="email" className="label-text">Email address</label>
-                    <input
-                        type="email"
-                        className="input-field-email"
-                        id="email"
-                        required
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-
-                    <label htmlFor="password" className="label-text">Password</label>
-                    <input
-                        type="password"
-                        className="input-field-password"
-                        id="password"
-                        required
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <button type="submit" className="sign-up-button">SIGN UP</button>
-                    <div className="question-div">
-                        <p className="question-p">Already have an account?</p>
-                        <Link to="/sign-in" className="sign-in-link-sign-up">Sign in now</Link>
+                    <h2 className="h2-title-sign-up">Create your account as shipper</h2>
+                    <h3 className="h3-title-sign-up">You won't regret it</h3>
+                    <div className="registration-block-wrapper">
+                        <div className="registration-block">
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="userShipperName"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    onChange={handleChange('userShipperName')} value={formData.userShipperName}
+                                    required={true}
+                                />
+                                <label htmlFor="userName" className="google-style-input-label">Name</label>
+                            </div>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="userShipperSecondName"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    onChange={handleChange('userShipperSecondName')}
+                                    value={formData.userShipperSecondName}
+                                    required={true}
+                                />
+                                <label htmlFor="userSecondName" className="google-style-input-label">Last Name</label>
+                            </div>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="userShipperPhoneNumber"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    onChange={handleChange('userShipperPhoneNumber')}
+                                    value={formData.userShipperPhoneNumber}
+                                    required={true}
+                                />
+                                <label htmlFor="userPhoneNumber" className="google-style-input-label">Phone
+                                    Number</label>
+                            </div>
+                        </div>
+                        <div className="registration-block">
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="userShipperEmail"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    onChange={handleChange('userShipperEmail')} value={formData.userShipperEmail}
+                                    required={true}
+                                />
+                                <label htmlFor="userEmail" className="google-style-input-label">Email</label>
+                            </div>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="password"
+                                    id="userShipperPassword"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    onChange={handleChange('userShipperPassword')} value={formData.userShipperPassword}
+                                    required={true}
+                                />
+                                <label htmlFor="userPassword" className="google-style-input-label">Password</label>
+                            </div>
+                        </div>
                     </div>
+                    <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0"
+                               onChange={handleCaptchaChange}/>
+                    <button className="sign-up-button" type="submit">
+                        {isLoading ? <CircularProgress size={30}/>
+                            : 'Create Account'}
+                    </button>
                     <div className="login-with-google-button">
-                        <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0" onChange={handleCaptchaChange} />
                         <GoogleLogin
                             onSuccess={handleGoogleLoginSignUpSuccess}
                             onError={() => {
@@ -134,10 +162,34 @@ function SignUpForm() {
                             }}
                         />
                     </div>
+                    <div className="question-div">
+                        <p className="question-p">Already have an account?</p>
+                        <Link to="/sign-in" className="sign-in-link-sign-up">Sign in now</Link>
+                    </div>
                 </form>
             </div>
-            <div className="right-side">
-
+            <div className="sign-up-right-side">
+                <section className="choosing-role-section">
+                    <h1 className="choosing-role-right-side-title">
+                        <Typewriter
+                            options={{
+                                strings: ["Welcome Shipper"],
+                                autoStart: true,
+                                loop: true,
+                                pauseFor: 4500,
+                            }}
+                        />
+                    </h1>
+                    <p className="choosing-role-right-side-description">
+                        <Typewriter
+                            options={{
+                                strings: ["Discover the best way to ship your goods", "We will help you to find the best carrier"],
+                                autoStart: true,
+                                loop: true,
+                            }}
+                        />
+                    </p>
+                </section>
             </div>
         </div>
 
