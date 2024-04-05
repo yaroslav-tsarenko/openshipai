@@ -677,19 +677,19 @@ body {
 
 .video-main {
     width: 100%;
-    height: 100vh;
+    height: 75vh;
 }
 
 .video-main video {
-    width: 100%;
-    height: 100%;
+    width: 50%;
+    height: 75vh;
     object-fit: cover;
 }
 
 .video-content {
     position: absolute;
     width: 100%;
-    height: 100%;
+    height: 75%;
     top: 0;
     display: flex;
     flex-direction: column;
@@ -774,7 +774,7 @@ body {
     top: 0;
     left: 0;
     width: 100%;
-    height: 100%;
+    height: 75vh;
     background-color: rgba(0, 0, 0, 0.6);
 }
 
@@ -966,7 +966,7 @@ body {
         margin: 0 0 20px 0;
     }
 
-    .advantage-introduction-content{
+    .advantage-introduction-content {
         width: 430px;
     }
 
@@ -1004,11 +1004,11 @@ body {
         padding: 70px;
     }
 
-    .get-started-container-content h1{
+    .get-started-container-content h1 {
         font-size: 6rem;
     }
 
-    .get-started-container-content-text span{
+    .get-started-container-content-text span {
         font-size: 2rem;
         width: 100%;
         height: 70px;
@@ -1020,6 +1020,276 @@ body {
         flex-direction: column;
         justify-content: space-between;
     }
+}
+
+.load-types-wrapper {
+    position: relative;
+    display: flex;
+    width: 100%;
+    height: 250px;
+    align-content: center;
+    justify-content: center;
+    text-align: center;
+    margin: 0 0 50px 0;
+}
+
+.load-types-content {
+    display: flex;
+    max-width: 1500px;
+    width: 100%;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.load-type h2 {
+    font-weight: bold;
+    font-size: 3rem;
+    color: var(--dark-grey);
+}
+
+.load-type p {
+    font-weight: normal;
+    color: var(--grey);
+    font-size: 1.5rem;
+}
+
+.load-type {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 255px;
+}
+
+.load-type-icon {
+    height: 160px;
+}
+
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    width: 500px;
+    height: 500px;
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.shipper-popup-title {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-grey);
+}
+
+.subscribe-container-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 500px;
+    background: var(--royal-blue);
+    color: white;
+    align-content: center;
+    text-align: center;
+}
+
+.subscribe-container h2 {
+    font-size: 5rem;
+    font-weight: bold;
+    color: var(--royal-white);
+}
+
+.subscribe-container p {
+    font-size: 2rem;
+    font-weight: normal;
+    color: var(--light-grey);
+}
+
+.subscribe-input-form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 55px;
+    background: var(--royal-white);
+    margin: 50px 0 0 0;
+    border-radius: 30px;
+}
+
+.subscribe-input-form input {
+    padding: 0 20px 0 20px;
+    font-size: 1.7rem;
+    font-weight: bold;
+    border-radius: 0;
+    border-right: 2px solid var(--light-grey);
+}
+
+.subscribe-input-form button {
+    border: none;
+    background: var(--royal-green);
+    font-weight: bold;
+    color: var(--royal-white);
+    font-size: 1.7rem;
+    border-bottom-right-radius: 30px;
+    border-top-right-radius: 30px;
+    padding: 15px;
+    transition: 0.2s ease-in-out;
+}
+
+.subscribe-carrier-shipper-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 50px;
+    background: var(--royal-blue);
+    color: white;
+    font-size: 1.9rem;
+    font-weight: bold;
+    border-radius: 30px;
+    text-decoration: none;
+    border: none;
+    margin: 0 auto;
+    transition: 0.2s ease-in-out;
+}
+
+
+.pre-production-title {
+    font-size: 5rem;
+    font-weight: bold;
+    color: var(--royal-blue);
+}
+
+.pre-production-subtitle {
+    font-size: 2rem;
+    font-weight: normal;
+    color: var(--grey);
+}
+
+.roles-container-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 1000px;
+    background: var(--royal-white);
+    color: var(--dark-grey);
+    align-content: center;
+    text-align: center;
+}
+
+.roles-description {
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    justify-content: center;
+    text-align: left;
+    width: 500px;
+    height: 100%;
+}
+
+.roles-description h2 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 10px 0 10px 0;
+    color: var(--dark-grey);
+}
+
+.roles-description p {
+    font-size: 1.7rem;
+    font-weight: normal;
+    margin: 10px 0 10px 0;
+    width: 250px;
+    color: var(--grey);
+}
+
+.roles-description h4 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--royal-blue);
+}
+
+.learn-more-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 200px;
+    height: 50px;
+    color: var(--royal-blue-light);
+    border: 1px solid var(--royal-blue-light);
+    font-size: 1.9rem;
+    font-weight: bold;
+    border-radius: 30px;
+    text-decoration: none;
+    margin: 20px 0 0 0;
+    transition: 0.2s ease-in-out;
 
 }
 
+.learn-more-button:hover {
+    background: var(--royal-blue);
+    color: var(--royal-white);
+    transition: 0.2s ease-in-out;
+
+}
+
+.roles-image-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 900px;
+    height: 100%;
+}
+
+.shipper-role-container, .broker-role-container, .carrier-role-container, .dispatch-role-container {
+    display: flex;
+    flex-direction: column;
+    text-align: left;
+    align-content: end;
+    justify-content: end;
+    width: 170px;
+    height: 600px;
+    border-radius: 20px;
+    padding: 0 0 0 15px;
+}
+
+.shipper-role-container:first-child{
+    width: 250px;
+    background: url("../../assets/shipper-image.jpg") no-repeat center;
+    object-fit: cover;
+}
+
+.broker-role-container{
+    background: url("../../assets/broker-image.jpg") no-repeat center;
+    object-fit: cover;
+}
+
+.carrier-role-container{
+    background: url("../../assets/carrier-image.jpg") no-repeat center;
+    object-fit: cover;
+}
+.dispatch-role-container{
+    background: url("../../assets/dispatch-image.jpg") no-repeat center;
+    object-fit: cover;
+}
+.roles-image-wrapper img {
+    width: 150px;
+    height: 633px;
+}
