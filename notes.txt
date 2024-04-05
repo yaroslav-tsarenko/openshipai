@@ -71,3 +71,21 @@ Client Secret = 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
                                 </div>
                             </a>
                         </nav>
+
+
+                        style={{
+                                            overlay: {
+                                                backgroundColor: 'rgba(0, 0, 0, 0.75)', // This will create a dark overlay
+                                                display: 'flex',
+                                                alignItems: 'center', // These two lines will center the modal vertically
+                                                justifyContent: 'center', // This line will center the modal horizontally
+                                            },
+                                            content: {
+                                                position: 'relative', // This line is needed to override the default 'absolute' positioning
+                                                width: '750px',
+                                                height: '750px',
+                                                overflow: 'auto',
+                                                WebkitOverflowScrolling: 'touch',
+                                                borderRadius: '30px', // This line will add a border radius to the modal
+                                            },
+                                        }}

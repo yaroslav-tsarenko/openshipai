@@ -13,6 +13,9 @@ import FullPageSlider from "./flicking-slider/FullPageSlider";
 import GetStartedContainer from "./get-started-container/GetStartedContainer";
 import AdvantagesContainer from "./advantages-container/AdvantagesContainer";
 import CardIntroduction from "./card-introduction/CardIntroduction";
+import LoadTypes from "./load-types/LoadTypes";
+import ServiceSubscribe from "./subscribe-for-service/ServiceSubscribe";
+import RolesContainer from "./roles-container/RolesContainer";
 
 const LandingPage = () => {
 
@@ -21,6 +24,9 @@ const LandingPage = () => {
             <LandingHeader/>
             <Fade>
                 <FullPageSlider/>
+            </Fade>
+            <Fade>
+                <LoadTypes/>
             </Fade>
             <Fade>
                 <CardIntroduction/>
@@ -41,6 +47,9 @@ const LandingPage = () => {
                                             image={AiScreens}/>
             </Fade>
             <Fade>
+                <ServiceSubscribe/>
+            </Fade>
+            <Fade>
                 <LeftIntroductionContainer title="Transparent Pricing"
                                            description="Access immediate, transparent quotes from a wide array
                                            of international carriers. openship.ai ensures cost-effective solutions with no hidden fees."
@@ -53,8 +62,12 @@ const LandingPage = () => {
                                             image={AllTimeUpdate}/>
             </Fade>
             <Fade>
+                <RolesContainer/>
+            </Fade>
+            <Fade>
                 <AdvantagesContainer/>
             </Fade>
+
             <Fade>
                 <GetStartedContainer/>
             </Fade>

@@ -10,6 +10,8 @@ const { OAuth2Client } = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
 const User = require('./models/User');
+const SubscribedCarriers = require('./models/SubscribedCarriers');
+const SubscribedShippers = require('./models/SubscribedShippers');
 const Shipper = require('./models/Shipper');
 const ConfirmedLoad = require('./models/ConfirmedLoad');
 const TakenLoad = require('./models/TakenLoad');
@@ -39,6 +41,7 @@ const AutoMotoBoatEquipment = require('./models/AutoMotoBoatEquipment');
 const MilitaryMoving = require('./models/MilitaryMoving');
 const CorporateMoving = require('./models/CorporateMoving');
 const StudentMoving = require('./models/StudentMoving');
+const SubscribedUsers = require('./models/SubscribedUsers');
 const SubmittedBid = require('./models/SubmittedBid');
 const DealChatConversation = require('./models/DealChatConversation');
 const multer = require('multer');
@@ -148,6 +151,53 @@ app.get('/all-user-loads', async (req, res) => {
     } catch (error) {
         console.error('Error fetching all user loads:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/subscribe-carrier', async (req, res) => {
+    const { email, name, phoneNumber, company } = req.body;
+
+    const newCarrier = new SubscribedCarriers({
+        email,
+        name,
+        phoneNumber,
+        company
+    });
+
+    try {
+        await newCarrier.save();
+        res.status(200).json({ message: 'Shipper subscribed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error subscribing shipper', error: error.message });
+    }
+});
+
+app.post('/subscribe-shipper', async (req, res) => {
+    const { email, name, phoneNumber} = req.body;
+
+    const newShipper = new SubscribedShippers({
+        email,
+        name,
+        phoneNumber,
+    });
+
+    try {
+        await newShipper.save();
+        res.status(200).json({ message: 'Shipper subscribed successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error subscribing shipper', error: error.message });
+    }
+});
+app.post('/subscribe-user', async (req, res) => {
+    const { email, phoneNumber, name } = req.body;
+
+    try {
+        const user = new SubscribedUsers({ email, phoneNumber, name });
+        await user.save();
+
+        res.status(201).json({ message: 'User subscribed successfully' });
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while subscribing the user' });
     }
 });
 app.get('/get-confirmed-load-by-commercial-load-id/:chatID', async (req, res) => {
