@@ -16,6 +16,8 @@ import CardIntroduction from "./card-introduction/CardIntroduction";
 import LoadTypes from "./load-types/LoadTypes";
 import ServiceSubscribe from "./subscribe-for-service/ServiceSubscribe";
 import RolesContainer from "./roles-container/RolesContainer";
+import MainBenefits from "./main-benefits/MainBenefits";
+import SlidersContainer from "./sliders-container/SlidersContainer";
 
 const LandingPage = () => {
 
@@ -29,7 +31,10 @@ const LandingPage = () => {
                 <LoadTypes/>
             </Fade>
             <Fade>
-                <CardIntroduction/>
+                <MainBenefits/>
+            </Fade>
+            <Fade>
+                <SlidersContainer/>
             </Fade>
             <Fade>
                 <LeftIntroductionContainer title="Start easy shipping"
@@ -49,6 +54,7 @@ const LandingPage = () => {
             <Fade>
                 <ServiceSubscribe/>
             </Fade>
+
             <Fade>
                 <LeftIntroductionContainer title="Transparent Pricing"
                                            description="Access immediate, transparent quotes from a wide array
