@@ -1270,26 +1270,166 @@ body {
     padding: 0 0 0 15px;
 }
 
-.shipper-role-container:first-child{
+.shipper-role-container:first-child {
     width: 250px;
     background: url("../../assets/shipper-image.jpg") no-repeat center;
     object-fit: cover;
 }
 
-.broker-role-container{
+.broker-role-container {
     background: url("../../assets/broker-image.jpg") no-repeat center;
     object-fit: cover;
 }
 
-.carrier-role-container{
+.carrier-role-container {
     background: url("../../assets/carrier-image.jpg") no-repeat center;
     object-fit: cover;
 }
-.dispatch-role-container{
+
+.dispatch-role-container {
     background: url("../../assets/dispatch-image.jpg") no-repeat center;
     object-fit: cover;
 }
+
 .roles-image-wrapper img {
     width: 150px;
     height: 633px;
+}
+
+
+.main-benefits-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    width: 100%;
+    height: 1500px;
+    align-content: center;
+    text-align: center;
+}
+
+.main-benefits-wrapper h1{
+    font-size: 4rem;
+    font-weight: bold;
+    width: 900px;
+    margin: 30px 0 0 0;
+    background: linear-gradient(to right, var(--royal-blue), hsl(0, 0%, 85%) 50%, var(--royal-blue) 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 3s infinite linear;
+}
+
+.benefit-container-wrapper{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 1200px;
+    align-content: center;
+    text-align: center;
+    flex-wrap: wrap; /* Add this line */
+}
+
+.benefit-container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 600px;
+    justify-content: space-between;
+    height: 340px;
+    margin: 50px 20px 40px 20px;
+    padding: 20px;
+    max-width: 40%;
+    text-align: center;
+}
+
+.benefit-container-icon{
+    width: 100px;
+    height: 100px;
+
+}
+
+.benefit-container h2{
+    margin: 15px 0 0 0;
+    font-size: 3rem;
+    font-weight: bold;
+    width: 300px;
+    color: var(--royal-blue);
+}
+
+.benefit-container p{
+    font-size: 1.7rem;
+    width: 300px;
+    font-weight: normal;
+    color: var(--grey);
+}
+
+
+.sliders-wrapper{
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    height: 3000px;
+    align-content: center;
+    text-align: center;
+}
+
+.first-slider{
+    display: flex;
+    position: relative;
+    align-items: center;
+    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 1500px;
+    color: white;
+    text-align: center;
+}
+
+.second-slider{
+    display: flex;
+    position: relative;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 1500px;
+    align-content: center;
+    text-align: center;
+}
+
+.first-slider h1, .second-slider h1{
+    font-size: 4rem;
+    margin-bottom: 40px;
+    font-weight: bold;
+    color: var(--royal-blue);
+
+}
+
+.swiper {
+    width: 100%;
+    padding-top: 50px;
+    padding-bottom: 50px;
+}
+
+.swiper-slide {
+    background-position: center;
+    background-size: cover;
+    width: 300px;
+    height: 300px;
+}
+
+.swiper-slide img {
+    display: block;
+    width: 100%;
+}
+
+.slide-item{
+    background: url("../../assets/shipper-image.jpg") no-repeat center;
 }
