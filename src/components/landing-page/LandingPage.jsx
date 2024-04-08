@@ -32,10 +32,10 @@ const LandingPage = () => {
                 <MainBenefits/>
             </Fade>
             <Fade>
-                <SlidersContainer/>
+                <CardIntroduction/>
             </Fade>
             <Fade>
-                <CardIntroduction/>
+                <SlidersContainer/>
             </Fade>
             <Fade>
                 <LeftIntroductionContainer title="Start easy shipping"
