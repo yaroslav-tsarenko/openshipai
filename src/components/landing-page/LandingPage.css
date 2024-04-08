@@ -1493,7 +1493,7 @@ body {
 @media screen and (max-width: 510px) {
 
     .slider-wrapper {
-        width: 400px;
+        width: 500px;
     }
 
     .roles-image-wrapper {
@@ -1582,6 +1582,7 @@ body {
     .introduction-card-vector-mobile {
         display: block;
         height: 1200px;
+        width: 500px;
     }
 
     .first-slider-wrapper h1,
@@ -1596,21 +1597,24 @@ body {
 
     .sliders-wrapper {
         height: 2900px;
+        width: 500px;
     }
 
     .first-slider-wrapper {
         height: 1400px;
+        width: 500px;
     }
 
     .second-slider-wrapper {
         height: 1400px;
+        width: 500px;
     }
 
     .sliders-container {
         display: flex;
         align-items: center;
         justify-content: center;
-        width: 100%;
+        width: 500px;
         height: 100%;
         align-content: center;
         text-align: center;
@@ -1629,7 +1633,13 @@ body {
 
     .video-main {
         width: 100%;
-        height: 185vh;
+        height: 195vh;
+    }
+
+    .benefit-container{
+        width: 100%;
+        margin: 20px 0 20px 0;
+        padding: 20px 0 20px 0;
     }
 
     .video-overlay {
@@ -1670,6 +1680,7 @@ body {
         position: relative;
         display: flex;
         width: 100%;
+        margin: 30px 0 0 0;
         align-content: center;
         justify-content: center;
         text-align: center;
@@ -1680,15 +1691,14 @@ body {
         flex-direction: column;
         flex-wrap: wrap;
         justify-content: space-between;
-        max-width: 1500px;
         width: 100%;
         align-items: center;
-        padding: 0 0 20px 0;
     }
 
     .load-type {
         flex: 0 0 48%;
         margin-bottom: 2%;
+        width: 200px;
     }
 
     .load-type:hover {
@@ -1701,6 +1711,7 @@ body {
     }
 
     .video-content p {
+        width: 100%;
         font-size: 1.5rem;
     }
 
