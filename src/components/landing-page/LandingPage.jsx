@@ -18,6 +18,7 @@ import ServiceSubscribe from "./subscribe-for-service/ServiceSubscribe";
 import RolesContainer from "./roles-container/RolesContainer";
 import MainBenefits from "./main-benefits/MainBenefits";
 import SlidersContainer from "./sliders-container/SlidersContainer";
+import HowItWorks from "./howitworks-container/HowItWorks";
 
 const LandingPage = () => {
 
@@ -28,13 +29,13 @@ const LandingPage = () => {
                 <FullPageSlider/>
             </Fade>
             <Fade>
-                <LoadTypes/>
-            </Fade>
-            <Fade>
                 <MainBenefits/>
             </Fade>
             <Fade>
                 <SlidersContainer/>
+            </Fade>
+            <Fade>
+                <CardIntroduction/>
             </Fade>
             <Fade>
                 <LeftIntroductionContainer title="Start easy shipping"
@@ -51,10 +52,6 @@ const LandingPage = () => {
                                             international shipments with precision and care. Dive in and ship smarter."
                                             image={AiScreens}/>
             </Fade>
-            <Fade>
-                <ServiceSubscribe/>
-            </Fade>
-
             <Fade>
                 <LeftIntroductionContainer title="Transparent Pricing"
                                            description="Access immediate, transparent quotes from a wide array
@@ -73,7 +70,6 @@ const LandingPage = () => {
             <Fade>
                 <AdvantagesContainer/>
             </Fade>
-
             <Fade>
                 <GetStartedContainer/>
             </Fade>

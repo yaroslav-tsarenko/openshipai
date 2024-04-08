@@ -17,18 +17,35 @@ const RolesContainer = () => {
             <div className="roles-image-wrapper">
                 <div className="shipper-role-container">
                     <h2>Shipper</h2>
-                    <h4>Pay Less</h4>
-                    <p>Book the perfect mode for your load in minutes, save up to 20%, and enjoy seamless, tech-driven
-                        car shipping solutions.</p>
+                    <div className="role-content">
+                        <h4>Pay Less</h4>
+                        <p>Book the perfect mode for your load in minutes, save up to 20%, and enjoy seamless,
+                            tech-driven car shipping solutions.</p>
+                    </div>
                 </div>
                 <div className="broker-role-container">
                     <h2>Broker</h2>
+                    <div className="role-content">
+                        <h4>Get Paid Faster</h4>
+                        <p>Accelerate cash flow and eliminate payment delays with our secure, automated payment
+                            system.</p>
+                    </div>
                 </div>
                 <div className="carrier-role-container">
                     <h2>Carrier</h2>
+                    <div className="role-content">
+                        <h4>Earn More</h4>
+                        <p>Embrace AI-powered route optimization and load matching tools to earn 20% more, eliminate
+                            empty miles, and maximize load capacities.</p>
+                    </div>
                 </div>
                 <div className="dispatch-role-container">
                     <h2>Dispatch</h2>
+                    <div className="role-content">
+                        <h4>Dispatch From Anywhere</h4>
+                        <p>Elevate dispatch operations with our cloud-based platform, featuring AI trip building,
+                            real-time monitoring, and seamless communication tools</p>
+                    </div>
                 </div>
             </div>
         </div>

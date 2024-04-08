@@ -1,5 +1,5 @@
 import React from 'react';
-import {ReactComponent as OpenshipLogoWhite} from "../../../assets/openship-ai-logo-white.svg";
+import {ReactComponent as OpenshipLogoWhite} from "../../../assets/openship-logo-updated-white.svg";
 import { BsTwitterX } from "react-icons/bs";
 import { FaLinkedinIn } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
