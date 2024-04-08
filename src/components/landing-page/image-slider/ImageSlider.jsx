@@ -32,7 +32,7 @@ const ImageSlider = ({ image, image2, image3 }) => {
             <Carousel
                 selectedItem={currentSlide}
                 autoPlay
-                interval={1000}
+                interval={5000}
                 infiniteLoop
                 showThumbs={false}
                 showArrows={false}
