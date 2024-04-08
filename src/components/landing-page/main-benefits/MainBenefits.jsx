@@ -1,33 +1,34 @@
 import React from 'react';
 import {ReactComponent as StarIconExample} from "../../../assets/star-icon-example.svg";
+import {ReactComponent as AutomatedDispatch} from "../../../assets/automated-dispatch-minimalistic.svg";
+import {ReactComponent as Support24} from "../../../assets/support24-7-minimalistic.svg";
+import {ReactComponent as Tracking} from "../../../assets/tracking-icon.svg";
+import {ReactComponent as SecurePayments} from "../../../assets/secure-payments-minimalistic.svg";
+
 const MainBenefits = () => {
     return (
         <div className="main-benefits-wrapper">
-            <h1>Why Our New Transportation Platform Will Transform the Industry</h1>
             <div className="benefit-container-wrapper">
                 <div className="benefit-container">
-                    <StarIconExample className="benefit-container-icon"/>
-                    <h2>Automated Dispatch</h2>
-                    <p>Our AI system efficiently allocates loads, ensuring optimal route selection and timely
-                        dispatch.</p>
+                    <AutomatedDispatch className="benefit-container-icon"/>
+                    <h2>Automated Trucking Dispatch</h2>
                 </div>
                 <div className="benefit-container">
-                    <StarIconExample className="benefit-container-icon"/>
-                    <h2>Real-Time Tracking</h2>
-                    <p>Enjoy visibility into your shipment's journey with continuous, AI-enhanced tracking updates.</p>
+                    <Support24 className="benefit-container-icon"/>
+                    <h2>Support 24/7</h2>
                 </div>
                 <div className="benefit-container">
-                    <StarIconExample className="benefit-container-icon"/>
-                    <h2>Guaranteed On-Time Delivery</h2>
-                    <p>Our AI closely monitors and adjusts routes in real-time, guaranteeing timely deliveries.</p>
+                    <SecurePayments className="benefit-container-icon"/>
+                    <h2>Secure Payments</h2>
+
                 </div>
-                <div className="benefit-container">
-                    <StarIconExample className="benefit-container-icon"/>
-                    <h2>Stress-Free Logistics</h2>
-                    <p>Streamline your logistics with AI that simplifies complex processes, from scheduling to
-                        delivery.</p>
-                </div>
-                <div className="benefit-container">
+               {/* <div className="benefit-container">
+                    <Support24 className="benefit-container-icon"/>
+                    <h2>24/7 Support</h2>
+                    <p>Unlock the power of artificial intelligence. It's designed to be your 24/7 partner, offering
+                        insights, automation, and support whenever you need it.</p>
+                </div>*/}
+                {/* <div className="benefit-container">
                     <StarIconExample className="benefit-container-icon"/>
                     <h2>Proactive Problem Solving</h2>
                     <p>Rely on AI for efficient handling of your logistics, providing you with
@@ -38,7 +39,7 @@ const MainBenefits = () => {
                     <h2>Availability</h2>
                     <p>Our customer support is accessible 24/7, ensuring assistance is always just a call or message
                         away.</p>
-                </div>
+                </div>*/}
                 {/*<div className="benefit-container">
                     <h2>Responsive Service</h2>
                     <p> Fast, efficient responses to inquiries and issues, no matter the time of day.</p>

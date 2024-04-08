@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import "../LandingPage.css";
-import {ReactComponent as OpenshipLogo} from "../../../assets/openshipai-logo-3.svg";
+import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
 import {ReactComponent as DropDownIcon} from "../../../assets/dropbdown-arrow.svg";
 import {ReactComponent as BurgerMenuIcon} from "../../../assets/burger-button.svg";
 import {ReactComponent as FaTimesIcon} from "../../../assets/fa-times-icon.svg";
@@ -26,7 +26,7 @@ const LandingHeader = () => {
     return (
         <header className="landing-page-header">
             <OpenshipLogo className="header-logo"/>
-            <nav className={`nav-menu-container ${sidebarOpen ? 'open' : ''}`}>
+            {/*<nav className={`nav-menu-container ${sidebarOpen ? 'open' : ''}`}>
                 <a href="#">Company<DropDownIcon className="drop-down-icon"/>
                     <div className="dropdown-content">
                         <a href="#">Company Link 1</a>
@@ -65,9 +65,9 @@ const LandingHeader = () => {
                         <a href="#">About us Link 3</a>
                     </div>
                 </a>
-            </nav>
-            <Link to={"/sign-up"} className="landing-button">Go to Account</Link>
-            <BurgerMenuIcon className="burger-menu-header" onClick={toggleSidebar}/>
+            </nav>*/}
+            {/*<Link to={"/sign-up"} className="landing-button">Go to Account</Link>*/}
+            {/*<BurgerMenuIcon className="burger-menu-header" onClick={toggleSidebar}/>
             <div className={`sidebar-landing-page ${sidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">
                     <FaTimesIcon className="fa-times-button-menu-header" onClick={toggleSidebar}/>
@@ -126,7 +126,7 @@ const LandingHeader = () => {
                     )}
                 </nav>
                 <Link to={"/sign-up"} className="landing-button-sidebar">Go to Account</Link>
-            </div>
+            </div>*/}
         </header>
     );
 };

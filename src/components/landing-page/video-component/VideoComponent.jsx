@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import Modal from 'react-modal';
 import {ReactComponent as FaTimesIcon} from "../../../assets/fa-times-icon.svg";
 import '../LandingPage.css';
+import LoadTypes from "../load-types/LoadTypes";
 
 const VideoComponent = ({firstVideo, secondVideo}) => {
     const [isShipperModalOpen, setIsShipperModalOpen] = useState(false);
@@ -91,14 +92,21 @@ const VideoComponent = ({firstVideo, secondVideo}) => {
             <video src={firstVideo} autoPlay loop muted/>
             <video src={secondVideo} autoPlay loop muted/>
             <div className="video-content">
-                <h1>openshipai</h1>
-                <p>Your Gateway to Global Shipping Empowered by AI</p>
-                <section className="main-slider-button-wrapper">
-                    <button className="become-shipper-button" onClick={openShipperModal}>Become Shipper</button>
-                    <button className="become-carrier-button" onClick={openCarrierModal}>Become Carrier</button>
-                </section>
+                <h1>AI Driven Solutions For:</h1>
+                <div className="introduction-project-wrapper">
+                    <div className="introduction-text">
+                        <h2>Shippers</h2>
+                        <p>Ship anything to anywhere. Simplify your Operation</p>
+                        <button className="become-shipper-button" onClick={openShipperModal}>Become Shipper</button>
+                    </div>
+                    <div className="introduction-text">
+                        <h2>Carriers</h2>
+                        <p>Maximize Earning. Maximize Time</p>
+                        <button className="become-carrier-button" onClick={openCarrierModal}>Become Carrier</button>
+                    </div>
+                </div>
+                <LoadTypes/>
             </div>
-
             <Modal
                 isOpen={isShipperModalOpen}
                 onRequestClose={closeShipperModal}

@@ -22,9 +22,9 @@ const ServiceSubscribe = () => {
                 <h2>Subscribe for our service</h2>
                 <p>Subscribe for our service and get the latest updates and offers</p>
                 <form className="subscribe-input-form" onSubmit={handleSubmit}>
-                    <input type="text" placeholder="Enter your email" value={email} onChange={e => setEmail(e.target.value)} />
-                    <input type="text" placeholder="Your Phone number" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
-                    <input type="text" placeholder="Your Name" value={name} onChange={e => setName(e.target.value)} />
+                    <input type="text" placeholder="Email" value={email} onChange={e => setEmail(e.target.value)} />
+                    <input type="text" placeholder="Phone number" value={phoneNumber} onChange={e => setPhoneNumber(e.target.value)} />
+                    <input type="text" className="your-name-input" placeholder="Name" value={name} onChange={e => setName(e.target.value)} />
                     <button type="submit">Subscribe</button>
                 </form>
             </div>
