@@ -9,7 +9,7 @@ const MainBenefits = () => {
             <div className="benefit-container-wrapper">
                 <div className="benefit-container">
                     <AutomatedDispatch className="benefit-container-icon"/>
-                    <h2>Automated Trucking Dispatch</h2>
+                    <h2>Automated Trucking & Dispatch</h2>
                 </div>
                 <div className="benefit-container">
                     <Support24 className="benefit-container-icon"/>
