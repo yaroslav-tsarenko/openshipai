@@ -89,3 +89,757 @@ Client Secret = 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
                                                 borderRadius: '30px', // This line will add a border radius to the modal
                                             },
                                         }}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                                        shipper dashboard template (import React, {useEffect, useState, useRef} from "react";
+                                                                    import '../ShipperDashboard.css';
+                                                                    import {ReactComponent as OpenshipLogo} from "../../../assets/openshipai-logo-3.svg";
+                                                                    import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
+                                                                    import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
+                                                                    import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
+                                                                    import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
+                                                                    import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
+                                                                    import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
+                                                                    import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
+                                                                    import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
+                                                                    import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
+                                                                    import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
+                                                                    import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
+                                                                    import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
+                                                                    import {ReactComponent as QoutesIcon} from "../../../assets/listing-icon-grey.svg";
+                                                                    import {ReactComponent as QoutesIconWhite} from "../../../assets/listing-icon-white.svg";
+                                                                    import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
+                                                                    import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
+                                                                    import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+                                                                    import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
+                                                                    import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+                                                                    import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
+                                                                    import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
+                                                                    import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
+                                                                    import {ReactComponent as CarrierIcon} from "../../../assets/trane-logo-carrier.svg";
+                                                                    import {useParams} from 'react-router-dom';
+                                                                    import {Link} from "react-router-dom";
+                                                                    import GoogleMapRealTimeTrafficComponent
+                                                                        from "../../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+                                                                    import JarvisChatComponent from "../../jarvis-chat-page/JarvisChatComponent";
+
+                                                                    const ShipperLoadsPage = () => {
+
+                                                                        const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+                                                                        const [hoveredButton, setHoveredButton] = useState('');
+                                                                        const {id} = useParams();
+                                                                        const toggleSidebar = () => {
+                                                                            setIsSidebarOpen(!isSidebarOpen);
+                                                                        };
+                                                                        return (
+                                                                            <div className="shipper-dashboard-wrapper">
+                                                                                <div className={`shipper-sidebar ${isSidebarOpen ? "" : "hidden"}`}>
+                                                                                    <section className="main-buttons">
+                                                                                        <OpenshipLogo/>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-dashboard/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Dashboard')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Dashboard' ? <DashboardIconWhite className="link-nav-button-icon"/> :
+                                                                                                <DashboardIcon className="link-nav-button-icon"/>}
+                                                                                            Dashboard AI
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-loads/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Loads')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Loads' ? <LoadIconWhite className="link-nav-button-icon"/> :
+                                                                                                <LoadIcon className="link-nav-button-icon"/>}
+                                                                                            My Loads
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-chat-conversation/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('CarrierChat')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'CarrierChat' ? <CarrierChatIconWhite className="link-nav-button-icon"/> :
+                                                                                                <CarrierChatIcon className="link-nav-button-icon"/>}
+                                                                                            Chat with Carrier
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-qoutes/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Qoutes')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Qoutes' ? <QoutesIconWhite className="link-nav-button-icon"/> :
+                                                                                                <QoutesIcon className="link-nav-button-icon"/>}
+                                                                                            My Qoutes
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-payments/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Payments')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Payments' ? <PaymentIconWhite className="link-nav-button-icon"/> :
+                                                                                                <PaymentIcon className="link-nav-button-icon"/>}
+                                                                                            Payments
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-profile/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Profile')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Profile' ? <ProfileIconWhite className="link-nav-button-icon"/> :
+                                                                                                <ProfileIcon className="link-nav-button-icon"/>}
+                                                                                            Profile
+                                                                                        </Link>
+                                                                                        <Link
+                                                                                            className="link-nav-button"
+                                                                                            to={`/shipper-settings/${id}`}
+                                                                                            onMouseEnter={() => setHoveredButton('Settings')}
+                                                                                            onMouseLeave={() => setHoveredButton('')}
+                                                                                        >
+                                                                                            {hoveredButton === 'Settings' ? <SettingsIconWhite className="link-nav-button-icon"/> :
+                                                                                                <SettingsIcon className="link-nav-button-icon"/>}
+                                                                                            Settings
+                                                                                        </Link>
+                                                                                    </section>
+                                                                                    <Link
+                                                                                        className="link-nav-button-logout"
+                                                                                        to={"/sign-in"}
+                                                                                        onMouseEnter={() => setHoveredButton('Logout')}
+                                                                                        onMouseLeave={() => setHoveredButton('')}
+                                                                                    >
+                                                                                        {hoveredButton === 'Logout' ? <LogoutIconWhite className="link-nav-button-icon"/> :
+                                                                                            <LogoutIcon className="link-nav-button-icon"/>}
+                                                                                        Logout
+                                                                                    </Link>
+                                                                                </div>
+                                                                                <button className="close-shipper-side-bar" onClick={toggleSidebar}>
+                                                                                    <ArrowNav className={`arrow-nav-close-open-side-bar ${isSidebarOpen ? "" : "rotated"}`}/>
+                                                                                </button>
+                                                                                <div className="shipper-dashboard-content">
+                                                                                    <div className="shipper-dashboard-content-header">
+                                                                                        <div className="shipper-dashboard-header-title">
+                                                                                            <h2 className="shipper-dashboard-content-title">Welcome Back, John</h2>
+                                                                                            <p className="shipper-dashboard-content-subtitle">Monitor payments, loads, revenues</p>
+                                                                                        </div>
+                                                                                        <div className="shipper-account-container">
+                                                                                            <div className="shipper-dashboard-searchbar">
+                                                                                                <SearchIcon className="search-icon-searchbar"/>
+                                                                                                <input type="text" placeholder="Search anything..."/>
+                                                                                            </div>
+                                                                                            <div className="shipper-dashboard-account-info">
+                                                                                                <section className="account-info">
+                                                                                                    <DefaultUserAvatar/>
+                                                                                                    <div className="account-info-text">
+                                                                                                        <h3 className="account-info-name">John Doe</h3>
+                                                                                                        <p className="account-info-role">Shipper</p>
+                                                                                                    </div>
+                                                                                                </section>
+                                                                                                <Link to={"#"} className="account-info-buttons"><BellIcon/></Link>
+                                                                                                <Link to={"#"} className="account-info-buttons"><SettingsAccountIcon/></Link>
+                                                                                            </div>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <div className="shipper-dashboard-content-body">
+
+                                                                                    </div>
+                                                                                </div>
+                                                                            </div>
+                                                                        );
+                                                                    };
+
+                                                                    export default ShipperLoadsPage;
+)
+
+
+
+
+
+
+
+import React, {useEffect, useState, useRef} from "react";
+import '../ShipperDashboard.css';
+import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
+import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
+import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
+import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
+import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
+import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
+import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
+import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
+import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
+import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
+import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
+import {ReactComponent as QoutesIcon} from "../../../assets/listing-icon-grey.svg";
+import {ReactComponent as QoutesIconWhite} from "../../../assets/listing-icon-white.svg";
+import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
+import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
+import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
+import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
+import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
+import {ReactComponent as BlueCard} from "../../../assets/card-blue.svg";
+import {ReactComponent as RedCard} from "../../../assets/card-pink.svg";
+import {ReactComponent as AddNew} from "../../../assets/add-new-card.svg";
+import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
+import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
+import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
+import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon-plus.svg";
+import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
+import {ReactComponent as CarrierLogo} from "../../../assets/trane-logo-carrier.svg";
+import {useParams} from 'react-router-dom';
+import {Link} from "react-router-dom";
+
+const ShipperSettings = () => {
+    const [activeSetting, setActiveSetting] = useState('Account');
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [hoveredButton, setHoveredButton] = useState('');
+    const {id} = useParams();
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
+    };
+    return (
+        <div className="shipper-dashboard-wrapper">
+            <div className={`shipper-sidebar ${isSidebarOpen ? "" : "hidden"}`}>
+                <section className="main-buttons">
+                    <OpenshipLogo width="200"/>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-dashboard/${id}`}
+                        onMouseEnter={() => setHoveredButton('Dashboard')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Dashboard' ? <DashboardIconWhite className="link-nav-button-icon"/> :
+                            <DashboardIcon className="link-nav-button-icon"/>}
+                        Dashboard AI
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-loads/${id}`}
+                        onMouseEnter={() => setHoveredButton('Loads')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Loads' ? <LoadIconWhite className="link-nav-button-icon"/> :
+                            <LoadIcon className="link-nav-button-icon"/>}
+                        My Loads
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-chat-conversation/${id}`}
+                        onMouseEnter={() => setHoveredButton('CarrierChat')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'CarrierChat' ? <CarrierChatIconWhite className="link-nav-button-icon"/> :
+                            <CarrierChatIcon className="link-nav-button-icon"/>}
+                        Chat with Carrier
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-qoutes/${id}`}
+                        onMouseEnter={() => setHoveredButton('Qoutes')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Qoutes' ? <QoutesIconWhite className="link-nav-button-icon"/> :
+                            <QoutesIcon className="link-nav-button-icon"/>}
+                        My Qoutes
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-payments/${id}`}
+                        onMouseEnter={() => setHoveredButton('Payments')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Payments' ? <PaymentIconWhite className="link-nav-button-icon"/> :
+                            <PaymentIcon className="link-nav-button-icon"/>}
+                        Payments
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-profile/${id}`}
+                        onMouseEnter={() => setHoveredButton('Profile')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Profile' ? <ProfileIconWhite className="link-nav-button-icon"/> :
+                            <ProfileIcon className="link-nav-button-icon"/>}
+                        Profile
+                    </Link>
+                    <Link
+                        className="link-nav-button"
+                        to={`/shipper-settings/${id}`}
+                        onMouseEnter={() => setHoveredButton('Settings')}
+                        onMouseLeave={() => setHoveredButton('')}
+                    >
+                        {hoveredButton === 'Settings' ? <SettingsIconWhite className="link-nav-button-icon"/> :
+                            <SettingsIcon className="link-nav-button-icon"/>}
+                        Settings
+                    </Link>
+                </section>
+                <Link
+                    className="link-nav-button-logout"
+                    to={"/sign-in"}
+                    onMouseEnter={() => setHoveredButton('Logout')}
+                    onMouseLeave={() => setHoveredButton('')}
+                >
+                    {hoveredButton === 'Logout' ? <LogoutIconWhite className="link-nav-button-icon"/> :
+                        <LogoutIcon className="link-nav-button-icon"/>}
+                    Logout
+                </Link>
+            </div>
+            <button className="close-shipper-side-bar" onClick={toggleSidebar}>
+                <ArrowNav className={`arrow-nav-close-open-side-bar ${isSidebarOpen ? "" : "rotated"}`}/>
+            </button>
+            <div className="shipper-dashboard-content">
+                <div className="carrier-settings-wrapper">
+                    <div className="settings-sidebar">
+                        <button className="settings-button" onClick={() => setActiveSetting('Account')}>
+                            <FontAwesomeIcon icon={faUser}/> Account
+                        </button>
+                        <button className="settings-button" onClick={() => setActiveSetting('Password')}>
+                            <FontAwesomeIcon icon={faKey}/> Password
+                        </button>
+                        <button className="settings-button" onClick={() => setActiveSetting('Notifications')}>
+                            <FontAwesomeIcon icon={faBell}/> Notifications
+                        </button>
+                        <button className="settings-button" onClick={() => setActiveSetting('Help')}>
+                            <FontAwesomeIcon icon={faQuestionCircle}/> Help
+                        </button>
+                    </div>
+                    <div className="settings-content">
+                        {activeSetting === 'Account' &&
+                            <div className="account-carrier-settings">
+                                <h3>General Info</h3>
+                                <div className="carrier-avatar-wrapper">
+                                    <div className="carrier-photo">
+                                        {selectedImage ?
+                                            <img src={selectedImage} className="carrier-avatar" alt="Selected"/> :
+                                            <UserAvatarComponent className="carrier-photo"/>}
+                                    </div>
+                                    <input type="file" id="hiddenFileInput" style={{display: 'none'}}
+                                           onChange={handleFileChange}/>
+                                    <div className="carrier-avatar-buttons">
+                                        <button className="change-photo-carrier" onClick={handleButtonClick}>Change
+                                            Customer Photo
+                                        </button>
+                                        <button className="delete-photo-carrier" onClick={handleDeleteClick}>Delete
+                                            Photo
+                                        </button>
+                                    </div>
+                                </div>
+                                <form onSubmit={handleFormSubmit}>
+                                    <div className="carrier-data-changing">
+                                        <label>Name</label>
+                                        <input type="text" name="name" placeholder={user ? user.name : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>Second Name</label>
+                                        <input type="text" name="secondName" placeholder={user ? user.secondName : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>Email</label>
+                                        <input type="tel" name="email" placeholder={user ? user.email : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>address</label>
+                                        <input type="text" name="address" placeholder={user ? user.phoneNumber : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>Password</label>
+                                        <input type="text" name="password" placeholder={user ? user.password : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <button className="submit-changes-button" type="submit">Save Changes</button>
+                                </form>
+                            </div>
+                        }
+                        {showSuccess &&
+                            <div className="success-message">
+                                Success
+                            </div>
+                        }
+                        {activeSetting === 'Password' &&
+                            <div className="account-carrier-settings-password">
+                                <h3>Password Settings</h3>
+                                <form>
+                                    <div className="carrier-data-changing">
+                                        <label>Password</label>
+                                        <input type="text" name="password" value={user.password}
+                                               placeholder={user ? user.password : ''}
+                                               onChange={handleFormChange}/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>New Password</label>
+                                        <input type="password" placeholder="New Password"/>
+                                    </div>
+                                    <div className="carrier-data-changing">
+                                        <label>I want to get two-factor authentication code in my email</label>
+                                        <Switch onChange={handleSwitchChange} checked={checked}/>
+                                    </div>
+                                </form>
+                                <button className="submit-changes-button">Save Changes</button>
+                            </div>
+                        }
+                        {activeSetting === 'Notifications' &&
+                            <div className="account-carrier-settings-notifications">
+                                <h3>Notifications</h3>
+                                <form>
+                                    <div className="carrier-data-changing-notifications">
+                                        <label>I want to get email notifications about new bids</label>
+                                        <Switch onChange={handleSwitchChange} checked={checked}/>
+                                    </div>
+                                    <div className="carrier-data-changing-notifications">
+                                        <label>I want to get email notifications about customer messages</label>
+                                        <Switch onChange={handleSwitchChange} checked={checked}/>
+                                    </div>
+                                    <div className="carrier-data-changing-notifications">
+                                        <label>I want to get email notifications about customer messages</label>
+                                        <Switch onChange={handleSwitchChange} checked={checked}/>
+                                    </div>
+                                    <div className="carrier-data-changing-notifications">
+                                        <label>I want to get email notifications about succesfull
+                                            registation\login</label>
+                                        <Switch onChange={handleSwitchChange} checked={checked}/>
+                                    </div>
+                                </form>
+                                <button className="submit-changes-button">Save Changes</button>
+                            </div>
+                        }
+                        {activeSetting === 'Help' &&
+                            <div className="help-info-container">
+                                <h3>Help Info</h3>
+                                <p>If you have any questions or issues, please refer to our <a
+                                    href="https://example.com/faq">FAQ</a> or <a
+                                    href="https://example.com/docs">documentation</a>.</p>
+                                <p>For further assistance, you can reach out to our support team at
+                                    support@example.com.</p>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default ShipperSettings;
+
+
+
+
+
+
+<div className="carrier-dashboard-content">
+                <div className="carrier-dashboard-content-header">
+                    <div className="carrier-dashboard-header-title">
+                        <h2 className="carrier-dashboard-content-title">Account Settings</h2>
+                        <p className="carrier-dashboard-content-subtitle">Make settings for your account</p>
+                    </div>
+                    <div className="carrier-account-container">
+                        <div className="carrier-dashboard-searchbar">
+                            <SearchIcon className="search-icon-searchbar"/>
+                            <input type="text" placeholder="Search anything..."/>
+                        </div>
+                        <div className="carrier-dashboard-account-info">
+                            <section className="account-info">
+                                <DefaultUserAvatar/>
+                                <div className="account-info-text">
+                                    <h3 className="account-info-name">John Doe</h3>
+                                    <p className="account-info-role">carrier</p>
+                                </div>
+                            </section>
+                            <Link to={"#"} className="account-info-buttons"><BellIcon/></Link>
+                            <Link to={"#"} className="account-info-buttons"><SettingsAccountIcon/></Link>
+                        </div>
+                    </div>
+                </div>
+                <div className="settings-container">
+                    <section className="settings-nav">
+                        <button
+                            onMouseEnter={() => setHoveredButton('SettingsAccount')}
+                            onMouseLeave={() => setHoveredButton('')}
+                            onClick={() => setActiveSetting('Account')}
+                        >
+                            {hoveredButton === 'SettingsAccount' ?
+                                <SettingsAccountWhite className="link-nav-button-icon"/> :
+                                <SettingsAccount className="link-nav-button-icon"/>}
+                            Account
+                        </button>
+                        <button
+                            onMouseEnter={() => setHoveredButton('PasswordSettings')}
+                            onMouseLeave={() => setHoveredButton('')}
+                            onClick={() => setActiveSetting('Password')}
+                        >
+                            {hoveredButton === 'PasswordSettings' ?
+                                <SettingsPasswordWhite className="link-nav-button-icon"/> :
+                                <SettingsPassword className="link-nav-button-icon"/>}
+                            Password
+                        </button>
+                        <button
+                            onMouseEnter={() => setHoveredButton('NotificationsButton')}
+                            onMouseLeave={() => setHoveredButton('')}
+                            onClick={() => setActiveSetting('Notifications')}
+                        >
+                            {hoveredButton === 'NotificationsButton' ?
+                                <SettingsNotificationsWhite className="link-nav-button-icon"/> :
+                                <SettingsNotifications className="link-nav-button-icon"/>}
+                            Notifications
+                        </button>
+                        <button
+                            onMouseEnter={() => setHoveredButton('HelpSettings')}
+                            onMouseLeave={() => setHoveredButton('')}
+                            onClick={() => setActiveSetting('Help')}
+                        >
+                            {hoveredButton === 'HelpSettings' ? <SettingsHelpWhite className="link-nav-button-icon"/> :
+                                <SettingsHelp className="link-nav-button-icon"/>}
+                            Help
+                        </button>
+                    </section>
+                    <section className="settings-content">
+                        {activeSetting === 'Account' && (
+                            <>
+                                <h2>Account Info</h2>
+                                <div className="account-info-details-container">
+                                    <div className="avatar-settings">
+                                        <DefaultUserAvatar className="avatar-user-photo"/>
+                                        <section className="avatar-settings-wrapper">
+                                            <button className="change-avatar">Change Avatar</button>
+                                            <button className="delete-avatar">Delete Photo</button>
+                                        </section>
+                                    </div>
+                                    <div className="account-info-settings">
+                                        <section className="account-info-settings-1">
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="firstName"
+                                                    id="firstName"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required={true}
+                                                />
+                                                <label htmlFor="firstName" className="google-style-input-label">First
+                                                    Name</label>
+                                            </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="lastName"
+                                                    id="lastName"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required={true}
+                                                />
+                                                <label htmlFor="lastName" className="google-style-input-label">Last
+                                                    Name</label>
+                                            </div>
+                                        </section>
+                                        <section className="account-info-settings-2">
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="phoneNumber"
+                                                    id="phoneNumber"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required={true}
+                                                />
+                                                <label htmlFor="phoneNumber" className="google-style-input-label">Phone
+                                                    Number</label>
+                                            </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="carrierEmail"
+                                                    id="carrierEmail"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required={true}
+                                                />
+                                                <label htmlFor="carrierEmail"
+                                                       className="google-style-input-label">Email</label>
+                                            </div>
+                                        </section>
+                                    </div>
+                                    <button className="apply-settings-button">Apply</button>
+                                </div>
+                                <section className="deleting-account-section">
+                                    <h2>Delete Account</h2>
+                                    <a href="#">I want to permanently delete my account<DeleteRedBinIcon
+                                        className="delete-bin-icon"/></a>
+                                </section>
+                            </>
+                        )}
+                        {activeSetting === 'Password' && (
+                            <>
+                                <h2>Password Settings</h2>
+                                <p>To change your password, you need to enter your old password, then after this you
+                                    need to enter your new password</p>
+                                <section className="password-settings-container">
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="oldPassword"
+                                            id="oldPassword"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                        />
+                                        <label htmlFor="oldPassword" className="google-style-input-label">Old
+                                            Password</label>
+                                    </div>
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="newPassword"
+                                            id="newPassword"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                        />
+                                        <label htmlFor="newPassword"
+                                               className="google-style-input-label">New Password</label>
+                                    </div>
+                                </section>
+                                <section className="warning-message-section">
+                                    <h3>If you change your password, you will be able to change it again after 7 days</h3>
+                                    <button className="apply-settings-button-bottom">Apply</button>
+                                </section>
+                            </>
+                        )}
+                        {activeSetting === 'Notifications' && (
+                            <>
+                                <h2>Notification Settings</h2>
+                                <p>Your can in detail change service notification</p>
+                                <section className="password-settings-container">
+                                    <Switch isOn={isOnAI} handleToggle={handleToggleAI} label="Get notifications from AI" />
+                                    <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier} label="Get notifications from Carrier" />
+                                    <Switch isOn={isOnDriver} handleToggle={handleToggleDriver} label="Get notifications from Driver" />
+                                    <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates} label="Get notifications of updates" />
+                                </section>
+                                <section className="warning-message-section">
+                                    <h3>After confirmation, the changes take effect immediately</h3>
+                                    <button className="apply-settings-button-bottom">Apply</button>
+                                </section>
+                            </>
+                        )}
+                        {activeSetting === 'Help' && (
+                            <>
+                                <h2>Help</h2>
+                                <p>For help, you can contact us by email or phone</p>
+
+                                <h2>I have a problem using service</h2>
+                                <p>If you have any problem with service fill this form, then send it</p>
+                                <section className="password-settings-container">
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="userEmail"
+                                            id="userEmail"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                        />
+                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
+                                    </div>
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="text"
+                                            id="newPassword"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                            style={{
+                                                height: "150px"
+                                            }}
+                                        />
+                                        <label htmlFor="newPassword"
+                                               className="google-style-input-label">Your Problem Description</label>
+                                    </div>
+                                </section>
+                                <button className="apply-settings-button-bottom">Send</button>
+                                <h2>I want to give feedback about project</h2>
+                                <p>Could us know in details, what satisfied you or what disappoint you</p>
+                                <section className="password-settings-container">
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="userEmail"
+                                            id="userEmail"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                        />
+                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
+                                    </div>
+                                    <div className="google-input-wrapper">
+                                        <input
+                                            type="text"
+                                            id="newPassword"
+                                            autoComplete="off"
+                                            className="google-style-input"
+                                            required={true}
+                                            style={{
+                                                height: "150px"
+                                            }}
+                                        />
+                                        <label htmlFor="newPassword"
+                                               className="google-style-input-label">Your Problem Description</label>
+                                    </div>
+                                </section>
+                                <button className="apply-settings-button-bottom">Send</button>
+                            </>
+                        )}
+                    </section>
+                </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+

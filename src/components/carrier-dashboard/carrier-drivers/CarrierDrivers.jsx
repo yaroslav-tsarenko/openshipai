@@ -1,776 +1,415 @@
 import React, {useEffect, useState, useRef} from "react";
-import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComment, faSearch} from "@fortawesome/free-solid-svg-icons";
-import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
-import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
-import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
-import '../CarrierDashboard.css';
-import {faEdit, faTrashAlt, faEllipsisH} from '@fortawesome/free-solid-svg-icons';
-import html2canvas from 'html2canvas';
-import {saveAs} from 'file-saver';
-import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
-import {loadStripe} from '@stripe/stripe-js';
-import {v4 as uuidv4} from 'uuid';
-import {ClipLoader} from "react-spinners";
-
-const stripePromise = loadStripe('your-stripe-public-key');
-const stripe = await stripePromise;
+import '../CarrierDashboard.css';
+import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
+import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
+import {ReactComponent as DriverAvatarExample} from "../../../assets/driver-photo-example.svg";
+import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
+import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
+import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
+import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
+import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
+import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
+import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
+import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
+import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
+import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
+import {ReactComponent as LoadBoxIconWhite} from "../../../assets/LoadBoxIconWhite.svg";
+import {ReactComponent as TireIcon} from "../../../assets/TireIcon.svg";
+import {ReactComponent as TireIconWhite} from "../../../assets/tire-icon-white.svg";
+import {ReactComponent as LoadBoxIcon} from "../../../assets/load-box-icon.svg";
+import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
+import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
+import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
+import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
+import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
+import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
+import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon-plus.svg";
+import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
+import {ReactComponent as CarrierIcon} from "../../../assets/trane-logo-carrier.svg";
+import {useParams} from 'react-router-dom';
+import {Link} from "react-router-dom";
+import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
+import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
+import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 
 const CarrierDrivers = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [user, setUser] = useState(null);
-    const navigate = useNavigate();
-    const [chatEndpoint, setChatEndpoint] = useState(null);
-    const {personalEndpoint} = useParams();
-    const [vehicleLoads, setVehicleLoads] = useState([]);
-    const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
-    const [commercialTruckLoads, setCommercialTruckLoads] = useState([]); // Add this line
-    const [boatLoads, setBoatLoads] = useState([]); // Add this line
-    const [constructionEquipmentLoads, setConstructionEquipmentLoads] = useState([]); // Add this line
-    const [heavyEquipmentLoads, setHeavyEquipmentLoads] = useState([]); // Add this line
-    const [carrier, setCarrier] = useState([]);
-    const [data, setData] = useState([]);
-    const [isExpanded, setIsExpanded] = useState(false);
-    const [touchStart, setTouchStart] = useState(null);
-    const [touchEnd, setTouchEnd] = useState(null);
-    const sidebarRef = useRef(null);
-    const minSwipeDistance = 50;
-    const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
-    const [editingLoad, setEditingLoad] = useState(null); // Holds the load currently being edited
-    const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedLoad, setSelectedLoad] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [showDetails, setShowDetails] = useState(false);
-    const [formData, setFormData] = useState(null);
-    const [showEditForm, setShowEditForm] = useState(false);
-    const [isPopupVisible, setIsPopupVisible] = useState(false);
-    const sigCanvas = useRef({});
-    const [selectedDropdown, setSelectedDropdown] = useState(null);
-    const dropdownRef = useRef(null);
-    const [showBidPopup, setShowBidPopup] = useState(false);
-    const [bid, setBid] = useState('');
-    const [currentTable, setCurrentTable] = useState(null);
-    const [bids, setBids] = useState({});
-    const [loadPrice, setLoadPrice] = useState(0);
-    const [currentLoadID, setCurrentLoadID] = useState(null);
-    const [newBid, setNewBid] = useState(null);
-    const [isAddDriverEnabled, setIsAddDriverEnabled] = useState(false);
-    const [isAddDriverPopupVisible, setIsAddDriverPopupVisible] = useState(false);
+    const [hoveredButton, setHoveredButton] = useState('');
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isEmailSentSuccesfully, setIsEmailSentSuccesfully] = useState(false);
+    const [isFail, setIsFail] = useState(false);
     const {carrierID} = useParams();
-    const [isLoading, setIsLoading] = useState(true);
-    const [drivers, setDrivers] = useState([]);
-    const handleBidClick = (tableId) => {
-        setCurrentTable(tableId);
-        setShowBidPopup(true);
-    };
-    const handleCloseBidPopup = () => {
-        setShowBidPopup(false);
-    };
+    const [isSuccessCredentials, setIsSuccessCredentials] = useState(false);
+    const [isDriverPopupOpen, setIsDriverPopupOpen] = useState(false);
+    const [sendEmailDriver, setSendEmailDriver] = useState(false);
+    const [sendDriverDataFailed, setSendDriverDataFailed] = useState(false);
+    const [formData, setFormData] = useState({
+        driverFirstAndLastName: '',
+        driverEmail: '',
+        driverPhoneNumber: '',
+        driverDateOfBirth: '',
+        driverAddress: '',
+        driverLicenseClass: '',
+        role: 'driver',
+        driverPhoto: '',
+        driverPassword: (Math.random().toString(36) + Math.random().toString(36)).slice(2, 66),
+        driverID: Math.random().toString(36).substring(2, 36) + Math.random().toString(36).substring(2, 36)
+            + Math.random().toString(36).substring(2, 36),
+        driverCreatedByCarrierID: carrierID,
+    });
 
-    const handleBidChange = (e) => {
-        setBid(e.target.value);
-    };
-
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-drivers')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setDrivers(response.data.drivers); // Set the drivers in state
-                } else {
-                    console.error('Error fetching drivers:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching drivers:', error);
-            });
-    }, []);
-    useEffect(() => {
-        const fetchDrivers = async () => {
-            setIsLoading(true);
-            try {
-                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers');
-                setDrivers(response.data);
-                setIsLoading(false);
-            } catch (error) {
-                console.error('Error fetching drivers:', error);
-                window.alert('Error fetching drivers');
-                setIsLoading(false);
-            }
-        };
-        fetchDrivers();
-    }, []);
-    useEffect(() => {
-        commercialTruckLoads.forEach(load => {
-            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
-                .then(response => {
-                    setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
-                })
-                .catch(error => {
-                    console.error("Error fetching bid: ", error);
-                });
-        });
-    }, [commercialTruckLoads]);
-
-    const handleBidSubmit = (load, e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-bid', {commercialLoadID: load.commercialLoadID, bid})
-            .then(response => {
-                console.log("Bid submitted successfully");
-                setBid('');
-
-                // Fetch the bid by commercialLoadID from the database
-                axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
-                    .then(response => {
-                        // Update the bids state with the fetched bid
-                        setBids(prevBids => ({...prevBids, [load.commercialLoadID]: response.data.bid}));
-                    })
-                    .catch(error => {
-                        console.error("Error fetching bid: ", error);
-                    });
-            })
-            .catch(error => {
-                console.error("Error submitting bid: ", error);
-            });
-    };
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
-    const saveSignature = () => {
-        const docWrapper = document.querySelector('.doc-wrapper');
-        html2canvas(docWrapper).then(canvas => {
-            const imgData = canvas.toDataURL(); // Convert the canvas to a Base64 string
-            axios.post('https://jarvis-ai-logistic-db-server.onrender.com/api/save-signature', {
-                imgData,
-                userEndpoint: user.personalEndpoint,
-                email: user.email,
-                signed: true,
-            }) // Send a POST request to the server
-                .then(response => {
-                    console.log(response);
-                    // Download the signature
-                    const imgBlob = atob(imgData.split(',')[1]); // Decode the Base64 string
-                    const array = [];
-                    for (let i = 0; i < imgBlob.length; i++) {
-                        array.push(imgBlob.charCodeAt(i));
-                    }
-                    const file = new Blob([new Uint8Array(array)], {type: 'image/png'});
-                    saveAs(file, 'signature.png');
-                })
-                .catch(error => console.error(error));
-        });
-    };
-
-    const handlePay = async (amount) => {
-        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
-        const sessionId = response.data.sessionId;
-
-        const stripe = await stripePromise;
-        const {error} = await stripe.redirectToCheckout({sessionId});
-
-        if (error) {
-            console.log(error);
-        }
-    };
-    const clearSignature = () => {
-        sigCanvas.current.clear();
-    };
-
-    const handleOpenPopup = () => {
-        setIsPopupVisible(true);
-    };
-
-    const handleClosePopup = () => {
-        setIsPopupVisible(false);
-    };
-    const handleFormChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
-    const handleEdit = (load) => {
-        setSelectedLoad(load);
-        setFormData(load); // Set the formData state to the current load
-        setShowEditForm(true); // Open the edit form
-    };
-    const handleCancel = () => {
-        setShowEditForm(false); // Close the edit form
-    };
-    const handleDetails = (load) => {
-        setSelectedLoad(load);
-        setFormData(load); // Set the formData state to the current load
-        setShowDetails(!showDetails);
-    };
-    const handleDelete = (driver) => {
-        if (window.confirm('Are you sure you want to delete this driver?')) {
-            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/delete-driver/${driver.driverID}`)
-                .then(response => {
-                    if (response.status === 200) {
-                        // Remove the deleted driver from the state
-                        setDrivers(drivers.filter(d => d.driverID !== driver.driverID));
-                    } else {
-                        console.error('Error deleting driver:', response);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting driver:', error);
-                });
-        }
-    };
-    const toggleOpen = (index) => {
-        if (selectedDropdown === index) {
-            setSelectedDropdown(null);
-        } else {
-            setSelectedDropdown(index);
-        }
-    };
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
-    useEffect(() => {
-        const target = sidebarRef.current;
-        const handleTouchStart = (e) => {
-            setTouchEnd(null);
-            setTouchStart(e.targetTouches[0].clientX);
-        };
-        const handleTouchMove = (e) => {
-            setTouchEnd(e.targetTouches[0].clientX);
-        };
-        target.addEventListener('touchstart', handleTouchStart);
-        target.addEventListener('touchmove', handleTouchMove);
-        return () => {
-            target.removeEventListener('touchstart', handleTouchStart);
-            target.removeEventListener('touchmove', handleTouchMove);
-        };
-    }, []);
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user/${personalEndpoint}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setUser(response.data); // Set the user state with the fetched data
-                } else {
-                    console.error('Error fetching user data:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching user data:', error);
-            });
-    }, []);
-    useEffect(() => {
-        if (!touchStart || !touchEnd) return;
-        const distance = touchStart - touchEnd;
-        const isLeftSwipe = distance > minSwipeDistance;
-        const isRightSwipe = distance < -minSwipeDistance;
-
-        if (isLeftSwipe) {
-            setIsSidebarOpen(false);
-        } else if (isRightSwipe) {
-            setIsSidebarOpen(true);
-        }
-    }, [touchStart, touchEnd]);
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/all-user-loads')
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-    }, []);
-
-    const handleDriverFormSubmit = async (event) => {
-        event.preventDefault();
-        const newDriver = {
-            driverID: uuidv4(),
-            carrierId: carrierID,
-            firstName: event.target.firstName.value,
-            lastName: event.target.lastName.value,
-            phoneNumber: event.target.phoneNumber.value,
-            email: event.target.email.value,
-            licensePlate: event.target.licensePlate.value,
-            truck: event.target.truck.value
-        };
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', newDriver);
-            console.log(response.data);
-            setIsAddDriverPopupVisible(false);
-            window.location.reload();
+            const response = await axios.post('http://localhost:8080/create-driver', formData);
+            console.log('Response:', response);
+            if (response.status === 200) {
+                console.log('Driver created successfully');
+                setIsSuccess(true);
+                setIsSuccessCredentials(true);
+            } else {
+                console.log('Failed to create driver');
+                setIsFail(true);
+            }
         } catch (error) {
-            console.error(error);
+            console.error('Error:', error);
+            setIsFail(true);
         }
     };
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
 
-        // Send a PUT request to the server to update the load
-        axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-commercial-truck-load/${selectedLoad._id}`, formData)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    // Update the load in the state
-                    setCommercialTruckLoads(commercialTruckLoads.map(load => load._id === selectedLoad._id ? response.data : load));
-                    setShowDetails(false); // Close the details div
-                } else {
-                    console.error('Error updating load:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error updating load:', error);
+    const handleSendData = async () => {
+        const data = {
+            driverEmail: formData.driverEmail,
+            driverPassword: formData.driverPassword
+        };
+
+        try {
+            const response = await fetch('http://localhost:8080/send-driver-credentials', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
             });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const jsonResponse = await response.json();
+            console.log(jsonResponse);
+            setIsEmailSentSuccesfully(true);
+            setTimeout(() => {
+                setIsDriverPopupOpen(false);
+                setIsSuccessCredentials(false);
+            }, 1500)
+        } catch (error) {
+            console.error('Error:', error);
+        }
     };
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-heavy-equipment-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Heavy Equipment loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Heavy Equipment loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-construction-equipment-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setConstructionEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Construction Equipment loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Construction Equipment loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-boat-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setBoatLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Boat Loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Boat Loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-commercial-truck-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setCommercialTruckLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Commercial Truck loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Commercial Truck loads:', error);
-            });
-    }, []);
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/submit-vehicle-load/${personalEndpoint}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setVehicleLoads(response.data);
-                } else {
-                    console.error('No vehicle loads found');
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching vehicle loads:', error);
-            });
-    }, [personalEndpoint]); // Ensure this runs when personalEndpoint changes
 
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-moto-equipment-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setMotoEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Moto Equipment loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Moto Equipment loads:', error);
-            });
-    }, []);
+    const handleChange = (input) => (e) => {
+        setFormData({...formData, [input]: e.target.value});
+    };
 
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-carriers')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    const carriers = response.data;
-                    const carrier = carriers.filter(carrier => carrier.carrierID === carrierID);
-                    setCarrier(carrier[0]);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching carriers:', error);
-            });
-    }, [carrierID]);
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
-    const [searchQuery, setSearchQuery] = useState("");
-    const handleSearch = () => {
-        console.log(searchQuery);
-    };
-    const handleLogout = () => {
-        setUser(null); // Clear the user data from the state
-        navigate('/sign-in'); // Navigate to the login form
-    };
+
     return (
-        <div className="admin-dashboard-wrapper">
-            <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
-                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Drivers</p>
-                <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierID}`}
-                          className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faTruck}/>My Shipments</Link>
-                    <Link
-                        to={`/carrier-drivers/${carrierID}`}
-                        className="navigation-button-2">
-                        <FontAwesomeIcon
-                            className="navigation-icon"
-                            icon={faTruck}/>
-                        Drivers
-                    </Link>
-                    <Link to={`/carrier-deal-chat-conversation/${carrierID}`}
-                          className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faComment}/>Chat with Customer</Link>
-                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
-                        <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
-                    </Link>
-                </div>
-                <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-settings/${carrierID}`} className="navigation-button-settings"><FontAwesomeIcon
-                        className="navigation-icon" icon={faCog}/>Settings</Link>
-                    <Link to="/sign-in" className="navigation-button-logout"><FontAwesomeIcon
-                        className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
-                </div>
-            </div>
-            <button className="toggle-button" onClick={toggleSidebar}>
-                <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
-            </button>
-            <div className="admin-content">
-                <div className="admin-content-wrapper">
-                    <div className="admin-inner-content-first">
-                        <div className="search-bar">
-                            <FontAwesomeIcon icon={faSearch} className="search-icon"/>
-                            <input
-                                type="text"
-                                className="search-input"
-                                placeholder="Search all loads, drivers, etc."
-                                value={searchQuery}
-                                onChange={(e) => setSearchQuery(e.target.value)}
-                            />
-                        </div>
-                        <div className="user-details-wrapper">
-                            <UserAvatarComponent className="user-avatar"/>
-                            <div className="user-details">
-                                <p className="user-name">{carrier ? carrier.companyName : 'Loading...'}</p>
-                                <p className="user-status">Customer</p>
-                            </div>
-                            <BellComponent className="bell-icon"/>
-                        </div>
-                    </div>
-                    <div className="admin-inner-content-second">
-                        <div className="inner-content-second-text">
-                            <p className="inner-content-second-text-first">Drivers</p>
-                            <p className="inner-content-second-text-second">Monitor drivers, status, payments etc.</p>
-                        </div>
-                    </div>
-                    <div className="table-wrapper">
-                        <div className="table-columns-titles">
-                            <div>DRIVER NAME</div>
-                            <div>DRIVER EMAIL</div>
-                            <div>DRIVER TRUCK</div>
-                            <div>LICENSE PLATE</div>
-                            <div>DRIVER ID</div>
-                            <div>INFO</div>
-                        </div>
-                        {isLoading ? (
-                            <div className="clip-loader-container">
-                                <ClipLoader color={"#e7e7e7"} loading={true} size={35}/>
-                            </div>
-                        ) : (
-                            drivers && drivers.length > 0 && drivers.map((driver, index) => (
-                                <Link className="driver-linker" to={`/carrier-dashboard/${carrierID}/driver/${driver.driverID}`}>
-                                    <div className={`table-items-wrapper ${isAddDriverEnabled ? 'disabled' : ''}`}>
-                                        <div className={`table-item ${driver === selectedLoad ? 'selected' : ''}`}
-                                             key={index}>
-                                            <div>{driver.firstName}</div>
-                                            <div>{driver.email}</div>
-                                            <div>{driver.truck}</div>
-                                            <div>{driver.licensePlate}</div>
-                                            <div>{driver.email}</div>
-                                            <div className="dropdown" onClick={() => {
-                                                toggleOpen(index);
-                                                toggleDropdown();
-                                            }}>
-                                                <button className="dropdown-button">&#8942;</button>
-                                                {selectedDropdown === index && isOpen && (
-                                                    <div className="dropdown-menu-buttons">
-                                                        <a href="#/action-1" onClick={() => handleEdit(driver)}>Edit
-                                                            Load <FontAwesomeIcon className="icon-a" icon={faEdit}/></a>
-                                                        <a href="#/action-2" onClick={() => handleDetails(driver)}>More
-                                                            Details <FontAwesomeIcon className="icon-a"
-                                                                                     icon={faEllipsisH}/></a>
-                                                        <a href="#/action-3" onClick={() => handleDelete(driver)}>Delete
-                                                            Driver<FontAwesomeIcon className="icon-a"
-                                                                                   icon={faTrashAlt}/></a>
-                                                    </div>
-                                                )}
-                                            </div>
-                                        </div>
-                                        {showDetails && selectedLoad === driver && (
-                                            <div className="load-details-wrapper">
-                                                <div className="load-details">
-                                                    <label>
-                                                        <h2>Vehicle Type</h2>
-                                                        <p>{selectedLoad.vehicleType}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Vehicle Model</h2>
-                                                        <p>{selectedLoad.vehicleModel}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Vehicle Year</h2>
-                                                        <p>{selectedLoad.vehicleYear}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Vehicle Color</h2>
-                                                        <p>{selectedLoad.vehicleColor}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Vehicle License Plate</h2>
-                                                        <p>{selectedLoad.vehicleLicensePlate}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Vehicle Vin</h2>
-                                                        <p>{selectedLoad.vehicleVin}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Pickup Location</h2>
-                                                        <p>{selectedLoad.pickupLocation}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Delivery Location</h2>
-                                                        <p>{selectedLoad.deliveryLocation}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Is Convertible</h2>
-                                                        <p>{selectedLoad.isConvertible ? 'Yes' : 'No'}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Is Modified</h2>
-                                                        <p>{selectedLoad.isModified ? 'Yes' : 'No'}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Is Inoperable</h2>
-                                                        <p>{selectedLoad.isInoperable ? 'Yes' : 'No'}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Service Level</h2>
-                                                        <p>{selectedLoad.serviceLevel}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Enclosed Transport</h2>
-                                                        <p>{selectedLoad.enclosedTransport ? 'Yes' : 'No'}</p>
-                                                    </label>
-                                                    <label>
-                                                        <h2>Terms Agreed</h2>
-                                                        <p>{selectedLoad.termsAgreed ? 'Yes' : 'No'}</p>
-                                                    </label>
-                                                </div>
-                                                <button className="hide-details-button"
-                                                        onClick={() => setShowDetails(false)}>Hide
-                                                </button>
-                                            </div>
-                                        )}
-                                        {/*<div className="message-document-wrapper">
-                                    <a onClick={handleOpenPopup}>You need to sign a document!</a>
-                                    {isPopupVisible && (
-                                        <div className="popup-overlay">
-                                            <div className="popup">
-                                                <div className="doc-wrapper">
-                                                    <SignatureCanvas ref={sigCanvas} penColor='black' canvasProps={{
-                                                        width: 576,
-                                                        height: 811,
-                                                        className: 'sigCanvas'
-                                                    }}/>
-                                                </div>
-                                                <button className="clear-signature" onClick={clearSignature}>Clear
-                                                    Signature
-                                                </button>
-                                                <button className="close-button" onClick={handleClosePopup}>Close
-                                                </button>
-                                                <button className="save-doc-button" onClick={saveSignature}>Save
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>*/}
-                                        {/* <button className="pay-load-button" onClick={() => handlePay(555)}>Pay load</button>*/}
-                                        {showBidPopup && currentTable === index && (
-                                            <div className="bid-popup-background" onClick={handleBidClick}>
-                                                <div className="bid-popup" onClick={e => e.stopPropagation()}>
-                                                    <FontAwesomeIcon icon={faTimes} className="close-icon"
-                                                                     onClick={handleCloseBidPopup}/>
-                                                    <form onSubmit={handleBidSubmit}>
-                                                        <input
-                                                            className="bit-input"
-                                                            type="text"
-                                                            placeholder="Place bid:"
-                                                            value={bid}
-                                                            onChange={handleBidChange}
-                                                        />
-                                                        <button onClick={(e) => handleBidSubmit(driver, e)}>Submit Bid
-                                                        </button>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {showEditForm && selectedLoad === driver && (
-                                            <div className="load-edit-form-wrapper">
-                                                <div className="load-edit-form">
-                                                    <form onSubmit={handleFormSubmit}>
-                                                        <label>
-                                                            Vehicle Type:
-                                                            <input type="text" name="vehicleType"
-                                                                   value={formData.vehicleType}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleType}/>
-                                                        </label>
-                                                        <label>
-                                                            Vehicle Model:
-                                                            <input type="text" name="vehicleModel"
-                                                                   value={formData.vehicleModel}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleModel}/>
-                                                        </label>
-                                                        <label>
-                                                            Vehicle Year:
-                                                            <input type="text" name="vehicleYear"
-                                                                   value={formData.vehicleYear}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleYear}/>
-                                                        </label>
-                                                        <label>
-                                                            Vehicle Color:
-                                                            <input type="text" name="vehicleColor"
-                                                                   value={formData.vehicleColor}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleColor}/>
-                                                        </label>
-                                                        <label>
-                                                            Vehicle License Plate:
-                                                            <input type="text" name="vehicleLicensePlate"
-                                                                   value={formData.vehicleLicensePlate}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleLicensePlate}/>
-                                                        </label>
-                                                        <label>
-                                                            Vehicle Vin:
-                                                            <input type="text" name="vehicleVin"
-                                                                   value={formData.vehicleVin}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.vehicleVin}/>
-                                                        </label>
-                                                        <label>
-                                                            Pickup Location:
-                                                            <input type="text" name="pickupLocation"
-                                                                   value={formData.pickupLocation}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.pickupLocation}/>
-                                                        </label>
-                                                        <label>
-                                                            Delivery Location:
-                                                            <input type="text" name="deliveryLocation"
-                                                                   value={formData.deliveryLocation}
-                                                                   onChange={handleFormChange}
-                                                                   placeholder={formData.deliveryLocation}/>
-                                                        </label>
-                                                    </form>
-                                                </div>
-                                                <button className="edit-form-submit" type="submit">Submit</button>
-                                                <button className="edit-form-cancel" type="button"
-                                                        onClick={handleCancel}>Cancel
-                                                </button>
-                                            </div>
-                                        )}
-                                    </div>
-                                </Link>
-                            ))
-                        )}
-                    </div>
-                    <button className="add-driver-button" onClick={() => setIsAddDriverPopupVisible(true)}>
-                        <p className="add-driver-text">Add Driver</p>
+        <div className="carrier-dashboard-wrapper">
+            <DashboardSidebar
+                DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
+                TakeLoad={{visible: true, route: `/carrier-take-loads/${carrierID}`}}
+                MyLoads={{visible: true, route: `/carrier-loads/${carrierID}`}}
+                DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
+                Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
+                ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
+                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
+                Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+            />
+            <div className="carrier-dashboard-content">
+                <HeaderDashboard
+                    contentTitle="Сarrier Dashboard"
+                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
+                    accountName="TRANE"
+                    accountRole="Carrier"
+                    profileLink={`/carrier-profile/${carrierID}`}
+                    bellLink={`/carrier-settings/${carrierID}`}
+                    settingsLink={`/carrier-profile/${carrierID}`}
+                />
+                <div className="shipper-dashboard-load-buttons">
+                    <section className="shipper-filter-buttons">
+                        <button className="filter-buttons-shipper"
+                                onMouseEnter={() => setHoveredButton('SortButton')}
+                                onMouseLeave={() => setHoveredButton('')}>
+                            {hoveredButton === 'SortButton' ?
+                                <SortIconWhite className="button-nav-load-icon"/> :
+                                <SortIcon className="button-nav-load-icon"/>}
+                            Sort
+                        </button>
+                        <button className="filter-buttons-shipper"
+                                onMouseEnter={() => setHoveredButton('FilterButton')}
+                                onMouseLeave={() => setHoveredButton('')}>
+                            {hoveredButton === 'FilterButton' ?
+                                <FilterIconWhite className="button-nav-load-icon"/> :
+                                <FilterIcon className="button-nav-load-icon"/>}
+                            Filter
+                        </button>
+                    </section>
+                    <button className="create-load-button" onClick={() => setIsDriverPopupOpen(true)}>
+                        <CreateLoadIcon className="button-nav-load-icon"/>
+                        Add Driver
                     </button>
-                    {isAddDriverPopupVisible && (
-                        <div className="blurred-background">
-                            <div className="add-driver-popup">
-                                <button className="close-button"
-                                        onClick={() => setIsAddDriverPopupVisible(false)}>Close
-                                </button>
-                                <div className="car-delivery-form">
-                                    <form className="form-group" onSubmit={handleDriverFormSubmit}>
-                                        <label style={{
-                                            display: 'none',
-                                        }}>
-                                            Driver ID:
-                                            <input type="text" name="driverID"/>
-                                        </label>
-                                        <label style={{
-                                            display: 'none',
-                                        }}>
-                                            Carrier ID:
-                                            <input type="text" name="carrierId"/>
-                                        </label>
-                                        <label>
-                                            First Name:
-                                            <input type="text" name="firstName" required/>
-                                        </label>
-                                        <label>
-                                            Last Name:
-                                            <input type="text" name="lastName" required/>
-                                        </label>
-                                        <label>
-                                            Phone Number:
-                                            <input type="text" name="phoneNumber" required/>
-                                        </label>
-                                        <label>
-                                            Email:
-                                            <input type="email" name="email" required/>
-                                        </label>
-                                        <label>
-                                            License Plate:
-                                            <input type="text" name="licensePlate" required/>
-                                        </label>
-                                        <label>
-                                            Truck:
-                                            <input type="text" name="truck" required/>
-                                        </label>
-                                        <button className="submit-btn" type="submit">Add Driver</button>
-                                    </form>
+                    {isDriverPopupOpen && (
+                        <div className="create-driver-overlay">
+                            {isSuccess && <FloatingWindowSuccess text="Driver added succesfully"/>}
+                            {isFail && <FloatingWindowFailed text="Driver with this credentials already exist"/>}
+                            {sendEmailDriver && <FloatingWindowSuccess text="Driver's data sended to driver" />}
+                            {sendDriverDataFailed && <FloatingWindowFailed text="Failed to send data to driver" />}
+                            {isEmailSentSuccesfully && <FloatingWindowSuccess text="Email sent successfully" />}
+                            {isSuccessCredentials ? (
+                                <div className="create-driver-popup">
+                                    <section>
+                                        <div>
+                                            <h3>Congratulations!</h3>
+                                            <p>Driver added successfully</p>
+                                        </div>
+                                        <button onClick={() => {
+                                            setIsDriverPopupOpen(false);
+                                            setIsSuccessCredentials(false);}}>Close</button>
+                                    </section>
+                                    <div className="create-driver-wrapper-success">
+                                        <section>
+                                            <span>
+                                                <h3>Here is driver credentials</h3>
+                                                <p>Driver credentials must only be shared with driver, appreciate personal data </p>
+                                            </span>
+                                            <span>
+                                                <p>Driver Email</p>
+                                                <h3>{formData.driverEmail}</h3>
+                                            </span>
+                                            <span>
+                                                <p>Driver Password</p>
+                                                <h3>{formData.driverPassword}</h3>
+                                            </span>
+                                        </section>
+                                        <button onClick={handleSendData}>Send Data to Driver</button>
+                                    </div>
                                 </div>
-                            </div>
+                            ) : (
+                                <div className="create-driver-popup">
+                                    <section>
+                                        <h3>Add Driver</h3>
+                                        <button onClick={() => setIsDriverPopupOpen(false)}>Close</button>
+                                    </section>
+                                    <div className="create-driver-wrapper">
+                                        <div className="add-driver-avatar">
+                                            <h3>Add Driver Photo</h3>
+                                        </div>
+                                        <div className="create-driver-input">
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="driverFirstAndLastName"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required
+                                                    onChange={handleChange('driverFirstAndLastName')}
+                                                    value={formData.driverFirstAndLastName}
+                                                />
+                                                <label htmlFor="driverFirstAndLastName" className="google-style-input-label">First Name & Last Name</label>
+                                            </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="driverEmail"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required
+                                                    onChange={handleChange('driverEmail')}
+                                                    value={formData.driverEmail}
+                                                />
+                                                <label htmlFor="driverEmail" className="google-style-input-label">Driver
+                                                    Email</label>
+                                            </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="driverPhoneNumber"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    required
+                                                    onChange={handleChange('driverPhoneNumber')}
+                                                    value={formData.driverPhoneNumber}
+                                                />
+                                                <label htmlFor="driverPhoneNumber" className="google-style-input-label">Driver
+                                                    Phone Number</label>
+                                            </div>
+                                            <button onClick={handleSubmit}>Confirm</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     )}
+                </div>
+                <div className="carrier-dashboard-content-body">
+                    <div className="driver-container-card-wrapper">
+                        <div className="driver-container-card">
+                            <DriverAvatarExample className="driver-photo-example"/>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Name & Last Name</label>
+                                    <h3>Jack Daniels</h3>
+                                </section>
+                                <section>
+                                    <label>Truck</label>
+                                    <h3>MACK R</h3>
+                                </section>
+                                <section>
+                                    <label>Email</label>
+                                    <h3>jackdaniels@gmail.com</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Insurance Status</label>
+                                    <h3>Insured</h3>
+                                </section>
+                                <section>
+                                    <label>Insurance Expired Data</label>
+                                    <h3>25.03.2025</h3>
+                                </section>
+                                <section>
+                                    <label>Current Location</label>
+                                    <h3>Washington</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <button>
+                                    Get Location
+                                </button>
+                            </div>
+                        </div>
+                        <div className="driver-container-card">
+                            <DriverAvatarExample className="driver-photo-example"/>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Name & Last Name</label>
+                                    <h3>Jack Daniels</h3>
+                                </section>
+                                <section>
+                                    <label>Truck</label>
+                                    <h3>MACK R</h3>
+                                </section>
+                                <section>
+                                    <label>Email</label>
+                                    <h3>jackdaniels@gmail.com</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Insurance Status</label>
+                                    <h3>Insured</h3>
+                                </section>
+                                <section>
+                                    <label>Insurance Expired Data</label>
+                                    <h3>25.03.2025</h3>
+                                </section>
+                                <section>
+                                    <label>Current Location</label>
+                                    <h3>Washington</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <button>
+                                    Get Location
+                                </button>
+                            </div>
+                        </div>
+                        <div className="driver-container-card">
+                            <DriverAvatarExample className="driver-photo-example"/>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Name & Last Name</label>
+                                    <h3>Jack Daniels</h3>
+                                </section>
+                                <section>
+                                    <label>Truck</label>
+                                    <h3>MACK R</h3>
+                                </section>
+                                <section>
+                                    <label>Email</label>
+                                    <h3>jackdaniels@gmail.com</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Insurance Status</label>
+                                    <h3>Insured</h3>
+                                </section>
+                                <section>
+                                    <label>Insurance Expired Data</label>
+                                    <h3>25.03.2025</h3>
+                                </section>
+                                <section>
+                                    <label>Current Location</label>
+                                    <h3>Washington</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <button>
+                                    Get Location
+                                </button>
+                            </div>
+                        </div>
+                        <div className="driver-container-card">
+                            <DriverAvatarExample className="driver-photo-example"/>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Name & Last Name</label>
+                                    <h3>Jack Daniels</h3>
+                                </section>
+                                <section>
+                                    <label>Truck</label>
+                                    <h3>MACK R</h3>
+                                </section>
+                                <section>
+                                    <label>Email</label>
+                                    <h3>jackdaniels@gmail.com</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <section>
+                                    <label>Insurance Status</label>
+                                    <h3>Insured</h3>
+                                </section>
+                                <section>
+                                    <label>Insurance Expired Data</label>
+                                    <h3>25.03.2025</h3>
+                                </section>
+                                <section>
+                                    <label>Current Location</label>
+                                    <h3>Washington</h3>
+                                </section>
+                            </div>
+                            <div className="driver-info-container">
+                                <button>
+                                    Get Location
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

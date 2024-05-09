@@ -1,6 +1,45 @@
 import React, {useEffect, useState, useRef} from "react";
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {faComment} from "@fortawesome/free-solid-svg-icons";
+import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
+import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
+import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
+import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
+import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
+import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
+import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
+import {ReactComponent as SearchBarIcon} from "../../../assets/search-bar-icon.svg";
+import {ReactComponent as UserChatAvatar} from "../../../assets/chat-user-icon.svg";
+import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
+import {ReactComponent as AttachCamera} from "../../../assets/attach-camera-button.svg";
+import {ReactComponent as AttachImage} from "../../../assets/attach-image-button.svg";
+import {ReactComponent as AttachFile} from "../../../assets/attach-file-button.svg";
+import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
+import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
+import {ReactComponent as PlusIconBlue} from "../../../assets/plus-blue-icon.svg";
+import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
+import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
+import {ReactComponent as BlueCard} from "../../../assets/card-blue.svg";
+import {ReactComponent as RedCard} from "../../../assets/card-pink.svg";
+import {ReactComponent as AddNew} from "../../../assets/add-new-card.svg";
+import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
+import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
+import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
+import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
+import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
+import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
+import {ReactComponent as LoadBoxIconWhite} from "../../../assets/LoadBoxIconWhite.svg";
+import {ReactComponent as TireIcon} from "../../../assets/TireIcon.svg";
+import {ReactComponent as TireIconWhite} from "../../../assets/tire-icon-white.svg";
+import {ReactComponent as LoadBoxIcon} from "../../../assets/load-box-icon.svg";
+import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
+import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
+import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
+import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
+import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
 import {faBars, faTimes, faSignOutAlt, faCog, faTruck, faRobot, faUser} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../../assets/bell.svg";
@@ -9,11 +48,13 @@ import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
 import io from 'socket.io-client';
+import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 const CarrierChatPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
+    const [hoveredButton, setHoveredButton] = useState('');
     const [chatEndpoint, setChatEndpoint] = useState(null);
     const [vehicleLoads, setVehicleLoads] = useState([]);
     const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
@@ -154,21 +195,8 @@ const CarrierChatPage = () => {
             console.error('Error fetching chat data:', error);
         }
     };
-    useEffect(() => {
-        function handleClickOutside(event) {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
-                setIsOpen(false);
-            }
-        }
-
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, []);
 
     useEffect(() => {
-        // Fetch the carrier object
         axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
@@ -316,23 +344,6 @@ const CarrierChatPage = () => {
         setIsOpen(!isOpen);
     };
     useEffect(() => {
-        const target = sidebarRef.current;
-        const handleTouchStart = (e) => {
-            setTouchEnd(null);
-            setTouchStart(e.targetTouches[0].clientX);
-        };
-        const handleTouchMove = (e) => {
-            setTouchEnd(e.targetTouches[0].clientX);
-        };
-        target.addEventListener('touchstart', handleTouchStart);
-        target.addEventListener('touchmove', handleTouchMove);
-        return () => {
-            target.removeEventListener('touchstart', handleTouchStart);
-            target.removeEventListener('touchmove', handleTouchMove);
-        };
-    }, []);
-
-    useEffect(() => {
         if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
         const isLeftSwipe = distance > minSwipeDistance;
@@ -462,64 +473,40 @@ const CarrierChatPage = () => {
     };
 
     return (
-        <div className="admin-dashboard-wrapper">
-            <div className={`admin-side-bar ${isSidebarOpen ? "" : "closed"}`} ref={sidebarRef}>
-                <p className="dashboard-title"><FontAwesomeIcon className="navigation-icon" icon={faUser}/>Carrier's
-                    dashboard</p>
-                <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-dashboard/${carrierID}`}
-                          className="navigation-button"><FontAwesomeIcon
-                        className="navigation-icon" icon={faTruck}/>My Shipments</Link>
-                    <Link
-                        to={`/carrier-drivers/${carrierID}`}
-                        className="navigation-button">
-                        <FontAwesomeIcon
-                            className="navigation-icon"
-                            icon={faTruck}/>
-                        Drivers
-                    </Link>
-                    <Link to={`/carrier-deal-chat-conversation/${carrierID}`}
-                          className="navigation-button-2"><FontAwesomeIcon
-                        className="navigation-icon" icon={faComment}/>Chat with Customer </Link>
-                    <Link to={`/jarvis-chat/${carrierID}/${chatEndpoint}`} className="navigation-button">
-                        <FontAwesomeIcon className="navigation-icon" icon={faRobot}/>Jarvis Chat Page
-                    </Link>
+        <div className="carrier-dashboard-wrapper">
+            <DashboardSidebar
+                DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
+                TakeLoad={{visible: true, route: `/carrier-take-loads/${carrierID}`}}
+                MyLoads={{visible: true, route: `/carrier-loads/${carrierID}`}}
+                DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
+                Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
+                ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
+                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
+                Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+            />
+            <div className="carrier-deal-conversations-sidebar">
+                <div className="chat-conversation-search-bar">
+                    <SearchBarIcon width="15"/>
+                    <input type="text" placeholder="Search chat by load ID..."/>
                 </div>
-                <div className="admin-side-bar-navigation">
-                    <Link to={`/carrier-settings/${carrierID}`} className="navigation-button-settings"><FontAwesomeIcon
-                        className="navigation-icon" icon={faCog}/>Settings</Link>
-                    <Link to="/jarvis-chat" className="navigation-button-logout"><FontAwesomeIcon
-                        className="navigation-icon" icon={faSignOutAlt}/>Logout</Link>
-                </div>
-            </div>
-            <div className="deal-conversations-sidebar">
-                <h3>Your active Deals</h3>
                 {conversations.map((conversation, index) => (
                     <div key={index} className="chat-id-container"
                          onClick={() => handleChatSelection(conversation.chatID)}>
-                        <h5>Deal Conversation ID:</h5>
-                        <h4>{conversation.chatID}</h4>
-                        <h6 className="chat-id-number">{conversation.chatID}</h6>
+                        <UserChatAvatar/>
+                        <div className="chat-details">
+                            <h3>Carrier Name</h3>
+                            <h4>{conversation.chatID}</h4>
+                        </div>
                     </div>
                 ))}
             </div>
-            <button className="toggle-button" onClick={toggleSidebar}>
-                <FontAwesomeIcon className="fa-bars-icon-times-icon" icon={isSidebarOpen ? faTimes : faBars}/>
-            </button>
-            <div className="customer-chat-content">
-                <div className="customer-chat-admin-inner-content-second">
-                    <div className="inner-content-second-text">
-                        <p className="inner-content-second-text-first">Start Messaging with Customer!</p>
-                        <p className="inner-content-second-text-second">Be careful due scammers</p>
+            <div className="carrier-dashboard-content">
+                <div className="carrier-chat-header">
+                    <div className="shipper-carrier-chat-header">
+                        <span className="status-circle"></span>
+                        <h1>Jack Daniels</h1>
                     </div>
-                    <div className="user-details-wrapper">
-                        <UserAvatarComponent className="user-avatar"/>
-                        <div className="user-details">
-                            <p>{carrier?.companyName}</p>
-                            <p className="user-status">Carrier</p>
-                        </div>
-                        <BellComponent className="bell-icon"/>
-                    </div>
+                    <h1>5426-3562-5625-7754</h1>
                 </div>
                 {chatID ? (
                     <div className="messaging-chat-wrapper">
@@ -535,6 +522,7 @@ const CarrierChatPage = () => {
                                         color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
                                         alignItems: 'start',
                                         textAlign: 'left',
+                                        fontSize: '1.3rem',
                                         padding: '10px',
                                         borderRadius: '10px',
                                         margin: '10px'
@@ -570,18 +558,21 @@ const CarrierChatPage = () => {
                                 </div>
                             ))}
                         </div>
-                        <button className="bol-doc-button" onClick={() => setSendBOLDocument(true)}>
-                            document
-                        </button>
-                        <div className="chat-input-area">
-                            <input
-                                type="text"
-                                className="chat-input"
-                                placeholder="Type your message here..."
-                                value={inputMessage}
-                                onChange={e => setInputMessage(e.target.value)}
-                                onKeyDown={handleKeyDown}
-                            />
+                        <div className="chat-input-area-wrapper">
+                            <button className="send-bol-button">Send BOL</button>
+                            <div className="chat-input-area">
+                                <input
+                                    type="text"
+                                    className="chat-input"
+                                    placeholder="Type your message here..."
+                                    value={inputMessage}
+                                    onChange={e => setInputMessage(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                />
+                                <AttachCamera className="chat-input-icons"/>
+                                <AttachImage className="chat-input-icons"/>
+                                <AttachFile className="chat-input-icons"/>
+                            </div>
                             <button
                                 className="chat-send-button"
                                 onClick={() => {
@@ -589,14 +580,14 @@ const CarrierChatPage = () => {
                                     setInputMessage("");
                                 }}
                             >
-                                Send
+                                <SendButtonIcon width="30"/>
                             </button>
                         </div>
                     </div>
                 ) : (
                     <div className="choose-chat-conversation">
-                    <p>Choose chat to start speaking with customer!</p>
-                </div>
+                        <p>Choose chat to start speaking with customer!</p>
+                    </div>
                 )}
             </div>
         </div>

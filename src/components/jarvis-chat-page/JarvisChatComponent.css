@@ -243,7 +243,7 @@ body {
     transition: 0.5s ease-in-out;
 }
 
-.side-bar.ai-chat-wrapper{
+.side-bar.ai-chat-wrapper {
     max-width: 450px;
 }
 
@@ -283,7 +283,7 @@ nav {
     max-width: 750px;
 }
 
-.greeting-wrapper{
+.greeting-wrapper {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -401,12 +401,18 @@ nav {
 }
 
 @keyframes gradient-animation {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
 }
 
-.greeting-subtitle{
+.greeting-subtitle {
     display: flex;
     flex-direction: column;
     text-align: left;
@@ -415,7 +421,8 @@ nav {
     margin: 0 170px 0 0;
 
 }
-.greeting-subtitle span{
+
+.greeting-subtitle span {
     background: linear-gradient(to right, var(--light-grey), var(--light-grey-hovered));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -435,7 +442,7 @@ nav {
     overflow-x: hidden;
 }
 
-.chat-sessions-introduction{
+.chat-sessions-introduction {
     margin: 200px auto;
     border-radius: 20px;
     width: 250px;
@@ -482,24 +489,32 @@ nav {
 .new-chat-session-button {
     border-radius: 30px;
     font-size: 1.8rem;
-    margin: 0 5px 0 0 ;
-    padding: 5px;
-    width: 40px;
+    height: 50px;
+    width: 50px;
     border: none;
     transition: 0.2s ease-in-out;
 }
 
-.new-chat-session-button:hover{
-    background: var(--light-grey-hovered);
+.new-chat-session-button:hover {
+    background: var(--light-grey-hovered-transparent);
 }
 
-.chat-control-buttons-section{
+.chat-control-buttons-section {
     margin: 15px 15px auto auto;
     border-bottom: 1px solid var(--light-grey);
     width: 100%;
     display: flex;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
     padding: 0 10px 10px 10px;
     justify-content: space-between;
+}
+
+.chat-control-buttons-section h2 {
+    margin: 0 0 0 15px;
+    font-size: 1.5rem;
+    color: var(--grey);
 }
 
 .my-loads-dashboard-button {
@@ -526,7 +541,7 @@ nav {
     flex-direction: column;
 }
 
-.bottom-sidebar-section{
+.bottom-sidebar-section {
     border-top: 1px solid var(--light-grey);
     margin: 0 0 25px 0;
     justify-content: center;
@@ -536,7 +551,7 @@ nav {
     padding: 15px 5px 0 5px;
 }
 
-.bottom-sidebar-section p{
+.bottom-sidebar-section p {
     margin: 0 auto;
     font-size: 1rem;
     width: 210px;
@@ -841,7 +856,7 @@ p.p-text-message {
 }
 
 
-.question-select-container{
+.question-select-container {
     max-width: 650px;
     width: 100%;
     height: 120px;
@@ -853,23 +868,25 @@ p.p-text-message {
     margin: 0 0 10px 0
 }
 
-.question-button-text{
+.question-button-text {
     margin: 0 0 0 10px;
 }
 
-.select-category-title{
+.select-category-title {
     width: 50px;
     font-size: 1.5rem;
-    color: var(--royal-white);
+    color: var(--dark-grey);
     margin: 0 0 10px 0;
 }
 
-.select-category-description{
+.select-category-description {
     margin: 0;
+    color: var(--light-grey);
 }
 
-.select-category-description p{
+.select-category-description p {
     width: 70px;
+    color: var(--light-grey);
 }
 
 .question-select-container::-webkit-scrollbar {
@@ -877,16 +894,14 @@ p.p-text-message {
 }
 
 
-.select-category-button{
+.select-category-button {
     display: flex;
     text-align: left;
     height: 80px;
     width: 240px;
     justify-content: space-between;
-    background: var(--royal-blue);
     font-weight: bold;
-    color: white;
-    border: none;
+    border: 1px solid var(--royal-blue);
     align-items: center;
     border-radius: 30px;
     padding: 0 15px 0 15px;
@@ -901,6 +916,7 @@ p.p-text-message {
     background: linear-gradient(90deg, var(--royal-blue-hovered), rgba(0, 0, 0, 0.07), var(--royal-blue-hovered));
     background-size: 200% auto;
     color: white;
+    border: none;
     animation: shimmer 4s infinite;
     transition: 0.4s ease-in-out;
 }

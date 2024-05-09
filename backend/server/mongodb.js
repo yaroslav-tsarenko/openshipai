@@ -60,49 +60,9 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
-const storage = multer.diskStorage({
-    destination: function(req, file, cb) {
-        cb(null, './uploads/');
-    },
-    filename: function(req, file, cb) {
-        cb(null, new Date().toISOString() + file.originalname);
-    }
-});
 
 function generatePersonalEndpoint() {
     return shortid.generate();
-}
-
-const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-        user: 'hauldepot@gmail.com',
-        pass: 'cdpntmwrxqkjdhta'
-    }
-});
-
-const mailOptions = {
-    from: 'hauldepot@gmail.com',
-    to: 'yaroslav7v@gmail.com',
-    subject: 'Sending Email using Node.js',
-    text: 'That was easy!'
-};
-
-function sendEmail(to, subject, text) {
-    const mailOptions = {
-        from: 'hauldepot@gmail.com',
-        to: to,
-        subject: subject,
-        text: text
-    };
-
-    transporter.sendMail(mailOptions, function(error, info){
-        if (error) {
-            console.log(error);
-        } else {
-            console.log('Email sent: ' + info.response);
-        }
-    });
 }
 
 mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mongodb.net/', {
@@ -114,9 +74,41 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
     console.error('Failed to connect to MongoDB:', err);
 });
 
+
+const transporter = nodemailer.createTransport({
+    host: "live.smtp.mailtrap.io",
+    port: 587,
+    secure: false,
+    auth: {
+        user: "api",
+        pass: "497af0a880150a79c7a956d93902bdc9",
+    },
+});
+
+async function sendEmailWithNode(driverEmail, driverPassword) {
+    const info = await transporter.sendMail({
+        from: "info@demomailtrap.com",
+        to: "openshipai@gmail.com",
+        subject: "Driver Credentials",
+        text: `Driver Email: ${driverEmail}\nDriver Password: ${driverPassword}`,
+        html: `<p>Driver Email: ${driverEmail}</p><p>Driver Password: ${driverPassword}</p>`,
+    });
+    console.log("Message sent: %s", info.messageId);
+}
+
+app.post('/send-driver-credentials', async (req, res) => {
+    const { driverEmail, driverPassword } = req.body;
+    try {
+        await sendEmailWithNode(driverEmail, driverPassword);
+        res.status(200).send({ message: 'Email sent successfully' });
+    } catch (error) {
+        console.error('Failed to send email:', error);
+        res.status(500).send({ message: 'Failed to send email' });
+    }
+});
+
 app.get('/all-user-loads', async (req, res) => {
     try {
-        // Fetch all user loads from each schema
         const userLoads = await Promise.all([
             UserModel.find(),
             ChatHistory.find(),
@@ -1036,13 +1028,18 @@ app.get('/get-expedite-loads', async (req, res) => {
 });
 
 app.post('/create-driver', async (req, res) => {
-    const newDriver = new Driver(req.body);
-
+    const driverData = req.body;
     try {
+        const existingDriver = await Driver.findOne({ driverEmail: driverData.driverEmail });
+        if (existingDriver) {
+            return res.status(400).json({ status: 'Error', message: 'Driver with this email already exists' });
+        }
+        const newDriver = new Driver(driverData);
         const savedDriver = await newDriver.save();
-        res.json(savedDriver);
+        res.status(200).json({ status: 'Success', driver: savedDriver });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error:', error);
+        res.status(500).json({ status: 'Error', message: error.message });
     }
 });
 
@@ -1516,7 +1513,6 @@ app.post('/sign-up', (req, res) => {
     newUser
         .save()
         .then(() => {
-            sendEmail(email, 'Welcome to Our Service', 'Thank you for signing up!');
             res.json({ status: 'Success', message: 'User registered successfully' });
         })
         .catch((err) => {
@@ -1529,13 +1525,12 @@ app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
     const carrier = await Carrier.findOne({ carrierAccountAccountEmail: email });
     const shipper = await Shipper.findOne({ userShipperEmail: email });
-    const driver = await Driver.findOne({ email: email });
-
+    const driver = await Driver.findOne({ driverEmail: email });
     if (carrier && carrier.carrierAccountPassword === password) {
         res.json({ status: 'Success', role: 'carrier', id: carrier.carrierID });
     } else if (shipper && shipper.userShipperPassword === password) {
         res.json({ status: 'Success', role: 'shipper', id: shipper.userShipperID });
-    } else if (driver && driver.password === password) {
+    } else if (driver && driver.driverPassword === password) {
         res.json({ status: 'Success', role: 'driver', id: driver.driverID });
     } else {
         res.json({ status: 'Error', message: 'Invalid email or password' });
@@ -1594,10 +1589,6 @@ app.post('/google-login', async (req, res) => {
             },
             { upsert: true, new: true, setDefaultsOnInsert: true }
         );
-
-        // Send an email after successful login
-        sendEmail(user.email, 'Successful Login with Google', 'You have been successfully logged in with Google! We hope our service will solve your different life issues');
-
         res.json({ status: "Success", user: user });
     } catch (error) {
         console.error(error);
@@ -1616,10 +1607,6 @@ app.delete('/delete-commercial-truck-load/:id', (req, res) => {
         }
     });
 });
-
-
-
-module.exports = router;
 
 app.listen(port, () => {
     console.log(`Server is up and running on port: ${port}`);

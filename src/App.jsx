@@ -4,58 +4,68 @@ import LoginForm from "./components/login-form/LoginForm";
 import JarvisChatComponent from "./components/jarvis-chat-page/JarvisChatComponent";
 import SignUpForm from "./components/sign-up-form/SignUpForm";
 import UserPage from "./components/user-page/UserPage";
-import ShipperDashboard from "./components/admin-dashboard-page/ShipperDashboard";
+import ShipperDashboard from "./components/shipper-dashboard-page/ShipperDashboard";
 import SuperAdminDashboard from "./components/super-admin-dashboard-page/SuperAdminDashboard";
 import SignUpFormCarrier from "./components/sign-up-form-carrier/SignUpFormCarrier";
 import CarrierDashboard from "./components/carrier-dashboard/CarrierDashboard";
-import CarrierDrivers from "./components/carrier-dashboard/carrier-drivers/CarrierDrivers";
-import ShipperBidsPage from "./components/admin-dashboard-page/bids-page/ShipperBidsPage";
-import ShipperChatPage from "./components/admin-dashboard-page/customer-chat-page/ShipperChatPage";
+import CarrierTakeLoad from "./components/carrier-dashboard/carrier-take-load/CarrierTakeLoad";
+import ShipperBidsPage from "./components/shipper-dashboard-page/bids-page/ShipperBidsPage";
+import ShipperChatPage from "./components/shipper-dashboard-page/customer-chat-page/ShipperChatPage";
 import CarrierChatPage from "./components/carrier-dashboard/carrier-chat-page/CarrierChatPage";
 import CarrierSettings from "./components/carrier-dashboard/carrier-settings-page/CarrierSettings";
 import DriverDashboard from "./components/driver-dashboard/DriverDashboard";
 import DriverChatPage from "./components/driver-dashboard/driver-chat-page/DriverChatPage";
 import DriverSettings from "./components/driver-dashboard/driver-settings-page/DriverSettings";
-import DriverDetails from "./components/driver-dashboard/driver-details/DriverDetails";
-import CarrierDriverDetails from "./components/carrier-dashboard/carrier-driver-details/CarrierDriverDetails";
+import CarrierDrivers from "./components/carrier-dashboard/carrier-drivers/CarrierDrivers";
 import ChoosingRolePage from "./components/choosing-role-page/ChoosingRolePage";
-import ShipperSettings from "./components/admin-dashboard-page/customer-settings/ShipperSettings";
+import ShipperSettings from "./components/shipper-dashboard-page/customer-settings/ShipperSettings";
 import LandingPage from "./components/landing-page/LandingPage";
+import ShipperLoadsPage from "./components/shipper-dashboard-page/shipper-loads/ShipperLoadsPage";
+import ShipperPaymentsPage from "./components/shipper-dashboard-page/shipper-payments/ShipperPaymentsPage";
+import ShipperProfilePage from "./components/shipper-dashboard-page/profile-page/ShipperProfilePage";
+import CarrierProfilePage from "./components/carrier-dashboard/carrier-profile/CarrierProfilePage";
+import CarrierPaymentsPage from "./components/carrier-dashboard/carrier-payments/CarrierPaymentsPage";
+import CarrierLoads from "./components/carrier-dashboard/carrier-loads-page/CarrierLoads";
+import DriverProfile from "./components/driver-dashboard/driver-details/DriverProfile";
+import DriverAssignedLoads from "./components/driver-dashboard/driver-pages/DriverAssignedLoads";
 
 function App() {
     return (
         <Router>
             <Routes>
                 <Route path="/shipper-dashboard/:id" element={<ShipperDashboard/>}/>
-                <Route path="/shipper-loads/:id" element={<ShipperDashboard/>}/>
-                <Route path="/shipper-chat-conversation/:id" element={<ShipperSettings/>}/>
-                <Route path="/shipper-qoutes/:id" element={<ShipperSettings/>}/>
-                <Route path="/shipper-payments/:id" element={<ShipperSettings/>}/>
-                <Route path="/shipper-profile/:id" element={<ShipperSettings/>}/>
+                <Route path="/shipper-loads/:id" element={<ShipperLoadsPage/>}/>
+                <Route path="/shipper-chat-conversation/:id" element={<ShipperChatPage/>}/>
+                <Route path="/shipper-qoutes/:id" element={<ShipperBidsPage/>}/>
+                <Route path="/shipper-payments/:id" element={<ShipperPaymentsPage/>}/>
+                <Route path="/shipper-profile/:id" element={<ShipperProfilePage/>}/>
                 <Route path="/shipper-settings/:id" element={<ShipperSettings/>}/>
-                <Route path="/user/:personalEndpoint" element={<UserPage/>} />
-                <Route path="/jarvis-chat/:personalEndpoint/:chatEndpoint" element={<JarvisChatComponent />} />
-                <Route path="/sign-in" element={<LoginForm/>}/>
-                <Route path="/" element={<LandingPage/>}/>
-                <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
+
                 <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
-                <Route path="/carrier-dashboard/:carrierID/driver/:driverID" element={<CarrierDriverDetails/>}/>
+                <Route path="/carrier-take-loads/:carrierID" element={<CarrierTakeLoad/>}/>
+                <Route path="/carrier-loads/:carrierID" element={<CarrierLoads/>}/>
+                <Route path="/carrier-settings/:carrierID" element={<CarrierSettings/>}/>
+                <Route path="/carrier-profile/:carrierID" element={<CarrierProfilePage/>}/>
+                <Route path="/carrier-payments/:carrierID" element={<CarrierPaymentsPage/>}/>
+                <Route path="/carrier-drivers/:carrierID" element={<CarrierDrivers/>}/>
+                <Route path="/carrier-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
+
                 <Route path="/driver-dashboard/:driverID" element={<DriverDashboard/>}/>
                 <Route path="/driver-settings/:driverID" element={<DriverSettings/>}/>
-                <Route path="/driver-chat/:driverID" element={<DriverChatPage/>}/>
-                <Route path="/driver-details/:driverID" element={<DriverDetails/>}/>
-                <Route path="/carrier-drivers/:carrierID" element={<CarrierDrivers/>}/>
+                <Route path="/driver-assigned-loads/:driverID" element={<DriverAssignedLoads/>}/>
+                <Route path="/driver-profile/:driverID" element={<DriverProfile/>}/>
+
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
+
                 <Route path="/customer-deal-chat-conversation/:personalEndpoint" element={<ShipperChatPage/>}/>
                 <Route path="/customer-deal-chat-conversation/:personalEndpoint/:chatID" element={<ShipperChatPage/>}/>
-                <Route path="/carrier-deal-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
-                <Route path="/carrier-settings/:carrierID" element={<CarrierSettings/>}/>
-                <Route path="/shipper" element={<ShipperDashboard/>}/>
-                <Route path="/carrier-settings/:carrierID" element={<CarrierSettings/>}/>
-                <Route path="/sign-up" element={<ChoosingRolePage/>}/>
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
+                <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
                 <Route path="/sign-up-shipper" element={<SignUpForm/>}/>
-                <Route path="/super-admin-dashboard/:personalEndpoint" element={<SuperAdminDashboard/>}/>
+                <Route path="/sign-up" element={<ChoosingRolePage/>}/>
+                <Route path="/sign-in" element={<LoginForm/>}/>
+                <Route path="/" element={<LandingPage/>}/>
+
             </Routes>
         </Router>
     )

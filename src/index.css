@@ -4,6 +4,7 @@
 
 html {
     font-size: 62.5%;
+    color: var(--grey);
 }
 
 body {
@@ -30,6 +31,8 @@ body {
     --light-grey: #cacaca;
     --light-grey-hovered: #e5e5e5;
     --light-grey-hovered-transparent: rgba(229, 229, 229, 0.23);
+    --load-credentials-background: #e6e6e6;
+    --load-credentials-font-color: #9E9E9E;
     --search-bar-background: #efefef;
     --search-bar-placeholder-color: #B4B4B4;
 }
