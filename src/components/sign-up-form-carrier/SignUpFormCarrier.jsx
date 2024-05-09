@@ -112,7 +112,7 @@ function SignCarrierUpForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        axios.post('http://localhost:8080/save-carrier-data', formData)
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-carrier-data', formData)
             .then(response => {
                 console.log(response);
                 if (response.status === 200) {

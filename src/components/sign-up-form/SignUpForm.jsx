@@ -32,7 +32,7 @@ function SignUpForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        axios.post('http://localhost:8080/save-shipper-data', formData)
+        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-shipper-data', formData)
             .then(response => {
                 console.log(response);
                 if (response.status === 200) {
