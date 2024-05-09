@@ -11,7 +11,7 @@ import {ReactComponent as FaSend} from "../../assets/send-icon.svg";
 import {ReactComponent as FaPicture} from "../../assets/image-icon.svg";
 import {ReactComponent as FaStars} from "../../assets/stars-svg.svg";
 import {ReactComponent as ChatLogoAI} from "../../assets/ai-logo-chat.svg";
-import {ReactComponent as FaPlus} from "../../assets/fa-icon-plus.svg";
+import {ReactComponent as FaPlus} from "../../assets/plus-blue-icon.svg";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {faMicrophone, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
 import userAvatar from "../../assets/userAvatar.svg";
@@ -4941,7 +4941,7 @@ const JarvisChatComponent = () => {
             <section className={`side-bar ${isSidebarOpen ? "" : "hidden"}`}>
                 <div className="control-buttons">
                     <section className="chat-control-buttons-section">
-                        <ChatLogoAI/>
+                        <h2>Openship AI</h2>
                         <button className="new-chat-session-button" onClick={createNewChatSession}><FaPlus/></button>
                     </section>
                 </div>

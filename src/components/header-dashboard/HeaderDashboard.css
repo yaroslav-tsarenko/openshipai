@@ -1,0 +1,113 @@
+.dashboard-content-header {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    margin-bottom: 20px;
+}
+
+.dashboard-content-title {
+    color: var(--royal-white);
+    font-size: 3.5rem;
+    background: linear-gradient(to right, var(--royal-blue), var(--royal-blue-hovered));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+}
+
+.dashboard-content-subtitle {
+    color: var(--light-grey);
+    font-size: 2rem;
+    font-weight: 300;
+}
+
+.account-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 650px;
+    height: 100%;
+}
+
+.dashboard-account-info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+    width: 350px;
+    margin: 0 0 0 20px;
+}
+
+.dashboard-searchbar {
+    background: var(--search-bar-background);
+    display: flex;
+    width: 300px;
+    height: 70px;
+    padding: 0 15px 0 17px;
+    border-radius: 40px;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    font-weight: bold;
+    color: var(--grey);
+    border: 1px solid var(--light-grey);
+    font-size: 1.8rem;
+    transition: 0.2s ease-in-out;
+}
+
+.dashboard-searchbar input::placeholder{
+    color: var(--light-grey);
+    font-size: 1.8rem;
+}
+
+.dashboard-searchbar:hover{
+    transition: 0.2s ease-in-out;
+    border: 1px solid var(--royal-blue);
+}
+
+.dashboard-searchbar:active{
+    transition: 0.2s ease-in-out;
+    border: 2px solid var(--royal-blue);
+}
+
+.account-info {
+    display: flex;
+    border-radius: 40px;
+    width: 220px;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.dashboard-account-info-text {
+    text-decoration: none;
+    margin: 10px 0 0 10px;
+    height: 50px;
+}
+
+.account-info-buttons {
+    border-radius: 40px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    transition: 0.2s ease-in-out;
+}
+
+.header-dashboard-account-info-name {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0;
+    color: var(--grey);
+}
+
+.header-dashboard-account-info-role {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: 500;
+    color: var(--light-grey);
+}

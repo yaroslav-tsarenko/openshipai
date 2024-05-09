@@ -79,29 +79,28 @@
     width: 100%;
     padding: 10px;
     height: 50px;
-    border: 2px solid var(--light-grey);
+    border: 1px solid var(--light-grey);
     border-radius: 7px;
     color: var(--dark-grey);
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: normal;
     transition: 0.1s ease-in-out;
 }
 
 .google-style-input:focus{
     transition: 0.1s ease-in-out;
-    border: 2px solid var(--royal-blue);
-
+    border: 1px solid var(--royal-blue);
 }
 
 .google-style-input:hover{
     transition: 0.1s ease-in-out;
-    border: 2px solid var(--royal-blue);
+    border: 1px solid var(--royal-blue);
 }
 
 .google-style-input-label {
     position: absolute;
     top: 5px;
-    font-weight: bold;
+    font-weight: normal;
     font-size: 1.5rem;
     left: 10px;
     padding: 10px;

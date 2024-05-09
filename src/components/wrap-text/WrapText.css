@@ -1,0 +1,6 @@
+.text-wrap-container{
+    display: inline-block;
+    width: auto;
+    background: red;
+    color: white;
+}
