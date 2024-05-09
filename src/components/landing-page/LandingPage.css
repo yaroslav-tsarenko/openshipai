@@ -857,6 +857,7 @@ body {
     align-items: center;
     justify-content: center;
     width: 100%;
+    max-width: 210px;
     height: 50px;
     background: var(--royal-blue);
     color: white;
