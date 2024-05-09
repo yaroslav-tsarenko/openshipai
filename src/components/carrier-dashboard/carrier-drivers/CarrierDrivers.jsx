@@ -70,7 +70,7 @@ const CarrierDrivers = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('http://localhost:8080/create-driver', formData);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', formData);
             console.log('Response:', response);
             if (response.status === 200) {
                 console.log('Driver created successfully');
@@ -93,7 +93,7 @@ const CarrierDrivers = () => {
         };
 
         try {
-            const response = await fetch('http://localhost:8080/send-driver-credentials', {
+            const response = await fetch('https://jarvis-ai-logistic-db-server.onrender.com/send-driver-credentials', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
