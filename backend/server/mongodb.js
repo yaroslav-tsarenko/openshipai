@@ -50,6 +50,7 @@ const Photo = require('./models/Photo');
 const Bid = require('./models/Bid');
 const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
+const Load = require('./models/Load');
 const stripe = require('stripe')('sk_test_51O5Q6UEOdY1hERYnOo1J3Zep6yPIGV4Mxo8dSPjkQElYi7enLOmu3sD7YfxEzWOe1dYO98nsmHNaBu83gpBI7ekT004LeMr38x');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
@@ -587,6 +588,7 @@ app.post('/save-carrier-data', async (req, res) => {
         res.status(500).json({ status: 'Error', message: error.message });
     }
 });
+
 app.post('/save-shipper-data', async (req, res) => {
     const shipperData = req.body;
     const newShipper = new Shipper(shipperData);
@@ -597,6 +599,22 @@ app.post('/save-shipper-data', async (req, res) => {
         res.status(500).json({ status: 'Error', message: error.message });
     }
 });
+
+app.post('/save-load-data', async (req, res) => {
+    console.log('Received request to /save-load-data'); // Log when a request is received
+    const loadData = req.body;
+    console.log('Request body:', loadData); // Log the request body
+    const newLoad = new Load(loadData);
+    try {
+        const savedLoad = await newLoad.save();
+        console.log('Saved load:', savedLoad); // Log the saved load
+        res.json({ status: 'Success', load: savedLoad });
+    } catch (error) {
+        console.error('Error saving load:', error); // Log any errors
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
+
 app.post('/api/save-signature', (req, res) => {
     const newSignature = new Signature({
         imgData: req.body.imgData,

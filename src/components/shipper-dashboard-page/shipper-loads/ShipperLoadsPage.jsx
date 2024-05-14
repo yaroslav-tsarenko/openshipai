@@ -18,6 +18,8 @@ import {ReactComponent as QoutesIconWhite} from "../../../assets/listing-icon-wh
 import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
 import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
 import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+import {ReactComponent as ArrowBack} from "../../../assets/arrow-back.svg";
+import {ReactComponent as LoadDirectionsIcon} from "../../../assets/create-load-direction.svg";
 import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
@@ -38,21 +40,35 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
-import {TextField} from "@mui/material";
+import Box from "@mui/material/Box";
+import HeavyEquipmentContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
+import VehicleLoadContainer from "../../load-containers/vehicle-load/VehicleLoadContainer";
+import MovingLoadContainer from "../../load-containers/moving-load/MovingLoadContainer";
+import MotoEquipmentLoadContainer from "../../load-containers/moto-equipment/MotoEquipmentLoadContainer";
+import BoatLoadContainer from "../../load-containers/boat-load/BoatLoadContainer";
+import CommercialTruckLoad from "../../load-containers/commercial-truck/CommercialTruckLoad";
 
-const HeavyEquipmentContainer = () => {
-    return <div style={{color: "black"}}>Heavy Equipment Container</div>;
-};
 
-const VehicleLoadContainer = () => {
-    return <div style={{color: "black"}}>Vehicle Load Container</div>;
-};
 const ShipperLoadsPage = () => {
 
     const [hoveredButton, setHoveredButton] = useState('');
     const [createLoadSection, setCreateLoadSection] = useState(false);
-    const {id} = useParams();
+    const {shipperID} = useParams();
     const [selectedOption, setSelectedOption] = useState('');
+    const [step, setStep] = useState(1);
+    const [formData, setFormData] = useState({
+        pickupLocation: '',
+        deliveryLocation: '',
+        loadType: ''
+    });
+    const handleLoadChange = (input) => (e) => {
+        setFormData({...formData, [input]: e.target.value});
+    };
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        setStep(step + 1);
+    };
 
     const handleChange = (event) => {
         setSelectedOption(event.target.value);
@@ -61,13 +77,13 @@ const ShipperLoadsPage = () => {
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${id}`}}
-                Settings={{visible: true, route: `/shipper-settings/${id}`}}
-                Profile={{visible: true, route: `/shipper-profile/${id}`}}
-                Payments={{visible: true, route: `/shipper-payments/${id}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${id}`}}
-                MyQoutes={{visible: true, route: `/shipper-qoutes/${id}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${id}`}}
+                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                Profile={{visible: true, route: `/shipper-profile/${shipperID}`}}
+                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                MyQoutes={{visible: true, route: `/shipper-qoutes/${shipperID}`}}
+                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
@@ -75,9 +91,9 @@ const ShipperLoadsPage = () => {
                     contentSubtitle="Your current payments"
                     accountName="John Doe"
                     accountRole="Shipper"
-                    profileLink={`/shipper-profile/${id}`}
-                    bellLink={`/shipper-settings/${id}`}
-                    settingsLink={`/shipper-profile/${id}`}
+                    profileLink={`/shipper-profile/${shipperID}`}
+                    bellLink={`/shipper-settings/${shipperID}`}
+                    settingsLink={`/shipper-profile/${shipperID}`}
                 />
                 {createLoadSection ? (
                     <div className="shipper-loads-dashboard-content-body">
@@ -117,15 +133,243 @@ const ShipperLoadsPage = () => {
                             <h3>Create Load</h3>
                         </div>
                         <div className="create-load-container-content">
-                            <FormControl fullWidth>
-                                <InputLabel>Type of Load</InputLabel>
-                                <Select value={selectedOption} onChange={handleChange}>
-                                    <MenuItem value="heavyEquipment" style={{color: "black"}}>Heavy Equipment</MenuItem>
-                                    <MenuItem value="vehicleLoad" style={{color: "black"}}>Vehicle Load</MenuItem>
-                                </Select>
-                            </FormControl>
-                            {selectedOption === 'heavyEquipment' && <HeavyEquipmentContainer />}
-                            {selectedOption === 'vehicleLoad' && <VehicleLoadContainer />}
+                            {step === 1 && (
+                                <div className="create-load-first-step">
+                                   <div className="create-load-credentials-container">
+                                       <OpenshipLogo width="300" height="80"/>
+                                       <h2>Create your load</h2>
+                                       <p>Create your load in few steps</p>
+                                   </div>
+                                    <div className="load-creation-input-fields">
+                                        <LoadDirectionsIcon className="create-load-direction-icon"/>
+                                        <section>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="pickupLocation"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('pickupLocation')}
+                                                    value={formData.pickupLocation}
+                                                    required
+                                                />
+                                                <label htmlFor="pickupLocation"
+                                                       className="google-style-input-label">Pickup Location</label>
+                                            </div>
+
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="deliveryLocation"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('deliveryLocation')}
+                                                    value={formData.deliveryLocation}
+                                                    required
+                                                />
+                                                <label htmlFor="deliveryLocation"
+                                                       className="google-style-input-label">Delivery Location</label>
+                                            </div>
+                                            <button className="create-load-submit-button" onClick={handleSubmit}>Next
+                                            </button>
+                                        </section>
+                                    </div>
+                                </div>
+                            )}
+                            {step === 2 && (
+                                <>
+                                    <div className="create-load-first-step">
+                                        <div className="create-load-credentials-container">
+                                            <OpenshipLogo width="300" height="80"/>
+                                            <h2>Specify Load Type</h2>
+                                            <p>By choosing load type, you will redirecting to the current form</p>
+                                        </div>
+                                        <div className="load-creation-input-fields">
+                                            <section>
+                                                <Box sx={{minWidth: 180, marginTop: '70px'}}>
+                                                    <FormControl fullWidth style={{fontSize: '15px',}}>
+                                                        <InputLabel id="demo-simple-select-label"
+                                                                    style={{fontSize: '15px', fontWeight: 'normal'}}>Load Type</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-label"
+                                                            id="demo-simple-select"
+                                                            label="Load Type"
+                                                            name="loadType"
+                                                            value={formData.loadType}
+                                                            onChange={handleLoadChange("loadType")}
+                                                            style={{
+                                                                fontSize: '15px',
+                                                                fontWeight: 'normal',
+                                                                color: 'gray',
+                                                                borderRadius: '10px'
+                                                            }}
+                                                            MenuProps={{
+                                                                anchorOrigin: {
+                                                                    vertical: "bottom",
+                                                                    horizontal: "left"
+                                                                },
+                                                                transformOrigin: {
+                                                                    vertical: "top",
+                                                                    horizontal: "left"
+                                                                },
+                                                                getContentAnchorEl: null,
+                                                                PaperProps: {
+                                                                    style: {
+                                                                        maxHeight: '200px',  // change this as per your requirement
+                                                                    },
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem value="vehicleLoad"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Vehicle Load</MenuItem>
+                                                            <MenuItem value="motoEquipment"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Moto Equipment</MenuItem>
+                                                            <MenuItem value="heavyEquipment"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Heavy Equipment</MenuItem>
+                                                            <MenuItem value="boatLoad"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Boat Load</MenuItem>
+                                                            <MenuItem value="commercialTruck"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Commercial Truck</MenuItem>
+                                                            <MenuItem value="moving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Moving</MenuItem>
+                                                            <MenuItem value="ltl"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>LTL</MenuItem>
+                                                            <MenuItem value="ftl"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>FTL</MenuItem>
+                                                            <MenuItem value="expedite"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Expedite</MenuItem>
+                                                            <MenuItem value="localMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Local Moving</MenuItem>
+                                                            <MenuItem value="londDistanceMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Long Distance Moving</MenuItem>
+                                                            <MenuItem value="studentMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Student Move</MenuItem>
+                                                            <MenuItem value="corporateMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Corporate Moving</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Heavy Lifting and Moving only</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Auto Moto Boat Equipment</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Shipping</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Military Moving</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Box>
+                                                <div className="creation-load-buttons-nav">
+                                                    {step > 1 && <button className="go-previous-step-button" onClick={() => setStep(step - 1)}><ArrowBack className="arrow-back"/>Go Back</button>}
+                                                    <button className="create-load-submit-button" onClick={handleSubmit}>Next</button>
+                                                </div>
+                                            </section>
+
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            {step === 3 && (
+                                <div className="create-load-wrapper">
+                                    {formData.loadType === 'vehicleLoad' &&
+                                        <VehicleLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {formData.loadType === 'heavyEquipment' &&
+                                        <HeavyEquipmentContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {formData.loadType === 'moving' &&
+                                        <MovingLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {formData.loadType === 'motoEquipment' &&
+                                        <MotoEquipmentLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {formData.loadType === 'boatLoad' &&
+                                        <BoatLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {formData.loadType === 'commercialTruck' &&
+                                        <CommercialTruckLoad
+                                            pickupLocation={formData.pickupLocation}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}/>}
+                                    {step > 1 && <button className="go-previous-step-button" onClick={() => setStep(step - 1)}><ArrowBack className="arrow-back"/>Go Back</button>}
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}
@@ -133,6 +377,7 @@ const ShipperLoadsPage = () => {
         </div>
     );
 };
+
 
 export default ShipperLoadsPage;
 

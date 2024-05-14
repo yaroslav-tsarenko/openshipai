@@ -44,30 +44,30 @@ const ShipperLoadsPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
-    const {id} = useParams();
+    const {shipperID} = useParams();
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${id}`}}
-                Settings={{visible: true, route: `/shipper-settings/${id}`}}
-                Profile={{visible: true, route: `/shipper-profile/${id}`}}
-                Payments={{visible: true, route: `/shipper-payments/${id}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${id}`}}
-                MyQoutes={{visible: true, route: `/shipper-qoutes/${id}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${id}`}}
+                DashboardAI={{ visible: true, route: `/shipper-dashboard/${shipperID}` }}
+                Settings={{ visible: true, route: `/shipper-settings/${shipperID}` }}
+                Profile={{ visible: true, route: `/shipper-profile/${shipperID}` }}
+                Payments={{ visible: true, route: `/shipper-payments/${shipperID}` }}
+                ChatWithCarrier={{ visible: true, route: `/shipper-chat-conversation/${shipperID}` }}
+                MyQoutes={{ visible: true, route: `/shipper-qoutes/${shipperID}` }}
+                MyLoads={{ visible: true, route: `/shipper-loads/${shipperID}` }}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Your current bids"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
+                    contentTitle="Welcome Back, John"
+                    contentSubtitle="Monitor payments, loads, revenues"
                     accountName="John Doe"
                     accountRole="Shipper"
-                    profileLink={`/shipper-profile/${id}`}
-                    bellLink={`/shipper-settings/${id}`}
-                    settingsLink={`/shipper-profile/${id}`}
+                    profileLink={`/shipper-profile/${shipperID}`}
+                    bellLink={`/shipper-settings/${shipperID}`}
+                    settingsLink={`/shipper-profile/${shipperID}`}
                 />
                 <div className="shipper-qoutes-dashboard-content-body">
                     <div className="shipper-loads-wrapper-qoutes">

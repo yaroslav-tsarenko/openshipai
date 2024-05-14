@@ -156,8 +156,8 @@ const CarrierSchema = new Schema({
         default: 'carrier'
     },
     carrierID: {
-        type: String,
-        default: shortid.generate
+            type: String,
+            default: shortid.generate
     }
 });
 
