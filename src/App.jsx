@@ -33,13 +33,13 @@ function App() {
     return (
         <Router>
             <Routes>
-                <Route path="/shipper-dashboard/:id" element={<ShipperDashboard/>}/>
-                <Route path="/shipper-loads/:id" element={<ShipperLoadsPage/>}/>
-                <Route path="/shipper-chat-conversation/:id" element={<ShipperChatPage/>}/>
-                <Route path="/shipper-qoutes/:id" element={<ShipperBidsPage/>}/>
-                <Route path="/shipper-payments/:id" element={<ShipperPaymentsPage/>}/>
-                <Route path="/shipper-profile/:id" element={<ShipperProfilePage/>}/>
-                <Route path="/shipper-settings/:id" element={<ShipperSettings/>}/>
+                <Route path="/shipper-dashboard/:shipperID" element={<ShipperDashboard/>}/>
+                <Route path="/shipper-loads/:shipperID" element={<ShipperLoadsPage/>}/>
+                <Route path="/shipper-chat-conversation/:shipperID" element={<ShipperChatPage/>}/>
+                <Route path="/shipper-qoutes/:shipperID" element={<ShipperBidsPage/>}/>
+                <Route path="/shipper-payments/:shipperID" element={<ShipperPaymentsPage/>}/>
+                <Route path="/shipper-profile/:shipperID" element={<ShipperProfilePage/>}/>
+                <Route path="/shipper-settings/:shipperID" element={<ShipperSettings/>}/>
 
                 <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
                 <Route path="/carrier-take-loads/:carrierID" element={<CarrierTakeLoad/>}/>

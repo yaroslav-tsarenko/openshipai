@@ -147,7 +147,8 @@ function SignCarrierUpForm() {
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('carrierUSDotNumber')} value={formData.carrierUSDotNumber}
+                                    onChange={handleChange('carrierUSDotNumber')}
+                                    value={formData.carrierUSDotNumber}
                                 />
                                 <label htmlFor="email" className="google-style-input-label">US Docket (MC, FF,
                                     MX)</label>

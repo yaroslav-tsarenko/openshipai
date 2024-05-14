@@ -34,7 +34,7 @@ import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 const ShipperChatPage = () => {
     const [hoveredButton, setHoveredButton] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const {id} = useParams();
+    const {shipperID} = useParams();
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const {personalEndpoint} = useParams();
@@ -463,15 +463,14 @@ const ShipperChatPage = () => {
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
-                DashboardAI={{ visible: true, route: `/shipper-dashboard/${id}` }}
-                Settings={{ visible: true, route: `/shipper-settings/${id}` }}
-                Profile={{ visible: true, route: `/shipper-profile/${id}` }}
-                Payments={{ visible: true, route: `/shipper-payments/${id}` }}
-                ChatWithCarrier={{ visible: true, route: `/shipper-chat-conversation/${id}` }}
-                MyQoutes={{ visible: true, route: `/shipper-qoutes/${id}` }}
-                MyLoads={{ visible: true, route: `/shipper-loads/${id}` }}
+                DashboardAI={{ visible: true, route: `/shipper-dashboard/${shipperID}` }}
+                Settings={{ visible: true, route: `/shipper-settings/${shipperID}` }}
+                Profile={{ visible: true, route: `/shipper-profile/${shipperID}` }}
+                Payments={{ visible: true, route: `/shipper-payments/${shipperID}` }}
+                ChatWithCarrier={{ visible: true, route: `/shipper-chat-conversation/${shipperID}` }}
+                MyQoutes={{ visible: true, route: `/shipper-qoutes/${shipperID}` }}
+                MyLoads={{ visible: true, route: `/shipper-loads/${shipperID}` }}
             />
-
             <div className="shipper-deal-conversations-sidebar">
                 <div className="chat-conversation-search-bar">
                     <SearchBarIcon width="15"/>
