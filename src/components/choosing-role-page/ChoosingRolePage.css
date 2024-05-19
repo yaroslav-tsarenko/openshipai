@@ -107,7 +107,7 @@
     transition: 0.3s;
     pointer-events: none;
     color: var(--light-grey);
-    background-color: transparent;
+    background-color: white;
 }
 
 .google-style-input:valid + .google-style-input-label,

@@ -943,5 +943,148 @@ export default ShipperSettings;
 
 
 
+<Box sx={{minWidth: 180, marginTop: '70px'}}>
+                                                    <FormControl fullWidth style={{fontSize: '15px',}}>
+                                                        <InputLabel id="demo-simple-select-label"
+                                                                    style={{fontSize: '15px', fontWeight: 'normal'}}>Load
+                                                            Type</InputLabel>
+                                                        <Select
+                                                            labelId="demo-simple-select-label"
+                                                            id="demo-simple-select"
+                                                            label="Load Type"
+                                                            name="loadType"
+                                                            value={formData.loadType}
+                                                            onChange={handleLoadChange("loadType")}
+                                                            style={{
+                                                                fontSize: '15px',
+                                                                fontWeight: 'normal',
+                                                                color: 'gray',
+                                                                borderRadius: '10px'
+                                                            }}
+                                                            MenuProps={{
+                                                                anchorOrigin: {
+                                                                    vertical: "bottom",
+                                                                    horizontal: "left"
+                                                                },
+                                                                transformOrigin: {
+                                                                    vertical: "top",
+                                                                    horizontal: "left"
+                                                                },
+                                                                getContentAnchorEl: null,
+                                                                PaperProps: {
+                                                                    style: {
+                                                                        maxHeight: '350px',
+                                                                    },
+                                                                },
+                                                            }}
+                                                        >
+                                                            <MenuItem value="vehicleLoad"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Vehicle Load</MenuItem>
+                                                            <MenuItem value="motoEquipment"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Moto Equipment</MenuItem>
+                                                            <MenuItem value="heavyEquipment"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Heavy Equipment</MenuItem>
+                                                            <MenuItem value="boatLoad"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Boat Load</MenuItem>
+                                                            <MenuItem value="commercialTruck"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Commercial Truck</MenuItem>
+                                                            <MenuItem value="moving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Moving</MenuItem>
+                                                            <MenuItem value="ltl"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>LTL</MenuItem>
+                                                            <MenuItem value="ftl"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>FTL</MenuItem>
+                                                            <MenuItem value="expedite"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Expedite</MenuItem>
+                                                            <MenuItem value="localMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Local Moving</MenuItem>
+                                                            <MenuItem value="londDistanceMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Long Distance Moving</MenuItem>
+                                                            <MenuItem value="studentMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Student Move</MenuItem>
+                                                            <MenuItem value="corporateMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Corporate Moving</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Heavy Lifting and Moving only</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Auto Moto Boat Equipment</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Shipping</MenuItem>
+                                                            <MenuItem value="militaryMoving"
+                                                                      style={{
+                                                                          fontSize: '15px',
+                                                                          color: 'grey',
+                                                                          fontWeight: 'normal'
+                                                                      }}>Military Moving</MenuItem>
+                                                        </Select>
+                                                    </FormControl>
+                                                </Box>
+
+
+
 
 
