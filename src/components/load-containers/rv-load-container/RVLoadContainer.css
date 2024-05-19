@@ -1,0 +1,19 @@
+.add-another-object-button{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    color: var(--royal-blue);
+    font-size: 1.3rem;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+    border-radius: 50px;
+}
+
+.another-object-plus-icon{
+    margin: 0 10px 0 0;
+}
+
+.add-another-object-button:hover{
+    background: var(--light-grey-hovered);
+}

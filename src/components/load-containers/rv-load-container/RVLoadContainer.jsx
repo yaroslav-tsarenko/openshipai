@@ -1,21 +1,23 @@
-import React, {useRef, useState} from 'react';
-import "./VehicleLoadContainer.css";
-import Switch from "../../switcher-component/Switch";
+import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
+import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import "./RVLoadContainer.css";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import Box from "@mui/material/Box";
 
-const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
-    const [isOperable, setIsOperable] = useState(false);
-    const [isConvertible, setIsConvertible] = useState(false);
-    const [isModified, setIsModified] = useState(false);
     const {shipperID} = useParams();
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
@@ -48,6 +50,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
+
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };
@@ -76,12 +79,13 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         const fileUrls = files.map(file => URL.createObjectURL(file));
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
+
     const handleCreateLoad = async () => {
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('http://localhost:8080/save-load-data', formData);
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
@@ -96,23 +100,79 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
             <div className="vehicle-load-container-content">
                 <section className="load-title-section">
-                    <h1>Car or Light Truck Load</h1>
+                    <h1>RV Load</h1>
                     <p>Try to fill all necessary fields</p>
                 </section>
                 <div className="vehicle-loads-container-inputs">
                     <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadTitle"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadTitle')}
-                                value={formData.loadTitle}
-                            />
-                            <label htmlFor="loadTitle" className="google-style-input-label">Load Title</label>
-                        </div>
+                        <Box sx={{minWidth: 180, height: '50px'}}>
+                            <FormControl fullWidth style={{fontSize: '15px',}}>
+                                <InputLabel id="demo-simple-select-label"
+                                            style={{fontSize: '15px', fontWeight: 'normal'}}>RV Type</InputLabel>
+                                <Select
+                                    labelId="demo-simple-select-label"
+                                    id="demo-simple-select"
+                                    label="Load Type"
+                                    name="loadType"
+                                    value={formData.loadSpecifiedItem}
+                                    style={{
+                                        fontSize: '15px',
+                                        fontWeight: 'normal',
+                                        color: 'gray',
+                                        borderRadius: '5px'
+                                    }}
+                                >
+                                    <MenuItem value="Class A Motorhome"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Class A Motorhome</MenuItem>
+                                    <MenuItem value="Class B Motorhome"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Class B Motorhome</MenuItem>
+                                    <MenuItem value="Class C Motorhome"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Class C Motorhome</MenuItem>
+                                    <MenuItem value="Travel Trailers"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Travel Trailers</MenuItem>
+                                    <MenuItem value="Folding Tent Trailer"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Folding Tent Trailer</MenuItem>
+                                    <MenuItem value="Fifth Wheel"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Fifth Wheel</MenuItem>
+                                    <MenuItem value="Truck Camper"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Truck Camper</MenuItem>
+                                    <MenuItem value="Other"
+                                              style={{
+                                                  fontSize: '15px',
+                                                  color: 'grey',
+                                                  fontWeight: 'normal'
+                                              }}>Other</MenuItem>
+                                </Select>
+                            </FormControl>
+                        </Box>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
@@ -157,69 +217,69 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
                         </div>
                     </section>
                 </div>
-                <div className="vehicle-loads-container-switchers">
-                    <Switch
-                        /* isOn={isOperable}*/
-                        handleToggle={() => {
-                            setIsOperable(!isOperable);
-                            setFormData({...formData, loadOperable: !isOperable});
-                            console.log('Vehicle on Run:', !isOperable);
-                        }}
-                        label="Vehicle on Run"
-                        tip="Is the vehicle currently operational or in use?"
-                    />
-                    <Switch
-                        /*isOn={isConvertible}*/
-                        handleToggle={() => {
-                            setIsConvertible(!isConvertible);
-                            setFormData({...formData, loadConvertible: !isConvertible});
-                            console.log('Convertible:', !isConvertible);
-                        }}
-                        label="Convertible"
-                        tip="Is the vehicle a convertible, with a roof that retracts or removes?"
-                    />
-                    <Switch
-                        /* isOn={isModified}*/
-                        handleToggle={() => {
-                            setIsModified(!isModified);
-                            setFormData({...formData, loadModified: !isModified});
-                            console.log('Modified:', !isModified);
-                        }}
-                        label="Modified"
-                        tip="Has the vehicle been altered from its original factory specifications?"
-                    />
-                </div>
+                <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
+                    another RV
+                </button>
                 <div className="vehicle-type-of-trailer-load">
-                    <h2>Choose type of trailer</h2>
+                    <h2>Choose RV Dimensions</h2>
                     <p>These can be your preferences, questions or requests</p>
-                    <div className="type-of-trailer-switchers">
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Open Trailer (Cost loss)"
-                            tip="Vehicle is open to the trailer?"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Enclosed Trailer (Costs More)"
-                            tip="Vehicle protected"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Both"
-                            tip="You can opt for open or enclosed trailer"
-                        />
+                    <div className="vehicle-loads-container-inputs">
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Length"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Length')}
+                                    value={formData.Length}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Length</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Weight"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Weight')}
+                                    value={formData.Weight}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Weight</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Width"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Width')}
+                                    value={formData.Width}
+                                />
+                                <label htmlFor="Width" className="google-style-input-label">Width</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Height"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Height')}
+                                    value={formData.Height}
+                                />
+                                <label htmlFor="loadVehicleModel" className="google-style-input-label">Height</label>
+                            </div>
+                        </section>
                     </div>
                 </div>
                 <div className="vehicle-load-optional-inputs">
@@ -254,10 +314,10 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
                         <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
                     ))}
                     {filePreviewUrl.map((url, index) => (
-                        <img key={index} src={url} alt="Preview"/>
+                        <img key={index} src={url} alt="Preview" />
                     ))}
                 </div>
-                <div className="vehicle-load-optional-inputs">
+                <div className="vehicle-load-description">
                     <h2>You can add personal note to this load</h2>
                     <p>These can be your preferences, questions or requests</p>
                     <div className="google-input-wrapper">
@@ -291,4 +351,4 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
     );
 };
 
-export default VehicleLoadContainer;
+export default RVLoadContainer;

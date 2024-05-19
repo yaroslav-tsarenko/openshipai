@@ -38,6 +38,9 @@ const ShipperDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
     const {shipperID} = useParams();
+    localStorage.setItem('shipperID',
+        shipperID);
+    let item = localStorage.getItem('shipperID');
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };

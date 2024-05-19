@@ -15,7 +15,7 @@ function LoginForm() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/sign-in', { email, password });
+        const response = await axios.post('http://localhost:8080/sign-in', { email, password });
         if (response.data.status === 'Success') {
             const { role, id } = response.data;
             if (role === 'carrier') {
