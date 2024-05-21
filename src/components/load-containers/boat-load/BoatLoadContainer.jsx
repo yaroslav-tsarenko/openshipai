@@ -1,32 +1,36 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import "./BoatLoadContainer.css";
 import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
+import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
+import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
+import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
+import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 
-const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
-    const [isFirstSwitch, setIsFirstSwitch] = useState(false);
-    const [isSecondSwitch, setIsSecondSwitch] = useState(false);
-    const [isThirdSwitch, setIsThirdSwitch] = useState(false);
+const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+    const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
+    const [filePreviewUrl, setFilePreviewUrl] = useState([]);
+    const fileInputRef = useRef();
+    const [isOperable, setIsOperable] = useState(false);
+    const [isConvertible, setIsConvertible] = useState(false);
+    const [isModified, setIsModified] = useState(false);
     const {shipperID} = useParams();
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
-    const [selectValue, setSelectValue] = useState('');
-    const handleSelectChange = (event) => {
-        setSelectValue(event.target.value);
-    };
     const [formData, setFormData] = useState({
         loadType: loadType,
+        loadSubType: loadSubType,
+        loadSpecifiedItem: '',
         loadTitle: '',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
+        loadPickupDate: loadPickupDate,
+        loadDeliveryDate: loadDeliveryDate,
+        loadPickupTime: loadPickupTime,
+        loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
         loadWeight: '',
         loadLength: '',
@@ -34,30 +38,51 @@ const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
-        loadNumberOfRooms: '',
-        loadNumberOfPallets: '',
-        loadNumberOfBoxes: '',
         loadHeight: '',
         loadQuantity: '',
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
-        loadStorageRequired: false,
-        loadPackingRequired: false,
-        loadLogisticServiceRequired: false,
         shipperID: shipperID,
     });
 
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
+    const handleButtonClick = () => {
+        fileInputRef.current.click();
+    };
 
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length + imagePreviewUrl.length > 5) {
+            alert('You can only select up to 5 files.');
+            return;
+        }
+        const imageUrls = files.map(file => {
+            if (file.type.startsWith('image/')) {
+                return URL.createObjectURL(file);
+            }
+            return null;
+        }).filter(url => url !== null);
+        setImagePreviewUrl(prevImageUrls => [...prevImageUrls, ...imageUrls]);
+    };
+
+    const handleFileChangeForButton = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length > 5) {
+            alert('You can only select up to 5 files.');
+            return;
+        }
+        const fileUrls = files.map(file => URL.createObjectURL(file));
+        setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
+    };
     const handleCreateLoad = async () => {
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
@@ -68,13 +93,13 @@ const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
 
     return (
         <div className="boat-load-container-wrapper">
-            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully" />}
-            {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again" />}
-            <section>
-                <h1>Boat Load</h1>
-                <p>Try to fill all necessary fields</p>
-            </section>
+            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
+            {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
             <div className="boat-load-container-content">
+                <section className="load-title-section">
+                    <h1>Boat Load</h1>
+                    <p>Try to fill all necessary fields</p>
+                </section>
                 <div className="boat-loads-container-inputs">
                     <section>
                         <div className="google-input-wrapper">
@@ -87,7 +112,7 @@ const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
                                 onChange={handleChange('loadTitle')}
                                 value={formData.loadTitle}
                             />
-                            <label htmlFor="loadTitle" className="google-style-input-label">Load Title</label>
+                            <label htmlFor="loadTitle" className="google-style-input-label">Shipment Title</label>
                         </div>
                     </section>
                     <section>
@@ -101,108 +126,200 @@ const BoatLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
                                 onChange={handleChange('loadVehicleYear')}
                                 value={formData.loadVehicleYear}
                             />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Specify Moving</label>
+                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Boat year</label>
                         </div>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
                             <input
                                 type="text"
-                                id="loadNumberOfRooms"
+                                id="loadVehicleMake"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                onChange={handleChange('loadNumberOfRooms')}
-                                value={formData.loadNumberOfRooms}
+                                onChange={handleChange('loadVehicleMake')}
+                                value={formData.loadVehicleMake}
                             />
-                            <label htmlFor="loadNumberOfRooms" className="google-style-input-label">Number of
-                                Rooms</label>
+                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Boat Make</label>
                         </div>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
                             <input
                                 type="text"
-                                id="loadNumberOfPallets"
+                                id="loadVehicleModel"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                onChange={handleChange('loadNumberOfPallets')}
-                                value={formData.loadNumberOfPallets}
+                                onChange={handleChange('loadVehicleModel')}
+                                value={formData.loadVehicleModel}
                             />
-                            <label htmlFor="loadNumberOfPallets" className="google-style-input-label">Number of
-                                Pallets</label>
-                        </div>
-                    </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadNumberOfBoxes"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadNumberOfBoxes')}
-                                value={formData.loadNumberOfBoxes}
-                            />
-                            <label htmlFor="loadNumberOfBoxes" className="google-style-input-label">Number of
-                                Boxes</label>
+                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Boat Model</label>
                         </div>
                     </section>
                 </div>
-                <div className="boat-load-additional-options">
-                    <div className="boat-loads-container-switchers">
+                <div className="boat-type-of-trailer-load">
+                    <h2>Choose Boat Dimensions</h2>
+                    <p>These can be your preferences, questions or requests</p>
+                    <div className="boat-loads-container-inputs">
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Length"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Length')}
+                                    value={formData.Length}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Length</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Weight"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Weight')}
+                                    value={formData.Weight}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Weight</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Width"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Width')}
+                                    value={formData.Width}
+                                />
+                                <label htmlFor="Width" className="google-style-input-label">Width</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Height"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Height')}
+                                    value={formData.Height}
+                                />
+                                <label htmlFor="loadVehicleModel" className="google-style-input-label">Height</label>
+                            </div>
+                        </section>
+                    </div>
+                </div>
+                <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
+                    another boat
+                </button>
+                <div className="boat-type-of-trailer-load">
+                    <h2>Choose type of trailer</h2>
+                    <p>These can be your preferences, questions or requests</p>
+                    <div className="type-of-trailer-switchers">
                         <Switch
-                            isOn={isSecondSwitch}
                             handleToggle={() => {
-                                setIsSecondSwitch(!isSecondSwitch);
-                                setFormData({...formData, loadConvertible: !isSecondSwitch});
-                                console.log('Logistic Service Required:', !isSecondSwitch);
+                                setIsOperable(!isOperable);
+                                setFormData({...formData, loadOperable: !isOperable});
+                                console.log('Vehicle on Run:', !isOperable);
                             }}
-                            label="Logistic Service Required"
-                            tip="Select this option if you require specialized logistics services such as route optimization, cargo consolidation, or expedited delivery"
+                            label="Open Trailer (Cost loss)"
+                            tip="Vehicle is open to the trailer?"
                         />
                         <Switch
-                            isOn={isFirstSwitch}
                             handleToggle={() => {
-                                setIsFirstSwitch(!isFirstSwitch);
-                                setFormData({...formData, loadConvertible: !isFirstSwitch});
-                                console.log('Packing service required:', !isFirstSwitch);
+                                setIsOperable(!isOperable);
+                                setFormData({...formData, loadOperable: !isOperable});
+                                console.log('Vehicle on Run:', !isOperable);
                             }}
-                            label="Packing service required"
-                            tip="Choose this if you need professional packing services to ensure your items are safely prepared for transit. Includes wrapping, boxing, and securing of goods."
+                            label="Enclosed Trailer (Costs More)"
+                            tip="Vehicle protected"
                         />
                         <Switch
-                            isOn={isThirdSwitch}
                             handleToggle={() => {
-                                setIsThirdSwitch(!isThirdSwitch);
-                                setFormData({...formData, loadModified: !isThirdSwitch});
-                                console.log('Storage needs if any:', !isThirdSwitch);
+                                setIsOperable(!isOperable);
+                                setFormData({...formData, loadOperable: !isOperable});
+                                console.log('Vehicle on Run:', !isOperable);
                             }}
-                            label="Storage needs if any"
-                            tip="Indicate whether you need storage for your items before or after transportation. Specify if you require short-term or long-term storage solutions."
+                            label="Both"
+                            tip="You can opt for open or enclosed trailer"
                         />
                     </div>
-                    <div className="boat-load-optional-inputs">
-                        <h2>You can add personal note to this load</h2>
-                        <p>These can be your preferences, questions or requests</p>
-                        <div className="google-input-wrapper">
+                </div>
+                <div className="boat-load-optional-inputs">
+                    <h2>For better experience attach files</h2>
+                    <p>AI can better analyze your preferences</p>
+                    <div className="additional-preferences-buttons">
+                        <button className="rv-additional-preferences-button"
+                                onClick={() => fileInputRef.current.click()}>
+                            <AttachFile className="additional-preferences-button-icon"/> Attach Files
+                        </button>
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            style={{display: 'none'}}
+                            onChange={handleFileChangeForButton}
+                            multiple
+                        />
+                        <button className="rv-additional-preferences-button" onClick={handleButtonClick}>
+                            <CameraIcon className="additional-preferences-button-icon"/> Make a Photo
+                        </button>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            capture="environment"
+                            ref={fileInputRef}
+                            style={{display: 'none'}}
+                            onChange={handleFileChange}
+                            multiple
+                        />
+                    </div>
+                    {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
+                        <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
+                    ))}
+                    {filePreviewUrl.map((url, index) => (
+                        <img key={index} src={url} alt="Preview"/>
+                    ))}
+                </div>
+                <div className="boat-load-optional-inputs">
+                    <h2>You can add personal note to this load</h2>
+                    <p>These can be your preferences, questions or requests</p>
+                    <div className="google-input-wrapper">
                             <textarea
                                 id="loadDescription"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                style={{height: '100px', maxHeight: '200px'}}
+                                style={{height: '170px', maxHeight: '200px'}}
                                 onChange={handleChange('loadDescription')}
                                 value={formData.loadDescription}
                             />
-                            <label htmlFor="loadDescription" className="google-style-input-label">Personal
-                                Description</label>
-                        </div>
+                        <label htmlFor="loadDescription" className="google-style-input-label">Personal
+                            Description</label>
                     </div>
                 </div>
-
+                <div className="note-container">
+                    <h4>Note</h4>
+                    <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
+                        marketplace</p>
+                </div>
                 <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+            </div>
+            <div className="boat-load-container-content-tips">
+                <RecommendationContainer title="Details Matter"
+                                         description="The quotes you get are only asaccurate as your listing. Make it as detailed as possible to avoid delays, price increases, and cancellations."/>
+                <RecommendationContainer title="Double Check Locations"
+                                         description="Include correct locations for accurate pricing."/>
             </div>
         </div>
     );

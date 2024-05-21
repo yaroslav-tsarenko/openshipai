@@ -1,16 +1,16 @@
 import React, {useRef, useState} from 'react';
-import "./CommercialTruckLoad.css";
+import "./TrailerAndOtherVehicles.css";
 import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
+import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
-import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 
-const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const TrailerAndOtherVehicles = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
@@ -92,15 +92,15 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
     };
 
     return (
-        <div className="vehicle-load-container-wrapper">
+        <div className="trailers-load-container-wrapper">
             {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
-            <div className="vehicle-load-container-content">
+            <div className="trailers-load-container-content">
                 <section className="load-title-section">
-                    <h1>Commercial Truck Load</h1>
+                    <h1>Trailers & Other vehicles</h1>
                     <p>Try to fill all necessary fields</p>
                 </section>
-                <div className="vehicle-loads-container-inputs">
+                <div className="trailers-loads-container-inputs">
                     <section>
                         <div className="google-input-wrapper">
                             <input
@@ -112,13 +112,13 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                                 onChange={handleChange('loadTitle')}
                                 value={formData.loadTitle}
                             />
-                            <label htmlFor="loadTitle" className="google-style-input-label">Load Title</label>
+                            <label htmlFor="loadTitle" className="google-style-input-label">Shipment Title</label>
                         </div>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
                             <input
-                                type="text"
+                                type="number"
                                 id="loadVehicleYear"
                                 autoComplete="off"
                                 className="google-style-input"
@@ -126,131 +126,78 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                                 onChange={handleChange('loadVehicleYear')}
                                 value={formData.loadVehicleYear}
                             />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Vehicle year</label>
+                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Quantity of items</label>
                         </div>
                     </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadVehicleMake"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadVehicleMake')}
-                                value={formData.loadVehicleMake}
-                            />
-                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Vehicle Make</label>
-                        </div>
-                    </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadVehicleModel"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadVehicleModel')}
-                                value={formData.loadVehicleModel}
-                            />
-                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Vehicle Model</label>
-                        </div>
-                    </section>
+
                 </div>
-                <div className="vehicle-loads-container-switchers">
-                    <Switch
-                        /* isOn={isOperable}*/
-                        handleToggle={() => {
-                            setIsOperable(!isOperable);
-                            setFormData({...formData, loadOperable: !isOperable});
-                            console.log('Vehicle on Run:', !isOperable);
-                        }}
-                        label="Vehicle on Run"
-                        tip="Is the vehicle currently operational or in use?"
-                    />
-                    <Switch
-                        /*isOn={isConvertible}*/
-                        handleToggle={() => {
-                            setIsConvertible(!isConvertible);
-                            setFormData({...formData, loadConvertible: !isConvertible});
-                            console.log('Convertible:', !isConvertible);
-                        }}
-                        label="Convertible"
-                        tip="Is the vehicle a convertible, with a roof that retracts or removes?"
-                    />
-                    <Switch
-                        /* isOn={isModified}*/
-                        handleToggle={() => {
-                            setIsModified(!isModified);
-                            setFormData({...formData, loadModified: !isModified});
-                            console.log('Modified:', !isModified);
-                        }}
-                        label="Modified"
-                        tip="Has the vehicle been altered from its original factory specifications?"
-                    />
+                <div className="trailers-type-of-trailer-load">
+                    <h2>Choose shipment Dimensions</h2>
+                    <p>These can be your preferences, questions or requests</p>
+                    <div className="trailers-loads-container-inputs">
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Length"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Length')}
+                                    value={formData.Length}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Length</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Weight"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Weight')}
+                                    value={formData.Weight}
+                                />
+                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Weight</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Width"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Width')}
+                                    value={formData.Width}
+                                />
+                                <label htmlFor="Width" className="google-style-input-label">Width</label>
+                            </div>
+                        </section>
+                        <section>
+                            <div className="google-input-wrapper">
+                                <input
+                                    type="text"
+                                    id="Height"
+                                    autoComplete="off"
+                                    className="google-style-input"
+                                    required
+                                    onChange={handleChange('Height')}
+                                    value={formData.Height}
+                                />
+                                <label htmlFor="loadVehicleModel" className="google-style-input-label">Height</label>
+                            </div>
+                        </section>
+                    </div>
                 </div>
                 <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
-                    another truck
+                    another parts load
                 </button>
-                <div className="vehicle-type-of-trailer-load">
-                    <h2>Choose type of trailer</h2>
-                    <p>These can be your preferences, questions or requests</p>
-                    <div className="type-of-trailer-switchers">
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Open Trailer (Cost loss)"
-                            tip="Vehicle is open to the trailer?"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Enclosed Trailer (Costs More)"
-                            tip="Vehicle protected"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Both"
-                            tip="You can opt for open or enclosed trailer"
-                        />
-                    </div>
-                </div>
-                <div className="vehicle-type-of-trailer-load">
-                    <h2>Additional details</h2>
-                    <p>Pick option</p>
-                    <div className="type-of-trailer-switchers">
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Is already on trailer?"
-                            tip="Vehicle is open to the trailer?"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Trailer type preference?"
-                            tip="Do you have a preference for the type of trailer?"
-                        />
-                    </div>
-                </div>
-                <div className="vehicle-load-optional-inputs">
+
+                <div className="trailers-load-optional-inputs">
                     <h2>For better experience attach files</h2>
                     <p>AI can better analyze your preferences</p>
                     <div className="additional-preferences-buttons">
@@ -285,7 +232,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                         <img key={index} src={url} alt="Preview"/>
                     ))}
                 </div>
-                <div className="vehicle-load-optional-inputs">
+                <div className="trailers-load-optional-inputs">
                     <h2>You can add personal note to this load</h2>
                     <p>These can be your preferences, questions or requests</p>
                     <div className="google-input-wrapper">
@@ -309,7 +256,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                 </div>
                 <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
             </div>
-            <div className="vehicle-load-container-content-tips">
+            <div className="trailers-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"
                                          description="The quotes you get are only asaccurate as your listing. Make it as detailed as possible to avoid delays, price increases, and cancellations."/>
                 <RecommendationContainer title="Double Check Locations"
@@ -319,4 +266,4 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
     );
 };
 
-export default CommercialTruckLoad;
+export default TrailerAndOtherVehicles;

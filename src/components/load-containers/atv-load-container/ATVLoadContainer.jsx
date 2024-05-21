@@ -1,5 +1,5 @@
 import React, {useRef, useState} from 'react';
-import "./CommercialTruckLoad.css";
+import "./ATVLoadContainer.css";
 import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
@@ -10,7 +10,7 @@ import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 
-const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const ATVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
@@ -92,15 +92,15 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
     };
 
     return (
-        <div className="vehicle-load-container-wrapper">
+        <div className="atv-load-container-wrapper">
             {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
-            <div className="vehicle-load-container-content">
+            <div className="atv-load-container-content">
                 <section className="load-title-section">
-                    <h1>Commercial Truck Load</h1>
+                    <h1>ATVs & Power Sports</h1>
                     <p>Try to fill all necessary fields</p>
                 </section>
-                <div className="vehicle-loads-container-inputs">
+                <div className="atv-loads-container-inputs">
                     <section>
                         <div className="google-input-wrapper">
                             <input
@@ -118,7 +118,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                     <section>
                         <div className="google-input-wrapper">
                             <input
-                                type="text"
+                                type="number"
                                 id="loadVehicleYear"
                                 autoComplete="off"
                                 className="google-style-input"
@@ -126,7 +126,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                                 onChange={handleChange('loadVehicleYear')}
                                 value={formData.loadVehicleYear}
                             />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Vehicle year</label>
+                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Number of Items</label>
                         </div>
                     </section>
                     <section>
@@ -158,7 +158,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                         </div>
                     </section>
                 </div>
-                <div className="vehicle-loads-container-switchers">
+                <div className="atv-loads-container-switchers">
                     <Switch
                         /* isOn={isOperable}*/
                         handleToggle={() => {
@@ -193,7 +193,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                 <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
                     another truck
                 </button>
-                <div className="vehicle-type-of-trailer-load">
+                <div className="atv-type-of-trailer-load">
                     <h2>Choose type of trailer</h2>
                     <p>These can be your preferences, questions or requests</p>
                     <div className="type-of-trailer-switchers">
@@ -226,31 +226,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                         />
                     </div>
                 </div>
-                <div className="vehicle-type-of-trailer-load">
-                    <h2>Additional details</h2>
-                    <p>Pick option</p>
-                    <div className="type-of-trailer-switchers">
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Is already on trailer?"
-                            tip="Vehicle is open to the trailer?"
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
-                            }}
-                            label="Trailer type preference?"
-                            tip="Do you have a preference for the type of trailer?"
-                        />
-                    </div>
-                </div>
-                <div className="vehicle-load-optional-inputs">
+                <div className="atv-load-optional-inputs">
                     <h2>For better experience attach files</h2>
                     <p>AI can better analyze your preferences</p>
                     <div className="additional-preferences-buttons">
@@ -285,7 +261,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                         <img key={index} src={url} alt="Preview"/>
                     ))}
                 </div>
-                <div className="vehicle-load-optional-inputs">
+                <div className="atv-load-optional-inputs">
                     <h2>You can add personal note to this load</h2>
                     <p>These can be your preferences, questions or requests</p>
                     <div className="google-input-wrapper">
@@ -309,7 +285,7 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                 </div>
                 <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
             </div>
-            <div className="vehicle-load-container-content-tips">
+            <div className="atv-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"
                                          description="The quotes you get are only asaccurate as your listing. Make it as detailed as possible to avoid delays, price increases, and cancellations."/>
                 <RecommendationContainer title="Double Check Locations"
@@ -319,4 +295,4 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
     );
 };
 
-export default CommercialTruckLoad;
+export default ATVLoadContainer;
