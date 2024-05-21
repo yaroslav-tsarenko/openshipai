@@ -127,7 +127,7 @@ const LandingHeader = () => {
                 </nav>
 
             </div>*/}
-            <Link to={"/sign-in"} className="landing-button-sidebar">Go to Account</Link>
+            {/*<Link to={"/sign-in"} className="landing-button-sidebar">Go to Account</Link>*/}
         </header>
     );
 };

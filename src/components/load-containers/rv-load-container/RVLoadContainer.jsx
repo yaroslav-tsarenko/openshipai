@@ -55,6 +55,10 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
         fileInputRef.current.click();
     };
 
+    const handleLoadChange = (input) => (e) => {
+        setFormData({...formData, [input]: e.target.value});
+    };
+
     const handleFileChange = (event) => {
         const files = Array.from(event.target.files);
         if (files.length + imagePreviewUrl.length > 5) {
@@ -115,6 +119,9 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
                                     label="Load Type"
                                     name="loadType"
                                     value={formData.loadSpecifiedItem}
+                                    onChange={(event) => {
+                                        handleLoadChange("loadSpecifiedItem")(event);
+                                    }}
                                     style={{
                                         fontSize: '15px',
                                         fontWeight: 'normal',
