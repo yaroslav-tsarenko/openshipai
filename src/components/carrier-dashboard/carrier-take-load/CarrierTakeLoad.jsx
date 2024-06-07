@@ -1,42 +1,14 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../CarrierDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
-import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../../assets/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../../assets/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../../assets/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../../assets/load-box-icon.svg";
-import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
 import {ReactComponent as MarkerIcon} from "../../../assets/location-marker-icon.svg";
 import {ReactComponent as MarkerIconWhite} from "../../../assets/location-marker-icon-white.svg";
 import {ReactComponent as AlongRouteIcon} from "../../../assets/route-marker-icon.svg";
 import {ReactComponent as AlongRouteIconWhite} from "../../../assets/route-marker-icon-white.svg";
 import {ReactComponent as PickupLocationArrow} from "../../../assets/arrow-icon-pickup.svg";
 import {ReactComponent as DeliveryLocationArrow} from "../../../assets/arrow-icon-delivery.svg";
-import {ReactComponent as BidArrowIcon} from "../../../assets/bid-arrow-icon.svg";
-import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
-import {ReactComponent as DirectionIconNumbers} from "../../../assets/directions-number-icons.svg";
-import {ReactComponent as CarrierIcon} from "../../../assets/trane-logo-carrier.svg";
 import {useParams} from 'react-router-dom';
 import Slider from '@mui/material/Slider';
-import {Link} from "react-router-dom";
+import axios from 'axios';
 import Box from '@mui/material/Box';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
@@ -50,7 +22,7 @@ import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
 const CarrierTakeLoad = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [hoveredButton, setHoveredButton] = useState('');
+    const [loads, setLoads] = useState([]);
     const {carrierID} = useParams();
     const [focusedButton, setFocusedButton] = useState(null);
     const [sliderValue, setSliderValue] = useState(null);
@@ -78,6 +50,21 @@ const CarrierTakeLoad = () => {
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    useEffect(() => {
+        const fetchLoads = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/get-all-loads');
+                setLoads(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching loads:', error);
+            }
+        };
+
+        fetchLoads();
+    }, []);
+
     return (
         <div className="carrier-dashboard-wrapper">
             <DashboardSidebar
@@ -245,66 +232,30 @@ const CarrierTakeLoad = () => {
                             </Box>
                         </div>
                         <div className="loads-containers-block">
-                            <LoadContainerBid
-                                loadPrice="1060$"
-                                loadTitle="Moving"
-                                loadPickUpLocation="Oregon, USA"
-                                loadPickUpDate="4 May - 11:00"
-                                loadDeliveryLocation="Los Angeles, USA"
-                                loadDeliveryDate="6 March - 15:00"
-                                loadType="Moving"
-                                loadWeight="500 lb"
-                                loadDistance="1290 mil"
-                                loadQoutes="12"
-                            />
-                            <LoadContainerBid
-                                loadPrice="560$"
-                                loadTitle="Car Load"
-                                loadPickUpLocation="New York, USA"
-                                loadPickUpDate="4 March - 13:00"
-                                loadDeliveryLocation="Los Angeles, USA"
-                                loadDeliveryDate="4 March - 13:00"
-                                loadType="Vehicle"
-                                loadWeight="1300 lb"
-                                loadDistance="230 mil"
-                                loadQoutes="No"
-                            />
-                            <LoadContainerBid
-                                loadPrice="1560$"
-                                loadTitle="Construction"
-                                loadPickUpLocation="New York, USA"
-                                loadPickUpDate="4 March - 13:00"
-                                loadDeliveryLocation="Los Angeles, USA"
-                                loadDeliveryDate="1 March - 15:00"
-                                loadType="Heavy"
-                                loadWeight="2300 lb"
-                                loadDistance="290 mil"
-                                loadQoutes="35"
-                            />
-                            <LoadContainerBid
-                                loadPrice="560$"
-                                loadTitle="Car Load"
-                                loadPickUpLocation="New York, USA"
-                                loadPickUpDate="4 March - 13:00"
-                                loadDeliveryLocation="Los Angeles, USA"
-                                loadDeliveryDate="4 March - 13:00"
-                                loadType="Vehicle"
-                                loadWeight="1300 lb"
-                                loadDistance="230 mil"
-                                loadQoutes="35"
-                            />
-                            <LoadContainerBid
-                                loadPrice="1560$"
-                                loadTitle="Construction"
-                                loadPickUpLocation="New York, USA"
-                                loadPickUpDate="4 March - 13:00"
-                                loadDeliveryLocation="Los Angeles, USA"
-                                loadDeliveryDate="1 March - 15:00"
-                                loadType="Heavy"
-                                loadWeight="2300 lb"
-                                loadDistance="290 mil"
-                                loadQoutes="35"
-                            />
+                            {loads.map(load => (
+                                <LoadContainerBid
+                                    key={load._id}
+                                    loadPrice={load.loadPrice}
+                                    loadTitle={load.loadTitle}
+                                    loadPickUpLocation={load.loadPickupLocation}
+                                    loadPickUpDate={load.loadPickupDate}
+                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                    loadDeliveryDate={load.loadDeliveryDate}
+                                    loadType={load.loadType}
+                                    loadWeight={`${load.loadWeight} lb`}
+                                    loadDistance={`${load.loadMilesTrip} mil`}
+                                    loadQoutes={load.loadQoutes}
+                                    loadID={load.loadCredentialID}
+                                    loadVehicleMake={load.loadVehicleMake}
+                                    loadStatus={load.loadStatus}
+                                    loadVehicleModel={load.loadVehicleModel}
+                                    loadVehicleYear={load.loadVehicleYear}
+                                    loadWidth={load.loadWidth}
+                                    loadHeight={load.loadHeight}
+                                    loadLength={load.loadLength}
+                                    loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>

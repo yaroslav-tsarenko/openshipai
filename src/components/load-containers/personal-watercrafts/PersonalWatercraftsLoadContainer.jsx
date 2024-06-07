@@ -9,6 +9,7 @@ import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFai
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import {ClipLoader} from "react-spinners";
 
 const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -18,6 +19,10 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
     const [isConvertible, setIsConvertible] = useState(false);
     const [isModified, setIsModified] = useState(false);
     const {shipperID} = useParams();
+    const [isOpenTrailer, setIsOpenTrailer] = useState(false);
+    const [isEnclosedTrailer, setIsEnclosedTrailer] = useState(false);
+    const [isBoth, setIsBoth] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
     const [formData, setFormData] = useState({
@@ -25,6 +30,8 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
+        loadStatus: 'Published',
+        loadPrice: 'Waiting for bids',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -32,9 +39,12 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadWeight: '',
+        loadTypeOfTrailer: '',
+        loadWeight: (() => `${Math.floor(Math.random() * 10000 + 1000)}`)(),
         loadLength: '',
         loadWidth: '',
+        loadPhotos: '',
+        loadFiles: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
@@ -43,6 +53,7 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
@@ -77,18 +88,24 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         const fileUrls = files.map(file => URL.createObjectURL(file));
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
+
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -126,7 +143,8 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
                                 onChange={handleChange('loadVehicleYear')}
                                 value={formData.loadVehicleYear}
                             />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Watercraft quantity</label>
+                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Watercraft
+                                quantity</label>
                         </div>
                     </section>
                     <section>
@@ -140,7 +158,8 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
                                 onChange={handleChange('loadVehicleMake')}
                                 value={formData.loadVehicleMake}
                             />
-                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Watercraft Make</label>
+                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Watercraft
+                                Make</label>
                         </div>
                     </section>
                     <section>
@@ -154,7 +173,8 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
                                 onChange={handleChange('loadVehicleModel')}
                                 value={formData.loadVehicleModel}
                             />
-                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Watercraft Model</label>
+                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Watercraft
+                                Model</label>
                         </div>
                     </section>
                 </div>
@@ -251,7 +271,9 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
                     <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
                         marketplace</p>
                 </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+                <button className="creating-load-button" onClick={handleCreateLoad}>
+                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                </button>
             </div>
             <div className="boat-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"

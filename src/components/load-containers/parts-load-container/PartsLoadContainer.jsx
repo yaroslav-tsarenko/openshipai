@@ -9,6 +9,7 @@ import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFai
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import {ClipLoader} from "react-spinners";
 
 const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -18,6 +19,7 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
     const [isConvertible, setIsConvertible] = useState(false);
     const [isModified, setIsModified] = useState(false);
     const {shipperID} = useParams();
+    const [isLoading, setIsLoading] = useState(false);
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
     const [formData, setFormData] = useState({
@@ -25,6 +27,8 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
+        loadStatus: 'Published',
+        loadPrice: 'Waiting for bids',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -32,9 +36,12 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadWeight: '',
+        loadTypeOfTrailer: '',
+        loadWeight: (() => `${Math.floor(Math.random() * 10000 + 1000)}`)(),
         loadLength: '',
         loadWidth: '',
+        loadPhotos: '',
+        loadFiles: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
@@ -43,6 +50,7 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
@@ -78,17 +86,22 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -119,42 +132,42 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
                         <div className="google-input-wrapper">
                             <input
                                 type="text"
-                                id="loadVehicleYear"
+                                id="loadIsCrate"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                onChange={handleChange('loadVehicleYear')}
-                                value={formData.loadVehicleYear}
+                                onChange={handleChange('loadIsCrate')}
+                                value={formData.loadIsCrate}
                             />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Is this crate?</label>
+                            <label htmlFor="loadIsCrate" className="google-style-input-label">Is this crate?</label>
                         </div>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
                             <input
                                 type="text"
-                                id="loadVehicleMake"
+                                id="loadIsPallet"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                onChange={handleChange('loadVehicleMake')}
-                                value={formData.loadVehicleMake}
+                                onChange={handleChange('loadIsPallet')}
+                                value={formData.loadIsPallet}
                             />
-                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Is this pallet?</label>
+                            <label htmlFor="loadIsPallet" className="google-style-input-label">Is this pallet?</label>
                         </div>
                     </section>
                     <section>
                         <div className="google-input-wrapper">
                             <input
                                 type="text"
-                                id="loadVehicleModel"
+                                id="loadIsBox"
                                 autoComplete="off"
                                 className="google-style-input"
                                 required
-                                onChange={handleChange('loadVehicleModel')}
-                                value={formData.loadVehicleModel}
+                                onChange={handleChange('loadIsBox')}
+                                value={formData.loadIsBox}
                             />
-                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Is this box?</label>
+                            <label htmlFor="loadIsBox" className="google-style-input-label">Is this box?</label>
                         </div>
                     </section>
                 </div>
@@ -166,56 +179,56 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Length"
+                                    id="loadLength"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Length')}
-                                    value={formData.Length}
+                                    onChange={handleChange('loadLength')}
+                                    value={formData.loadLength}
                                 />
-                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Length</label>
+                                <label htmlFor="loadLength" className="google-style-input-label">Length</label>
                             </div>
                         </section>
                         <section>
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Weight"
+                                    id="loadWeight"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Weight')}
-                                    value={formData.Weight}
+                                    onChange={handleChange('loadWeight')}
+                                    value={formData.loadWeight}
                                 />
-                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Weight</label>
+                                <label htmlFor="loadWeight" className="google-style-input-label">Weight</label>
                             </div>
                         </section>
                         <section>
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Width"
+                                    id="loadWidth"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Width')}
-                                    value={formData.Width}
+                                    onChange={handleChange('loadWidth')}
+                                    value={formData.loadWidth}
                                 />
-                                <label htmlFor="Width" className="google-style-input-label">Width</label>
+                                <label htmlFor="loadWidth" className="google-style-input-label">Width</label>
                             </div>
                         </section>
                         <section>
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Height"
+                                    id="loadHeight"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Height')}
-                                    value={formData.Height}
+                                    onChange={handleChange('loadHeight')}
+                                    value={formData.loadHeight}
                                 />
-                                <label htmlFor="loadVehicleModel" className="google-style-input-label">Height</label>
+                                <label htmlFor="loadHeight" className="google-style-input-label">Height</label>
                             </div>
                         </section>
                     </div>
@@ -313,7 +326,9 @@ const PartsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSub
                     <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
                         marketplace</p>
                 </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+                <button className="creating-load-button" onClick={handleCreateLoad}>
+                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                </button>
             </div>
             <div className="parts-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"

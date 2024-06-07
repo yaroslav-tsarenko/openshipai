@@ -40,12 +40,10 @@ const GoogleMapShowDirection = React.memo(function GoogleMapShowDirection({ orig
         }
     };
 
-
-
     return (
         <LoadScript
-            googleMapsApiKey="AIzaSyBRtLE7Bp4U4rlvAMrEpVoJ2R_evqeohZo"
-            libraries={['places']} // Add 'places' to the libraries array
+            googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM"
+            libraries={['places']}
             preventGoogleFontsLoading
         >
             <GoogleMap

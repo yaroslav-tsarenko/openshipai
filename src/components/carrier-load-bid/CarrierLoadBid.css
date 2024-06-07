@@ -1,0 +1,183 @@
+.carrier-load-bid-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: fit-content;
+    padding: 20px;
+    margin: 10px 0 0 0;
+    background: none;
+    border-radius: 8px;
+    border: 1px solid var(--light-grey);
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.carrier-load-bid-container:hover{
+    border: 1px solid var(--royal-blue);
+}
+
+.carrier-load-bid-container-header{
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+.carrier-load-bid-container-header section{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    justify-items: center;
+}
+
+.carrier-load-bid-container-header h4{
+    font-size: 1.2rem;
+    color: var(--royal-white);
+    padding: 7px 10px 7px 10px;
+    width: fit-content;
+    height: fit-content;
+    background: var(--royal-blue);
+    margin: 0 10px 0 0;
+    border-radius: 10px;
+}
+
+.carrier-load-bid-container-header h3{
+    font-size: 1.2rem;
+    width: fit-content;
+    height: fit-content;
+    color: var(--royal-white);
+    margin: 0;
+    padding: 7px 10px 7px 10px;
+    background: var(--royal-green);
+    border-radius: 10px;
+}
+
+.carrier-load-bid-container-header h2{
+    font-size: 2.4rem;
+    color: var(--dark-grey);
+    margin: 0 0 0 10px;
+    border-radius: 10px;
+}
+
+
+.carrier-load-bid-container-body{
+    display: flex;
+    text-align: left;
+    width: 100%;
+}
+
+.carrier-load-bid-container-body p{
+    font-size: 1.7rem;
+    color: var(--grey);
+    margin: 0;
+    padding: 0;
+}
+
+.carrier-load-bid-container-bottom{
+    display: flex;
+    justify-content: right;
+}
+
+
+.apply-bid-button{
+    width: fit-content;
+    padding: 10px 15px 10px 15px;
+    border-radius: 50px;
+    border: none;
+    margin: 10px 0 0 0;
+    display: flex;
+    float: right;
+    background: var(--royal-green);
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: 0.2s ease-in-out;
+}
+
+.apply-bid-button:hover{
+    background: var(--royal-green-hovered);
+    cursor: pointer;
+}
+
+.carrier-bid-popup-overlay {
+    position: fixed;
+    top: 0;
+    z-index: 999;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.carrier-bid-popup {
+    width: 900px;
+    height: 430px;
+    background: white;
+    border-radius: 10px;
+    box-sizing: border-box;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.carrier-bid-popup-header {
+    justify-content: space-between;
+    height: fit-content;
+    display: flex;
+    padding: 20px;
+    align-content: center;
+    justify-items: center;
+    align-items: center;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.carrier-bid-popup-header h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--royal-blue);
+}
+
+.carrier-bid-popup-content {
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.carrier-bid-description {
+    width: 90%;
+    margin: 10px 0 0 0;
+}
+
+.carrier-bid-description h3 {
+    font-size: 2rem;
+    color: var(--dark-grey);
+}
+
+.carrier-bid-description p {
+    font-size: 1.5rem;
+    color: var(--grey);
+}
+
+.carrier-bid-popup-value-inputs {
+    justify-content: space-between;
+    display: flex;
+}
+
+.carrier-submit-bid-button{
+    display: flex;
+    margin: 0 auto;
+    padding: 10px 15px 10px 15px;
+    width: fit-content;
+    background: var(--royal-green);
+    border-radius: 50px;
+    border: none;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+}
+
+.carrier-submit-bid-button:hover{
+    background: var(--royal-green-hovered);
+}

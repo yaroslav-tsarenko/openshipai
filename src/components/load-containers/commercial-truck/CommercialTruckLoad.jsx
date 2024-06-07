@@ -9,6 +9,7 @@ import RecommendationContainer from "../../reccomendation-container/Recommendati
 import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import {ClipLoader} from "react-spinners";
 
 const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -20,11 +21,19 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
     const {shipperID} = useParams();
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
+    const [isOpenTrailer, setIsOpenTrailer] = useState(false);
+    const [isEnclosedTrailer, setIsEnclosedTrailer] = useState(false);
+    const [isOnTrailer, setIsOnTrailer] = useState(false);
+    const [hasTrailerPreference, setHasTrailerPreference] = useState(false);
+    const [isBoth, setIsBoth] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
         loadType: loadType,
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
+        loadStatus: 'Published',
+        loadPrice: 'Waiting for bids',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -32,9 +41,12 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadWeight: '',
+        loadTypeOfTrailer: '',
+        loadWeight: (() => `${Math.floor(Math.random() * 10000 + 1000)}`)(),
         loadLength: '',
         loadWidth: '',
+        loadPhotos: '',
+        loadFiles: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
@@ -43,6 +55,9 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        isOnTrailer: false,
+        hasTrailerPreference: false,
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
@@ -78,17 +93,22 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -232,18 +252,18 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                     <div className="type-of-trailer-switchers">
                         <Switch
                             handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
+                                setIsOnTrailer(!isOnTrailer);
+                                setFormData({...formData, isOnTrailer: !isOnTrailer});
+                                console.log('Is already on trailer:', !isOnTrailer);
                             }}
                             label="Is already on trailer?"
                             tip="Vehicle is open to the trailer?"
                         />
                         <Switch
                             handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
+                                setHasTrailerPreference(!hasTrailerPreference);
+                                setFormData({...formData, hasTrailerPreference: !hasTrailerPreference});
+                                console.log('Trailer type preference:', !hasTrailerPreference);
                             }}
                             label="Trailer type preference?"
                             tip="Do you have a preference for the type of trailer?"
@@ -307,7 +327,9 @@ const CommercialTruckLoad = ({pickupLocation, deliveryLocation, loadType, loadSu
                     <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
                         marketplace</p>
                 </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+                <button className="creating-load-button" onClick={handleCreateLoad}>
+                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                </button>
             </div>
             <div className="vehicle-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"

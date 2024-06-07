@@ -1,9 +1,11 @@
 .loadboard-load-container-wrapper {
     display: flex;
+    position: relative;
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    height: 350px;
+    height: 200px;
+    text-decoration: none;
     border: 1px solid var(--light-grey);
     border-radius: 45px;
     cursor: pointer;
@@ -11,11 +13,36 @@
     transition: 0.2s ease-in-out;
 }
 
+.load-quotes-circle {
+    position: absolute;
+    top: -5px;
+    left: -1px;
+    width: 30px;
+    height: 30px;
+    background-color: red;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+}
+
 .loadboard-load-container-wrapper:hover {
     transition: 0.2s ease-in-out;
     border: 1px solid var(--royal-blue);
     background-color: var(--light-grey-hovered-transparent);
+    transform: scale(1.0);
 }
+
+.loadboard-load-container-wrapper:active {
+    transition: 0.1s ease-in-out;
+    border: 2px solid var(--royal-blue);
+    background-color: var(--light-grey-hovered-transparent);
+    transform: scale(0.98);
+}
+
+
 
 .loadboard-load-container-info {
     display: flex;
@@ -32,23 +59,24 @@
     flex-direction: column;
     align-content: center;
     justify-content: space-between;
-    padding: 60px 0 20px 40px;
+    height: 94%;
 }
 
 .loadboard-load-status {
+    margin: 10px 0 10px 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     text-align: center;
     width: fit-content;
     justify-items: center;
-    padding: 5px;
+    padding: 2px;
     border-radius: 33px;
     background: var(--load-credentials-background);
 }
 
 .loadboard-status-text {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     font-weight: bold;
     text-align: center;
     justify-content: center;
@@ -65,63 +93,84 @@
     margin: 0 0 0 5px;
 }
 
+.load-container-title{
+    color: var(--dark-grey);
+    font-size: 2rem;
+    font-weight: bold;
+}
+
 .loadboard-load-price {
     color: var(--royal-green);
-    font-size: 4rem;
-    font-weight: normal;
+    font-size: 1.8rem;
+    font-weight: bold;
 }
 
 .loadboard-load-direction-wrapper {
     display: flex;
     align-items: center;
-    height: 120px;
 }
 
 .loadboard-load-direction {
     justify-content: space-between;
     display: flex;
     flex-direction: column;
+    height: 85%;
 }
 
 .loadboard-load-direction-origin {
-    margin: 15px 0 0 0;
+    margin: 5px 0 0 0;
+    display: flex;
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
 }
 
 .loadboard-load-direction-origin h3 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: var(--royal-blue);
 }
 
 .loadboard-load-direction-origin p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: normal;
     color: var(--light-grey);
-
+    margin: 0 0 0 5px;
 }
 
 .loadboard-load-direction-destination {
     margin: 5px 0 0 0;
+    display: flex;
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
 }
 
 .loadboard-load-direction-destination h3 {
-    font-size: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
     color: var(--royal-blue);
 }
 
 .loadboard-load-direction-destination p {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: normal;
     color: var(--light-grey);
+    margin: 0 0 0 5px;
 }
 
 .loadboard-load-info-additional {
     display: flex;
-    flex-direction: column;
+    width: 350px;
     align-content: start;
     justify-content: space-between;
     margin: 0 30px 0 0;
+}
+.map-load-section-load-container{
+    width: 50%;
+    height: 100%;
 }
 
 .loadboard-carrier-load-logo{
@@ -131,7 +180,7 @@
 
 .loadboard-credentials{
     display: flex;
-    flex-direction: column;
+    flex-wrap: wrap;
     align-content: center;
     justify-content: space-between;
     padding: 0 0 20px 0;
@@ -139,7 +188,7 @@
 
 .loadboard-credentials span {
     padding: 7px 12px 7px 12px;
-    margin: 10px 0 10px 0;
+    margin: 10px 3px 10px 3px;
     color: var(--load-credentials-font-color);
     font-size: 1.4rem;
     font-weight: bold;

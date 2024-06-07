@@ -28,6 +28,7 @@ import CarrierPaymentsPage from "./components/carrier-dashboard/carrier-payments
 import CarrierLoads from "./components/carrier-dashboard/carrier-loads-page/CarrierLoads";
 import DriverProfile from "./components/driver-dashboard/driver-details/DriverProfile";
 import DriverAssignedLoads from "./components/driver-dashboard/driver-pages/DriverAssignedLoads";
+import ShipperLoadPage from "./components/shipper-dashboard-page/shipper-load/ShipperLoadPage";
 
 function App() {
     return (
@@ -40,6 +41,7 @@ function App() {
                 <Route path="/shipper-payments/:shipperID" element={<ShipperPaymentsPage/>}/>
                 <Route path="/shipper-profile/:shipperID" element={<ShipperProfilePage/>}/>
                 <Route path="/shipper-settings/:shipperID" element={<ShipperSettings/>}/>
+                <Route path="/shipper-load/:shipperID/:loadCredentialID" element={<ShipperLoadPage/>}/>
 
                 <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
                 <Route path="/carrier-take-loads/:carrierID" element={<CarrierTakeLoad/>}/>

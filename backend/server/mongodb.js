@@ -51,6 +51,7 @@ const Bid = require('./models/Bid');
 const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
 const Load = require('./models/Load');
+const LoadBid = require('./models/LoadBid');
 const stripe = require('stripe')('sk_test_51O5Q6UEOdY1hERYnOo1J3Zep6yPIGV4Mxo8dSPjkQElYi7enLOmu3sD7YfxEzWOe1dYO98nsmHNaBu83gpBI7ekT004LeMr38x');
 require('dotenv').config();
 const nodemailer = require('nodemailer');
@@ -66,6 +67,21 @@ function generatePersonalEndpoint() {
     return shortid.generate();
 }
 
+async function calculateDistance(loadPickupLocation, loadDeliveryLocation) {
+    const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${encodeURIComponent(loadPickupLocation)}&destinations=${encodeURIComponent(loadDeliveryLocation)}&key=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0] && data.rows[0].elements[0].distance) {
+        const distance = data.rows[0].elements[0].distance.text;
+        return distance;
+    } else {
+        console.error('Error: Invalid data structure');
+        return null;
+    }
+}
+
 mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mongodb.net/', {
     useNewUrlParser: true,
     useUnifiedTopology: true
@@ -74,7 +90,6 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
 }).catch(err => {
     console.error('Failed to connect to MongoDB:', err);
 });
-
 
 const transporter = nodemailer.createTransport({
     host: "live.smtp.mailtrap.io",
@@ -105,6 +120,58 @@ app.post('/send-driver-credentials', async (req, res) => {
     } catch (error) {
         console.error('Failed to send email:', error);
         res.status(500).send({ message: 'Failed to send email' });
+    }
+});
+
+app.post('/create-bid', async (req, res) => {
+    try {
+        const newLoadBid = new LoadBid(req.body);
+        const savedLoadBid = await newLoadBid.save();
+
+        const bids = await LoadBid.find({ loadCredentialID: req.body.loadCredentialID });
+
+        const averagePrice = bids.reduce((total, bid) => total + bid.loadBidPrice, 0) / bids.length;
+
+        const load = await Load.findOne({ loadCredentialID: req.body.loadCredentialID });
+
+        const updatedQuotes = load.loadQoutes + 1;
+
+        await Load.updateOne({ loadCredentialID: req.body.loadCredentialID }, { loadPrice: averagePrice, loadQoutes: updatedQuotes });
+
+        res.json(savedLoadBid);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/load/:loadCredentialID', async (req, res) => {
+    const { loadCredentialID } = req.params;
+    try {
+        const load = await Load.findOne({ loadCredentialID: loadCredentialID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+        res.json(load);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-all-load-bids', async (req, res) => {
+    try {
+        const loadBids = await LoadBid.find({});
+        res.status(200).json(loadBids);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/delete-all-load-bids', async (req, res) => {
+    try {
+        await LoadBid.deleteMany({});
+        res.status(200).send({status: 'Success', message: 'All LoadBids deleted successfully'});
+    } catch (err) {
+        res.status(500).send({status: 'Error', message: 'Failed to delete all LoadBids'});
     }
 });
 
@@ -144,6 +211,25 @@ app.get('/all-user-loads', async (req, res) => {
     } catch (error) {
         console.error('Error fetching all user loads:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.get('/get-all-loads', async (req, res) => {
+    try {
+        const loads = await Load.find();
+        res.json(loads);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.delete('/delete-all-loads', async (req, res) => {
+    try {
+        await Load.deleteMany({});
+        res.status(200).send('All loads deleted successfully');
+    } catch (error) {
+        console.error('Error deleting loads:', error);
+        res.status(500).send('Error deleting loads');
     }
 });
 
@@ -601,16 +687,16 @@ app.post('/save-shipper-data', async (req, res) => {
 });
 
 app.post('/save-load-data', async (req, res) => {
-    console.log('Received request to /save-load-data'); // Log when a request is received
+    console.log('Received request to /save-load-data');
     const loadData = req.body;
-    console.log('Request body:', loadData); // Log the request body
+    console.log('Request body:', loadData);
     const newLoad = new Load(loadData);
     try {
         const savedLoad = await newLoad.save();
-        console.log('Saved load:', savedLoad); // Log the saved load
+        console.log('Saved load:', savedLoad);
         res.json({ status: 'Success', load: savedLoad });
     } catch (error) {
-        console.error('Error saving load:', error); // Log any errors
+        console.error('Error saving load:', error);
         res.status(500).json({ status: 'Error', message: error.message });
     }
 });
@@ -618,9 +704,9 @@ app.post('/save-load-data', async (req, res) => {
 app.post('/api/save-signature', (req, res) => {
     const newSignature = new Signature({
         imgData: req.body.imgData,
-        userEndpoint: req.body.userEndpoint, // Add this line
-        email: req.body.email, // Add this line
-        signed: true, // Add this line
+        userEndpoint: req.body.userEndpoint,
+        email: req.body.email,
+        signed: true,
     });
 
     newSignature.save()

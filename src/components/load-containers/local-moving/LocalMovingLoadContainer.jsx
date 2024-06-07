@@ -18,11 +18,13 @@ import OutlinedInput from '@mui/material/OutlinedInput';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import {ThemeProvider, createTheme} from "@mui/material";
+import {ClipLoader} from "react-spinners";
 
 const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const {shipperID} = useParams();
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
@@ -43,8 +45,11 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
+        loadDestinationOptions: '',
+        loadAdditionalSelectedLoadOptions: [],
         loadWeight: '',
         loadLength: '',
+        loadAreaOption: '',
         loadWidth: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
@@ -55,19 +60,20 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
         loadConvertible: false,
         loadModified: false,
         shipperID: shipperID,
+        selectedLoadOptions: [],
     });
 
     const theme = createTheme({
         palette: {
             primary: {
-                main: '#024ec9', // This will be the primary color of your theme
+                main: '#024ec9',
             },
             secondary: {
-                main: '#024ec9', // This will be the secondary color of your theme
+                main: '#024ec9',
             },
             text: {
-                primary: '#000000', // This will be the primary text color of your theme
-                secondary: '#757575', // This will be the secondary text color of your theme
+                primary: '#000000',
+                secondary: '#757575',
             },
         },
         typography: {
@@ -121,6 +127,11 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
         setSelectedOptions(
             typeof value === 'string' ? value.split(',') : value,
         );
+
+        setFormData(prevState => ({
+            ...prevState,
+            loadAdditionalSelectedLoadOptions: typeof value === 'string' ? value.split(',') : value,
+        }));
     };
 
     const handleChange = (input) => (e) => {
@@ -161,17 +172,22 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
     };
 
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
             const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -190,8 +206,8 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                 <InputLabel id="demo-simple-select-label"
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>Moving Size</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadMovingSize"
+                                    id="loadMovingSize"
                                     label="Moving Size"
                                     name="loadMovingSize"
                                     value={formData.loadMovingSize}
@@ -264,8 +280,8 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>Number of
                                     bedrooms</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadNumberOfBedrooms"
+                                    id="loadNumberOfBedrooms"
                                     label="Number of bedrooms"
                                     name="loadNumberOfBedrooms"
                                     value={formData.loadNumberOfBedrooms}
@@ -363,8 +379,8 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>Delivery
                                     stories</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadDeliveryStories"
+                                    id="loadDeliveryStories"
                                     label="Pickup stories"
                                     name="loadDeliveryStories"
                                     value={formData.loadDeliveryStories}
@@ -404,17 +420,17 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                 <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
                     another load
                 </button>
-                <div className="local-moving-type-of-trailer-load">
+                <div className="commercial-business-moving-type-of-trailer-load">
                     <h2>Does the area have shopping, entertainment, or restaurants?</h2>
                     <p>Choose option</p>
-                    <div className="local-moving-loads-container-inputs">
+                    <div className="ltl-load-container-inputs">
                         <Box sx={{minWidth: "100%", height: '50px', marginBottom: "20px"}}>
                             <FormControl fullWidth style={{fontSize: '15px',}}>
                                 <InputLabel id="demo-simple-select-label"
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>Choose option</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadAreaOption"
+                                    id="loadAreaOption"
                                     label="Choose option"
                                     name="loadAreaOption"
                                     value={formData.loadAreaOption}
@@ -428,13 +444,13 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                         borderRadius: '5px'
                                     }}
                                 >
-                                    <MenuItem value="1"
+                                    <MenuItem value="1 floor"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
                                                   fontWeight: 'normal'
                                               }}>1 floor</MenuItem>
-                                    <MenuItem value="2"
+                                    <MenuItem value="2 floor"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
@@ -446,7 +462,7 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                                   color: 'grey',
                                                   fontWeight: 'normal'
                                               }}>+3 floor</MenuItem>
-                                    <MenuItem value="3+"
+                                    <MenuItem value="Load via passanger or freight + elevator"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
@@ -457,17 +473,17 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                         </Box>
                     </div>
                 </div>
-                <div className="local-moving-type-of-trailer-load">
+                <div className="commercial-business-moving-type-of-trailer-load">
                     <h2>Do you need item move upon down at your destination</h2>
                     <p>Choose option</p>
-                    <div className="local-moving-loads-container-inputs">
+                    <div className="ltl-load-container-inputs">
                         <Box sx={{minWidth: "100%", height: '50px', marginBottom: "20px"}}>
                             <FormControl fullWidth style={{fontSize: '15px',}}>
                                 <InputLabel id="demo-simple-select-label"
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>Choose option</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadDestinationOptions"
+                                    id="loadDestinationOptions"
                                     label="Choose option"
                                     name="loadDestinationOptions"
                                     value={formData.loadDestinationOptions}
@@ -481,19 +497,19 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                                         borderRadius: '5px'
                                     }}
                                 >
-                                    <MenuItem value="1"
+                                    <MenuItem value="Some"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
                                                   fontWeight: 'normal'
                                               }}>Some</MenuItem>
-                                    <MenuItem value="2"
+                                    <MenuItem value="I need"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
                                                   fontWeight: 'normal'
                                               }}>I need</MenuItem>
-                                    <MenuItem value="3+"
+                                    <MenuItem value="I do not need"
                                               style={{
                                                   fontSize: '15px',
                                                   color: 'grey',
@@ -504,33 +520,35 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                         </Box>
                     </div>
                 </div>
-                <div className="local-moving-type-of-trailer-load">
+                <div className="commercial-business-moving-type-of-trailer-load">
                     <h2>Is there anything else</h2>
                     <p>Choose option</p>
-                    <div className="local-moving-loads-container-inputs">
+                    <div className="ltl-load-container-inputs">
                         <ThemeProvider theme={theme}>
-                            <Box sx={{ minWidth: "100%", height: '50px', fontSize: '20px', marginBottom: '25px' }}>
+                            <Box sx={{minWidth: "100%", height: '50px', fontSize: '20px', marginBottom: '25px'}}>
                                 <FormControl fullWidth>
-                                    <InputLabel id="demo-multiple-checkbox-label" sx={{ fontSize: '15px', color: 'black' }}>Options</InputLabel>
+                                    <InputLabel id="demo-multiple-checkbox-label"
+                                                sx={{fontSize: '15px', color: 'black'}}>Options</InputLabel>
                                     <Select
                                         labelId="demo-multiple-checkbox-label"
                                         id="demo-multiple-checkbox"
                                         multiple
                                         value={selectedOptions}
                                         onChange={handleOptionChange}
-                                        input={<OutlinedInput label="Options" />}
+                                        input={<OutlinedInput label="Options"/>}
                                         renderValue={(selected) => selected.join(', ')}
                                         MenuProps={MenuProps}
                                     >
                                         {options.map((option) => (
-                                            <MenuItem key={option} value={option} sx={{ fontSize: '15px', color: 'black' }}>
+                                            <MenuItem key={option} value={option}
+                                                      sx={{fontSize: '15px', color: 'black'}}>
                                                 <Checkbox checked={selectedOptions.indexOf(option) > -1} sx={{
                                                     color: pink[800],
                                                     '&.Mui-checked': {
                                                         color: pink[600],
                                                     },
-                                                }}  />
-                                                <ListItemText primary={option} />
+                                                }}/>
+                                                <ListItemText primary={option}/>
                                             </MenuItem>
                                         ))}
                                     </Select>
@@ -597,7 +615,9 @@ const LocalMovingLoadContainer = ({pickupLocation, deliveryLocation, loadType, l
                     <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
                         marketplace</p>
                 </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+                <button className="creating-load-button" onClick={handleCreateLoad}>
+                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                </button>
             </div>
             <div className="local-moving-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"

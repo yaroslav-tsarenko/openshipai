@@ -141,13 +141,11 @@ const ShipperChatPage = () => {
     }, [chatID]);
     useEffect(() => {
         socketRef.current = io.connect('https://socket-chat-server.onrender.com');
-
         socketRef.current.on('carrier message', (data) => {
             if (data.chatID === selectedChatID) {
                 setChatMessages((oldMessages) => [...oldMessages, data.message]);
             }
         });
-
         return () => {
             socketRef.current.disconnect();
         };

@@ -8,8 +8,10 @@ import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFai
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import {BeatLoader, CircleLoader, ClipLoader} from "react-spinners";
 
 const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+    const [isLoading, setIsLoading] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
@@ -17,13 +19,18 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
     const [isConvertible, setIsConvertible] = useState(false);
     const [isModified, setIsModified] = useState(false);
     const {shipperID} = useParams();
+    const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
+
     const [formData, setFormData] = useState({
         loadType: loadType,
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
+        loadStatus: 'Published',
+        loadPrice: 0,
+        loadQoutes: 0,
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -31,9 +38,12 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadWeight: '',
+        loadTypeOfTrailer: '',
+        loadWeight: (() => `${Math.floor(Math.random() * 10000 + 1000)}`)(),
         loadLength: '',
         loadWidth: '',
+        loadPhotos: '',
+        loadFiles: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
@@ -42,6 +52,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
@@ -77,17 +88,22 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
@@ -195,30 +211,51 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
                     <div className="type-of-trailer-switchers">
                         <Switch
                             handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
+                                if (loadTypeOfTrailer !== 'Open Trailer') {
+                                    setLoadTypeOfTrailer('Open Trailer');
+                                    setFormData({...formData, loadTypeOfTrailer: 'Open Trailer'});
+                                } else {
+                                    setLoadTypeOfTrailer(null);
+                                    setFormData({...formData, loadTypeOfTrailer: null});
+                                }
+                                console.log(loadTypeOfTrailer); // Log the selected value
                             }}
                             label="Open Trailer (Cost loss)"
                             tip="Vehicle is open to the trailer?"
+                            value="Open Trailer"
+                            isOn={loadTypeOfTrailer === 'Open Trailer'}
                         />
                         <Switch
                             handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
+                                if (loadTypeOfTrailer !== 'Enclosed Trailer') {
+                                    setLoadTypeOfTrailer('Enclosed Trailer');
+                                    setFormData({...formData, loadTypeOfTrailer: 'Enclosed Trailer'});
+                                } else {
+                                    setLoadTypeOfTrailer(null);
+                                    setFormData({...formData, loadTypeOfTrailer: null});
+                                }
+                                console.log(loadTypeOfTrailer); // Log the selected value
                             }}
                             label="Enclosed Trailer (Costs More)"
                             tip="Vehicle protected"
+                            value="Enclosed Trailer"
+                            isOn={loadTypeOfTrailer === 'Enclosed Trailer'}
                         />
                         <Switch
                             handleToggle={() => {
-                                setIsOperable(!isOperable);
-                                setFormData({...formData, loadOperable: !isOperable});
-                                console.log('Vehicle on Run:', !isOperable);
+                                if (loadTypeOfTrailer !== 'Both') {
+                                    setLoadTypeOfTrailer('Both');
+                                    setFormData({...formData, loadTypeOfTrailer: 'Both'});
+                                } else {
+                                    setLoadTypeOfTrailer(null);
+                                    setFormData({...formData, loadTypeOfTrailer: null});
+                                }
+                                console.log(loadTypeOfTrailer);
                             }}
                             label="Both"
                             tip="You can opt for open or enclosed trailer"
+                            value="Both"
+                            isOn={loadTypeOfTrailer === 'Both'}
                         />
                     </div>
                 </div>
@@ -279,7 +316,9 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
                     <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
                         marketplace</p>
                 </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
+                <button className="creating-load-button" onClick={handleCreateLoad}>
+                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                </button>
             </div>
             <div className="vehicle-load-container-content-tips">
                 <RecommendationContainer title="Details Matter"
