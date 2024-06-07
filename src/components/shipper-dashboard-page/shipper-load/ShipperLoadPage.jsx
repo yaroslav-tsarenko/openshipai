@@ -192,12 +192,8 @@ const ShipperLoadPage = () => {
                            loadEstimatedDeliveryTime={loadBid.loadBidDeliveryDate}
                            />
                        ))}
-
                    </div>
                 </div>
-
-
-
                 {/*<div style={{background: "grey"}}>
                     <h2>{load.loadTitle}</h2>
                     <p>Type: {load.loadType}</p>
