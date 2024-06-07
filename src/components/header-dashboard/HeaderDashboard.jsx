@@ -20,7 +20,7 @@ const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRo
                 </div>
                 <div className="dashboard-account-info">
                     <section className="account-info">
-                        <DefaultUserAvatar/>
+                        <DefaultUserAvatar width="60" height="60"/>
                         <Link to={profileLink} className="dashboard-account-info-text">
                             <h3 className="header-dashboard-account-info-name">{accountName}</h3>
                             <p className="header-dashboard-account-info-role">{accountRole}</p>

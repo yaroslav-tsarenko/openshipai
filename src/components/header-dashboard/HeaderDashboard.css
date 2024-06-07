@@ -10,7 +10,7 @@
 
 .dashboard-content-title {
     color: var(--royal-white);
-    font-size: 3.5rem;
+    font-size: 2.5rem;
     background: linear-gradient(to right, var(--royal-blue), var(--royal-blue-hovered));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -44,7 +44,7 @@
     background: var(--search-bar-background);
     display: flex;
     width: 300px;
-    height: 70px;
+    height: 55px;
     padding: 0 15px 0 17px;
     border-radius: 40px;
     justify-content: center;
@@ -99,14 +99,14 @@
 }
 
 .header-dashboard-account-info-name {
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 500;
     margin: 0;
     color: var(--grey);
 }
 
 .header-dashboard-account-info-role {
-    font-size: 1.5rem;
+    font-size: 1.3rem;
     margin: 0;
     font-weight: 500;
     color: var(--light-grey);

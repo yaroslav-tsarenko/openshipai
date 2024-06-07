@@ -1,47 +1,75 @@
 import React from 'react';
-import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
+import {ReactComponent as DirectionIcon} from "../../assets/load-container-directions-smaller.svg";
 import {ReactComponent as CarrierLogo} from "../../assets/trane-logo-carrier.svg";
 import "./LoadContainer.css"
 import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
+import {Link} from "react-router-dom";
 
-const LoadContainer = () => {
+const LoadContainer = ({
+                           loadStatus,
+                           loadPrice,
+                           loadPickupLocation,
+                           loadPickupTime,
+                           loadDeliveryLocation,
+                           loadTitle,
+                           loadDeliveryTime,
+                           loadDescription,
+                           loadCredentialID,
+                           loadType,
+                           loadWeight,
+                           loadTrailerType,
+                           loadVehicleModel,
+                           loadVehicleYear,
+                           loadMilesTrip,
+                           loadQoutes,
+                           loadTypeOfPackaging,
+                           shipperID,
+                       }) => {
     return (
-        <div className="loadboard-load-container-wrapper">
+        <Link to={`/shipper-load/${shipperID}/${loadCredentialID}`} className="loadboard-load-container-wrapper">
+            <div>
+                {loadQoutes > 0 && <div className="load-quotes-circle">{loadQoutes}</div>}
+            </div>
             <section className="loadboard-load-container-info">
                 <div className="loadboard-load-info-main">
                     <div className="loadboard-load-status">
                         <span className="loadboard-status-circle"></span>
-                        <p className="loadboard-status-text">Booked</p>
+                        <p className="loadboard-status-text">{loadStatus}</p>
                     </div>
-                    <h2 className="loadboard-load-price">560$</h2>
+                    <h3 className="load-container-title">{loadType}</h3>
+                    <h2 className="loadboard-load-price">{loadPrice}$</h2>
                     <div className="loadboard-load-direction-wrapper">
-                        <DirectionIcon height="150px" style={{marginRight: '10px'}}/>
+                        <DirectionIcon style={{marginRight: '10px'}}/>
                         <div className="loadboard-load-direction">
                             <span className="loadboard-load-direction-origin">
-                                <h3>New York, USA</h3>
-                                <p>4 March - 13:00</p>
+                                <h3>{loadPickupLocation}</h3>
+                                <p>{loadPickupTime}</p>
                             </span>
                             <span className="loadboard-load-direction-destination">
-                                <h3>Los Angeles, USA</h3>
-                                <p>4 March - 13:00</p>
+                                <h3>{loadDeliveryLocation}</h3>
+                                <p>{loadDeliveryTime}</p>
                             </span>
                         </div>
                     </div>
                 </div>
                 <div className="loadboard-load-info-additional">
-                    <CarrierLogo className="loadboard-carrier-load-logo"/>
                     <div className="loadboard-credentials">
-                        <span>5673-5385-6525-8642</span>
-                        <span>Vehicle Load</span>
-                        <span>1300 lb</span>
-                        <span>Dry Van</span>
+                        {loadCredentialID && <span>{loadCredentialID}</span>}
+                        {loadType && <span>{loadType}</span>}
+                        {loadWeight && <span>{loadWeight}</span>}
+                        {loadTrailerType && <span>{loadTrailerType}</span>}
+                        {loadVehicleModel && <span>{loadVehicleModel}</span>}
+                        {loadVehicleYear && <span>{loadVehicleYear}</span>}
+                        {loadMilesTrip && <span>{loadMilesTrip} mil</span>}
+                        {loadTypeOfPackaging && <span>{loadTypeOfPackaging}</span>}
+                        {loadDescription && <span>{loadDescription}</span>}
                     </div>
                 </div>
             </section>
-            <div className="map-load-section">
-                <GoogleMapShowDirection origin="New York" destination="Los Angeles"/>
+            <div className="map-load-section-load-container">
+                <GoogleMapShowDirection origin={loadPickupLocation} destination={loadDeliveryLocation}/>
             </div>
-        </div>
+        </Link>
     );
 };
 

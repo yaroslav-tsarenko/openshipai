@@ -26,6 +26,8 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
+        loadStatus: 'Published',
+        loadPrice: 'Waiting for bids',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -33,9 +35,13 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadWeight: '',
+        loadTypeOfTrailer: '',
+        loadWeight: (() => `${Math.floor(Math.random() * 10000 + 1000)}`)(),
         loadLength: '',
+        loadRVType: '',
         loadWidth: '',
+        loadPhotos: '',
+        loadFiles: '',
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',
@@ -44,6 +50,7 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
@@ -114,13 +121,13 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
                                 <InputLabel id="demo-simple-select-label"
                                             style={{fontSize: '15px', fontWeight: 'normal'}}>RV Type</InputLabel>
                                 <Select
-                                    labelId="demo-simple-select-label"
-                                    id="demo-simple-select"
+                                    labelId="loadRVType"
+                                    id="loadRVType"
                                     label="Load Type"
-                                    name="loadType"
-                                    value={formData.loadSpecifiedItem}
+                                    name="loadRVType"
+                                    value={formData.loadRVType}
                                     onChange={(event) => {
-                                        handleLoadChange("loadSpecifiedItem")(event);
+                                        handleLoadChange("loadRVType")(event);
                                     }}
                                     style={{
                                         fontSize: '15px',
@@ -235,14 +242,14 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Length"
+                                    id="loadLength"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Length')}
-                                    value={formData.Length}
+                                    onChange={handleChange('loadLength')}
+                                    value={formData.loadLength}
                                 />
-                                <label htmlFor="loadVehicleYear" className="google-style-input-label">Length</label>
+                                <label htmlFor="loadLength" className="google-style-input-label">Length</label>
                             </div>
                         </section>
                         <section>
@@ -263,28 +270,28 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Width"
+                                    id="loadWidth"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Width')}
-                                    value={formData.Width}
+                                    onChange={handleChange('loadWidth')}
+                                    value={formData.loadWidth}
                                 />
-                                <label htmlFor="Width" className="google-style-input-label">Width</label>
+                                <label htmlFor="loadWidth" className="google-style-input-label">Width</label>
                             </div>
                         </section>
                         <section>
                             <div className="google-input-wrapper">
                                 <input
                                     type="text"
-                                    id="Height"
+                                    id="loadHeight"
                                     autoComplete="off"
                                     className="google-style-input"
                                     required
-                                    onChange={handleChange('Height')}
-                                    value={formData.Height}
+                                    onChange={handleChange('loadHeight')}
+                                    value={formData.loadHeight}
                                 />
-                                <label htmlFor="loadVehicleModel" className="google-style-input-label">Height</label>
+                                <label htmlFor="loadHeight" className="google-style-input-label">Height</label>
                             </div>
                         </section>
                     </div>

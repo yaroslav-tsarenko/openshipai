@@ -66,7 +66,7 @@ const LandingHeader = () => {
                     </div>
                 </a>
             </nav>*/}
-            {/*<Link to={"/sign-up"} className="landing-button">Go to Account</Link>*/}
+            <Link to={"/sign-up"} className="landing-button">Go to Account</Link>
             {/*<BurgerMenuIcon className="burger-menu-header" onClick={toggleSidebar}/>
             <div className={`sidebar-landing-page ${sidebarOpen ? 'open' : ''}`}>
                 <div className="sidebar-header">

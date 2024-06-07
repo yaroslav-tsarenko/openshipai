@@ -27,12 +27,12 @@
 .dashboard-link-nav-button{
     display: flex;
     width: 220px;
-    height: 55px;
+    height: 47px;
     margin: 5px 0 5px 0;
     font-weight: bold;
     color: var(--light-grey);
     text-decoration: none;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     padding: 0 10px 0 20px;
     border-radius: 30px;
     text-align: center;
@@ -64,11 +64,11 @@
     display: flex;
     margin: 0 auto 30px auto;
     width: 220px;
-    height: 55px;
+    height: 45px;
     font-weight: bold;
     color: var(--light-grey);
     text-decoration: none;
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     padding: 0 10px 0 20px;
     border-radius: 30px;
     text-align: center;

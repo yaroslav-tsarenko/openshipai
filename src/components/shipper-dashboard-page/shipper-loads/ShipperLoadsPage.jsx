@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from 'react';
 import '../ShipperDashboard.css';
 import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
 import {ReactComponent as ArrowRight} from '../../../assets/arrow-right-load-frame.svg';
@@ -23,14 +23,13 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
+import axios from 'axios';
 import HeavyEquipmentContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
 import VehicleLoadContainer from "../../load-containers/vehicle-load/VehicleLoadContainer";
-import MovingLoadContainer from "../../load-containers/moving-load/MovingLoadContainer";
 import MotoEquipmentLoadContainer from "../../load-containers/moto-equipment/MotoEquipmentLoadContainer";
 import BoatLoadContainer from "../../load-containers/boat-load/BoatLoadContainer";
 import CommercialTruckLoad from "../../load-containers/commercial-truck/CommercialTruckLoad";
 import RVLoadContainer from "../../load-containers/rv-load-container/RVLoadContainer";
-import {TextField} from "@mui/material";
 import SailboatLoadContainer from "../../load-containers/sailboat-load/SailboatLoadContainer";
 import PersonalWatercraftsLoadContainer
     from "../../load-containers/personal-watercrafts/PersonalWatercraftsLoadContainer";
@@ -39,12 +38,24 @@ import PartsLoadContainer from "../../load-containers/parts-load-container/Parts
 import TrailerAndOtherVehicles from "../../load-containers/trailer-other-vehicle/TrailerAndOtherVehicles";
 import LocalMovingLoadContainer from "../../load-containers/local-moving/LocalMovingLoadContainer";
 import LongDistanceMoving from "../../load-containers/long-distance-moving/LongDistanceMoving";
+import CommercialBusinessMoving from "../../load-containers/commercial-load-moving/CommercialBusinessMoving";
+import HeavyLiftingMovingOnly from "../../load-containers/heavy-liftin-moving-only/HeavyLiftingMovingOnly";
+import HouseHoldItem from "../../load-containers/household-item/HouseHoldItem";
+import OfficeMoving from "../../load-containers/office-moving/OfficeMoving";
+import CorporateMoving from "../../load-containers/corporate-moving/CorporateMoving";
+import StudentMoving from "../../load-containers/student-moving/StudentMoving";
+import MilitaryMoving from "../../load-containers/military-moving/MilitaryMoving";
+import ExpediteLoadContainer from "../../load-containers/expedite-load-container/ExpediteLoadContainer";
+import FTLLoadContainer from "../../load-containers/ftl-load-container/FTLLoadContainer";
+import LTLLoadContainer from "../../load-containers/ltl-load-container/LTLLoadContainer";
+import FarmEquipmentLoadContainer from "../../load-containers/farm-equipment-load-container/FarmEquipmentLoadContainer";
 
 const ShipperLoadsPage = () => {
 
     const [hoveredButton, setHoveredButton] = useState('');
     const [createLoadSection, setCreateLoadSection] = useState(false);
     const {shipperID} = useParams();
+    const [loads, setLoads] = useState([]);
     const [selectedOption, setSelectedOption] = useState('');
     const [step, setStep] = useState(1);
     const [formData, setFormData] = useState({
@@ -58,8 +69,30 @@ const ShipperLoadsPage = () => {
         loadSubType: ''
     });
 
+    const deleteAllLoads = async () => {
+        try {
+            const response = await axios.delete('http://localhost:8080/delete-all-loads');
+            console.log(response.data.message);
+        } catch (error) {
+            console.error('Error deleting all loads:', error);
+        }
+    };
+
+    useEffect(() => {
+        const fetchLoads = async () => {
+            try {
+                const response = await axios.get('http://localhost:8080/get-all-loads');
+                setLoads(response.data);
+            } catch (error) {
+                console.error('Error fetching loads:', error);
+            }
+        };
+
+        fetchLoads();
+    }, []);
+
     const handleLoadFrameClick = (loadType) => {
-        setFormData(prevState => ({ ...prevState, loadType }));
+        setFormData(prevState => ({...prevState, loadType}));
         setStep(2);
     };
 
@@ -118,10 +151,36 @@ const ShipperLoadsPage = () => {
                                 <CreateLoadIcon className="button-nav-load-icon"/>Create New Load
                             </button>
                         </div>
-                        <div className="shipper-loads-wrapper">
-                            <LoadContainer/>
-                            <LoadContainer/>
-                            <LoadContainer/>
+                        <div className="load-containers-wrapper">
+                            {/*<button className="apply-settings-button" onClick={deleteAllLoads}>delete all loads</button>*/}
+                            {loads.length > 0 ? (
+                                loads.map((load, index) => (
+                                    <div key={index}>
+                                        <LoadContainer
+                                            loadStatus={load.loadStatus}
+                                            loadPrice={load.loadPrice}
+                                            loadTitle={load.loadTitle}
+                                            loadTrailerType={load.loadTypeOfTrailer}
+                                            loadCredentialID={load.loadCredentialID}
+                                            loadWeight={load.loadWeight}
+                                            loadPickupTime={load.loadPickupDate}
+                                            loadDeliveryTime={load.loadPickupDate}
+                                            loadType={load.loadType}
+                                            shipperID={shipperID}
+                                            loadPickupLocation={load.loadPickupLocation}
+                                            loadDeliveryLocation={load.loadDeliveryLocation}
+                                            loadVehicleModel={load.loadVehicleModel}
+                                            loadVehicleYear={load.loadVehicleYear}
+                                            loadMilesTrip={load.loadMilesTrip}
+                                            loadQoutes={load.loadQoutes}
+                                            loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                            loadDescription={load.loadDescription}
+                                        />
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="load-empty-message">You don't have created any load</p>
+                            )}
                         </div>
                     </div>
                 ) : (
@@ -141,28 +200,32 @@ const ShipperLoadsPage = () => {
                                         <p>Use our modern shipment system</p>
                                     </section>
                                     <div className="load-type-frame-wrapper-content">
-                                        <button className="load-frame-container"  onClick={() => handleLoadFrameClick("Vehicle Load")}>
+                                        <button className="load-frame-container"
+                                                onClick={() => handleLoadFrameClick("Vehicle Load")}>
                                             <img src={VehicleLoadType}/>
                                             <section>
                                                 <h2>Vehicle Load</h2>
                                                 <ArrowRight width="20"/>
                                             </section>
                                         </button>
-                                        <button className="load-frame-container" onClick={() => handleLoadFrameClick("Moving")}>
+                                        <button className="load-frame-container"
+                                                onClick={() => handleLoadFrameClick("Moving")}>
                                             <img src={MovingLoadType}/>
                                             <section>
                                                 <h2>Moving</h2>
                                                 <ArrowRight width="20"/>
                                             </section>
                                         </button>
-                                        <button className="load-frame-container" onClick={() => handleLoadFrameClick("Freight")}>
+                                        <button className="load-frame-container"
+                                                onClick={() => handleLoadFrameClick("Freight")}>
                                             <img src={FreightLoadType}/>
                                             <section>
                                                 <h2>Freight</h2>
                                                 <ArrowRight width="20"/>
                                             </section>
                                         </button>
-                                        <button className="load-frame-container" onClick={() => handleLoadFrameClick("Heavy Equipment")}>
+                                        <button className="load-frame-container"
+                                                onClick={() => handleLoadFrameClick("Heavy Equipment")}>
                                             <img src={HeavyLoadType}/>
                                             <section>
                                                 <h2>Heavy Equipment</h2>
@@ -186,7 +249,10 @@ const ShipperLoadsPage = () => {
                                                     <Box sx={{minWidth: 180, marginTop: '70px'}}>
                                                         <FormControl fullWidth style={{fontSize: '15px',}}>
                                                             <InputLabel id="demo-simple-select-label"
-                                                                        style={{fontSize: '15px', fontWeight: 'normal'}}>Load Subtype</InputLabel>
+                                                                        style={{
+                                                                            fontSize: '15px',
+                                                                            fontWeight: 'normal'
+                                                                        }}>Load Subtype</InputLabel>
                                                             <Select
                                                                 labelId="demo-simple-select-label"
                                                                 id="demo-simple-select"
@@ -223,50 +289,63 @@ const ShipperLoadsPage = () => {
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Car or Light Truck</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Car or Light Truck</MenuItem>
                                                                 <MenuItem value="MotoEquipment"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Moto Equipment</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Moto Equipment</MenuItem>
                                                                 <MenuItem value="Powerboats"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Powerboats</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Powerboats</MenuItem>
                                                                 <MenuItem value="Sailboats"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Sailboats</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Sailboats</MenuItem>
                                                                 <MenuItem value="PersonalWatercrafts"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Personal watercrafts</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Personal watercrafts</MenuItem>
                                                                 <MenuItem value="ATVs&PowerSports"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>ATVs & Power Sports</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>ATVs & Power Sports</MenuItem>
                                                                 <MenuItem value="CommercialTruck"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Commercial Truck</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Commercial Truck</MenuItem>
 
                                                                 <MenuItem value="Parts"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Parts</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Parts</MenuItem>
                                                                 <MenuItem value="TrailerAndOtherVehicles"
                                                                           style={{
                                                                               fontSize: '15px',
                                                                               color: 'grey',
-                                                                              fontWeight: 'normal'}}>Trailer & Other Vehicles</MenuItem>
+                                                                              fontWeight: 'normal'
+                                                                          }}>Trailer & Other Vehicles</MenuItem>
                                                                 <MenuItem value="RV"
-                                                                          style={{fontSize: '15px', color: 'grey', fontWeight: 'normal'}}>RV (Recreational Vehicles)</MenuItem>
+                                                                          style={{
+                                                                              fontSize: '15px',
+                                                                              color: 'grey',
+                                                                              fontWeight: 'normal'
+                                                                          }}>RV (Recreational Vehicles)</MenuItem>
                                                             </Select>
                                                         </FormControl>
                                                     </Box>
@@ -338,50 +417,52 @@ const ShipperLoadsPage = () => {
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
-                                                                              }}>Local Moving (less then 50 mil)</MenuItem>
+                                                                              }}>Local Moving (less then 50
+                                                                        mil)</MenuItem>
                                                                     <MenuItem value="LongDistanceMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Long Distance Moving</MenuItem>
-                                                                    <MenuItem value="Commercial / Business Moving"
+                                                                    <MenuItem value="CommercialBusinessMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Commercial / Business Moving</MenuItem>
-                                                                    <MenuItem value="Heavy Lifting and Moving Only"
+                                                                    <MenuItem value="HeavyLiftingAndMovingOnly"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
-                                                                              }}>Heavy Lifting and Moving Only</MenuItem>
-                                                                    <MenuItem value="Household item"
+                                                                              }}>Heavy Lifting and Moving
+                                                                        Only</MenuItem>
+                                                                    <MenuItem value="HouseholdItem"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Household item</MenuItem>
-                                                                    <MenuItem value="Office Moving"
+                                                                    <MenuItem value="OfficeMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Office Moving</MenuItem>
-                                                                    <MenuItem value="Corporate Moving"
+                                                                    <MenuItem value="CorporateMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Corporate Moving</MenuItem>
-                                                                    <MenuItem value="Student Moving"
+                                                                    <MenuItem value="StudentMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
                                                                                   fontWeight: 'normal'
                                                                               }}>Student Moving</MenuItem>
-                                                                    <MenuItem value="Military Moving"
+                                                                    <MenuItem value="MilitaryMoving"
                                                                               style={{
                                                                                   fontSize: '15px',
                                                                                   color: 'grey',
@@ -542,15 +623,17 @@ const ShipperLoadsPage = () => {
                                                                     }}
                                                                 >
                                                                     <MenuItem value="Farm Equipment"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'}}>Farm Equipment</MenuItem>
-                                                                <MenuItem value="Construction Equipment"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'}}>Construction Equipment</MenuItem>
+                                                                              style={{
+                                                                                  fontSize: '15px',
+                                                                                  color: 'grey',
+                                                                                  fontWeight: 'normal'
+                                                                              }}>Farm Equipment</MenuItem>
+                                                                    <MenuItem value="Construction Equipment"
+                                                                              style={{
+                                                                                  fontSize: '15px',
+                                                                                  color: 'grey',
+                                                                                  fontWeight: 'normal'
+                                                                              }}>Construction Equipment</MenuItem>
                                                                 </Select>
                                                             </FormControl>
                                                         </Box>
@@ -652,7 +735,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -662,7 +745,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -672,7 +755,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -682,7 +765,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -692,7 +775,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -702,7 +785,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -712,7 +795,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -722,7 +805,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -732,7 +815,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -742,7 +825,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -752,7 +835,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
@@ -762,7 +845,127 @@ const ShipperLoadsPage = () => {
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
-                                            deliveryLocationDate={formData.deliveryLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'CommercialBusinessMoving' &&
+                                        <CommercialBusinessMoving
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'HeavyLiftingAndMovingOnly' &&
+                                        <HeavyLiftingMovingOnly
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'HouseholdItem' &&
+                                        <HouseHoldItem
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'OfficeMoving' &&
+                                        <OfficeMoving
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'CorporateMoving' &&
+                                        <CorporateMoving
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'StudentMoving' &&
+                                        <StudentMoving
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'MilitaryMoving' &&
+                                        <MilitaryMoving
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'Expedite' &&
+                                        <ExpediteLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'FTL' &&
+                                        <FTLLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'LTL' &&
+                                        <LTLLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'Construction Equipment' &&
+                                        <HeavyEquipmentContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            deliveryLocationTime={formData.deliveryLocationTime}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}/>}
+                                    {formData.loadSubType === 'Farm Equipment' &&
+                                        <FarmEquipmentLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}

@@ -1,18 +1,9 @@
 const mongoose = require('mongoose');
 
 const DealChatConversationSchema = new mongoose.Schema({
-    chatID: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    loadType: String,
-    currency: String,
-    pickupLocation: String,
-    deliveryLocation: String,
-    bidPrice: Number,
+    chatID: String,
     loadID: String,
-    personalEndpoint: String,
+    shipperID: String,
     carrierID: String,
 });
 
