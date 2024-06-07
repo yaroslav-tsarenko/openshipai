@@ -7,7 +7,7 @@ const LoadSchema = new mongoose.Schema({
     loadTitle: String,
     loadStatus: String,
     loadPrice: Number,
-    loadPickupLocation: String,ё
+    loadPickupLocation: String,
     loadPickupDate: String,
     loadPickupTime: String,
     loadDeliveryLocation: String,
