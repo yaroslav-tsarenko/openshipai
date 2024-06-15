@@ -1,0 +1,49 @@
+.failed-payment-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: #f8f9fa;
+    color: #dc3545;
+}
+
+.animated-text-failed {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    font-weight: bold;
+    color: var(--royal-red);
+    animation: text-animation 1s ease-in-out forwards;
+}
+
+.animated-times {
+    width: 100px;
+    height: 100px;
+    margin-bottom: 1rem;
+    stroke: #dc3545;
+}
+
+.circle-times{
+    stroke-dasharray: 166;
+    stroke-dashoffset: 166;
+    stroke-width: 2;
+    stroke-miterlimit: 10;
+    stroke: var(--royal-red);
+    fill: none;
+    animation: stroke 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+
+}
+
+.times{
+    stroke: var(--royal-red);
+}
+
+@keyframes rotate {
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.animated-text-secondary {
+    font-size: 1rem;
+}

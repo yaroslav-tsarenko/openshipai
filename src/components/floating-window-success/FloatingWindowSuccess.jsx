@@ -8,7 +8,7 @@ const FloatingWindowSuccess = ({ text }) => {
     useEffect(() => {
         const timer = setTimeout(() => {
             ref.current.style.animation = 'slide-up 0.5s forwards';
-        }, 3000);
+        }, 5000);
 
         return () => clearTimeout(timer);
     }, []);

@@ -71,7 +71,7 @@ const ShipperLoadsPage = () => {
 
     const deleteAllLoads = async () => {
         try {
-            const response = await axios.delete('http://localhost:8080/delete-all-loads');
+            const response = await axios.delete('https://jarvis-ai-logistic-db-server.onrender.com/delete-all-loads');
             console.log(response.data.message);
         } catch (error) {
             console.error('Error deleting all loads:', error);
@@ -81,7 +81,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         const fetchLoads = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/get-all-loads');
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-loads');
                 setLoads(response.data);
             } catch (error) {
                 console.error('Error fetching loads:', error);

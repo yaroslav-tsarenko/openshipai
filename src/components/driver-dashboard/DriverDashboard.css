@@ -98,6 +98,94 @@
     height: 100dvh;
 }
 
+.driver-map-direction-wrapper {
+    height: 600px;
+}
+
+.driver-map-direction-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-direction: column;
+    width: 100%;
+    padding: 30px;
+    height: fit-content;
+    border-bottom-right-radius: 20px;
+    border-bottom-left-radius: 20px;
+    background: var(--royal-white);
+    box-shadow: 1px 1px 5px 0px var(--light-grey);
+}
+
+.driver-map-direction-nav-header {
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+}
+
+
+.driver-map-direction-nav-header section h2 {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--royal-green);
+}
+
+.driver-map-direction-nav-header section span {
+    display: flex;
+}
+
+.driver-map-direction-nav-header section span p {
+    color: var(--grey);
+    margin: 0 10px 0 0;
+    font-size: 14px;
+}
+
+.driver-map-direction-nav-body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.pick-up-button {
+    margin: 0 10px 0 0;
+    padding: 5px 15px 5px 15px;
+    background: var(--royal-green);
+    color: var(--royal-white);
+    border-radius: 30px;
+    border: none;
+    font-size: 17px;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+}
+
+.pick-up-button:hover {
+    background: var(--royal-green-hovered);
+}
+
+.transit-update-button {
+    padding: 5px 15px 5px 15px;
+    color: var(--royal-blue);
+    border-radius: 30px;
+    border: none;
+    font-size: 17px;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+}
+
+.transit-update-button:hover {
+    background: var(--light-grey-hovered);
+}
+
+.exit-button {
+    padding: 5px 15px 5px 15px;
+    background: var(--royal-red);
+    color: var(--royal-white);
+    border-radius: 30px;
+    border: none;
+    font-size: 13px;
+    font-weight: bold;
+
+}
+
 .payments-wrapper {
     display: flex;
     flex-direction: column;
@@ -964,7 +1052,6 @@
 }
 
 
-
 .bid-arrow-icon {
     margin: 0 0 0 5px;
     transition: transform 0.3s ease-in-out;
@@ -1600,18 +1687,6 @@
     transition: 0.2s ease-in-out;
 }
 
-.chat-input-area {
-    border: 1px solid var(--light-grey);
-    display: flex;
-    width: 100%;
-    height: 55px;
-    border-radius: 30px;
-    justify-content: space-between;
-    align-content: center;
-    align-items: center;
-    justify-items: center;
-    padding: 0 0 0 25px;
-}
 
 .chat-input-icons {
     margin: 0 15px 0 5px;
@@ -1635,27 +1710,6 @@
     border-radius: 30px;
 }
 
-.chat-id-container {
-    display: flex;
-    margin: 20px 0 0 0;
-    cursor: pointer;
-    font-weight: bold;
-    padding: 10px;
-    transition: 0.15s ease-in-out;
-    font-size: 2rem;
-}
-
-.chat-id-container:hover {
-    background: var(--royal-blue-hovered);
-}
-
-.chat-details {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    margin: 0 0 0 20px;
-    padding: 5px 0 5px;
-}
 
 .chat-input-area input {
     font-size: 1.5rem;
@@ -1684,32 +1738,6 @@
 
 }
 
-.chat-conversation-search-bar {
-    display: flex;
-    width: 350px;
-    margin: 10px 10px auto 10px;
-    height: 70px;
-    padding: 0 15px 0 17px;
-    border-radius: 40px;
-    justify-content: center;
-    justify-items: center;
-    align-items: center;
-    font-weight: bold;
-    background: var(--light-grey-hovered);
-    color: var(--grey);
-    font-size: 1.8rem;
-    transition: 0.2s ease-in-out;
-}
-
-.chat-conversation-search-bar:hover {
-    transition: 0.2s ease-in-out;
-    background: var(--royal-white);
-}
-
-.chat-conversation-search-bar:focus {
-    transition: 0.2s ease-in-out;
-    background: var(--royal-white);
-}
 
 .chat-conversation-search-bar input {
     font-size: 1.8rem;
@@ -2119,7 +2147,7 @@
     flex-direction: column;
 }
 
-.create-driver-wrapper-success section{
+.create-driver-wrapper-success section {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -2131,7 +2159,7 @@
     border-bottom: 1px solid var(--light-grey);
 }
 
-.create-driver-wrapper-success section span p{
+.create-driver-wrapper-success section span p {
     font-size: 1.5rem;
     margin: 0;
     font-weight: bold;

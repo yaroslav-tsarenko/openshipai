@@ -37,7 +37,7 @@ const DashboardSidebar = ({
                           }) => {
 
     const [hoveredButton, setHoveredButton] = useState('');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     return (
         <div className="dashboard-sidebar-wrapper">

@@ -410,11 +410,104 @@
 
 .shipper-carrier-chat-header {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     width: 240px;
     height: 90px;
+}
 
+.warning-container-wrapper{
+    position: absolute;
+    z-index: 1000;
+    max-width: 1050px;
+    width: 100%;
+}
+
+.success-container{
+    background: var(--royal-green);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.success-container-header{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    font-weight: bold;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.success-container-header h2{
+    font-size: 2rem;
+    margin: 5px 0 0 5px;
+    color: var(--royal-white);
+}
+
+.success-container-body{
+    padding: 10px;
+    display: flex;
+}
+
+.success-container-body p{
+    font-size: 1.8rem;
+    color: var(--royal-white);
+}
+
+.bol-container{
+    margin: 10px 0 0 0;
+    background: var(--royal-yellow);
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 15px;
+}
+
+.bol-container-header{
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    font-weight: bold;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.bol-container-header h2{
+    font-size: 2rem;
+    margin: 5px 0 0 5px;
+    color: var(--royal-white);
+}
+
+.bol-container-body{
+    padding: 10px;
+    display: flex;
+}
+
+.bol-container-body p{
+    font-size: 1.8rem;
+    color: var(--royal-white);
+}
+
+.close-warning-container-button{
+    border: none;
+    border-radius: 50px;
+    width: 50px;
+    height: 51px;
+    font-size: 2rem;
+    transition: 0.2s ease-in-out;
+}
+
+.close-warning-container-button:hover{
+    background: var(--light-grey-hovered-transparent);
 }
 
 .shipper-chat-header h1 {
@@ -1533,14 +1626,21 @@
 
 .shipper-deal-conversations-sidebar {
     width: 400px;
+    margin: 20px auto;
 }
 
-.chat-input-area-wrapper {
+.chat-id-containers-wrapper{
     display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 850px;
+    overflow: scroll;
+    overflow-x: hidden;
+
 }
+
 
 .chat-input-area {
-    border: 1px solid var(--light-grey);
     display: flex;
     width: 100%;
     height: 55px;
@@ -1580,12 +1680,14 @@
     cursor: pointer;
     font-weight: bold;
     padding: 10px;
-    transition: 0.15s ease-in-out;
+    color: black;
+    border-radius: 50px;
+    transition: 0.2s ease-in-out;
     font-size: 2rem;
 }
 
 .chat-id-container:hover {
-    background: var(--royal-blue-hovered);
+    background: var(--light-grey-hovered);
 }
 
 .chat-details {
@@ -1594,6 +1696,24 @@
     justify-content: space-between;
     margin: 0 0 0 20px;
     padding: 5px 0 5px;
+}
+
+.user-avatar-chat{
+    height: 65px;
+    width: 65px;
+    border-radius: 50px;
+}
+
+.chat-details h3{
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--dark-grey);
+}
+
+.chat-details h4{
+    font-size: 1.7rem;
+    font-weight: normal;
+    color: var(--grey);
 }
 
 .chat-input-area input {
@@ -1627,7 +1747,7 @@
     display: flex;
     width: 350px;
     margin: 10px 10px auto 10px;
-    height: 70px;
+    height: 55px;
     padding: 0 15px 0 17px;
     border-radius: 40px;
     justify-content: center;
@@ -1635,6 +1755,7 @@
     align-items: center;
     font-weight: bold;
     background: var(--light-grey-hovered);
+    border: 1px solid var(--light-grey-hovered);
     color: var(--grey);
     font-size: 1.8rem;
     transition: 0.2s ease-in-out;
@@ -1642,12 +1763,12 @@
 
 .chat-conversation-search-bar:hover {
     transition: 0.2s ease-in-out;
-    background: var(--royal-white);
+    border: 1px solid var(--royal-blue);
 }
 
 .chat-conversation-search-bar:focus {
     transition: 0.2s ease-in-out;
-    background: var(--royal-white);
+    border: 1px solid var(--royal-blue);
 }
 
 .chat-conversation-search-bar input {
@@ -2086,4 +2207,25 @@
 .load-carrier-bids-listing-header p {
     color: var(--light-grey);
     font-size: 1.5rem;
+}
+
+.clip-loader-style{
+    display: flex;
+    position: absolute;
+    margin: 50px auto;
+    justify-content: center;
+    align-items: center;
+}
+
+.chat-user-name{
+    margin: 0 0 0 10px;
+}
+
+.load-status-delivering{
+    background: var(--light-grey-hovered);
+    color: var(--royal-green);
+    padding: 10px;
+    border-radius: 30px;
+
+
 }

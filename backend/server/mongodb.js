@@ -223,6 +223,24 @@ app.get('/get-all-loads', async (req, res) => {
     }
 });
 
+app.post('/create-deal-chat-conversation', async (req, res) => {
+    const { chatID, loadID, shipperID, carrierID } = req.body;
+
+    try {
+        const newChat = new DealChatConversation({
+            chatID,
+            loadID,
+            shipperID,
+            carrierID
+        });
+
+        await newChat.save();
+        res.status(200).json({ message: 'DealChatConversation created successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Error creating DealChatConversation:', error });
+    }
+});
+
 app.delete('/delete-all-loads', async (req, res) => {
     try {
         await Load.deleteMany({});
@@ -360,12 +378,101 @@ app.get('/get-confirmed-load/:loadID', async (req, res) => {
         res.status(500).json({ error: 'There was an error fetching the confirmed load' });
     }
 });
+
 app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
     try {
         const conversation = await DealChatConversation.findOne({ chatID: req.params.chatID });
         res.status(200).send(conversation);
     } catch (error) {
         res.status(500).send(error);
+    }
+});
+
+app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+
+    try {
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+        if (dealChatConversation) {
+            res.json(dealChatConversation);
+        } else {
+            res.status(404).json({ message: 'DealChatConversation not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/get-load-by-chat/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+
+    try {
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+
+        if (!dealChatConversation) {
+            return res.status(404).json({ message: 'Chat not found' });
+        }
+
+        const load = await Load.findOne({ loadCredentialID: dealChatConversation.loadID });
+
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        res.json(load);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-load-confirmation/:loadID', async (req, res) => {
+    const { loadID } = req.params;
+
+    try {
+        const load = await Load.findOne({ loadID: loadID });
+        if (load) {
+            res.json({ loadCarrierConfirmation: load.loadCarrierConfirmation });
+        } else {
+            res.status(404).json({ message: 'Load not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/get-load-by-chat/:chatID', async (req, res) => {
+    try {
+        const chatID = req.params.chatID;
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+        const load = await Load.findOne({ loadID: dealChatConversation.loadID });
+        res.json(load);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.put('/confirm-load/:chatID', async (req, res) => {
+    try {
+        console.log(`Fetching DealChatConversation with chatID: ${req.params.chatID}`);
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: req.params.chatID });
+        if (!dealChatConversation) {
+            console.log(`DealChatConversation with chatID: ${req.params.chatID} not found`);
+            return res.status(404).json({ message: 'DealChatConversation not found' });
+        }
+        console.log(`Fetching Load with loadID: ${dealChatConversation.loadID}`);
+        const load = await Load.findOne({ loadCredentialID: dealChatConversation.loadID });
+        if (!load) {
+            console.log(`Load with loadID: ${dealChatConversation.loadID} not found`);
+            return res.status(404).json({ message: 'Load not found' });
+        }
+        console.log(`Updating loadCarrierConfirmation for Load with loadID: ${dealChatConversation.loadID}`);
+        load.loadCarrierConfirmation = 'Confirmed';
+        await load.save();
+        console.log(`Load with loadID: ${dealChatConversation.loadID} updated successfully`);
+        res.status(200).json({ message: 'Load confirmed successfully' });
+    } catch (error) {
+        console.error('Error occurred:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -1150,12 +1257,56 @@ app.post('/create-driver', async (req, res) => {
 app.get('/get-driver/:driverID', async (req, res) => {
     const { driverID } = req.params;
     try {
-        const driver = await Driver.findOne({ _id: driverID });
+        const driver = await Driver.findOne({ driverID: driverID });
         if (!driver) {
             return res.status(404).json({ message: 'Driver not found' });
         }
         res.json(driver);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-load-assigning/:loadID', async (req, res) => {
+    const { loadID } = req.params;
+    const { loadAssignedDriverID } = req.body;
+
+    try {
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        load.loadAssignedDriverID = loadAssignedDriverID;
+        await load.save();
+
+        res.status(200).json(load);
+    } catch (error) {
+        console.error('Error updating load:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-load/:loadID', async (req, res) => {
+    const { loadID } = req.params;
+    try {
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+        res.json(load);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-assigned-loads/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    try {
+        const assignedLoads = await Load.find({ driverID: driverID });
+        res.status(200).json(assignedLoads);
+    } catch (error) {
+        console.error('Error fetching assigned loads:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -1186,11 +1337,37 @@ app.get('/get-boat-loads', async (req, res) => {
         res.status(500).json({ status: 'Error', message: error.message });
     }
 });
+
+
 app.get('/get-all-drivers', async (req, res) => {
     try {
         const drivers = await Driver.find({});
         res.status(200).json(drivers);
     } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/assign-load/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    const { loadID } = req.body;
+
+    try {
+        const driver = await Driver.findOne({ driverID: driverID });
+
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
+
+        // Add the loadID to the driver's assigned loads
+        driver.driverAssignedLoadsID.push(loadID);
+
+        // Save the updated driver
+        await driver.save();
+
+        res.status(200).json({ message: 'Load assigned successfully to driver', driver: driver });
+    } catch (error) {
+        console.error('Error assigning load to driver:', error);
         res.status(500).json({ message: error.message });
     }
 });
@@ -1370,6 +1547,68 @@ app.post('/create-checkout-session', async (req, res) => {
     res.json({ sessionId: session.id });
 });
 
+app.put('/load-update-delivered-status/:loadID', async (req, res) => {
+    const loadID = req.params.loadID;
+    const { loadDeliveredStatus } = req.body;
+
+    try {
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+        load.loadDeliveredStatus = loadDeliveredStatus;
+        await load.save();
+        res.status(200).json({ message: 'Load status updated successfully' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.put('/update-load-payment-status/:chatID', async (req, res) => {
+    try {
+        const chatID = req.params.chatID;
+        const dealChatConversation = await DealChatConversation.findOne({ chatID: chatID });
+        const loadID = dealChatConversation.loadID;
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        load.loadPaymentStatus = "Paid";
+        await load.save();
+        res.json({ message: "Load payment status updated successfully" });
+    } catch (error) {
+        console.error('Error updating load payment status:', error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+});
+
+app.post('/create-checkout-session-2', async (req, res) => {
+
+    const { amount, loadType, description, shipperID, chatID } = req.body;
+
+    try {
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: [{
+                price_data: {
+                    currency: 'usd',
+                    product_data: {
+                        name: (loadType + ( description))
+                    },
+                    unit_amount: amount * 100, // Stripe expects the amount in cents
+                },
+                quantity: 1,
+            }],
+            mode: 'payment',
+            success_url: `http://localhost:3000/payment-success/${shipperID}/${chatID}`,
+            cancel_url: 'http://localhost:3000/payment-failed',
+        });
+
+        res.json({ sessionId: session.id });
+    } catch (error) {
+        console.error('Error creating checkout session:', error);
+        res.status(500).json({ error: 'An error occurred while creating the checkout session.' });
+    }
+});
+
 app.post('/save-confirmed-arrival', async (req, res) => {
     const { loadID, status, payment } = req.body;
     try {
@@ -1412,6 +1651,8 @@ app.post('/submit-vehicle-load', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
+
 
 app.get('/submit-vehicle-load/:personalEndpoint', async (req, res) => {
     const { personalEndpoint } = req.params;
@@ -1529,6 +1770,7 @@ app.get('/user-chat-sessions/:personalEndpoint', (req, res) => {
             res.status(500).json({ message: err.message });
         });
 });
+
 app.post('/chat-message', (req, res) => {
     const { userEndpoint, chatEndpoint, chat } = req.body;
     ChatHistory.findOneAndUpdate(
@@ -1541,6 +1783,71 @@ app.post('/chat-message', (req, res) => {
         res.status(500).json({ status: 'Error', message: err.message });
     });
 });
+
+app.put('/approve-agreement/:chatID', async (req, res) => {
+    const chatID = req.params.chatID;
+    const chatConversation = await DealChatConversation.findById(chatID);
+    chatConversation.approvalStatus[req.user.id] = true;
+    await chatConversation.save();
+    if (Object.values(chatConversation.approvalStatus).every(status => status)) {
+        const load = await Load.findById(chatConversation.loadID);
+        load.loadStatus = "Booked";
+        await load.save();
+    }
+    res.sendStatus(200);
+});
+
+app.get('/get-shipper/:shipperID', async (req, res) => {
+
+    const { shipperID } = req.params;
+
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        if (shipper) {
+            res.json(shipper);
+        } else {
+            res.status(404).json({ message: 'Shipper not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/get-deal-conversation-chat/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+
+    try {
+        const dealConversationChat = await DealChatConversation.findOne({ chatID: chatID });
+        if (dealConversationChat) {
+            const carrier = await Carrier.findOne({ carrierID: dealConversationChat.carrierID });
+            if (carrier) {
+                res.json(carrier);
+            } else {
+                res.status(404).json({ message: 'Carrier not found' });
+            }
+        } else {
+            res.status(404).json({ message: 'DealConversationChat not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.put('/confirm-load/:loadID', async (req, res) => {
+    try {
+        const load = await Load.findOne({ loadID: req.params.loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+        load.loadCarrierConfirmation = req.body.loadCarrierConfirmation;
+        await load.save();
+        res.status(200).json(load);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.get('/chat-session/:chatEndpoint', (req, res) => {
     const { chatEndpoint } = req.params;
 

@@ -24,11 +24,11 @@
     align-items: center;
 }
 
-.right-side-login-section{
+.right-side-login-section {
 
 }
 
-.right-side-login-side-title{
+.right-side-login-side-title {
     text-transform: uppercase;
     font-size: 9.5rem;
     font-weight: 700;
@@ -37,7 +37,7 @@
     -webkit-text-fill-color: transparent;
 }
 
-.right-side-login-side-description{
+.right-side-login-side-description {
     font-size: 2.5rem;
     font-weight: 600;
     color: var(--light-grey);
@@ -57,7 +57,7 @@
     color: var(--grey);
 }
 
-.label-text{
+.label-text {
     color: #343541;
     font-weight: 500;
     font-size: 1.2rem;
@@ -105,12 +105,16 @@
     margin: 10px auto;
     background-color: var(--royal-blue);
     border: none;
-    height: 50px;
+    align-items: center;
+    align-content: center;
+    justify-items: center;
+    justify-content: center;
+    padding: 7px 13px 7px 13px;
+    display: flex;
     font-weight: 500;
     font-size: 1.5rem;
     border-radius: 35px;
     transition: 0.3s ease-out;
-    width: 200px;
 }
 
 .sign-in-button:hover {
@@ -120,11 +124,11 @@
 
 
 @media only screen and (max-width: 694px) {
-    .right-side-login{
+    .right-side-login {
         display: none;
     }
 
-    .left-side{
+    .left-side {
         width: 100vw;
         height: 100vh;
         background-color: #f2f2f2;

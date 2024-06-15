@@ -31,7 +31,7 @@ const ShipperLoadPage = () => {
     useEffect(() => {
         const fetchLoad = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/load/${loadCredentialID}`);
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/load/${loadCredentialID}`);
                 setLoad(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -41,7 +41,7 @@ const ShipperLoadPage = () => {
 
         const fetchAllLoadBids = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/get-all-load-bids');
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-load-bids');
                 const data = await response.data;
 
                 if (response.status === 200) {
@@ -187,6 +187,7 @@ const ShipperLoadPage = () => {
                            key={loadBid._id}
                            loadBidPrice={loadBid.loadBidPrice}
                            loadID={loadBid.loadCredentialID}
+                           shipperID={shipperID}
                            loadCarrierID={loadBid.loadBidCarrierID}
                            loadBidCoverLetter={loadBid.loadBidCoverLetter}
                            loadEstimatedDeliveryTime={loadBid.loadBidDeliveryDate}
