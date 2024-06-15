@@ -9,6 +9,7 @@ const DriverSchema = new mongoose.Schema({
     driverLicenseClass: String,
     driverPhoto: String,
     driverPassword: String,
+    driverAssignedLoadsID: [String],
     driverID: String,
     driverCreatedByCarrierID: String,
     role: { type: String, default: 'driver' },

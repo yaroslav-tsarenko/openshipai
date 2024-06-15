@@ -29,6 +29,10 @@ import CarrierLoads from "./components/carrier-dashboard/carrier-loads-page/Carr
 import DriverProfile from "./components/driver-dashboard/driver-details/DriverProfile";
 import DriverAssignedLoads from "./components/driver-dashboard/driver-pages/DriverAssignedLoads";
 import ShipperLoadPage from "./components/shipper-dashboard-page/shipper-load/ShipperLoadPage";
+import SuccessPaymentPage from "./pages/success-payment/SuccessPaymentPage";
+import FailedPaymentPage from "./pages/failed-payment/FailedPaymentPage";
+import DriverAssignedLoad from "./components/driver-dashboard/driver-assigned-load/DriverAssignedLoad";
+import SuccessLoadDelivering from "./pages/success-load-delivering/SuccessLoadDelivering";
 
 function App() {
     return (
@@ -56,17 +60,22 @@ function App() {
                 <Route path="/driver-settings/:driverID" element={<DriverSettings/>}/>
                 <Route path="/driver-assigned-loads/:driverID" element={<DriverAssignedLoads/>}/>
                 <Route path="/driver-profile/:driverID" element={<DriverProfile/>}/>
+                <Route path="/driver-assigned-load/:driverID/:loadID" element={<DriverAssignedLoad/>}/>
 
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
 
-                <Route path="/customer-deal-chat-conversation/:personalEndpoint" element={<ShipperChatPage/>}/>
-                <Route path="/customer-deal-chat-conversation/:personalEndpoint/:chatID" element={<ShipperChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:shipperID" element={<ShipperChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:shipperID/:chatID" element={<ShipperChatPage/>}/>
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
                 <Route path="/sign-up-shipper" element={<SignUpForm/>}/>
                 <Route path="/sign-up" element={<ChoosingRolePage/>}/>
                 <Route path="/sign-in" element={<LoginForm/>}/>
                 <Route path="/" element={<LandingPage/>}/>
+
+                <Route path="/payment-success/:shipperID/:chatID" element={<SuccessPaymentPage/>}/>
+                <Route path="/load-delivered-success/:driverID" element={<SuccessLoadDelivering/>}/>
+                <Route path="/payment-failed/:shipperID" element={<FailedPaymentPage/>}/>
 
             </Routes>
         </Router>

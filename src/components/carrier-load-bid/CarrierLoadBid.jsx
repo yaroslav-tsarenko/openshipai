@@ -1,17 +1,30 @@
 import React, {useState} from 'react';
 import {ReactComponent as CarrierAvatar} from "../../assets/userAvatar2.svg"
+import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
 import {ClipLoader} from "react-spinners";
 import axios from "axios";
+import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 
-const CarrierLoadBid = ({loadCarrierID, loadBidPrice, loadID, loadBidCoverLetter, loadEstimatedDeliveryTime}) => {
+const CarrierLoadBid = ({
+                            loadCarrierID,
+                            loadBidPrice,
+                            loadID,
+                            loadBidCoverLetter,
+                            shipperID,
+                            loadEstimatedDeliveryTime
+                        }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const date = new Date(loadEstimatedDeliveryTime);
+    const navigate = useNavigate();
     const day = date.getDate();
-    const month = date.toLocaleString('default', { month: 'long' });
-    const time = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    const month = date.toLocaleString('default', {month: 'long'});
+    const time = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     const formattedDate = `${day} ${month} at ${time}`;
     const [isLoading, setIsLoading] = useState(false);
+    const [statusMessage, setStatusMessage] = useState('');
+    const [isSuccess, setIsSuccess] = useState(null);
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
@@ -21,12 +34,45 @@ const CarrierLoadBid = ({loadCarrierID, loadBidPrice, loadID, loadBidCoverLetter
         setIsPopupOpen(true);
     };
 
-    const handleSubmit = async (e) => {
 
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setIsLoading(true);
+
+        const chatID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+        const chatData = {
+            chatID: chatID,
+            loadID: loadID,
+            shipperID: shipperID,
+            carrierID: loadCarrierID,
+        };
+        try {
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-deal-chat-conversation', chatData);
+            if (response.status === 200) {
+                console.log('DealChatConversation created successfully');
+                setStatusMessage('Your bid applied successfully');
+                setTimeout(() => {
+                    navigate(`/shipper-chat-conversation/${shipperID}`);
+                }, 1000);
+                setIsSuccess(true);
+            } else {
+                console.error('Failed to create DealChatConversation:', response.data);
+                setStatusMessage('Failed to apply bid. Try again');
+                setIsSuccess(false);
+            }
+        } catch (error) {
+            console.error('Error creating DealChatConversation:', error);
+            setStatusMessage('Failed to apply bid. Try again');
+            setIsSuccess(false);
+        } finally {
+            setIsLoading(false);
+        }
     };
 
     return (
         <>
+            {isSuccess === true && <FloatingWindowSuccess text={statusMessage}/>}
+            {isSuccess === false && <FloatingWindowFailed text={statusMessage}/>}
             <div className="carrier-load-bid-container">
                 <div className="carrier-load-bid-container-header">
                     <section>
@@ -63,7 +109,8 @@ const CarrierLoadBid = ({loadCarrierID, loadBidPrice, loadID, loadBidCoverLetter
                             <div className="carrier-bid-description">
                                 <h3>After continuing</h3>
                                 <p>After the renewal takes effect and you cannot re-select the carrier, a chat will be
-                                    automatically created between you and the carrier, to which you will be automatically
+                                    automatically created between you and the carrier, to which you will be
+                                    automatically
                                     redirected in a few seconds.d</p>
                             </div>
                             <div className="carrier-bid-description">

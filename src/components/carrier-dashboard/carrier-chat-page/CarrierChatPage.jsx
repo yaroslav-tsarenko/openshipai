@@ -8,7 +8,7 @@ import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.s
 import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
 import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
 import {ReactComponent as SearchBarIcon} from "../../../assets/search-bar-icon.svg";
-import {ReactComponent as UserChatAvatar} from "../../../assets/chat-user-icon.svg";
+import {ReactComponent as UserChatAvatar} from "../../../assets/userAvatar.svg";
 import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
 import {ReactComponent as AttachCamera} from "../../../assets/attach-camera-button.svg";
 import {ReactComponent as AttachImage} from "../../../assets/attach-image-button.svg";
@@ -49,65 +49,126 @@ import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
 import io from 'socket.io-client';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
+import {ClipLoader} from "react-spinners";
+import useSound from 'use-sound';
+import notificationSound from '../../../assets/sound-effects/message-sent.mp3'; // replace with the path to your sound file
+import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
+import DriverEntity from "../driver-entity/DriverEntity";
+
 const CarrierChatPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [user, setUser] = useState(null);
     const navigate = useNavigate();
-    const [hoveredButton, setHoveredButton] = useState('');
-    const [chatEndpoint, setChatEndpoint] = useState(null);
-    const [vehicleLoads, setVehicleLoads] = useState([]);
+    const [play] = useSound(notificationSound);
     const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
-    const [commercialTruckLoads, setCommercialTruckLoads] = useState([]); // Add this line
+    const [isSuccess, setIsSuccess] = useState(false);
+    const [isAssignSuccess, setIsAssignSuccess] = useState(false);
+    const [isAssignFailed, setIsAssignFailed] = useState(false);
+    const [isAssignLoading, setIsAssignLoading] = useState(false);
     const [boatLoads, setBoatLoads] = useState([]); // Add this line
     const [constructionEquipmentLoads, setConstructionEquipmentLoads] = useState([]); // Add this line
     const [heavyEquipmentLoads, setHeavyEquipmentLoads] = useState([]); // Add this line
     const [data, setData] = useState([]);
-    const [isExpanded, setIsExpanded] = useState(false);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
-    const sidebarRef = useRef(null);
     const minSwipeDistance = 50;
     const [selectedChatID, setSelectedChatID] = useState(null);
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
-    const [editingLoad, setEditingLoad] = useState(null); // Holds the load currently being edited
-    const [isEditFormVisible, setIsEditFormVisible] = useState(false); // Controls the visibility of the edit form
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [showDetails, setShowDetails] = useState(false);
+    const [load, setLoad] = useState(null);
     const [formData, setFormData] = useState(null);
     const [showEditForm, setShowEditForm] = useState(false);
     const [isPopupVisible, setIsPopupVisible] = useState(false);
     const sigCanvas = useRef({});
     const [selectedDropdown, setSelectedDropdown] = useState(null);
-    const dropdownRef = useRef(null);
+    const [chatData, setChatData] = useState(null);
     const [bid, setBid] = useState(null);
     const [conversations, setConversations] = useState([]);
-    const [isBidApplied, setIsBidApplied] = useState(false);
     const [bids, setBids] = useState([]);
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [shipperApproval, setShipperApproval] = useState(false);
+    const fileInputRef = useRef();
     const [selectedBid, setSelectedBid] = useState(null);
     const [chatMessages, setChatMessages] = useState([]);
     const [carrier, setCarrier] = useState(null);
     const {carrierID} = useParams();
-    const { chatID } = useParams();
-    const [isChatButtonDisabled, setIsChatButtonDisabled] = useState(true);
+    const {chatID} = useParams();
+    const [shipper, setShipper] = useState(null);
     const socketRef = useRef();
-    const [currentUser, setCurrentUser] = useState(null);
     const [inputMessage, setInputMessage] = useState("");
-    const [sendBOLDocument, setSendBOLDocument] = useState(false);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
+    const [filePreviewUrl, setFilePreviewUrl] = useState([]);
+    const [fileData, setFileData] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
+    const [isApprovalSent, setIsApprovalSent] = useState(false);
+    const [showAssignDriverPopup, setShowAssignDriverPopup] = useState(false);
+    const [drivers, setDrivers] = useState([]);
+
+    const toggleAssignDriverPopup = () => {
+        setShowAssignDriverPopup(!showAssignDriverPopup);
+    };
+
+    const handleFileChangeForButton = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length > 5) {
+            alert('You can only select up to 5 files.');
+            return;
+        }
+        const fileUrls = files.map(file => URL.createObjectURL(file));
+        setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
+    };
+
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${chatID}`)
+        const fetchDrivers = async () => {
+            try {
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers'); // Replace with your API endpoint
+                setDrivers(response.data);
+            } catch (error) {
+                console.error('Error fetching drivers:', error);
+            }
+        };
+
+        fetchDrivers();
+    }, []);
+
+
+    useEffect(() => {
+        const fetchChatData = async () => {
+            try {
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-conversation-chat/${chatID}`);
+                setChatData(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching chat data:', error);
+            }
+        };
+
+        fetchChatData();
+    }, [chatID])
+
+
+    useEffect(() => {
+        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    setUser(response.data);
+                    axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-shipper/${response.data.shipperID}`)
+                        .then(shipperResponse => {
+                            if (shipperResponse.data && shipperResponse.status === 200) {
+                                setShipper(shipperResponse.data);
+                            }
+                        })
+                        .catch(shipperError => {
+                            console.error('Error fetching shipper data:', shipperError);
+                        });
                 }
             })
             .catch(error => {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching chat conversation:', error);
             });
     }, [chatID]);
+
     useEffect(() => {
         if (selectedBid && selectedBid.carrierID) {
             axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierID}`)
@@ -123,30 +184,18 @@ const CarrierChatPage = () => {
     }, [selectedBid]);
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-commercial-truck-loads`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setCommercialTruckLoads(response.data.loads);
-                    response.data.loads.forEach(load => {
-                        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bid/${load.commercialLoadID}`)
-                            .then(response => {
-                                if (response.data && response.status === 200) {
-                                    setBid(response.data);
-                                }
-                            })
-                            .catch(error => {
-                                console.error('Error fetching bid:', error);
-                            });
-                    });
-                } else {
-                    console.error('Error fetching Commercial Truck loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Commercial Truck loads:', error);
-            });
-    }, []);
+        const fetchLoad = async () => {
+            try {
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load-by-chat/${chatID}`);
+                setLoad(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching load:', error);
+            }
+        };
 
+        fetchLoad();
+    }, [chatID]);
 
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
@@ -157,17 +206,10 @@ const CarrierChatPage = () => {
                 console.error('Error fetching conversations:', error);
             });
     }, []);
+
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
-            .then(response => {
-                setBids(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching bids:', error);
-            });
-    }, []);
-    useEffect(() => {
-        socketRef.current = io.connect('https://socket-chat-server.onrender.com');
+
+        socketRef.current = io.connect('https://socket-chat-server-xly7.onrender.com');
 
         socketRef.current.on('customer message', (data) => {
             if (data.chatID === selectedChatID) {
@@ -208,47 +250,22 @@ const CarrierChatPage = () => {
             });
     }, [carrierID]);
 
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${response.data.personalEndpoint}`)
-                        .then(userResponse => {
-                            if (userResponse.data && userResponse.status === 200) {
-                                setUser(userResponse.data);
-                            }
-                        })
-                        .catch(userError => {
-                            console.error('Error fetching user data:', userError);
-                        });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching chat conversation:', error);
-            });
-    }, [chatID]);
-    useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${selectedChatID}`)
-            .then(response => {
-                setChatMessages(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error);
-            });
-    }, [selectedChatID]);
 
     const sendMessage = (message) => {
         const newMessage = {
             text: message,
             date: new Date(),
             sender: 'carrierID',
+            file: fileData,
         };
-        socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
+        setImagePreviewUrl([]);
+        setFilePreviewUrl([]);
+        socketRef.current.emit('carrier message', {message: newMessage, chatID: selectedChatID, carrier: 'carrierID'});
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
         axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-chat-message', {
             chatID: selectedChatID,
-            receiver: 'personalEndpoint',
+            receiver: 'shipperID',
             sender: 'carrierID',
             text: message,
             date: new Date()
@@ -256,9 +273,12 @@ const CarrierChatPage = () => {
             .catch(error => {
                 console.error('Error saving chat message:', error);
             });
+
+
     };
 
     useEffect(() => {
+        setIsLoading(true);
         axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
@@ -266,6 +286,7 @@ const CarrierChatPage = () => {
             .catch(error => {
                 console.error('Error fetching chat messages:', error);
             });
+        setIsLoading(false);
     }, [chatID]);
 
     const handleKeyDown = (event) => {
@@ -288,61 +309,7 @@ const CarrierChatPage = () => {
             console.log(error);
         }
     };
-    const clearSignature = () => {
-        sigCanvas.current.clear();
-    };
 
-    const handleOpenPopup = () => {
-        setIsPopupVisible(true);
-    };
-
-    const handleClosePopup = () => {
-        setIsPopupVisible(false);
-    };
-    const handleFormChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
-    const handleEdit = (load) => {
-        setSelectedLoad(load);
-        setFormData(load);
-        setShowEditForm(true);
-    };
-    const handleCancel = () => {
-        setShowEditForm(false); // Close the edit form
-    };
-    const handleDetails = (load) => {
-        setSelectedLoad(load);
-        setFormData(load); // Set the formData state to the current load
-        setShowDetails(!showDetails);
-    };
-    const handleDelete = (load) => {
-        if (window.confirm('Are you sure you want to delete this load?')) {
-            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/delete-commercial-truck-load/${load._id}`)
-                .then(response => {
-                    if (response.status === 200) {
-                        setCommercialTruckLoads(commercialTruckLoads.filter(l => l._id !== load._id));
-                    } else {
-                        console.error('Error deleting load:', response);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error deleting load:', error);
-                });
-        }
-    };
-    const toggleOpen = (index) => {
-        if (selectedDropdown === index) {
-            setSelectedDropdown(null);
-        } else {
-            setSelectedDropdown(index);
-        }
-    };
-    const toggleDropdown = () => {
-        setIsOpen(!isOpen);
-    };
     useEffect(() => {
         if (!touchStart || !touchEnd) return;
         const distance = touchStart - touchEnd;
@@ -363,24 +330,7 @@ const CarrierChatPage = () => {
                 console.error('There was an error!', error);
             });
     }, []);
-    const handleFormSubmit = (e) => {
-        e.preventDefault();
 
-        // Send a PUT request to the server to update the load
-        axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-commercial-truck-load/${selectedLoad._id}`, formData)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    // Update the load in the state
-                    setCommercialTruckLoads(commercialTruckLoads.map(load => load._id === selectedLoad._id ? response.data : load));
-                    setShowDetails(false); // Close the details div
-                } else {
-                    console.error('Error updating load:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error updating load:', error);
-            });
-    };
     useEffect(() => {
         axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-heavy-equipment-loads')
             .then(response => {
@@ -420,19 +370,7 @@ const CarrierChatPage = () => {
                 console.error('Error fetching Boat Loads:', error);
             });
     }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-commercial-truck-loads')
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setCommercialTruckLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Commercial Truck loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Commercial Truck loads:', error);
-            });
-    }, []);
+
     useEffect(() => {
         axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
             .then(response => {
@@ -459,17 +397,60 @@ const CarrierChatPage = () => {
             });
     }, []);
 
+    const handleCarrierApprove = async () => {
+        setIsApprovalSent(true);
+        try {
+            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/confirm-load/${chatID}`);
+            if (response.status === 200) {
+                console.log(response.data.message);
+                socketRef.current.emit('carrier approval', {chatID: selectedChatID});
+            } else {
+                console.error('Error confirming load:', response);
+            }
+        } catch (error) {
+            console.error('Error confirming load:', error);
+        }
+        window.location.reload();
+    };
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
-    const [searchQuery, setSearchQuery] = useState("");
-    const handleSearch = () => {
-        console.log(searchQuery);
-    };
-    const handleLogout = () => {
-        setUser(null);
-        navigate('/sign-in');
+    useEffect(() => {
+        socketRef.current = io.connect('https://socket-chat-server-xly7.onrender.com');
+
+        socketRef.current.on('payment updated', (data) => {
+            if (data.chatID === chatID) {
+                window.location.reload();
+            }
+        });
+
+        return () => {
+            socketRef.current.disconnect();
+        };
+    }, [chatID]);
+
+    useEffect(() => {
+        socketRef.current.on('shipper approval', (data) => {
+            setShipperApproval(true);
+        });
+
+        return () => {
+            socketRef.current.off('shipper approval');
+        };
+    }, []);
+
+    const handleAssignLoad = async (driver, loadID) => {
+        setIsAssignLoading(true);
+        try {
+            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/assign-load/${driver.driverID}`, { loadID });
+            if (response.status === 200) {
+                console.log('Load assigned successfully');
+                isAssignSuccess(true);
+            } else {
+                console.error('Error assigning load:', response);
+            }
+        } catch (error) {
+            console.error('Error assigning load:', error);
+        }
+        setIsAssignLoading(false);
     };
 
     return (
@@ -484,106 +465,197 @@ const CarrierChatPage = () => {
                 Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
             />
+            {shipperApproval && (
+                <>
+                    {play()}
+                    <FloatingWindowSuccess
+                        text="Shipper approved your agreement. Approve shipper's agreement too, to continue next steps"/>
+                </>
+            )}
+
+            {showAssignDriverPopup &&
+                <div className="assign-driver-popup-overlay">
+                    <div className="assign-driver-popup">
+                        <div className="assign-driver-popup-header">
+                            <h1>Assign Driver for load: {load.loadCredentialID}</h1>
+                            <button className="close-button" onClick={toggleAssignDriverPopup}>Close</button>
+                        </div>
+                        <div className="assign-driver-popup-content">
+                            {drivers.filter(driver => driver.driverCreatedByCarrierID === carrierID).map((driver, index) => (
+                                <DriverEntity
+                                    key={index}
+                                    driverFirstAndLastName={driver.driverFirstAndLastName}
+                                    driverEmail={driver.driverEmail}
+                                    driverID={driver.driverID}
+                                    loadID={load.loadCredentialID}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            }
             <div className="carrier-deal-conversations-sidebar">
                 <div className="chat-conversation-search-bar">
                     <SearchBarIcon width="15"/>
                     <input type="text" placeholder="Search chat by load ID..."/>
                 </div>
-                {conversations.map((conversation, index) => (
-                    <div key={index} className="chat-id-container"
-                         onClick={() => handleChatSelection(conversation.chatID)}>
-                        <UserChatAvatar/>
-                        <div className="chat-details">
-                            <h3>Carrier Name</h3>
-                            <h4>{conversation.chatID}</h4>
+                <div className="chat-id-containers-wrapper">
+                    {conversations.map((conversation, index) => (
+                        <div key={index} className="chat-id-container"
+                             onClick={() => handleChatSelection(conversation.chatID)}>
+                            <UserChatAvatar className="user-avatar-chat"/>
+                            <div className="chat-details">
+                                <h3>Shipper Name</h3>
+                                <h4>{conversation.chatID}</h4>
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    ))}
+                </div>
             </div>
             <div className="carrier-dashboard-content">
                 <div className="carrier-chat-header">
                     <div className="shipper-carrier-chat-header">
                         <span className="status-circle"></span>
-                        <h1>Jack Daniels</h1>
+                        <h1 className="chat-user-name">{shipper ? shipper.userShipperName :
+                            <ClipLoader color="#024ecc" loading={true} size={25}/>}</h1>
                     </div>
-                    <h1>5426-3562-5625-7754</h1>
-                </div>
-                {chatID ? (
-                    <div className="messaging-chat-wrapper">
-                        <div className="chat-messages">
-                            {chatMessages.map((message, index) => (
-                                <div key={index} style={{
-                                    display: 'flex',
-                                    justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
-                                }}>
-                                    {message.sender !== 'carrierID' && <UserAvatarComponent/>}
-                                    <div style={{
-                                        backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
-                                        color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
-                                        alignItems: 'start',
-                                        textAlign: 'left',
-                                        fontSize: '1.3rem',
-                                        padding: '10px',
-                                        borderRadius: '10px',
-                                        margin: '10px'
-                                    }}>
-                                        <div className="user-role-name">
-                                            {message.sender === 'personalEndpoint' &&
-                                                <div className="user-carrier-name">{user ? <p>{user.name}</p> :
-                                                    <p>Loading...</p>}</div>}
-                                            {message.sender !== 'carrierID' &&
-                                                <div className="user-carrier-role">Customer</div>}
-                                        </div>
-                                        <div className="user-role-name">
-                                            {message.sender === 'carrierID' &&
-                                                <div style={{
-                                                    color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',
-                                                }}>{carrier.companyName}</div>}
-                                            {message.sender === 'carrierID' &&
-                                                <div className="user-carrier-role">Carrier</div>}
-                                        </div>
-                                        {message.text}
-                                        <div style={{
-                                            color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
-                                            alignItems: 'end',
-                                            textAlign: 'right',
-                                        }}
-                                        >{new Date(message.date).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit',
-                                            hour12: false
-                                        })}</div>
-                                    </div>
-                                    {message.sender === 'carrierID' && <UserAvatarComponent/>}
-                                </div>
-                            ))}
-                        </div>
-                        <div className="chat-input-area-wrapper">
-                            <button className="send-bol-button">Send BOL</button>
-                            <div className="chat-input-area">
-                                <input
-                                    type="text"
-                                    className="chat-input"
-                                    placeholder="Type your message here..."
-                                    value={inputMessage}
-                                    onChange={e => setInputMessage(e.target.value)}
-                                    onKeyDown={handleKeyDown}
-                                />
-                                <AttachCamera className="chat-input-icons"/>
-                                <AttachImage className="chat-input-icons"/>
-                                <AttachFile className="chat-input-icons"/>
-                            </div>
-                            <button
-                                className="chat-send-button"
-                                onClick={() => {
-                                    sendMessage(inputMessage);
-                                    setInputMessage("");
-                                }}
-                            >
-                                <SendButtonIcon width="30"/>
+                    {load && load.loadCarrierConfirmation === 'Confirmed' ? (
+                        load.loadPaymentStatus === 'Paid' ? (
+                            <button className="send-bol-button" onClick={toggleAssignDriverPopup}>
+                                Assign Driver
                             </button>
-                        </div>
-                    </div>
+                        ) : (
+                            <button className="waiting-for-approval-button" disabled>
+                                <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
+                                Waiting for Shipper's payment
+                            </button>
+                        )
+                    ) : (
+                        <button className="send-bol-button" onClick={handleCarrierApprove}>
+                            Approve Agreement
+                        </button>
+                    )}
+                </div>
+
+                {chatID ? (
+                    <>
+                        {isLoading ? (
+                            <ClipLoader color="#024ecc" loading={true} size={40} className="clip-loader-style"/>
+                        ) : (
+                            <div className="messaging-chat-wrapper">
+                                <div className="chat-messages">
+                                    {chatMessages.map((message, index) => (
+                                        <div key={index} style={{
+                                            display: 'flex',
+                                            justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
+                                        }}>
+                                            {message.sender !== 'carrierID' && <UserAvatarComponent/>}
+                                            <div style={{
+                                                backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
+                                                color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
+                                                alignItems: 'start',
+                                                textAlign: 'left',
+                                                fontSize: '1.3rem',
+                                                padding: '10px',
+                                                maxWidth: '200px',
+                                                width: '100%',
+                                                borderRadius: '10px',
+                                                margin: '10px'
+                                            }}>
+                                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                    {message.sender === 'shipperID' &&
+                                                        <div>
+                                                            {shipper ?
+                                                                <p style={{color: '#a9a9a9'}}>{shipper.userShipperName}</p> :
+                                                                <ClipLoader color="#024ecc" loading={true}
+                                                                            size={25}/>
+                                                            }
+                                                        </div>}
+                                                    {message.sender !== 'carrierID' &&
+                                                        <div style={{color: '#a9a9a9'}}>Customer</div>}
+                                                </div>
+                                                <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                    {message.sender === 'carrierID' &&
+                                                        <div
+                                                            style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
+                                                            {carrier ? carrier.carrierContactCompanyName :
+                                                                <ClipLoader color="#024ecc" loading={true}
+                                                                            size={25}/>}
+                                                        </div>}
+                                                    {message.sender === 'carrierID' &&
+                                                        <div
+                                                            style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
+                                                            Carrier
+                                                        </div>}
+                                                </div>
+                                                {message.text}
+                                                {message.file && <img src={message.file} alt="File"/>}
+                                                <div style={{
+                                                    color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
+                                                    alignItems: 'end',
+                                                    textAlign: 'right',
+                                                }}
+                                                >{new Date(message.date).toLocaleTimeString([], {
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: false
+                                                })}</div>
+                                            </div>
+                                            {message.sender === 'carrierID' && <UserAvatarComponent/>}
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="chat-input-area-wrapper">
+                                    <div className="chat-input-area-wrapper">
+                                        <div className="images-preview-wrapper">
+                                            {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
+                                                <img key={index} className="file-image-preview" src={url}
+                                                     alt="Preview"/>
+                                            ))}
+                                            {filePreviewUrl.map((url, index) => (
+                                                <img key={index} className="file-image-preview" src={url}
+                                                     alt="Preview"/>
+                                            ))}
+                                        </div>
+                                        <div className="chat-input-area">
+                                            <input
+                                                type="file"
+                                                ref={fileInputRef}
+                                                style={{display: 'none'}}
+                                                onChange={handleFileChangeForButton}
+                                                multiple
+                                            />
+                                            <button className="send-bol-button"
+                                                    onClick={() => fileInputRef.current.click()}>Send BOL
+                                            </button>
+                                            <input
+                                                type="text"
+                                                className="chat-input"
+                                                placeholder="Type your message here..."
+                                                value={inputMessage}
+                                                onChange={e => setInputMessage(e.target.value)}
+                                                onKeyDown={handleKeyDown}
+                                            />
+                                            <AttachCamera className="chat-input-icons"/>
+                                            <AttachImage className="chat-input-icons"/>
+                                            <AttachFile className="chat-input-icons"/>
+                                            <button
+                                                className="chat-send-button"
+                                                onClick={() => {
+                                                    sendMessage(inputMessage);
+                                                    setInputMessage("");
+                                                }}
+                                            >
+                                                <SendButtonIcon width="30"/>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )
+                        }
+                    </>
+
                 ) : (
                     <div className="choose-chat-conversation">
                         <p>Choose chat to start speaking with customer!</p>

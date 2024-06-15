@@ -30,6 +30,7 @@ import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.sv
 import {ReactComponent as BidArrowIcon} from "../../../assets/bid-arrow-icon.svg";
 import {ReactComponent as DirectionIconNumbers} from "../../../assets/directions-number-icons.svg";
 import {useParams} from 'react-router-dom';
+import axios from "axios";
 import {Link} from "react-router-dom";
 import MetricCompoent from "../../metric-component/MetricCompoent";
 import GoogleMapRealTimeTrafficComponent
@@ -37,15 +38,51 @@ import GoogleMapRealTimeTrafficComponent
 import JarvisChatComponent from "../../jarvis-chat-page/JarvisChatComponent";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import AssignedLoadContainer from "../../assigned-load-container/AssignedLoadContainer";
 
 const DriverAssignedLoads = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
     const {driverID} = useParams();
+    const [driver, setDriver] = useState(null);
+    const [loads, setLoads] = useState([]);
+
+
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+
+    useEffect(() => {
+        const fetchDriver = async () => {
+            try {
+                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-driver/${driverID}`);
+                setDriver(response.data);
+            } catch (error) {
+                console.error('Error fetching driver:', error);
+            }
+        };
+
+        fetchDriver();
+    }, [driverID]);
+
+
+    useEffect(() => {
+        const fetchLoads = async () => {
+            try {
+                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-loads');
+                setLoads(response.data);
+            } catch (error) {
+                console.error('Error fetching loads:', error);
+            }
+        };
+
+        fetchLoads();
+    }, []);
+
+    const assignedLoads = loads.filter(load => load.loadAssignedDriverID === driverID);
+
     return (
         <div className="driver-dashboard-wrapper">
             <DashboardSidebar
@@ -67,253 +104,22 @@ const DriverAssignedLoads = () => {
                 <div className="driver-dashboard-content">
                     <div className="driver-dashboard-content-body">
                         <div className="loads-containers-block">
-                            <div className="take-load-container">
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="take-load-container">
+                            {assignedLoads.map(load => (
+                                <AssignedLoadContainer
+                                    key={load.loadID}
+                                    loadTitle={load.loadTitle}
+                                    loadWeight={load.loadWeight}
+                                    loadType={load.loadType}
+                                    driverID={driverID}
+                                    loadTrip={load.loadMilesTrip}
+                                    loadCredentialID={load.loadCredentialID}
+                                    loadPickupLocation={load.loadPickupLocation}
+                                    loadPickupLocationDate={load.loadPickupDate}
+                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                    loadDeliveryLocationDate={load.loadDeliveryDate}
 
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="take-load-container">
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="take-load-container">
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="take-load-container">
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
-                            <div className="take-load-container">
-                                <div className="driver-load-directions-wrapper">
-                                    <span>
-                                        <label htmlFor="">Load Title</label>
-                                        <h3>Car Load</h3>
-                                    </span>
-                                    <div className="driver-load-directions">
-                                        <DirectionIconNumbers height="500px"/>
-                                        <div className="load-driver-direction">
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                            <section>
-                                                <h3>New York</h3>
-                                                <p>13 March - 13:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-short-info">
-                                    <span>
-                                        <label>Load Type</label>
-                                        <h3>Vehicle</h3>
-                                    </span>
-                                    <span>
-                                        <label>Weight</label>
-                                        <h3>1300 lbs</h3>
-                                    </span>
-                                    <span>
-                                        <label>Trip</label>
-                                        <h3>290 mil</h3>
-                                    </span>
-                                </div>
-                                <div className="instant-book-load">
-                                    <label>Assigned to you</label>
-                                    
-                                    <button className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/>
-                                    </button>
-                                </div>
-                            </div>
+                                />
+                            ))}
                         </div>
                     </div>
                 </div>
