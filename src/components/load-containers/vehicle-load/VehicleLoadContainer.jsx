@@ -28,7 +28,6 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
-        loadStatus: 'Published',
         loadPrice: 0,
         loadQoutes: 0,
         loadPickupLocation: pickupLocation,
@@ -52,6 +51,11 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadStatus: 'Published',
+        loadCarrierConfirmation: "Not Confirmed",
+        loadPaymentStatus: "Not Paid",
+        loadAssignedDriverID: "Not Assigned",
+        loadDeliveredStatus: "Not Delivered",
         loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
@@ -93,7 +97,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
             ...formData,
         });
         try {
-            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
             if (response.status === 200) {
                 window.location.reload();
             }

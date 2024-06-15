@@ -30,8 +30,6 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         loadSubType: loadSubType,
         loadSpecifiedItem: '',
         loadTitle: '',
-        loadStatus: 'Published',
-        loadPrice: 'Waiting for bids',
         loadPickupLocation: pickupLocation,
         loadDeliveryLocation: deliveryLocation,
         loadPickupDate: loadPickupDate,
@@ -53,6 +51,12 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
         loadOperable: false,
         loadConvertible: false,
         loadModified: false,
+        loadPrice: 0,
+        loadStatus: 'Published',
+        loadCarrierConfirmation: "Not Confirmed",
+        loadPaymentStatus: "Not Paid",
+        loadAssignedDriverID: "Not Assigned",
+        loadDeliveredStatus: "Not Delivered",
         loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
@@ -95,7 +99,7 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
             ...formData,
         });
         try {
-            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
             if (response.status === 200) {
                 window.location.reload();
             }
