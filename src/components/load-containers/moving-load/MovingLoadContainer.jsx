@@ -45,6 +45,13 @@ const MovingLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
         loadStorageRequired: false,
         loadPackingRequired: false,
         loadLogisticServiceRequired: false,
+        loadPrice: 0,
+        loadStatus: 'Published',
+        loadCarrierConfirmation: "Not Confirmed",
+        loadPaymentStatus: "Not Paid",
+        loadAssignedDriverID: "Not Assigned",
+        loadDeliveredStatus: "Not Delivered",
+        loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
         shipperID: shipperID,
     });
 
