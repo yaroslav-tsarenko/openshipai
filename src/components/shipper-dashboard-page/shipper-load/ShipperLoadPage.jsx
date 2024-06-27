@@ -16,17 +16,36 @@ import BmwImage4 from "../../../assets/bmw-4.png";
 import BmwImage5 from "../../../assets/bmw-5.png";
 import BmwImage6 from "../../../assets/bmw-6.png";
 import ImageSlider from "../../image-slider/ImageSlider";
-import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import CarrierLoadBid from "../../carrier-load-bid/CarrierLoadBid";
+import {Skeleton} from "@mui/material";
 
 const ShipperLoadPage = () => {
-
+    const address = process.env.REACT_APP_API_BASE_URL;
     const images = [BmwImage1, BmwImage2, BmwImage3, BmwImage4, BmwImage5, BmwImage6];
-
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const {loadCredentialID} = useParams();
     const {shipperID} = useParams();
     const [load, setLoad] = useState(null);
     const [loadBids, setLoadBids] = useState([]);
+
+    const [shipperInfo, setShipperInfo] = useState(null);
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
 
     useEffect(() => {
         const fetchLoad = async () => {
@@ -63,9 +82,6 @@ const ShipperLoadPage = () => {
         return <div>Loading...</div>;
     }
 
-
-
-
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
@@ -79,13 +95,16 @@ const ShipperLoadPage = () => {
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Welcome Back, John"
-                    contentSubtitle="Your current payments"
-                    accountName="John Doe"
-                    accountRole="Shipper"
+                    contentTitle={shipperInfo ?
+                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="load-page-header">
                     <Link to={`/shipper-loads/${shipperID}`} className="go-back-link">

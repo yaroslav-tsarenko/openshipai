@@ -8,6 +8,7 @@ import {
     ReactComponent as TruckIcon
 } from "../../assets/truck-vector.svg";
 import Typewriter from 'typewriter-effect';
+import CustomCheckBox from "../custom-checkbox/CustomCheckBox";
 
 function ChoosingRolePage() {
     return (
@@ -22,19 +23,19 @@ function ChoosingRolePage() {
                                 <h2>I'm Shipper</h2>
                                 <p>I have stuff i need to get from A to B</p>
                             </section>
-                            <BoxIcon/>
+                            <BoxIcon className="choosing-role-icon"/>
                         </Link>
                         <Link to={"/sign-up-carrier"} className="role-button">
                             <section>
                                 <h2>I'm Carrier</h2>
                                 <p>I have empty space in my truck</p>
                             </section>
-                            <TruckIcon/>
+                            <TruckIcon className="choosing-role-icon"/>
                         </Link>
                     </div>
                     <div className="policy-agreement-container">
-                        <input type="checkbox"/>
-                        <p>I agree to the <Link to={"/"}>Terms of Service</Link> and <Link to={"/"}>Privacy
+                        <CustomCheckBox/>
+                        <p className="policy-agreement-container-p">I agree to the <Link to={"/"}>Terms of Service</Link> and <Link to={"/"}>Privacy
                             Policy</Link></p>
                     </div>
 

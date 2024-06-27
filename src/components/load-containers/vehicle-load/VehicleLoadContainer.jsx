@@ -63,6 +63,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
+
     const handleButtonClick = () => {
         fileInputRef.current.click();
     };

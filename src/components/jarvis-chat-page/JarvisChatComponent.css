@@ -215,8 +215,8 @@ body {
 .ai-chat-wrapper {
     display: flex;
     width: 100%;
-    max-width: 895px;
     height: 705px;
+    max-width: 940px;
     border-radius: 40px;
     border: 1px solid var(--light-grey);
 }
@@ -268,7 +268,7 @@ nav {
     max-height: 750px;
     height: 100%;
     max-width: 450px;
-    margin: 0 40px auto auto;
+    margin: 0 40px auto 20px;
     display: flex;
     flex-direction: column;
     justify-content: space-between;

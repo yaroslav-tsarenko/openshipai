@@ -50,8 +50,11 @@ import {useParams} from 'react-router-dom';
 import {Link} from "react-router-dom";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import {Skeleton} from "@mui/material";
+import axios from "axios";
 
 const ShipperProfilePage = () => {
+    const address = process.env.REACT_APP_API_BASE_URL;
     const [activeSetting, setActiveSetting] = useState('Account');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
@@ -60,21 +63,42 @@ const ShipperProfilePage = () => {
     const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [isOnDriver, setIsOnDriver] = useState(false);
     const [isOnUpdates, setIsOnUpdates] = useState(false);
-    const handleToggleAI = () => {
-        setIsOnAI(!isOnAI);
-    };
-    const handleToggleCarrier = () => {
-        setIsOnCarrier(!isOnCarrier);
-    };
-    const handleToggleDriver = () => {
-        setIsOnDriver(!isOnDriver);
-    };
-    const handleToggleUpdates = () => {
-        setIsOnUpdates(!isOnUpdates);
-    };
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    const [shipperInfo, setShipperInfo] = useState(null);
+
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true);
+            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [shipperInfo]);
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
@@ -88,27 +112,57 @@ const ShipperProfilePage = () => {
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Welcome Back, John"
+                    contentTitle={shipperInfo ?
+                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <Skeleton variant="text" width={250} />}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName="John Doe"
-                    accountRole="Shipper"
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-profile-content-wrapper">
                     <div className="profile-content-wrapper">
                         <div className="shipper-profile-content">
                             <div className="shipper-info">
-                                <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                {previewSavedImage ? (
+                                    <img src={previewSavedImage} className="shipper-profile-avatar" alt="User Avatar" />
+                                ) : (
+                                    <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                )}
                                 <section className="shipper-details-wrapper">
                                     <div className="shipper-role-name">
-                                        <h3>John Doe</h3>
-                                        <p>Shipper</p>
+                                        <h3>
+                                            {
+                                            shipperInfo ?
+                                            <>
+                                                {shipperInfo.userShipperName}
+                                            </>
+                                            :
+                                            <Skeleton variant="text" width={250} />}
+                                        </h3>
+                                        <p>
+                                            {shipperInfo ?
+                                                    <>
+                                                        {shipperInfo.userShipperRole}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />}
+                                        </p>
                                     </div>
                                     <div className="shipper-info-details">
                                         <p>USA, Los Angeles</p>
-                                        <p>johndoe@gmail.com</p>
+                                        <p>
+                                            {
+                                                shipperInfo ?
+                                                    <>
+                                                        {shipperInfo.userShipperEmail}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />}
+                                        </p>
                                     </div>
                                 </section>
                             </div>

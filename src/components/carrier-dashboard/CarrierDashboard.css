@@ -1919,6 +1919,7 @@
     color: var(--royal-white);
     font-size: 3rem;
     display: flex;
+    object-fit: cover;
     justify-content: center;
     align-items: center;
     margin: 0 auto;
@@ -1926,13 +1927,13 @@
 }
 
 .avatar-settings-wrapper {
-    width: 350px;
+    width: 250px;
     display: flex;
     justify-content: space-between;
     margin: 20px 0 20px 0;
 }
 
-.change-avatar {
+.carrier-change-avatar {
     background: var(--royal-blue);
     border: none;
     width: 150px;
@@ -1943,7 +1944,7 @@
     transition: 0.2s ease-in-out;
 }
 
-.change-avatar:hover {
+.carrier-change-avatar:hover {
     background: var(--royal-blue-hovered);
     color: var(--royal-white);
     transition: 0.2s ease-in-out;
@@ -1969,20 +1970,19 @@
 .account-info-settings {
     display: flex;
     margin: 30px auto;
-    width: 450px;
+    width: 460px;
     justify-content: space-between;
     border-bottom: 1px solid var(--light-grey);
     height: 100%;
 }
 
 .account-info-settings-1 {
-    width: 215px;
+    width: 225px;
 }
 
 .account-info-settings-2 {
-    width: 215px;
+    width: 225px;
 }
-
 .avatar-settings-icon {
     height: 150px;
     border-radius: 50%;

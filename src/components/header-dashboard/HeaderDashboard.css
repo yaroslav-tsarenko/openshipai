@@ -57,17 +57,17 @@
     transition: 0.2s ease-in-out;
 }
 
-.dashboard-searchbar input::placeholder{
+.dashboard-searchbar input::placeholder {
     color: var(--light-grey);
     font-size: 1.8rem;
 }
 
-.dashboard-searchbar:hover{
+.dashboard-searchbar:hover {
     transition: 0.2s ease-in-out;
     border: 1px solid var(--royal-blue);
 }
 
-.dashboard-searchbar:active{
+.dashboard-searchbar:active {
     transition: 0.2s ease-in-out;
     border: 2px solid var(--royal-blue);
 }
@@ -103,6 +103,11 @@
     font-weight: 500;
     margin: 0;
     color: var(--grey);
+}
+
+.user-header-avatar {
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .header-dashboard-account-info-role {

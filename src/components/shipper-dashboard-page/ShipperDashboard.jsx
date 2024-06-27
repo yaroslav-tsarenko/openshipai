@@ -22,8 +22,7 @@ import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
 import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
 import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
-import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
-import {ReactComponent as CarrierIcon} from "../../assets/trane-logo-carrier.svg";
+
 import {useParams} from 'react-router-dom';
 import {Link} from "react-router-dom";
 import MetricCompoent from "../metric-component/MetricCompoent";
@@ -32,11 +31,15 @@ import GoogleMapRealTimeTrafficComponent
 import JarvisChatComponent from "../jarvis-chat-page/JarvisChatComponent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
+import ShipperActiveLoadsPanel from "../shipper-active-loads-panel/ShipperActiveLoadsPanel";
+import {Skeleton} from "@mui/material";
+import axios from "axios";
 
 const ShipperDashboard = () => {
-
+    const address = process.env.REACT_APP_API_BASE_URL;
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
+    const [shipperInfo, setShipperInfo] = useState(null);
     const {shipperID} = useParams();
     localStorage.setItem('shipperID',
         shipperID);
@@ -44,27 +47,65 @@ const ShipperDashboard = () => {
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true);
+            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [shipperInfo]);
+
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
 
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
-                DashboardAI={{ visible: true, route: `/shipper-dashboard/${shipperID}` }}
-                Settings={{ visible: true, route: `/shipper-settings/${shipperID}` }}
-                Profile={{ visible: true, route: `/shipper-profile/${shipperID}` }}
-                Payments={{ visible: true, route: `/shipper-payments/${shipperID}` }}
-                ChatWithCarrier={{ visible: true, route: `/shipper-chat-conversation/${shipperID}` }}
-                MyQoutes={{ visible: true, route: `/shipper-qoutes/${shipperID}` }}
-                MyLoads={{ visible: true, route: `/shipper-loads/${shipperID}` }}
+                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                Profile={{visible: true, route: `/shipper-profile/${shipperID}`}}
+                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                MyQoutes={{visible: true, route: `/shipper-qoutes/${shipperID}`}}
+                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Welcome Back, John"
+                    contentTitle={shipperInfo ?
+                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <Skeleton variant="text" width={250} />}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName="John Doe"
-                    accountRole="Shipper"
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-dashboard-content-body">
                     <div className="shipper-dashboard-chat-metric">
@@ -85,134 +126,7 @@ const ShipperDashboard = () => {
                         </div>
                         <JarvisChatComponent/>
                     </div>
-                    <div className="shipper-dashboard-side-panel-wrapper">
-                        <div className="shipper-map-container">
-                            <GoogleMapRealTimeTrafficComponent className="shipper-info-google-map-container"
-                                                               origin="New York" destination="Washington"/>
-                        </div>
-                        <div className="shipper-dashboard-side-panel">
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-carrier">
-                                    <CarrierIcon className="carrier-icon"/>
-                                    <button className="chat-carrier-button">Chat with Carrier</button>
-                                </div>
-                            </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-carrier">
-                                    <CarrierIcon className="carrier-icon"/>
-                                    <button className="chat-carrier-button">Chat with Carrier</button>
-                                </div>
-                            </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-carrier">
-                                    <CarrierIcon className="carrier-icon"/>
-                                    <button className="chat-carrier-button">Chat with Carrier</button>
-                                </div>
-                            </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-carrier">
-                                    <CarrierIcon className="carrier-icon"/>
-                                    <button className="chat-carrier-button">Chat with Carrier</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ShipperActiveLoadsPanel shipperID={shipperID}/>
                 </div>
             </div>
         </div>

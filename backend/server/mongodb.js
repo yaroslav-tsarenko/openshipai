@@ -44,8 +44,6 @@ const StudentMoving = require('./models/StudentMoving');
 const SubscribedUsers = require('./models/SubscribedUsers');
 const SubmittedBid = require('./models/SubmittedBid');
 const DealChatConversation = require('./models/DealChatConversation');
-const multer = require('multer');
-const upload = multer({ dest: 'uploads/' });
 const Photo = require('./models/Photo');
 const Bid = require('./models/Bid');
 const Signature = require('./models/Signature');
@@ -54,14 +52,34 @@ const Load = require('./models/Load');
 const LoadBid = require('./models/LoadBid');
 const stripe = require('stripe')('sk_test_51O5Q6UEOdY1hERYnOo1J3Zep6yPIGV4Mxo8dSPjkQElYi7enLOmu3sD7YfxEzWOe1dYO98nsmHNaBu83gpBI7ekT004LeMr38x');
 require('dotenv').config();
+const fs = require('fs');
 const nodemailer = require('nodemailer');
 const bodyParser = require('body-parser');
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+const multer = require('multer');
+const sharp = require('sharp');
+
+
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
+app.use('/uploads', express.static('uploads'));
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 10 * 1024 * 1024 } // Set file size limit to 10MB
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 function generatePersonalEndpoint() {
     return shortid.generate();
@@ -211,6 +229,88 @@ app.get('/all-user-loads', async (req, res) => {
     } catch (error) {
         console.error('Error fetching all user loads:', error);
         res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.post('/upload-avatar/:shipperID', upload.single('avatar'), async (req, res) => {
+    const { shipperID } = req.params;
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({ message: 'No file uploaded' });
+        }
+        const avatarPath = `uploads/${req.file.filename}`;
+        const shipper = await Shipper.findOneAndUpdate(
+            { userShipperID: shipperID },
+            { userShipperAvatar: avatarPath },
+            { new: true }
+        );
+
+        if (!shipper) {
+            return res.status(404).json({ message: 'Shipper not found' });
+        }
+
+        res.json(shipper);
+    } catch (error) {
+        console.error('Error uploading avatar:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-avatar/:shipperID', async (req, res) => {
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: req.params.shipperID });
+        if (!shipper || !shipper.userShipperAvatar) {
+            return res.status(404).json({ message: 'Shipper or avatar not found' });
+        }
+
+        const imagePath = path.join(__dirname, shipper.userShipperAvatar);
+        console.log('Attempting to serve image from:', imagePath); // Log the constructed path
+
+        if (fs.existsSync(imagePath)) {
+            res.sendFile(imagePath);
+        } else {
+            res.status(404).json({ message: 'Image file not found' });
+        }
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/get-shipper-avatar/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        if (!shipper) {
+            return res.status(404).json({ message: 'Shipper not found' });
+        }
+        res.json({ avatar: shipper.userShipperAvatar });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-shipper/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    const { name, secondName, phoneNumber, email } = req.body;
+
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        if (!shipper) {
+            return res.status(404).json({ message: 'Shipper not found' });
+        }
+
+        // Update the shipper data if new data is provided
+        if (name) shipper.userShipperName = name;
+        if (secondName) shipper.userShipperSecondName = secondName;
+        if (phoneNumber) shipper.userShipperPhoneNumber = phoneNumber;
+        if (email) shipper.userShipperEmail = email;
+
+        await shipper.save();
+        res.json(shipper);
+    } catch (error) {
+        console.error('Error updating shipper:', error);
+        res.status(500).json({ message: error.message });
     }
 });
 
@@ -1932,11 +2032,46 @@ app.post('/sign-up', (req, res) => {
         });
 });
 
+app.get('/get-current-user/:userRole/:userID', async (req, res) => {
+    const { userRole, userID } = req.params;
+
+    try {
+        let user;
+
+        switch(userRole) {
+            case 'shipper':
+                user = await Shipper.findOne({ userShipperID: userID });
+                break;
+            case 'carrier':
+                user = await Carrier.findOne({ carrierID: userID });
+                break;
+            case 'driver':
+                user = await Driver.findOne({ driverID: userID });
+                break;
+            default:
+                return res.status(400).json({ message: 'Invalid user role' });
+        }
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        res.json(user);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.post('/sign-in', async (req, res) => {
     const { email, password } = req.body;
-    const carrier = await Carrier.findOne({ carrierAccountAccountEmail: email });
-    const shipper = await Shipper.findOne({ userShipperEmail: email });
-    const driver = await Driver.findOne({ driverEmail: email });
+
+    const [carrier, shipper, driver] = await Promise.all([
+        Carrier.findOne({ carrierAccountAccountEmail: email }),
+        Shipper.findOne({ userShipperEmail: email }),
+        Driver.findOne({ driverEmail: email })
+    ]);
+
     if (carrier && carrier.carrierAccountPassword === password) {
         res.json({ status: 'Success', role: 'carrier', id: carrier.carrierID });
     } else if (shipper && shipper.userShipperPassword === password) {
@@ -2007,17 +2142,6 @@ app.post('/google-login', async (req, res) => {
     }
 });
 
-app.delete('/delete-commercial-truck-load/:id', (req, res) => {
-    const id = req.params.id;
-
-    CommercialTruckLoad.findByIdAndRemove(id, (error, result) => {
-        if (error) {
-            res.status(500).json({ error: 'There was an error deleting the load.' });
-        } else {
-            res.status(200).json({ message: 'Load deleted successfully', result: result });
-        }
-    });
-});
 
 app.listen(port, () => {
     console.log(`Server is up and running on port: ${port}`);

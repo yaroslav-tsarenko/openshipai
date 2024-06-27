@@ -37,7 +37,7 @@ const DashboardSidebar = ({
                           }) => {
 
     const [hoveredButton, setHoveredButton] = useState('');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
 
     return (
         <div className="dashboard-sidebar-wrapper">
@@ -191,9 +191,9 @@ const DashboardSidebar = ({
                     Logout
                 </Link>
             </div>
-            <button className="close-dashboard-side-bar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
+           {/* <button className="close-dashboard-side-bar" onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
                 <ArrowNav className={`arrow-nav-close-open-side-bar ${isSidebarOpen ? '' : 'rotated'}`}/>
-            </button>
+            </button>*/}
         </div>
     );
 };
