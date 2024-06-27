@@ -6,7 +6,7 @@ import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.s
 import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
 import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
 
-const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink }) => {
+const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
     return (
         <div className="dashboard-content-header">
             <div>
@@ -20,7 +20,13 @@ const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRo
                 </div>
                 <div className="dashboard-account-info">
                     <section className="account-info">
-                        <DefaultUserAvatar width="60" height="60"/>
+
+                        {avatar ? (
+                            <img src={avatar} className="user-header-avatar" alt="User Avatar" width="60" height="60" />
+                        ) : (
+                            <DefaultUserAvatar width="60" height="60"/>
+                        )}
+
                         <Link to={profileLink} className="dashboard-account-info-text">
                             <h3 className="header-dashboard-account-info-name">{accountName}</h3>
                             <p className="header-dashboard-account-info-role">{accountRole}</p>

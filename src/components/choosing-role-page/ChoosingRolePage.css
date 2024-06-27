@@ -10,19 +10,32 @@
     display: flex;
 }
 
+.role-left-side-content{
+    width: 100%;
+    max-width: 570px;
+}
+
+
+
+.choosing-role-icon{
+    width: 100%;
+    max-width: 52px;
+
+}
+
 .choosing-role-left-side {
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    max-width: 700px;
     padding: 15px;
+    max-width: 800px;
     width: 100%;
     background-color: #ffffff;
 }
 
 .choosing-role-left-side h2 {
-    font-size: 4.5rem;
+    font-size: 3rem;
     font-weight: 600;
     color: var(--royal-blue);
 }
@@ -36,7 +49,7 @@
 }
 
 .choosing-role-left-side p {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     font-weight: 500;
     color: var(--grey);
 }
@@ -127,6 +140,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    max-width: 720px;
     height: 130px;
     color: var(--royal-blue);
     padding: 10px 20px;
@@ -142,13 +156,13 @@
 
 .role-button h2 {
     margin: 25px 0 0;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 600;
     color: var(--royal-blue);
 }
 
 .role-button p {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: 500;
     color: var(--grey);
 }
@@ -169,13 +183,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    max-width: 200px;
-    width: 100%;
-    height: 70px;
     background: var(--royal-blue);
     padding: 10px 20px;
-    font-weight: bold;
-    font-size: 2rem;
+    width: fit-content;
+    font-size: 1.5rem;
     border-radius: 60px;
     cursor: pointer;
     border: none;
@@ -194,19 +205,21 @@
     display: flex;
     align-content: center;
     justify-content: center;
+    align-items: center;
+    justify-items: center;
     text-decoration: none;
     text-align: center;
     margin-top: 20px;
 }
 
-.policy-agreement-container p {
+.policy-agreement-container-p {
     font-size: 1.4rem;
     font-weight: 500;
     align-content: center;
+    margin: 0;
     justify-content: center;
     text-decoration: none;
     color: var(--grey);
-    margin: 15px 0 0 15px;
 }
 
 .policy-agreement-container input[type="checkbox"] {
@@ -215,7 +228,7 @@
 }
 
 .question-p-sign-up {
-    font-size: 2rem;
+    font-size: 1.5rem;
     text-align: center;
     margin: 50px 0 20px 0;
     font-weight: 500;
@@ -223,6 +236,7 @@
 }
 
 .question-p-sign-in {
+    font-size: 1.5rem;
     text-decoration: none;
 }
 

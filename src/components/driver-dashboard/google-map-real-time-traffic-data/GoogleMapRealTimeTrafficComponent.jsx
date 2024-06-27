@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, TrafficLayer, Marker, InfoWindow } from '@react-google-maps/api';
+const libraries = ['places'];
 
 const containerStyle = {
     width: '100%',
@@ -79,8 +80,8 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
 
     return (
         <LoadScript
-            googleMapsApiKey="AIzaSyBRtLE7Bp4U4rlvAMrEpVoJ2R_evqeohZo" // Replace with your API key
-            libraries={['places']}
+            googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM" // Replace with your API key
+            libraries={libraries}
         >
             <GoogleMap
                 mapContainerStyle={containerStyle}

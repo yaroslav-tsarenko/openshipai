@@ -16,6 +16,7 @@ import {ClipLoader, FadeLoader} from "react-spinners";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 
 const ShipperChatPage = () => {
+    const address = process.env.REACT_APP_API_BASE_URL;
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [loadConfirmation, setLoadConfirmation] = useState(null);
     const [user, setUser] = useState(null);
@@ -37,6 +38,7 @@ const ShipperChatPage = () => {
     const socketRef = useRef();
     const [userName, setUserName] = useState("");
     const [shipper, setShipper] = useState("");
+    const [shipperHeaderData, setShipperHeaderData] = useState("");
     const [play] = useSound(notificationSound);
     const [dealChatConversations, setDealChatConversations] = useState([]);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
@@ -45,6 +47,24 @@ const ShipperChatPage = () => {
     const [showSuccessWindow, setShowSuccessWindow] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
+
+
+    const [shipperInfo, setShipperInfo] = useState(null);
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
 
     useEffect(() => {
         setShowSuccessContainer(true);

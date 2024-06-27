@@ -6,6 +6,8 @@ const ShipperSchema = new mongoose.Schema({
     userShipperPhoneNumber: String,
     userShipperEmail: String,
     userShipperPassword: String,
+    userShipperAvatar: String,
+    userShipperLocation: String,
     userShipperID: {type: String, unique: true, required: true},
     userShipperChatEndpoints: [{type: mongoose.Schema.Types.ObjectId, ref: 'ChatHistory'}],
     userShipperRole: {type: String, default: 'shipper'},

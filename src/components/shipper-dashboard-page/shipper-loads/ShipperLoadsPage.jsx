@@ -12,6 +12,7 @@ import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-whi
 import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon-plus.svg";
 import VehicleLoadType from "../../../assets/vehicle-category.svg";
 import MovingLoadType from "../../../assets/moving-category.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import FreightLoadType from "../../../assets/freight-category.svg";
 import HeavyLoadType from "../../../assets/heavy-category.svg";
 import {useParams} from 'react-router-dom';
@@ -49,15 +50,19 @@ import ExpediteLoadContainer from "../../load-containers/expedite-load-container
 import FTLLoadContainer from "../../load-containers/ftl-load-container/FTLLoadContainer";
 import LTLLoadContainer from "../../load-containers/ltl-load-container/LTLLoadContainer";
 import FarmEquipmentLoadContainer from "../../load-containers/farm-equipment-load-container/FarmEquipmentLoadContainer";
+import {Skeleton} from "@mui/material";
 
 const ShipperLoadsPage = () => {
-
+    const address = process.env.REACT_APP_API_BASE_URL;
     const [hoveredButton, setHoveredButton] = useState('');
     const [createLoadSection, setCreateLoadSection] = useState(false);
     const {shipperID} = useParams();
     const [loads, setLoads] = useState([]);
-    const [selectedOption, setSelectedOption] = useState('');
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [step, setStep] = useState(1);
+    const [shipperInfo, setShipperInfo] = useState(null);
+    const [loading, setLoading] = useState(false);
+
     const [formData, setFormData] = useState({
         pickupLocation: '',
         pickupLocationDate: '',
@@ -69,14 +74,39 @@ const ShipperLoadsPage = () => {
         loadSubType: ''
     });
 
-    const deleteAllLoads = async () => {
-        try {
-            const response = await axios.delete('https://jarvis-ai-logistic-db-server.onrender.com/delete-all-loads');
-            console.log(response.data.message);
-        } catch (error) {
-            console.error('Error deleting all loads:', error);
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true);
+            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
         }
-    };
+    }, [shipperInfo]);
+
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
 
     useEffect(() => {
         const fetchLoads = async () => {
@@ -118,13 +148,16 @@ const ShipperLoadsPage = () => {
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Welcome Back, John"
-                    contentSubtitle="Your current payments"
-                    accountName="John Doe"
-                    accountRole="Shipper"
+                    contentTitle={shipperInfo ?
+                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 {createLoadSection ? (
                     <div className="shipper-loads-dashboard-content-body">

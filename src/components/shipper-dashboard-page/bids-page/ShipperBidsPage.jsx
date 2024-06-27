@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import '../ShipperDashboard.css';
 import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
 import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
@@ -39,15 +39,50 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainer from "../../load-container/LoadContainer";
 import LoadDetailsComponent from "../../load-details-container/LoadDetailsComponent";
+import {Skeleton} from "@mui/material";
+import axios from "axios";
 
 const ShipperLoadsPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
     const {shipperID} = useParams();
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+    const [shipperInfo, setShipperInfo] = useState(null);
+
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true);
+            const avatarUrl = `http://localhost:8080/${shipperInfo.userShipperAvatar}`;
+
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [shipperInfo]);
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/get-current-user/shipper/${shipperID}`);
+                const data = await response.json();
+
+                setShipperInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [shipperInfo, shipperID]);
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
@@ -61,13 +96,16 @@ const ShipperLoadsPage = () => {
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Welcome Back, John"
+                    contentTitle={shipperInfo ?
+                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <Skeleton variant="text" width={250} />}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName="John Doe"
-                    accountRole="Shipper"
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-qoutes-dashboard-content-body">
                     <div className="shipper-loads-wrapper-qoutes">
