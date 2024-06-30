@@ -5,7 +5,6 @@ const mongoose = require('mongoose');
 const path = require('path');
 const shortid = require('shortid'); // Import the 'shortid' package
 const cors = require('cors');
-const router = express.Router();
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
@@ -24,13 +23,11 @@ const ConstructionEquipmentLoad = require('./models/ConstructionEquipmentLoad');
 const MotoEquipmentLoad = require('./models/MotoEquipmentLoad');
 const VehicleLoad = require('./models/VehicleLoad');
 const HeavyEquipmentLoad = require('./models/HeavyEquipmentLoad');
-const LTLDelivery = require('./models/LTLDelivery');
 const FTLLoad = require('./models/FTLLoad');
 const Other = require('./models/Other');
 const BoatLoad = require('./models/BoatLoad');
 const ExpediteLoad = require('./models/ExpediteLoad');
 const FreeConsultation = require('./models/FreeConsultation');
-const LocalMoving = require('./models/LocalMoving');
 const LongDistanceMoving = require('./models/LongDistanceMoving');
 const InternationalMoving = require('./models/InternationalMoving');
 const CommercialBusinessMoving = require('./models/CommercialBusinessMoving');
@@ -54,9 +51,8 @@ const stripe = require('stripe')('sk_test_51O5Q6UEOdY1hERYnOo1J3Zep6yPIGV4Mxo8dS
 require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
-const bodyParser = require('body-parser');
 const multer = require('multer');
-const sharp = require('sharp');
+
 
 
 app.use(cors());
