@@ -9,9 +9,9 @@ const CreateSuperUserButton = () => {
             pass: 'fmdnjeit875475ghhsakgvu35158gbdhw',
         };
         try {
-            const response = await axios.post('http://localhost:8080/create-super-user', superUserData);
+            const response = await axios.post(`${BACKEND_URL}`, superUserData);
             if (response.status === 200) {
-                window.location.href = 'http://localhost:3000/super-admin-dashboard';
+                window.location.href = `http://localhost:3000/super-admin-dashboard`;
             }
         } catch (error) {
             console.error('Error creating super user:', error);

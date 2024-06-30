@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ServiceSubscribe = () => {
     const [email, setEmail] = useState('');
@@ -9,7 +10,7 @@ const ServiceSubscribe = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            await axios.post('http://localhost:8080/subscribe-user', { email, phoneNumber, name });
+            await axios.post(`${BACKEND_URL}/subscribe-user`, { email, phoneNumber, name });
             alert('You have subscribed successfully');
         } catch (error) {
             alert('An error occurred while subscribing');

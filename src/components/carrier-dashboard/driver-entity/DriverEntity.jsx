@@ -4,7 +4,7 @@ import ClipLoader from 'react-spinners/ClipLoader';
 import axios from "axios";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-
+import {BACKEND_URL} from "../../../constants/constants";
 const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID }) => {
 
     const [isAssignSuccess, setIsAssignSuccess] = useState(false);
@@ -16,10 +16,10 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
 
         try {
             // Assign the load to the driver
-            const assignResponse = await axios.put(`http://localhost:8080/assign-load/${driverID}`, { loadID: loadID });
+            const assignResponse = await axios.put(`${BACKEND_URL}/assign-load/${driverID}`, { loadID: loadID });
 
             // Update the loadAssignedDriverID field of the Load
-            const updateResponse = await axios.put(`http://localhost:8080/update-load-assigning/${loadID}`, { loadAssignedDriverID: driverID });
+            const updateResponse = await axios.put(`${BACKEND_URL}/update-load-assigning/${loadID}`, { loadAssignedDriverID: driverID });
 
             if (assignResponse.status === 200 && updateResponse.status === 200) {
                 setIsAssignSuccess(true);
