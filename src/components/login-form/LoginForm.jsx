@@ -8,10 +8,9 @@ import Typewriter from "typewriter-effect";
 import {ClipLoader} from "react-spinners";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
-
+import {BACKEND_URL} from "../../constants/constants";
 
 function LoginForm() {
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const navigate = useNavigate()
@@ -21,7 +20,7 @@ function LoginForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        const response = await axios.post(`https://jarvis-ai-logistic-db-server.onrender.com/sign-in`, {email, password});
+        const response = await axios.post(`${BACKEND_URL}/sign-in`, {email, password});
         setIsLoading(false);
 
         if (response.data.status === 'Success') {

@@ -14,7 +14,8 @@ import {ReactComponent as ChatLogoAI} from "../../assets/ai-logo-chat.svg";
 import {ReactComponent as FaPlus} from "../../assets/plus-blue-icon.svg";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {faMicrophone, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
-import userAvatar from "../../assets/userAvatar.svg";
+import {BACKEND_URL} from "../../constants/constants";
+
 import {useParams} from "react-router-dom";
 import {faCamera} from '@fortawesome/free-solid-svg-icons';
 import "./JarvisChatComponent.css";
@@ -50,7 +51,6 @@ const JarvisChatComponent = () => {
     const fileInputRef = useRef(null);
     const [selectedImage, setSelectedImage] = useState([]);
     const [isImagePopupOpen, setIsImagePopupOpen] = useState(false);
-
 
     const handleImageClick = () => {
         setIsImagePopupOpen(true);
@@ -321,7 +321,7 @@ const JarvisChatComponent = () => {
 
     useEffect(() => {
         // Fetch user information from the server using the personalEndpoint
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user/${personalEndpoint}`)
+        axios.get(`${BACKEND_URL}/user/${personalEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data); // Set the user data in state
@@ -333,7 +333,7 @@ const JarvisChatComponent = () => {
                 console.error('Error fetching user data:', error);
             });
 
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/chat-history/${personalEndpoint}`)
+        axios.get(`${BACKEND_URL}/chat-history/${personalEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setPreviousChats(response.data.chats);
@@ -377,7 +377,7 @@ const JarvisChatComponent = () => {
         };
     }, []);
     const createNewChatSession = () => {
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', {userEndpoint: personalEndpoint})
+        axios.post('${BACKEND_URL}/create-chat-session', {userEndpoint: personalEndpoint})
             .then(response => {
                 if (response.data.status === "Success") {
                     navigate(`/jarvis-chat/${personalEndpoint}/${response.data.chatEndpoint}`);
@@ -440,7 +440,7 @@ const JarvisChatComponent = () => {
     };
 
     const saveChatMessage = (content, role) => {
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/chat-message', {
+        axios.post('${BACKEND_URL}/chat-message', {
             userEndpoint: personalEndpoint,
             chatEndpoint: chatEndpoint,
             chat: {
@@ -619,7 +619,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-office-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-office-moving', formData);
                 if (response.status === 200) {
                     alert('Form submitted successfully');
                     const newLoad = response.data.moving; // Get the new moving data from the response
@@ -736,7 +736,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-auto-moto-boat-equipment', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-auto-moto-boat-equipment', formData);
                 if (response.status === 200) {
                     setPreviousChats([...previousChats, {role: "You", content: value}, {
                         role: "Assistant",
@@ -861,7 +861,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-corporate-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-corporate-moving', formData);
                 if (response.status === 200) {
                     setPreviousChats([...previousChats, {role: "You", content: value}, {
                         role: "Assistant",
@@ -1070,7 +1070,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-military-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-military-moving', formData);
                 if (response.status === 200) {
                     setPreviousChats([...previousChats, {role: "You", content: value}, {
                         role: "Assistant",
@@ -1283,7 +1283,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-heavy-lifting-and-moving-only', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-heavy-lifting-and-moving-only', formData);
                 if (response.status === 200) {
                     setPreviousChats(prevChats => (
                         [...prevChats,
@@ -1385,7 +1385,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-moving-and-storage-service', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-moving-and-storage-service', formData);
                 if (response.status === 200) {
                     setPreviousChats(prevChats => (
                         [...prevChats,
@@ -1610,7 +1610,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-long-distance-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-long-distance-moving', formData);
                 if (response.status === 200) {
                     alert('Form submitted successfully');
                     setPreviousChats(prevChats => [...prevChats, {
@@ -1798,7 +1798,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-local-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-local-moving', formData);
                 if (response.status === 200) {
                     alert('Form submitted successfully');
                     const newLoad = response.data.moving; // Get the new moving data from the response
@@ -1991,7 +1991,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-commercial-business-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-commercial-business-moving', formData);
                 if (response.status === 200) {
                     alert('Form submitted successfully');
                     const newLoad = response.data.moving; // Get the new moving data from the response
@@ -2184,7 +2184,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-moto-equipment-load', motoEquipmentData);
+                const response = await axios.post('${BACKEND_URL}/submit-moto-equipment-load', motoEquipmentData);
                 if (response.status === 200) {
                     console.log('Moto Equipment load submitted successfully:', response.data.load);
                     const newLoad = response.data.load;
@@ -2521,7 +2521,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-international-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-international-moving', formData);
                 if (response.status === 200) {
                     const newLoad = response.data.moving; // Get the new moving data from the response
                     setPreviousChats(prevChats => [...prevChats, {
@@ -2863,7 +2863,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-vehicle-load', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-vehicle-load', formData);
                 if (response.status === 200) {
                     // Assuming response.data.load is the new vehicle load object
                     const newLoad = response.data.load;
@@ -3083,7 +3083,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-boat-load', boatLoadData);
+                const response = await axios.post('${BACKEND_URL}/submit-boat-load', boatLoadData);
                 if (response.status === 200) {
                     console.log('Boat Load submitted successfully:', response.data.load);
 
@@ -3331,7 +3331,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-construction-equipment-load', constructionEquipmentData);
+                const response = await axios.post('${BACKEND_URL}/submit-construction-equipment-load', constructionEquipmentData);
                 if (response.status === 200) {
                     console.log('Construction Equipment load submitted successfully:', response.data.load);
 
@@ -3572,7 +3572,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-heavy-equipment-load', heavyEquipmentData);
+                const response = await axios.post('${BACKEND_URL}/submit-heavy-equipment-load', heavyEquipmentData);
                 if (response.status === 200) {
                     console.log('Heavy Equipment load submitted successfully:', response.data.load);
 
@@ -3754,7 +3754,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-ltl-delivery', ltlData);
+                const response = await axios.post('${BACKEND_URL}/submit-ltl-delivery', ltlData);
                 if (response.status === 200) {
                     console.log('LTL delivery submitted successfully:', response.data.delivery);
                     const newDelivery = response.data.delivery;
@@ -3932,7 +3932,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-expedite-load', expediteData);
+                const response = await axios.post('${BACKEND_URL}/submit-expedite-load', expediteData);
                 if (response.status === 200) {
                     console.log('Expedite load submitted successfully:', response.data.load);
                     const newLoad = response.data.load;
@@ -4069,7 +4069,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-other', otherData);
+                const response = await axios.post('${BACKEND_URL}/submit-other', otherData);
                 if (response.status === 200) {
                     console.log('Other form submitted successfully:', response.data.other);
                     const newOther = response.data.other;
@@ -4116,7 +4116,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-free-consultation', consultationData);
+                const response = await axios.post('${BACKEND_URL}/submit-free-consultation', consultationData);
                 if (response.status === 200) {
                     console.log('Free consultation form submitted successfully:', response.data.consultation);
                     setPreviousChats(prevChats => [...prevChats, {
@@ -4191,7 +4191,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-student-moving', formData);
+                const response = await axios.post('${BACKEND_URL}/submit-student-moving', formData);
                 if (response.status === 200) {
                     setPreviousChats([...previousChats, {role: "You", content: value}, {
                         role: "Assistant",
@@ -4369,7 +4369,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/submit-ftl-load', ftlData);
+                const response = await axios.post('${BACKEND_URL}/submit-ftl-load', ftlData);
                 if (response.status === 200) {
                     console.log('FTL delivery submitted successfully:', response.data.delivery);
                     setPreviousChats(prevChats => [...prevChats, {
@@ -4882,7 +4882,7 @@ const JarvisChatComponent = () => {
     }, [message, currentTitle])
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/chat-session/${chatEndpoint}`)
+        axios.get(`${BACKEND_URL}/chat-session/${chatEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setPreviousChats(response.data.chats);
@@ -4897,7 +4897,7 @@ const JarvisChatComponent = () => {
 
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user-chat-sessions/${personalEndpoint}`)
+        axios.get(`${BACKEND_URL}/user-chat-sessions/${personalEndpoint}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setAllChatSessions(response.data.chatSessions);
@@ -4913,7 +4913,7 @@ const JarvisChatComponent = () => {
     const handleDeleteAllChatSessions = () => {
         const confirmation = window.confirm('Are you sure you want to delete all chat sessions?');
         if (confirmation) {
-            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/delete-all-chat-sessions/${personalEndpoint}`)
+            axios.delete(`${BACKEND_URL}/delete-all-chat-sessions/${personalEndpoint}`)
                 .then(response => {
                     if (response.status === 200) {
                         console.log('All chat sessions deleted');

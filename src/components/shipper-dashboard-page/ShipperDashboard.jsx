@@ -49,6 +49,7 @@ const ShipperDashboard = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {

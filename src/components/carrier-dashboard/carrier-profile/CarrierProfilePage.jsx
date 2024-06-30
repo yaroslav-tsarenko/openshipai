@@ -41,6 +41,9 @@ import {useParams} from 'react-router-dom';
 import {Link} from "react-router-dom";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
+import axios from "axios";
+import {BACKEND_URL} from "../../../constants/constants";
+import {Skeleton} from "@mui/material";
 
 const CarrierProfilePage = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
@@ -51,6 +54,33 @@ const CarrierProfilePage = () => {
     const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [isOnDriver, setIsOnDriver] = useState(false);
     const [isOnUpdates, setIsOnUpdates] = useState(false);
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [carrierInfo, setCarrierInfo] = useState(null);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getUser();
+        getAvatar();
+    }, [carrierID]);
+
     const handleToggleAI = () => {
         setIsOnAI(!isOnAI);
     };
@@ -81,27 +111,69 @@ const CarrierProfilePage = () => {
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Сarrier Dashboard"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
-                    accountName="TRANE"
-                    accountRole="Carrier"
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="carrier-profile-content-wrapper">
                     <div className="profile-content-wrapper">
                         <div className="carrier-profile-content">
                             <div className="carrier-info">
-                                <DefaultUserAvatar className="carrier-profile-avatar"/>
+                                {previewSavedImage ? (
+                                    <img src={previewSavedImage} className="carrier-profile-avatar" alt="User Avatar"/>
+                                ) : (
+                                    <DefaultUserAvatar className="carrier-profile-avatar"/>
+                                )}
                                 <section className="carrier-details-wrapper">
                                     <div className="carrier-role-name">
-                                        <h3>John Doe</h3>
-                                        <p>Carrier</p>
+                                        <h3>
+                                            {
+                                                carrierInfo ?
+                                                    <>
+                                                        {carrierInfo.carrierAccountName}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />
+                                            }
+                                            {
+                                                carrierInfo ?
+                                                    <>
+                                                        {carrierInfo.carrierAccountLastName}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />
+                                            }
+                                        </h3>
+                                        <p>
+                                            {
+                                                carrierInfo ?
+                                                    <>
+                                                        {carrierInfo.role}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />
+                                            }
+                                        </p>
                                     </div>
                                     <div className="carrier-info-details">
                                         <p>USA, Los Angeles</p>
-                                        <p>johndoe@gmail.com</p>
+                                        <p>
+                                            {
+                                                carrierInfo ?
+                                                    <>
+                                                        {carrierInfo.carrierAccountAccountEmail}
+                                                    </>
+                                                    :
+                                                    <Skeleton variant="text" width={250} />
+                                            }
+                                        </p>
                                     </div>
                                 </section>
                             </div>

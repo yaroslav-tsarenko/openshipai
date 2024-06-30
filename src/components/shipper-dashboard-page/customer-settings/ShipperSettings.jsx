@@ -69,7 +69,7 @@ const ShipperSettings = () => {
             formData.append('avatar', shipperAvatar);
 
             try {
-                const response = await axios.post(`${BACKEND_URL}/upload-avatar/${shipperID}`, formData, {
+                const response = await axios.post(`${BACKEND_URL}/upload-shipper-avatar/${shipperID}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -103,7 +103,7 @@ const ShipperSettings = () => {
     useEffect(() => {
         const getAvatar = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-avatar/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-shipper-avatar/${shipperID}`);
                 if (response.data.userShipperAvatar) {
                     setPreviewSavedImage(`${BACKEND_URL}/${response.data.userShipperAvatar}`);
                 }

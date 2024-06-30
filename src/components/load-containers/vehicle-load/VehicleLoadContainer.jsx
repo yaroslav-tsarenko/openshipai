@@ -98,7 +98,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post('${BACKEND_URL}/save-load-data', formData);
             if (response.status === 200) {
                 window.location.reload();
             }

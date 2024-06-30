@@ -39,6 +39,8 @@ import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowS
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import {BACKEND_URL} from "../../../constants/constants";
+import {Skeleton} from "@mui/material";
 
 const CarrierDrivers = () => {
 
@@ -52,6 +54,34 @@ const CarrierDrivers = () => {
     const [isDriverPopupOpen, setIsDriverPopupOpen] = useState(false);
     const [sendEmailDriver, setSendEmailDriver] = useState(false);
     const [sendDriverDataFailed, setSendDriverDataFailed] = useState(false);
+
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [carrierInfo, setCarrierInfo] = useState(null);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getUser();
+        getAvatar();
+    }, [carrierID]);
+
     const [formData, setFormData] = useState({
         driverFirstAndLastName: '',
         driverEmail: '',
@@ -67,10 +97,12 @@ const CarrierDrivers = () => {
         driverCreatedByCarrierID: carrierID,
     });
 
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-driver', formData);
+            const response = await axios.post(`${BACKEND_URL}/create-driver`, formData);
             console.log('Response:', response);
             if (response.status === 200) {
                 console.log('Driver created successfully');
@@ -93,7 +125,7 @@ const CarrierDrivers = () => {
         };
 
         try {
-            const response = await fetch('https://jarvis-ai-logistic-db-server.onrender.com/send-driver-credentials', {
+            const response = await fetch(`${BACKEND_URL}/send-driver-credentials`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -139,13 +171,16 @@ const CarrierDrivers = () => {
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Сarrier Dashboard"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
-                    accountName="TRANE"
-                    accountRole="Carrier"
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-dashboard-load-buttons">
                     <section className="shipper-filter-buttons">

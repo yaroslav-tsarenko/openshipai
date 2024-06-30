@@ -8,6 +8,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import Typewriter from "typewriter-effect";
 import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
 import {CircularProgress} from "@mui/material";
+import {BACKEND_URL} from "../../constants/constants";
 
 function SignUpForm() {
     const [captchaValue, setCaptchaValue] = useState(null);
@@ -32,7 +33,7 @@ function SignUpForm() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-shipper-data', formData)
+        axios.post(`${BACKEND_URL}/save-shipper-data`, formData)
             .then(response => {
                 console.log(response);
                 if (response.status === 200) {
@@ -53,11 +54,11 @@ function SignUpForm() {
     const handleGoogleLoginSignUpSuccess = (credentialResponse) => {
         const credential = credentialResponse.credential;
 
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/google-login', {token: credential})
+        axios.post(`${BACKEND_URL}/google-login`, {token: credential})
             .then(response => {
                 if (response.data.status === "Success") {
                     const personalEndpoint = response.data.user.personalEndpoint;
-                    axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-chat-session', { userEndpoint: personalEndpoint })
+                    axios.post(`${BACKEND_URL}/create-chat-session`, { userEndpoint: personalEndpoint })
                         .then(response => {
                             if (response.data.status === "Success") {
                                 navigate(`/jarvis-chat/${personalEndpoint}/${response.data.chatEndpoint}`);

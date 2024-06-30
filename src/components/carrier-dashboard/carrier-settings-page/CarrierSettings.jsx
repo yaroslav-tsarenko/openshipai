@@ -16,6 +16,8 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {BACKEND_URL} from "../../../constants/constants";
 import axios from "axios";
+import {Skeleton} from "@mui/material";
+import {ClipLoader} from "react-spinners";
 
 const CarrierSettings = () => {
 
@@ -29,29 +31,33 @@ const CarrierSettings = () => {
     const [isOnDriver, setIsOnDriver] = useState(false);
     const [isOnUpdates, setIsOnUpdates] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [shipperEmail, setShipperEmail] = useState('');
+    const [carrierFirstName, setCarrierFirstName] = useState('');
+    const [carrierLastName, setCarrierLastName] = useState('');
+    const [carrierPhoneNumber, setCarrierPhoneNumber] = useState('');
+    const [carrierEmail, setCarrierEmail] = useState('');
+    const [carrierDotNumber, setCarrierDotNumber] = useState('');
+    const [carrierCompanyName, setCarrierCompanyName] = useState('');
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [avatarFromDB, setAvatarFromDB] = useState(null);
-
+    const [carrierAvatar, setCarrierAvatar] = useState(null);
 
     const handleApplySettings = async () => {
         setIsLoading(true);
         const updatedData = {
-            name: firstName,
-            secondName: lastName,
-            phoneNumber,
-            email: shipperEmail,
+            name: carrierFirstName,
+            secondName: carrierLastName,
+            phoneNumber: carrierPhoneNumber,
+            email: carrierEmail,
+            companyName: carrierCompanyName,
+            dotNumber: carrierDotNumber,
         };
 
         try {
-            const response = await axios.put(`${BACKEND_URL}/update-shipper/${shipperID}`, updatedData);
+            const response = await axios.put(`${BACKEND_URL}/update-carrier/${carrierID}`, updatedData);
             if (response.status === 200) {
-                setShipperInfo(response.data);
+                setCarrierInfo(response.data);
             }
         } catch (error) {
             console.error('Error updating shipper:', error);
@@ -59,12 +65,12 @@ const CarrierSettings = () => {
             setIsLoading(false);
         }
 
-        if (shipperAvatar) {
+        if (carrierAvatar) {
             const formData = new FormData();
-            formData.append('avatar', shipperAvatar);
+            formData.append('avatar', carrierAvatar);
 
             try {
-                const response = await axios.post(`${BACKEND_URL}/upload-avatar/${shipperID}`, formData, {
+                const response = await axios.post(`${BACKEND_URL}/upload-carrier-avatar/${carrierID}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -79,10 +85,9 @@ const CarrierSettings = () => {
     };
 
     useEffect(() => {
-        if (shipperInfo && shipperInfo.userShipperAvatar) {
-            setLoading(true); // Start loading
-            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
+        if (carrierInfo && carrierInfo.carrierAvatar) {
+            setLoading(true);
+            const avatarUrl = `${BACKEND_URL}/${carrierInfo.carrierAvatar}`;
             axios.get(avatarUrl)
                 .then(() => {
                     setPreviewSavedImage(avatarUrl);
@@ -93,14 +98,14 @@ const CarrierSettings = () => {
                     setLoading(false);
                 });
         }
-    }, [shipperInfo]);
+    }, [carrierInfo]);
 
     useEffect(() => {
         const getAvatar = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-avatar/${shipperID}`);
-                if (response.data.userShipperAvatar) {
-                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.userShipperAvatar}`);
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -108,11 +113,11 @@ const CarrierSettings = () => {
         };
 
         getAvatar();
-    }, [shipperID]);
+    }, [carrierID]);
 
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
-        setShipperAvatar(file);
+        setCarrierAvatar(file);
         if (file) {
             const url = URL.createObjectURL(file);
             setPreviewImage(url);
@@ -120,7 +125,7 @@ const CarrierSettings = () => {
     };
 
     const handleAvatarDelete = () => {
-        setShipperAvatar(null);
+        setCarrierAvatar(null);
     };
 
     const triggerFileInput = () => {
@@ -146,7 +151,7 @@ const CarrierSettings = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${carrierID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
                 const data = await response.json();
                 setCarrierInfo(data);
             } catch (error) {
@@ -171,13 +176,16 @@ const CarrierSettings = () => {
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Сarrier Dashboard"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
-                    accountName="TRANE"
-                    accountRole="Carrier"
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="settings-container">
                     <section className="settings-nav">
@@ -252,50 +260,75 @@ const CarrierSettings = () => {
                                         <section className="account-info-settings-1">
                                             <div className="google-input-wrapper">
                                                 <input
-                                                    type="firstName"
-                                                    id="firstName"
+                                                    type="carrierFirstName"
+                                                    id="carrierFirstName"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierFirstName(e.target.value)}
                                                 />
-                                                <label htmlFor="firstName" className="google-style-input-label">Carrier
-                                                    Name</label>
+                                                <label htmlFor="carrierFirstName" className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierAccountName}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                </label>
                                             </div>
                                             <div className="google-input-wrapper">
                                                 <input
-                                                    type="lastName"
-                                                    id="lastName"
+                                                    type="carrierLastName"
+                                                    id="carrierLastName"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierLastName(e.target.value)}
                                                 />
-                                                <label htmlFor="lastName" className="google-style-input-label">Carrier
-                                                    Last
-                                                    Name</label>
+                                                <label htmlFor="carrierLastName" className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierAccountLastName}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                </label>
                                             </div>
                                             <div className="google-input-wrapper">
                                                 <input
-                                                    type="lastName"
-                                                    id="lastName"
+                                                    type="carrierCompanyName"
+                                                    id="carrierCompanyName"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierCompanyName(e.target.value)}
                                                 />
-                                                <label htmlFor="lastName" className="google-style-input-label">Carrier
-                                                    Company Name</label>
+                                                <label htmlFor="carrierCompanyName"
+                                                       className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierContactCompanyName}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                </label>
                                             </div>
                                         </section>
                                         <section className="account-info-settings-2">
                                             <div className="google-input-wrapper">
                                                 <input
-                                                    type="phoneNumber"
-                                                    id="phoneNumber"
+                                                    type="carrierPhoneNumber"
+                                                    id="carrierPhoneNumber"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierPhoneNumber(e.target.value)}
                                                 />
-                                                <label htmlFor="phoneNumber" className="google-style-input-label">Carrier
-                                                    Phone Number</label>
+                                                <label htmlFor="carrierPhoneNumber"
+                                                       className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierCorporatePhoneNumber}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                </label>
                                             </div>
                                             <div className="google-input-wrapper">
                                                 <input
@@ -304,24 +337,44 @@ const CarrierSettings = () => {
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierEmail(e.target.value)}
                                                 />
                                                 <label htmlFor="carrierEmail"
-                                                       className="google-style-input-label">Carrier Email</label>
+                                                       className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierAccountAccountEmail}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}</label>
                                             </div>
                                             <div className="google-input-wrapper">
                                                 <input
-                                                    type="carrierEmail"
-                                                    id="carrierEmail"
+                                                    type="carrierDotNumber"
+                                                    id="carrierDotNumber"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    onChange={(e) => setCarrierDotNumber(e.target.value)}
                                                 />
-                                                <label htmlFor="carrierEmail"
-                                                       className="google-style-input-label">Carrier DOT Number</label>
+                                                <label htmlFor="carrierDotNumber"
+                                                       className="google-style-input-label">
+                                                    {carrierInfo ?
+                                                        <>
+                                                            {carrierInfo.carrierDotNumber}
+                                                        </> :
+                                                        <Skeleton variant="text" width={50}/>}</label>
                                             </div>
                                         </section>
                                     </div>
-                                    <button className="apply-settings-button">Apply</button>
+                                    <button onClick={handleApplySettings} className="apply-settings-button">
+                                        {isLoading ?
+                                            <>
+                                                <ClipLoader color="#ffffff" loading={isLoading}
+                                                            className="apply-settings-button"
+                                                            size={25}/> Applying...
+                                            </> :
+                                            "Apply"}
+                                    </button>
                                 </div>
                                 <section className="deleting-account-section">
                                     <h2>Delete Account</h2>
