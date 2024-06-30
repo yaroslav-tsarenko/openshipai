@@ -155,6 +155,9 @@ const CarrierSchema = new Schema({
         type: String,
         default: 'carrier'
     },
+    carrierAvatar:{
+        type: String,
+    },
     carrierID: {
             type: String,
             default: shortid.generate

@@ -30,11 +30,7 @@ import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon
 import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
 import {ReactComponent as CarrierLogo} from "../../../assets/trane-logo-carrier.svg";
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
-import GoogleMapLoadRealTimeTrafficComponent
-    from "../../driver-dashboard/google-map-load-container/GoogleMapLoadRealTimeTrafficComponent";
-import GoogleMapContainer from "../../driver-dashboard/google-map-container/GoogleMapContainer";
-import GoogleMapShowDirection from "../../google-map-show-direction/GoogleMapShowDirection";
+import {BACKEND_URL} from "../../../constants/constants";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainer from "../../load-container/LoadContainer";
@@ -55,7 +51,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
-            const avatarUrl = `http://localhost:8080/${shipperInfo.userShipperAvatar}`;
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
             axios.get(avatarUrl)
                 .then(() => {
@@ -72,7 +68,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);

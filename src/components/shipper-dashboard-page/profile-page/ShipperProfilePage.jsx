@@ -47,7 +47,7 @@ import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.sv
 import {ReactComponent as CarrierLogo} from "../../../assets/trane-logo-carrier.svg";
 import Switch from '../../switcher-component/Switch';
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
+import {BACKEND_URL} from "../../../constants/constants";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
@@ -71,7 +71,7 @@ const ShipperProfilePage = () => {
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
-            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
             axios.get(avatarUrl)
                 .then(() => {
@@ -88,7 +88,7 @@ const ShipperProfilePage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);

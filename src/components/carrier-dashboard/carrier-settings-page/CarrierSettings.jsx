@@ -1,12 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../CarrierDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../../assets/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../../assets/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../../assets/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../../assets/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../../assets/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../../assets/logout-icon-white.svg";
 import {ReactComponent as SettingsAccount} from "../../../assets/account-settings-icon.svg";
 import {ReactComponent as SettingsAccountWhite} from "../../../assets/account-settings-icon-white.svg";
 import {ReactComponent as SettingsPassword} from "../../../assets/lock-icon.svg";
@@ -15,54 +8,155 @@ import {ReactComponent as SettingsNotifications} from "../../../assets/bell-sett
 import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
 import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
 import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../../assets/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../../assets/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../../assets/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../../assets/settings-icon-white.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../../assets/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../../assets/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../../assets/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../../assets/load-box-icon.svg";
-import {ReactComponent as CarrierChatIcon} from "../../../assets/chat-icon-grey.svg";
-import {ReactComponent as CarrierChatIconWhite} from "../../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../../assets/settings-icon.svg";
-import {ReactComponent as SearchIcon} from "../../../assets/search-icon.svg";
 import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
 import Switch from '../../switcher-component/Switch';
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import {BACKEND_URL} from "../../../constants/constants";
+import axios from "axios";
 
 const CarrierSettings = () => {
+
     const [activeSetting, setActiveSetting] = useState('Account');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [carrierInfo, setCarrierInfo] = useState(null);
     const [hoveredButton, setHoveredButton] = useState('');
     const {carrierID} = useParams();
+    const fileInputRef = useRef();
     const [isOnAI, setIsOnAI] = useState(false);
     const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [isOnDriver, setIsOnDriver] = useState(false);
     const [isOnUpdates, setIsOnUpdates] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [shipperEmail, setShipperEmail] = useState('');
+    const [previewImage, setPreviewImage] = useState(null);
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
+    const [avatarFromDB, setAvatarFromDB] = useState(null);
+
+
+    const handleApplySettings = async () => {
+        setIsLoading(true);
+        const updatedData = {
+            name: firstName,
+            secondName: lastName,
+            phoneNumber,
+            email: shipperEmail,
+        };
+
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-shipper/${shipperID}`, updatedData);
+            if (response.status === 200) {
+                setShipperInfo(response.data);
+            }
+        } catch (error) {
+            console.error('Error updating shipper:', error);
+        } finally {
+            setIsLoading(false);
+        }
+
+        if (shipperAvatar) {
+            const formData = new FormData();
+            formData.append('avatar', shipperAvatar);
+
+            try {
+                const response = await axios.post(`${BACKEND_URL}/upload-avatar/${shipperID}`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+
+                console.log(response.data);
+            } catch (error) {
+                console.error(error);
+            }
+        }
+        window.location.reload();
+    };
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true); // Start loading
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
+
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [shipperInfo]);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-avatar/${shipperID}`);
+                if (response.data.userShipperAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.userShipperAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getAvatar();
+    }, [shipperID]);
+
+    const handleAvatarChange = (event) => {
+        const file = event.target.files[0];
+        setShipperAvatar(file);
+        if (file) {
+            const url = URL.createObjectURL(file);
+            setPreviewImage(url);
+        }
+    };
+
+    const handleAvatarDelete = () => {
+        setShipperAvatar(null);
+    };
+
+    const triggerFileInput = () => {
+        fileInputRef.current.click();
+    };
+
     const handleToggleAI = () => {
         setIsOnAI(!isOnAI);
     };
+
     const handleToggleCarrier = () => {
         setIsOnCarrier(!isOnCarrier);
     };
+
     const handleToggleDriver = () => {
         setIsOnDriver(!isOnDriver);
     };
+
     const handleToggleUpdates = () => {
         setIsOnUpdates(!isOnUpdates);
     };
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+
+    useEffect(() => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getUser();
+    }, [carrierID]);
+
     return (
         <div className="carrier-dashboard-wrapper">
             <DashboardSidebar
@@ -132,11 +226,26 @@ const CarrierSettings = () => {
                             <>
                                 <h2>Account Info</h2>
                                 <div className="account-info-details-container">
-                                <div className="avatar-settings">
-                                        <DefaultUserAvatar className="avatar-user-photo"/>
+                                    <div className="avatar-settings">
+                                        {previewImage ? (
+                                            <img src={previewImage} className="avatar-user-photo"
+                                                 alt="User Avatar"/>
+                                        ) : previewSavedImage ? (
+                                            <img src={previewSavedImage} className="avatar-user-photo"
+                                                 alt="User Avatar"/>
+                                        ) : (
+                                            <DefaultUserAvatar className="avatar-user-photo"/>
+                                        )}
+
                                         <section className="avatar-settings-wrapper">
-                                            <button className="change-avatar">Change Avatar</button>
-                                            <button className="delete-avatar">Delete Photo</button>
+                                            <button className="change-avatar" onClick={triggerFileInput}>Change
+                                                Avatar
+                                            </button>
+                                            <button className="shipper-delete-avatar"
+                                                    onClick={handleAvatarDelete}>Delete Photo
+                                            </button>
+                                            <input type="file" ref={fileInputRef} style={{display: 'none'}}
+                                                   onChange={handleAvatarChange}/>
                                         </section>
                                     </div>
                                     <div className="account-info-settings">
