@@ -9,6 +9,7 @@ import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
 import io from 'socket.io-client';
 import {ClipLoader, PuffLoader} from "react-spinners";
+import {SOCKET_URL} from "../../../constants/constants";
 
 import {BACKEND_URL} from "../../../constants/constants";
 
@@ -130,7 +131,7 @@ const DriverChatPage = () => {
 
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-all-deal-chat-conversations')
+        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`)
             .then(response => {
                 setConversations(response.data);
             })
@@ -139,7 +140,7 @@ const DriverChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-all-bids')
+        axios.get(`${BACKEND_URL}/get-all-bids`)
             .then(response => {
                 setBids(response.data);
             })
@@ -148,7 +149,7 @@ const DriverChatPage = () => {
             });
     }, []);
     useEffect(() => {
-        socketRef.current = io.connect('http://localhost:8083');
+        socketRef.current = io.connect(`${SOCKET_URL}`);
 
         socketRef.current.on('customer message', (data) => {
             if (data.chatID === selectedChatID) {
@@ -240,7 +241,7 @@ const DriverChatPage = () => {
         socketRef.current.emit('carrier message', { message: newMessage, chatID: selectedChatID, carrier: 'carrierID' });
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('${BACKEND_URL}/save-chat-message', {
+        axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'personalEndpoint',
             sender: 'carrierID',
@@ -272,7 +273,7 @@ const DriverChatPage = () => {
 
 
     const handlePay = async (amount) => {
-        const response = await axios.post('${BACKEND_URL}/create-checkout-session', {amount});
+        const response = await axios.post(`${BACKEND_URL}/create-checkout-session`, {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -366,7 +367,7 @@ const DriverChatPage = () => {
         }
     }, [touchStart, touchEnd]);
     useEffect(() => {
-        axios.get('${BACKEND_URL}/all-user-loads')
+        axios.get(`${BACKEND_URL}/all-user-loads`)
             .then(response => {
                 setData(response.data);
             })
@@ -393,7 +394,7 @@ const DriverChatPage = () => {
             });
     };
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-heavy-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-heavy-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
@@ -406,7 +407,7 @@ const DriverChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-construction-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-construction-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setConstructionEquipmentLoads(response.data.loads); // Set the loads in state
@@ -419,7 +420,7 @@ const DriverChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-boat-loads')
+        axios.get(`${BACKEND_URL}/get-boat-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setBoatLoads(response.data.loads); // Set the loads in state
@@ -432,7 +433,7 @@ const DriverChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-commercial-truck-loads')
+        axios.get(`${BACKEND_URL}/get-commercial-truck-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCommercialTruckLoads(response.data.loads); // Set the loads in state
@@ -457,7 +458,7 @@ const DriverChatPage = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-moto-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-moto-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setMotoEquipmentLoads(response.data.loads); // Set the loads in state

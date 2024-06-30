@@ -82,7 +82,7 @@ const CarrierTakeLoad = () => {
     useEffect(() => {
         const fetchLoads = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/get-all-loads');
+                const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
                 setLoads(response.data);
                 console.log(response.data);
             } catch (error) {

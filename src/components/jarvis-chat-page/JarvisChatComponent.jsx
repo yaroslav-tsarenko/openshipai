@@ -2654,7 +2654,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('http://localhost:8080/submit-commercial-truck-load', commercialTruckData);
+                const response = await axios.post(`${BACKEND_URL}/submit-commercial-truck-load`, commercialTruckData);
                 if (response.status === 200) {
                     console.log('Commercial Truck load submitted successfully:', response.data.load);
                     const newLoad = response.data.load;
@@ -2863,7 +2863,7 @@ const JarvisChatComponent = () => {
         const handleSubmit = async (event) => {
             event.preventDefault();
             try {
-                const response = await axios.post('${BACKEND_URL}/submit-vehicle-load', formData);
+                const response = await axios.post(`${BACKEND_URL}/submit-vehicle-load`, formData);
                 if (response.status === 200) {
                     // Assuming response.data.load is the new vehicle load object
                     const newLoad = response.data.load;
@@ -4487,7 +4487,7 @@ const JarvisChatComponent = () => {
                 });
             }
             try {
-                const response = await axios.post('http://localhost:8080/upload-photos', formData, {
+                const response = await axios.post('${BACKEND_URL}/upload-photos', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
@@ -4839,7 +4839,7 @@ const JarvisChatComponent = () => {
             }
         };
         try {
-            const response = await fetch("http://localhost:8080/completions", options);
+            const response = await fetch("${BACKEND_URL}/completions", options);
             const data = await response.json();
             if (response.ok && data.choices && data.choices.length > 0) {
                 const assistantResponse = data.choices[0].message;

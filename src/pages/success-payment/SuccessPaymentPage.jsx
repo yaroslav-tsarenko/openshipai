@@ -4,6 +4,7 @@ import './SuccessPaymentPage.css';
 import io from 'socket.io-client';
 import axios from 'axios';
 import {BACKEND_URL} from "../../constants/constants";
+import {SOCKET_URL} from "../../constants/constants";
 
 const SuccessPaymentPage = () => {
 
@@ -15,7 +16,7 @@ const SuccessPaymentPage = () => {
 
     useEffect(() => {
 
-        socketRef.current = io.connect('http://localhost:8083');
+        socketRef.current = io.connect(`${SOCKET_URL}`);
         const timer = setInterval(() => {
             setCountdown((prevCountdown) => {
                 if (prevCountdown <= 1) {

@@ -8,6 +8,7 @@ import {useParams} from "react-router-dom";
 import {ClipLoader} from "react-spinners";
 import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
+import {BACKEND_URL} from "../../constants/constants";
 
 const LoadContainerBid = ({
                               loadPrice,
@@ -66,7 +67,7 @@ const LoadContainerBid = ({
 
     const handleDeleteAllBids = async () => {
         try {
-            const response = await axios.delete(`http://localhost:8080/delete-all-load-bids`);
+            const response = await axios.delete(`${BACKEND_URL}/delete-all-load-bids`);
             console.log(response.data);
             window.location.reload();
         } catch (error) {
@@ -78,7 +79,7 @@ const LoadContainerBid = ({
         e.preventDefault();
         setIsLoading(true);
         try {
-            const response = await axios.post('http://localhost:8080/create-bid', formData);
+            const response = await axios.post(`${BACKEND_URL}/create-bid`, formData);
             console.log(response.data);
             setIsSuccess(true);
             setTimeout(() => {

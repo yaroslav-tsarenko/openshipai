@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import {ReactComponent as FaTimesIcon} from "../../../assets/fa-times-icon.svg";
 import '../LandingPage.css';
 import LoadTypes from "../load-types/LoadTypes";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const VideoComponent = ({firstVideo, secondVideo}) => {
     const [isShipperModalOpen, setIsShipperModalOpen] = useState(false);
@@ -32,7 +33,7 @@ const VideoComponent = ({firstVideo, secondVideo}) => {
     };
     const handleSubscribeCarrier = async () => {
         try {
-            const response = await fetch('http://localhost:8080/subscribe-carrier', {
+            const response = await fetch(`${BACKEND_URL}/subscribe-carrier`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -52,7 +53,7 @@ const VideoComponent = ({firstVideo, secondVideo}) => {
     };
     const handleSubscribeShipper = async () => {
         try {
-            const response = await fetch('http://localhost:8080/subscribe-shipper', {
+            const response = await fetch(`${BACKEND_URL}/subscribe-shipper`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
