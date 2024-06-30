@@ -3,6 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import './SuccessPaymentPage.css';
 import io from 'socket.io-client';
 import axios from 'axios';
+import {BACKEND_URL} from "../../constants/constants";
 
 const SuccessPaymentPage = () => {
 
@@ -28,7 +29,7 @@ const SuccessPaymentPage = () => {
 
 
 
-        axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-load-payment-status/${chatID}`)
+        axios.put(`${BACKEND_URL}/update-load-payment-status/${chatID}`)
             .then(response => {
                 console.log(response.data);
                 // Emit a socket event after successful payment update

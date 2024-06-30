@@ -196,7 +196,7 @@ app.delete('/delete-all-load-bids', async (req, res) => {
     }
 });
 
-app.post('/upload-avatar/:shipperID', upload.single('avatar'), async (req, res) => {
+app.post('/upload-shipper-avatar/:shipperID', upload.single('avatar'), async (req, res) => {
     const {shipperID} = req.params;
 
     try {
@@ -221,16 +221,76 @@ app.post('/upload-avatar/:shipperID', upload.single('avatar'), async (req, res) 
     }
 });
 
-app.get('/get-avatar/:shipperID', async (req, res) => {
+app.put('/update-carrier/:carrierID', async (req, res) => {
+    const {carrierID} = req.params;
+    const {name, secondName, phoneNumber, email, companyName, dotNumber} = req.body;
+
+    try {
+        const carrier = await Carrier.findOne({carrierID: carrierID});
+        if (!carrier) {
+            return res.status(404).json({message: 'Carrier not found'});
+        }
+
+        if (name) carrier.carrierAccountName = name;
+        if (secondName) carrier.carrierAccountLastName = secondName;
+        if (phoneNumber) carrier.carrierCorporatePhoneNumber = phoneNumber;
+        if (email) carrier.carrierAccountAccountEmail = email;
+        if (companyName) carrier.carrierContactCompanyName = companyName;
+        if (dotNumber) carrier.carrierDotNumber = dotNumber;
+
+        await carrier.save();
+        res.json(carrier);
+    } catch (error) {
+        console.error('Error updating carrier:', error);
+        res.status(500).json({message: error.message});
+    }
+});
+
+app.post('/upload-carrier-avatar/:carrierID', upload.single('avatar'), async (req, res) => {
+    const {carrierID} = req.params;
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({message: 'No file uploaded'});
+        }
+        const avatarPath = `uploads/${req.file.filename}`;
+        const carrier = await Carrier.findOneAndUpdate(
+            {carrierID: carrierID},
+            {carrierAvatar: avatarPath},
+            {new: true}
+        );
+
+        if (!carrier) {
+            return res.status(404).json({message: 'Carrier not found'});
+        }
+
+        res.json(carrier);
+    } catch (error) {
+        console.error('Error uploading avatar:', error);
+        res.status(500).json({message: error.message});
+    }
+});
+
+app.get('/get-carrier-avatar/:carrierID', async (req, res) => {
+    try {
+        const carrier = await Carrier.findOne({ carrierID: req.params.carrierID });
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+        res.json({ carrierAvatar: carrier.carrierAvatar });
+    } catch (err) {
+        res.status(500).json({ message: err.message });
+    }
+});
+
+app.get('/get-shipper-avatar/:shipperID', async (req, res) => {
     try {
         const shipper = await Shipper.findOne({userShipperID: req.params.shipperID});
         if (!shipper || !shipper.userShipperAvatar) {
             return res.status(404).json({message: 'Shipper or avatar not found'});
         }
-
         const imagePath = path.join(__dirname, shipper.userShipperAvatar);
         console.log('Attempting to serve image from:', imagePath); // Log the constructed path
-
         if (fs.existsSync(imagePath)) {
             res.sendFile(imagePath);
         } else {
@@ -238,19 +298,6 @@ app.get('/get-avatar/:shipperID', async (req, res) => {
         }
     } catch (err) {
         res.status(500).json({message: err.message});
-    }
-});
-
-app.get('/get-shipper-avatar/:shipperID', async (req, res) => {
-    const {shipperID} = req.params;
-    try {
-        const shipper = await Shipper.findOne({userShipperID: shipperID});
-        if (!shipper) {
-            return res.status(404).json({message: 'Shipper not found'});
-        }
-        res.json({avatar: shipper.userShipperAvatar});
-    } catch (error) {
-        res.status(500).json({message: error.message});
     }
 });
 
@@ -263,13 +310,10 @@ app.put('/update-shipper/:shipperID', async (req, res) => {
         if (!shipper) {
             return res.status(404).json({message: 'Shipper not found'});
         }
-
-        // Update the shipper data if new data is provided
         if (name) shipper.userShipperName = name;
         if (secondName) shipper.userShipperSecondName = secondName;
         if (phoneNumber) shipper.userShipperPhoneNumber = phoneNumber;
         if (email) shipper.userShipperEmail = email;
-
         await shipper.save();
         res.json(shipper);
     } catch (error) {
@@ -554,27 +598,7 @@ app.get('/get-all-carriers', async (req, res) => {
         res.status(500).send(error);
     }
 });
-app.put('/update-carrier/:carrierID', upload.single('carrierAvatar'), async (req, res) => {
-    const {carrierID} = req.params;
-    const updatedCarrier = req.body;
-    if (req.file) {
-        updatedCarrier.carrierAvatar = req.file.path;
-    }
-    try {
-        const carrier = await Carrier.findOneAndUpdate(
-            {carrierID: carrierID}, // find a document with this filter
-            updatedCarrier, // document to insert when nothing was found
-            {new: true, upsert: true}, // options
-        );
-        if (!carrier) {
-            return res.status(404).json({message: 'Carrier not found'});
-        }
-        res.status(200).json(carrier);
-    } catch (error) {
-        console.error('Error updating carrier:', error);
-        res.status(500).json({message: 'Server error'});
-    }
-});
+
 app.put('/update-carrier-password/:carrierID', async (req, res) => {
     const {carrierID} = req.params;
     const {password} = req.body;

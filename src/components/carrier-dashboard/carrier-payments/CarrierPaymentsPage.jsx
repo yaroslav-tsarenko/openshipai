@@ -45,6 +45,9 @@ import {useParams} from 'react-router-dom';
 import {Link} from "react-router-dom";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import axios from "axios";
+import {BACKEND_URL} from "../../../constants/constants";
+import {Skeleton} from "@mui/material";
 
 const CarrierPaymentsPage = () => {
 
@@ -56,6 +59,33 @@ const CarrierPaymentsPage = () => {
     const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [isOnDriver, setIsOnDriver] = useState(false);
     const [isOnUpdates, setIsOnUpdates] = useState(false);
+
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [carrierInfo, setCarrierInfo] = useState(null);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getUser();
+        getAvatar();
+    }, [carrierID]);
     const handleToggleAI = () => {
         setIsOnAI(!isOnAI);
     };
@@ -86,13 +116,16 @@ const CarrierPaymentsPage = () => {
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Сarrier Dashboard"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
-                    accountName="TRANE"
-                    accountRole="Carrier"
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="payments-wrapper">
                     <div className="payment-selection-header">

@@ -18,6 +18,9 @@ import Switch from "../../carrier-switcher-component/Switch";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {BACKEND_URL} from "../../../constants/constants";
+import {Skeleton} from "@mui/material";
 
 const CarrierTakeLoad = () => {
 
@@ -29,7 +32,32 @@ const CarrierTakeLoad = () => {
     const [isOnAI, setIsOnAI] = useState(false);
     const [pickupDate, setPickupDate] = React.useState(null);
     const [order, setOrder] = React.useState(null);
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [carrierInfo, setCarrierInfo] = useState(null);
 
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getUser();
+        getAvatar();
+    }, [carrierID]);
     const handleChange = (event) => {
         setPickupDate(event.target.value);
     };
@@ -79,13 +107,16 @@ const CarrierTakeLoad = () => {
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Take load"
-                    contentSubtitle="By clicking on the qoute you can see the carriers listing"
-                    accountName="TRANE"
-                    accountRole="Carrier"
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                        <Skeleton variant="text" width={250} />}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="carrier-dashboard-content-body">
                     <div className="filter-loads-container">
