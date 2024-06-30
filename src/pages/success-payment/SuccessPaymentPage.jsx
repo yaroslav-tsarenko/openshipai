@@ -33,7 +33,6 @@ const SuccessPaymentPage = () => {
         axios.put(`${BACKEND_URL}/update-load-payment-status/${chatID}`)
             .then(response => {
                 console.log(response.data);
-                // Emit a socket event after successful payment update
                 socketRef.current.emit('payment updated', { chatID: chatID });
             })
             .catch(error => {
