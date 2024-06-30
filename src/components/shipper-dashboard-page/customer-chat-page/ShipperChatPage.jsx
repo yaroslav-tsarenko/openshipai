@@ -14,9 +14,9 @@ import {loadStripe} from '@stripe/stripe-js';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader, FadeLoader} from "react-spinners";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ShipperChatPage = () => {
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [loadConfirmation, setLoadConfirmation] = useState(null);
     const [user, setUser] = useState(null);
@@ -54,7 +54,7 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);
@@ -74,7 +74,7 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const fetchLoad = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load-by-chat/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-load-by-chat/${chatID}`);
                 setLoad(response.data);
             } catch (error) {
                 console.error('Error fetching load:', error);
@@ -87,7 +87,7 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const fetchLoadConfirmation = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load-confirmation-by-chat/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-load-confirmation-by-chat/${chatID}`);
                 setLoadConfirmation(response.data.loadCarrierConfirmation);
                 console.log(response.data.loadCarrierConfirmation);
             } catch (error) {
@@ -101,7 +101,7 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const fetchDealChatConversations = async () => {
             try {
-                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations');
+                const response = await axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`);
                 const allDealChatConversations = response.data;
                 const filteredDealChatConversations = allDealChatConversations.filter(conversation => conversation.chatID === chatID);
                 setDealChatConversations(filteredDealChatConversations);
@@ -147,7 +147,7 @@ const ShipperChatPage = () => {
     }, [selectedChatID]);
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${chatID}`)
+        axios.get(`${BACKEND_URL}/deal-conversation-messages-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -157,7 +157,7 @@ const ShipperChatPage = () => {
     }, [chatID]);
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/deal-conversation-messages-history/${selectedChatID}`)
+        axios.get(`${BACKEND_URL}/deal-conversation-messages-history/${selectedChatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -179,7 +179,7 @@ const ShipperChatPage = () => {
         });
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-chat-message', {
+        axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'carrierID',
             sender: 'shipperID',
@@ -192,7 +192,7 @@ const ShipperChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
+        axios.get(`${BACKEND_URL}/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -210,7 +210,7 @@ const ShipperChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
+        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`)
             .then(response => {
                 setConversations(response.data);
             })
@@ -220,7 +220,7 @@ const ShipperChatPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-bids-by-user/${shipperID}`)
+        axios.get(`${BACKEND_URL}/get-bids-by-user/${shipperID}`)
             .then(response => {
                 const bids = response.data;
                 setBids(bids);
@@ -233,7 +233,7 @@ const ShipperChatPage = () => {
 
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-user/${shipperID}`)
+        axios.get(`${BACKEND_URL}/get-user/${shipperID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -245,7 +245,7 @@ const ShipperChatPage = () => {
     }, [shipperID]);
     useEffect(() => {
         if (selectedBid && selectedBid.carriershipperID) {
-            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carriershipperID}`)
+            axios.get(`${BACKEND_URL}/get-carrier/${selectedBid.carriershipperID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -275,7 +275,7 @@ const ShipperChatPage = () => {
     }, [chatID]);
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-shipper/${shipperID}`)
+        axios.get(`${BACKEND_URL}/get-shipper/${shipperID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setShipper(response.data);
@@ -287,7 +287,7 @@ const ShipperChatPage = () => {
     }, [shipperID]);
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-bids')
+        axios.get('${BACKEND_URL}/get-all-bids')
             .then(response => {
                 setBids(response.data);
             })
@@ -299,7 +299,7 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const fetchLoad = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load-by-chat/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-load-by-chat/${chatID}`);
                 setLoad(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -312,7 +312,7 @@ const ShipperChatPage = () => {
 
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/user/${shipperID}`)
+        axios.get(`${BACKEND_URL}/user/${shipperID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setUser(response.data);
@@ -343,7 +343,7 @@ const ShipperChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-conversation-chat/${chatID}`)
+        axios.get(`${BACKEND_URL}/get-deal-conversation-chat/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -356,7 +356,7 @@ const ShipperChatPage = () => {
 
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
+        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`)
             .then(response => {
                 const sortedConversations = response.data.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
                 setConversations(sortedConversations);
@@ -373,7 +373,7 @@ const ShipperChatPage = () => {
         setIsLoading(true);
         setSelectedChatID(chatID);
         try {
-            const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`);
+            const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
             if (response.status === 200) {
                 console.log(response.data);
                 navigate(`/customer-deal-chat-conversation/${shipperID}/${chatID}`);
@@ -406,7 +406,7 @@ const ShipperChatPage = () => {
     const handlePayClick = async () => {
         setIsProcessingPayment(true);
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session-2', { amount: load.loadPrice * 1.03, loadType: load.loadType, description: " (Including taxes and fee)", shipperID: shipperID, chatID: chatID  });
+            const response = await axios.post(`${BACKEND_URL}/create-checkout-session-2`, { amount: load.loadPrice * 1.03, loadType: load.loadType, description: " (Including taxes and fee)", shipperID: shipperID, chatID: chatID  });
             const sessionId = response.data.sessionId;
 
             const stripe = await stripePromise;

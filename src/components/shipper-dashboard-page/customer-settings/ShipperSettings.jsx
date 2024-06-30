@@ -19,9 +19,9 @@ import { Skeleton } from "@mui/material";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import { ClipLoader } from "react-spinners";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ShipperSettings = () => {
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [activeSetting, setActiveSetting] = useState('Account');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
@@ -42,7 +42,6 @@ const ShipperSettings = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-
     const [avatarFromDB, setAvatarFromDB] = useState(null);
 
     const handleApplySettings = async () => {
@@ -55,7 +54,7 @@ const ShipperSettings = () => {
         };
 
         try {
-            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/update-shipper/${shipperID}`, updatedData);
+            const response = await axios.put(`${BACKEND_URL}/update-shipper/${shipperID}`, updatedData);
             if (response.status === 200) {
                 setShipperInfo(response.data);
             }
@@ -70,7 +69,7 @@ const ShipperSettings = () => {
             formData.append('avatar', shipperAvatar);
 
             try {
-                const response = await axios.post(`https://jarvis-ai-logistic-db-server.onrender.com/upload-avatar/${shipperID}`, formData, {
+                const response = await axios.post(`${BACKEND_URL}/upload-avatar/${shipperID}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data',
                     },
@@ -87,7 +86,7 @@ const ShipperSettings = () => {
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true); // Start loading
-            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
             axios.get(avatarUrl)
                 .then(() => {
@@ -104,9 +103,9 @@ const ShipperSettings = () => {
     useEffect(() => {
         const getAvatar = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-avatar/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-avatar/${shipperID}`);
                 if (response.data.userShipperAvatar) {
-                    setPreviewSavedImage(`https://jarvis-ai-logistic-db-server.onrender.com/${response.data.userShipperAvatar}`);
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.userShipperAvatar}`);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -136,7 +135,7 @@ const ShipperSettings = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
                 setShipperInfo(data);
             } catch (error) {
@@ -159,9 +158,7 @@ const ShipperSettings = () => {
     const handleToggleUpdates = () => {
         setIsOnUpdates(!isOnUpdates);
     };
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+
 
 
     return (

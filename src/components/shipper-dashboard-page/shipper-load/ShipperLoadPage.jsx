@@ -19,6 +19,7 @@ import ImageSlider from "../../image-slider/ImageSlider";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import CarrierLoadBid from "../../carrier-load-bid/CarrierLoadBid";
 import {Skeleton} from "@mui/material";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ShipperLoadPage = () => {
     const address = process.env.REACT_APP_API_BASE_URL;
@@ -35,7 +36,7 @@ const ShipperLoadPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);
@@ -50,7 +51,7 @@ const ShipperLoadPage = () => {
     useEffect(() => {
         const fetchLoad = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/load/${loadCredentialID}`);
+                const response = await axios.get(`${BACKEND_URL}/load/${loadCredentialID}`);
                 setLoad(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -60,7 +61,7 @@ const ShipperLoadPage = () => {
 
         const fetchAllLoadBids = async () => {
             try {
-                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-load-bids');
+                const response = await axios.get(`${BACKEND_URL}/get-all-load-bids`);
                 const data = await response.data;
 
                 if (response.status === 200) {

@@ -10,6 +10,7 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ShipperPaymentsPage = () => {
 
@@ -23,7 +24,7 @@ const ShipperPaymentsPage = () => {
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
-            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
             axios.get(avatarUrl)
                 .then(() => {
@@ -40,7 +41,7 @@ const ShipperPaymentsPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);

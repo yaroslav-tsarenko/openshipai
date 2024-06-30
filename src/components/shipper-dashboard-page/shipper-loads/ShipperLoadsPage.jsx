@@ -51,9 +51,9 @@ import FTLLoadContainer from "../../load-containers/ftl-load-container/FTLLoadCo
 import LTLLoadContainer from "../../load-containers/ltl-load-container/LTLLoadContainer";
 import FarmEquipmentLoadContainer from "../../load-containers/farm-equipment-load-container/FarmEquipmentLoadContainer";
 import {Skeleton} from "@mui/material";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const ShipperLoadsPage = () => {
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [hoveredButton, setHoveredButton] = useState('');
     const [createLoadSection, setCreateLoadSection] = useState(false);
     const {shipperID} = useParams();
@@ -78,7 +78,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
-            const avatarUrl = `https://jarvis-ai-logistic-db-server.onrender.com/${shipperInfo.userShipperAvatar}`;
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
             axios.get(avatarUrl)
                 .then(() => {
@@ -96,7 +96,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`https://jarvis-ai-logistic-db-server.onrender.com/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);
@@ -111,7 +111,7 @@ const ShipperLoadsPage = () => {
     useEffect(() => {
         const fetchLoads = async () => {
             try {
-                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-loads');
+                const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
                 setLoads(response.data);
             } catch (error) {
                 console.error('Error fetching loads:', error);
