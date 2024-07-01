@@ -6,7 +6,7 @@ import {ClipLoader} from "react-spinners";
 import axios from "axios";
 import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
-
+import {BACKEND_URL} from "../../constants/constants";
 const CarrierLoadBid = ({
                             loadCarrierID,
                             loadBidPrice,
@@ -47,7 +47,7 @@ const CarrierLoadBid = ({
             carrierID: loadCarrierID,
         };
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-deal-chat-conversation', chatData);
+            const response = await axios.post(`${BACKEND_URL}/create-deal-chat-conversation`, chatData);
             if (response.status === 200) {
                 console.log('DealChatConversation created successfully');
                 setStatusMessage('Your bid applied successfully');
