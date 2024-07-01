@@ -53,9 +53,8 @@ import {ClipLoader} from "react-spinners";
 import useSound from 'use-sound';
 import notificationSound from '../../../assets/sound-effects/message-sent.mp3'; // replace with the path to your sound file
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
-import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import DriverEntity from "../driver-entity/DriverEntity";
 import {BACKEND_URL} from "../../../constants/constants";
+import DriverEntity from "../driver-entity/DriverEntity";
 
 const CarrierChatPage = () => {
 
@@ -124,7 +123,7 @@ const CarrierChatPage = () => {
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
-                const response = await axios.get('${BACKEND_URL}/get-all-drivers'); // Replace with your API endpoint
+                const response = await axios.get(`${BACKEND_URL}/get-all-drivers`); // Replace with your API endpoint
                 setDrivers(response.data);
             } catch (error) {
                 console.error('Error fetching drivers:', error);
@@ -199,7 +198,7 @@ const CarrierChatPage = () => {
     }, [chatID]);
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-all-deal-chat-conversations')
+        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`)
             .then(response => {
                 setConversations(response.data);
             })
@@ -264,7 +263,7 @@ const CarrierChatPage = () => {
         socketRef.current.emit('carrier message', {message: newMessage, chatID: selectedChatID, carrier: 'carrierID'});
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('${BACKEND_URL}/save-chat-message', {
+        axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'shipperID',
             sender: 'carrierID',
@@ -300,7 +299,7 @@ const CarrierChatPage = () => {
 
 
     const handlePay = async (amount) => {
-        const response = await axios.post('${BACKEND_URL}/create-checkout-session', {amount});
+        const response = await axios.post(`${BACKEND_URL}/create-checkout-session`, {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -323,7 +322,7 @@ const CarrierChatPage = () => {
         }
     }, [touchStart, touchEnd]);
     useEffect(() => {
-        axios.get('${BACKEND_URL}/all-user-loads')
+        axios.get(`${BACKEND_URL}/all-user-loads`)
             .then(response => {
                 setData(response.data);
             })
@@ -333,7 +332,7 @@ const CarrierChatPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-heavy-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-heavy-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
@@ -346,7 +345,7 @@ const CarrierChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-construction-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-construction-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setConstructionEquipmentLoads(response.data.loads); // Set the loads in state
@@ -359,7 +358,7 @@ const CarrierChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-boat-loads')
+        axios.get(`${BACKEND_URL}/get-boat-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setBoatLoads(response.data.loads); // Set the loads in state
@@ -385,7 +384,7 @@ const CarrierChatPage = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-moto-equipment-loads')
+        axios.get(`${BACKEND_URL}/get-moto-equipment-loads`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setMotoEquipmentLoads(response.data.loads); // Set the loads in state
