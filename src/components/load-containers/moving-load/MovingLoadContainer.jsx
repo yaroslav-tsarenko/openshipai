@@ -5,11 +5,7 @@ import axios from 'axios';
 import {useParams} from "react-router-dom";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const MovingLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
     const [isFirstSwitch, setIsFirstSwitch] = useState(false);
@@ -64,7 +60,7 @@ const MovingLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {

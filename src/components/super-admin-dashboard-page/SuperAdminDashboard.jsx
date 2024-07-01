@@ -15,7 +15,8 @@ import {Link} from "react-router-dom";
 import {ReactComponent as UserAvatarComponent} from "../../assets/userAvatar2.svg";
 import {ReactComponent as BellComponent} from "../../assets/bell.svg";
 import "./SuperAdminDashboard.css";
-import SignatureCanvas from "react-signature-canvas";
+import {BACKEND_URL} from "../../constants/constants";
+
 const SuperAdminDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const sidebarRef = useRef(null);
@@ -67,7 +68,7 @@ const SuperAdminDashboard = () => {
     const handleDelete = (user) => {
         const confirmation = window.confirm(`Are you sure you want to delete user ${user.name}?`);
         if (confirmation) {
-            axios.delete(`https://jarvis-ai-logistic-db-server.onrender.com/user-email/${user.email}`)
+            axios.delete(`${BACKEND_URL}/user-email/${user.email}`)
                 .then(response => {
                     setUsers(users.filter(u => u.email !== user.email));
                     window.alert('User successfully deleted'); // Alert the user
@@ -80,7 +81,7 @@ const SuperAdminDashboard = () => {
     };
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/users')
+        axios.get(`${BACKEND_URL}/users`)
             .then(response => {
                 setUsers(response.data);
             })

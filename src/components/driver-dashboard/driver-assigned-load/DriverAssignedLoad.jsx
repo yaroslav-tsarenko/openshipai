@@ -8,6 +8,7 @@ import { useNavigate } from 'react-router-dom';
 import GoogleMapShowDriverDirection from "../../google-driver-load-direction/GoogleMapShowDriverDirection";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import ClipLoader from "react-spinners/ClipLoader";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const DriverAssignedLoad = () => {
     const [isPickedUp, setIsPickedUp] = useState(false);
@@ -20,7 +21,7 @@ const DriverAssignedLoad = () => {
     useEffect(() => {
         const getLoad = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load/${loadID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-load/${loadID}`);
                 setLoad(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -34,7 +35,7 @@ const DriverAssignedLoad = () => {
     const handleDeliveredClick = async () => {
         setIsCompletingDelivering(true);
         try {
-            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/load-update-delivered-status/${loadID}`, {
+            const response = await axios.put(`${BACKEND_URL}/load-update-delivered-status/${loadID}`, {
                 loadDeliveredStatus: 'Delivered'
             });
             if (response.status === 200) {

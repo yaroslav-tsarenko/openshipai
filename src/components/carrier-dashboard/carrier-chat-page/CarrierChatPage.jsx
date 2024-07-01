@@ -55,6 +55,7 @@ import notificationSound from '../../../assets/sound-effects/message-sent.mp3'; 
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import DriverEntity from "../driver-entity/DriverEntity";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const CarrierChatPage = () => {
 
@@ -123,7 +124,7 @@ const CarrierChatPage = () => {
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
-                const response = await axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-drivers'); // Replace with your API endpoint
+                const response = await axios.get('${BACKEND_URL}/get-all-drivers'); // Replace with your API endpoint
                 setDrivers(response.data);
             } catch (error) {
                 console.error('Error fetching drivers:', error);
@@ -137,7 +138,7 @@ const CarrierChatPage = () => {
     useEffect(() => {
         const fetchChatData = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-conversation-chat/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-deal-conversation-chat/${chatID}`);
                 setChatData(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -150,10 +151,10 @@ const CarrierChatPage = () => {
 
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`)
+        axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
-                    axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-shipper/${response.data.shipperID}`)
+                    axios.get(`${BACKEND_URL}/get-shipper/${response.data.shipperID}`)
                         .then(shipperResponse => {
                             if (shipperResponse.data && shipperResponse.status === 200) {
                                 setShipper(shipperResponse.data);
@@ -171,7 +172,7 @@ const CarrierChatPage = () => {
 
     useEffect(() => {
         if (selectedBid && selectedBid.carrierID) {
-            axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${selectedBid.carrierID}`)
+            axios.get(`${BACKEND_URL}/get-carrier/${selectedBid.carrierID}`)
                 .then(response => {
                     if (response.data && response.status === 200) {
                         setCarrier(response.data);
@@ -186,7 +187,7 @@ const CarrierChatPage = () => {
     useEffect(() => {
         const fetchLoad = async () => {
             try {
-                const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-load-by-chat/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-load-by-chat/${chatID}`);
                 setLoad(response.data);
                 console.log(response.data);
             } catch (error) {
@@ -198,7 +199,7 @@ const CarrierChatPage = () => {
     }, [chatID]);
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-all-deal-chat-conversations')
+        axios.get('${BACKEND_URL}/get-all-deal-chat-conversations')
             .then(response => {
                 setConversations(response.data);
             })
@@ -225,7 +226,7 @@ const CarrierChatPage = () => {
         setSelectedChatID(chatID);
 
         try {
-            const response = await axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-deal-chat-conversation/${chatID}`);
+            const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
 
             if (response.status === 200) {
                 console.log(response.data);
@@ -239,7 +240,7 @@ const CarrierChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
+        axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -263,7 +264,7 @@ const CarrierChatPage = () => {
         socketRef.current.emit('carrier message', {message: newMessage, chatID: selectedChatID, carrier: 'carrierID'});
         setInputMessage('');
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-chat-message', {
+        axios.post('${BACKEND_URL}/save-chat-message', {
             chatID: selectedChatID,
             receiver: 'shipperID',
             sender: 'carrierID',
@@ -279,7 +280,7 @@ const CarrierChatPage = () => {
 
     useEffect(() => {
         setIsLoading(true);
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-chat-history/${chatID}`)
+        axios.get(`${BACKEND_URL}/get-chat-history/${chatID}`)
             .then(response => {
                 setChatMessages(response.data);
             })
@@ -299,7 +300,7 @@ const CarrierChatPage = () => {
 
 
     const handlePay = async (amount) => {
-        const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/create-checkout-session', {amount});
+        const response = await axios.post('${BACKEND_URL}/create-checkout-session', {amount});
         const sessionId = response.data.sessionId;
 
         const stripe = await stripePromise;
@@ -322,7 +323,7 @@ const CarrierChatPage = () => {
         }
     }, [touchStart, touchEnd]);
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/all-user-loads')
+        axios.get('${BACKEND_URL}/all-user-loads')
             .then(response => {
                 setData(response.data);
             })
@@ -332,7 +333,7 @@ const CarrierChatPage = () => {
     }, []);
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-heavy-equipment-loads')
+        axios.get('${BACKEND_URL}/get-heavy-equipment-loads')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
@@ -345,7 +346,7 @@ const CarrierChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-construction-equipment-loads')
+        axios.get('${BACKEND_URL}/get-construction-equipment-loads')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setConstructionEquipmentLoads(response.data.loads); // Set the loads in state
@@ -358,7 +359,7 @@ const CarrierChatPage = () => {
             });
     }, []); // Empty dependency array means this effect runs once on component mount
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-boat-loads')
+        axios.get('${BACKEND_URL}/get-boat-loads')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setBoatLoads(response.data.loads); // Set the loads in state
@@ -372,7 +373,7 @@ const CarrierChatPage = () => {
     }, []); // Empty dependency array means this effect runs once on component mount
 
     useEffect(() => {
-        axios.get(`https://jarvis-ai-logistic-db-server.onrender.com/get-carrier/${carrierID}`)
+        axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
@@ -384,7 +385,7 @@ const CarrierChatPage = () => {
     }, [carrierID]);
 
     useEffect(() => {
-        axios.get('https://jarvis-ai-logistic-db-server.onrender.com/get-moto-equipment-loads')
+        axios.get('${BACKEND_URL}/get-moto-equipment-loads')
             .then(response => {
                 if (response.data && response.status === 200) {
                     setMotoEquipmentLoads(response.data.loads); // Set the loads in state
@@ -400,7 +401,7 @@ const CarrierChatPage = () => {
     const handleCarrierApprove = async () => {
         setIsApprovalSent(true);
         try {
-            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/confirm-load/${chatID}`);
+            const response = await axios.put(`${BACKEND_URL}/confirm-load/${chatID}`);
             if (response.status === 200) {
                 console.log(response.data.message);
                 socketRef.current.emit('carrier approval', {chatID: selectedChatID});
@@ -440,7 +441,7 @@ const CarrierChatPage = () => {
     const handleAssignLoad = async (driver, loadID) => {
         setIsAssignLoading(true);
         try {
-            const response = await axios.put(`https://jarvis-ai-logistic-db-server.onrender.com/assign-load/${driver.driverID}`, { loadID });
+            const response = await axios.put(`${BACKEND_URL}/assign-load/${driver.driverID}`, { loadID });
             if (response.status === 200) {
                 console.log('Load assigned successfully');
                 isAssignSuccess(true);
