@@ -1367,30 +1367,12 @@
     color: var(--royal-white);
 }
 
-.create-load-button {
-    width: 250px;
-    background: var(--royal-blue);
-    color: var(--royal-white);
-    font-size: 2rem;
-    justify-content: space-between;
-    align-content: center;
-    align-items: center;
-    justify-items: center;
-    text-align: center;
-    font-weight: bold;
-    transition: 0.2s ease-in-out;
-    border-radius: 55px;
-}
+
 
 .button-nav-load-icon {
     margin-right: 10px;
 }
 
-.create-load-button:hover {
-    background: var(--royal-blue-light);
-    transition: 0.2s ease-in-out;
-    color: var(--royal-white);
-}
 
 .carrier-loads-wrapper {
     display: flex;

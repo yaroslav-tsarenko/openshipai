@@ -3,9 +3,9 @@ import { useParams } from 'react-router-dom';
 import GoogleMapRealTimeTrafficComponent
     from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 import axios from 'axios';
-import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
-import {ReactComponent as CarrierIcon} from "../../assets/trane-logo-carrier.svg";
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
+
+import { BACKEND_URL } from "../../constants/constants";
 
 const ShipperActiveLoadsPanel = () => {
     const { shipperID } = useParams();
@@ -14,7 +14,7 @@ const ShipperActiveLoadsPanel = () => {
     const [destination, setDestination] = useState("");
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-all-loads') // replace with your actual API endpoint
+        axios.get(`${BACKEND_URL}/get-all-loads`)
             .then(response => {
                 const filteredLoads = response.data.filter(load => load.shipperID === shipperID);
                 setLoads(filteredLoads);

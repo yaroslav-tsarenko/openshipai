@@ -9,7 +9,7 @@ import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
 import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
 import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
 import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
-import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon-plus.svg";
+import { CiCirclePlus } from "react-icons/ci";
 import VehicleLoadType from "../../../assets/vehicle-category.svg";
 import MovingLoadType from "../../../assets/moving-category.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
@@ -181,7 +181,8 @@ const ShipperLoadsPage = () => {
                                 </button>
                             </section>
                             <button className="create-load-button" onClick={() => setCreateLoadSection(false)}>
-                                <CreateLoadIcon className="button-nav-load-icon"/>Create New Load
+                                <CiCirclePlus className="circle-plus-icon"/>
+                                Create New Load
                             </button>
                         </div>
                         <div className="load-containers-wrapper">

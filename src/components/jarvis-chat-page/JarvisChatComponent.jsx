@@ -4928,13 +4928,6 @@ const JarvisChatComponent = () => {
                 });
         }
     };
-    const uniqueTitles = Array.from(new Set(previousChats.map(previousChat => previousChat.title)))
-    console.log(uniqueTitles)
-    console.log(previousChats)
-    const handleLogout = () => {
-        setUser(null);
-        navigate('/sign-in');
-    };
 
     return (
         <div className="ai-chat-wrapper">

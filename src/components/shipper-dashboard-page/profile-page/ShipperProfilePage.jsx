@@ -185,7 +185,7 @@ const ShipperProfilePage = () => {
                                 <PlusIconBlue/>
                             </div>
                             <div className="section-content">
-                                <div className="section-item">
+                                {/*<div className="section-item">
                                     <DefaultUserAvatar/>
                                     <div>
                                         <h3>Jake</h3>
@@ -195,52 +195,20 @@ const ShipperProfilePage = () => {
                                         <h3>Seen</h3>
                                         <p>2h ago</p>
                                     </div>
-                                </div>
-                                <div className="section-item">
-                                    <DefaultUserAvatar/>
-                                    <div>
-                                        <h3>Jake</h3>
-                                        <p>Hi John, I'm ready to deliver your load</p>
-                                    </div>
-                                    <div>
-                                        <h3>Seen</h3>
-                                        <p>2h ago</p>
-                                    </div>
-                                </div>
-                                <div className="section-item">
-                                    <DefaultUserAvatar/>
-                                    <div>
-                                        <h3>Jake</h3>
-                                        <p>Hi John, I'm ready to deliver your load</p>
-                                    </div>
-                                    <div>
-                                        <h3>Seen</h3>
-                                        <p>2h ago</p>
-                                    </div>
-                                </div>
-                                <div className="section-item">
-                                    <DefaultUserAvatar/>
-                                    <div>
-                                        <h3>Jake</h3>
-                                        <p>Hi John, I'm ready to deliver your load</p>
-                                    </div>
-                                    <div>
-                                        <h3>Seen</h3>
-                                        <p>2h ago</p>
-                                    </div>
-                                </div>
+                                </div>*/}
+                                <h3>No messages...</h3>
                             </div>
                         </section>
                         <section>
                             <div className="section-header">
                                 <span>
-                                    <h3>Friends (35)</h3>
+                                    <h3>Friends</h3>
                                     <p>Your all friends</p>
                                 </span>
                                 <PlusIconBlue/>
                             </div>
                             <div className="section-content">
-                                <div className="section-item">
+                                {/* <div className="section-item">
                                     <div className="user-item-info">
                                         <DefaultUserAvatar/>
                                         <div>
@@ -249,37 +217,8 @@ const ShipperProfilePage = () => {
                                         </div>
                                     </div>
                                     <MoreVertIcon/>
-                                </div>
-                                <div className="section-item">
-                                    <div className="user-item-info">
-                                        <DefaultUserAvatar/>
-                                        <div>
-                                            <h3>Jake</h3>
-                                            <p>Carrier</p>
-                                        </div>
-                                    </div>
-                                    <MoreVertIcon/>
-                                </div>
-                                <div className="section-item">
-                                    <div className="user-item-info">
-                                        <DefaultUserAvatar/>
-                                        <div>
-                                            <h3>Jake</h3>
-                                            <p>Carrier</p>
-                                        </div>
-                                    </div>
-                                    <MoreVertIcon/>
-                                </div>
-                                <div className="section-item">
-                                    <div className="user-item-info">
-                                        <DefaultUserAvatar/>
-                                        <div>
-                                            <h3>Jake</h3>
-                                            <p>Carrier</p>
-                                        </div>
-                                    </div>
-                                    <MoreVertIcon/>
-                                </div>
+                                </div>*/}
+                                <h3>Currently in development...</h3>
                             </div>
                         </section>
                         <section>
@@ -291,7 +230,7 @@ const ShipperProfilePage = () => {
                                 <PlusIconBlue/>
                             </div>
                             <div className="section-content">
-                            <h3>No Activity...</h3>
+                                <h3>Currently in development...</h3>
                             </div>
                         </section>
                     </div>

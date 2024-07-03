@@ -9,6 +9,7 @@ import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFai
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
+import {BACKEND_URL} from "../../../constants/constants";
 import {ClipLoader} from "react-spinners";
 
 const SailboatLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
@@ -94,7 +95,7 @@ const SailboatLoadContainer = ({pickupLocation, deliveryLocation, loadType, load
             ...formData,
         });
         try {
-            const response = await axios.post('http://localhost:8080/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             if (response.status === 200) {
                 window.location.reload();
             }
