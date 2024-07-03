@@ -1352,30 +1352,34 @@
 }
 
 .create-load-button {
-    width: 250px;
-    background: var(--royal-blue);
-    color: var(--royal-white);
-    font-size: 2rem;
-    border: none;
-    justify-content: space-between;
+    border-radius: 55px;
+    display: flex;
+    font-size: 1.3rem;
+    justify-content: center;
     align-content: center;
     align-items: center;
-    justify-items: center;
     text-align: center;
-    font-weight: bold;
+    justify-items: center;
+    padding: 12px 15px 12px 15px;
+    background: var(--royal-green);
+    border: none;
+    height: fit-content;
+    width: fit-content;
     transition: 0.2s ease-in-out;
-    border-radius: 55px;
+}
+
+.circle-plus-icon {
+   margin: 0 3px 1px 0;
+}
+
+.create-load-button:hover {
+    background: var(--royal-green-hovered);
 }
 
 .button-nav-load-icon {
     margin-right: 10px;
 }
 
-.create-load-button:hover {
-    background: var(--royal-blue-light);
-    transition: 0.2s ease-in-out;
-    color: var(--royal-white);
-}
 
 .shipper-loads-wrapper {
     display: flex;

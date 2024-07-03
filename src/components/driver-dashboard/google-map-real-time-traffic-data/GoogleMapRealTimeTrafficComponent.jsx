@@ -25,25 +25,10 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
             setFuelStops([]);
             setFuelStopsCount(0);
             setCurrentRequest({ origin, destination });
-            fetchWeatherData(destination); // Fetch weather data for destination
         }
     }, [origin, destination, currentRequest.origin, currentRequest.destination]);
 
-    const fetchWeatherData = async (location) => {
-        try {
-            const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${location.lat}&lon=${location.lng}&appid=08aadf33344b3a68713abc2bb85e0810&units=metric`);
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            const data = await response.json();
-            console.log("Weather data: ", data); // Log the fetched data
-            setWeather(data);
-        } catch (error) {
-            console.error("Error fetching weather data:", error);
-        }
-    };
-    console.log("Weather state: ", weather); // Log the weather state
-    console.log("Weather state: ", weather); // Log the weather state
+
 
     const directionsCallback = response => {
         if (response !== null) {
@@ -120,11 +105,7 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
                         position={infoWindowPosition}
                         onCloseClick={() => setInfoWindowPosition(null)}
                     >
-                        <div className="google-map-real-time-traffic-component">
-                            <p className="google-map-text">{routeInfo.distance}</p>
-                            <p className="google-map-text">{routeInfo.duration}</p>
-                            <p className="google-map-text">Fuel Stops: {fuelStopsCount}</p>
-                        </div>
+                        <></>
                     </InfoWindow>
                 )}
             </GoogleMap>
