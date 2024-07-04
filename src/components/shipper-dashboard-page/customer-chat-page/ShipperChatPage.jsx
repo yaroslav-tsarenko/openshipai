@@ -426,10 +426,8 @@ const ShipperChatPage = () => {
             <DashboardSidebar
                 DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
                 Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Profile={{visible: true, route: `/shipper-profile/${shipperID}`}}
                 Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
                 ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyQoutes={{visible: true, route: `/shipper-qoutes/${shipperID}`}}
                 MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
             />
             {showSuccessWindow && <FloatingWindowSuccess text="Carrier approved your agreement. Now you need to pay to go through next steps" />}

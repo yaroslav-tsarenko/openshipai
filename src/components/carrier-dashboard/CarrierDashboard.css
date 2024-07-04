@@ -412,6 +412,7 @@
 }
 
 .profile-content-wrapper {
+    margin: 20px 0 0 0;
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -1897,12 +1898,12 @@
 .avatar-user-photo {
     width: 150px;
     height: 150px;
+    object-fit: cover;
     border-radius: 50%;
     background: var(--royal-blue);
     color: var(--royal-white);
     font-size: 3rem;
     display: flex;
-    object-fit: cover;
     justify-content: center;
     align-items: center;
     margin: 0 auto;

@@ -1,31 +1,34 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
 import axios from 'axios';
-import { ReactComponent as SettingsAccount } from "../../../assets/account-settings-icon.svg";
-import { ReactComponent as SettingsAccountWhite } from "../../../assets/account-settings-icon-white.svg";
-import { ReactComponent as SettingsPassword } from "../../../assets/lock-icon.svg";
-import { ReactComponent as SettingsPasswordWhite } from "../../../assets/lock-icon-white.svg";
-import { ReactComponent as SettingsNotifications } from "../../../assets/bell-settings-icon.svg";
-import { ReactComponent as SettingsNotificationsWhite } from "../../../assets/bell-settings-icon-white.svg";
-import { ReactComponent as SettingsHelp } from "../../../assets/help-settings-icon.svg";
-import { ReactComponent as SettingsHelpWhite } from "../../../assets/help-settings-icon-white.svg";
-import { ReactComponent as DefaultUserAvatar } from "../../../assets/default-avatar.svg";
-import { ReactComponent as DeleteRedBinIcon } from "../../../assets/delete-account-bin-icon.svg";
+import {ReactComponent as SettingsAccount} from "../../../assets/account-settings-icon.svg";
+import {ReactComponent as SettingsAccountWhite} from "../../../assets/account-settings-icon-white.svg";
+import {ReactComponent as SettingsPassword} from "../../../assets/lock-icon.svg";
+import {ReactComponent as SettingsPasswordWhite} from "../../../assets/lock-icon-white.svg";
+import {ReactComponent as SettingsNotifications} from "../../../assets/bell-settings-icon.svg";
+import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
+import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
+import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
+import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
 import Switch from '../../switcher-component/Switch';
-import { useParams } from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
-import { Skeleton } from "@mui/material";
+import {Skeleton} from "@mui/material";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import { ClipLoader } from "react-spinners";
+import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
+import Tooltip from "../../tooltip/Tooltip";
 
 const ShipperSettings = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const [hoveredButton, setHoveredButton] = useState('');
-    const { shipperID } = useParams();
+    const {shipperID} = useParams();
     const [isOnAI, setIsOnAI] = useState(false);
     const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [isOnDriver, setIsOnDriver] = useState(false);
@@ -43,6 +46,18 @@ const ShipperSettings = () => {
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [avatarFromDB, setAvatarFromDB] = useState(null);
+    const settingsRef = useRef();
+
+    const scrollToSettingsRef = () => {
+        settingsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }) // For smooth scroll
+    }
+
+    const toggleTooltip = () => {
+        setIsTooltipVisible(!isTooltipVisible);
+        setTimeout(() => {
+            setIsTooltipVisible(false)
+        }, 2000);
+    };
 
     const handleApplySettings = async () => {
         setIsLoading(true);
@@ -160,29 +175,26 @@ const ShipperSettings = () => {
     };
 
 
-
     return (
         <>
-            {status === 'Success' && <FloatingWindowSuccess text="New changes applied" />}
-            {status === 'Error' && <FloatingWindowFailed text="Something went wrong. Try again" />}
+            {status === 'Success' && <FloatingWindowSuccess text="New changes applied"/>}
+            {status === 'Error' && <FloatingWindowFailed text="Something went wrong. Try again"/>}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{ visible: true, route: `/shipper-dashboard/${shipperID}` }}
-                    Settings={{ visible: true, route: `/shipper-settings/${shipperID}` }}
-                    Profile={{ visible: true, route: `/shipper-profile/${shipperID}` }}
-                    Payments={{ visible: true, route: `/shipper-payments/${shipperID}` }}
-                    ChatWithCarrier={{ visible: true, route: `/shipper-chat-conversation/${shipperID}` }}
-                    MyQoutes={{ visible: true, route: `/shipper-qoutes/${shipperID}` }}
-                    MyLoads={{ visible: true, route: `/shipper-loads/${shipperID}` }}
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
                 />
                 <div className="shipper-dashboard-content">
                     <HeaderDashboard
                         contentTitle={shipperInfo ?
                             <>Welcome back, {shipperInfo.userShipperName}!</> :
-                            <Skeleton variant="text" width={250} />}
+                            <Skeleton variant="text" width={250}/>}
                         contentSubtitle="Monitor payments, loads, revenues"
-                        accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
-                        accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
+                        accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                        accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
@@ -196,8 +208,8 @@ const ShipperSettings = () => {
                                 onClick={() => setActiveSetting('Account')}
                             >
                                 {hoveredButton === 'SettingsAccount' ?
-                                    <SettingsAccountWhite className="link-nav-button-icon" /> :
-                                    <SettingsAccount className="link-nav-button-icon" />}
+                                    <SettingsAccountWhite className="link-nav-button-icon"/> :
+                                    <SettingsAccount className="link-nav-button-icon"/>}
                                 Account
                             </button>
                             <button
@@ -206,8 +218,8 @@ const ShipperSettings = () => {
                                 onClick={() => setActiveSetting('Password')}
                             >
                                 {hoveredButton === 'PasswordSettings' ?
-                                    <SettingsPasswordWhite className="link-nav-button-icon" /> :
-                                    <SettingsPassword className="link-nav-button-icon" />}
+                                    <SettingsPasswordWhite className="link-nav-button-icon"/> :
+                                    <SettingsPassword className="link-nav-button-icon"/>}
                                 Password
                             </button>
                             <button
@@ -216,8 +228,8 @@ const ShipperSettings = () => {
                                 onClick={() => setActiveSetting('Notifications')}
                             >
                                 {hoveredButton === 'NotificationsButton' ?
-                                    <SettingsNotificationsWhite className="link-nav-button-icon" /> :
-                                    <SettingsNotifications className="link-nav-button-icon" />}
+                                    <SettingsNotificationsWhite className="link-nav-button-icon"/> :
+                                    <SettingsNotifications className="link-nav-button-icon"/>}
                                 Notifications
                             </button>
                             <button
@@ -226,20 +238,91 @@ const ShipperSettings = () => {
                                 onClick={() => setActiveSetting('Help')}
                             >
                                 {hoveredButton === 'HelpSettings' ?
-                                    <SettingsHelpWhite className="link-nav-button-icon" /> :
-                                    <SettingsHelp className="link-nav-button-icon" />}
+                                    <SettingsHelpWhite className="link-nav-button-icon"/> :
+                                    <SettingsHelp className="link-nav-button-icon"/>}
                                 Help
                             </button>
                         </section>
                         <section className="settings-content">
                             {activeSetting === 'Account' && (
                                 <>
+                                    <h2>Profile</h2>
+                                    <div className="profile-content-wrapper">
+                                        <div className="shipper-profile-content">
+                                            <div className="shipper-info">
+                                                {previewSavedImage ? (
+                                                    <img src={previewSavedImage} className="shipper-profile-avatar"
+                                                         alt="User Avatar"/>
+                                                ) : (
+                                                    <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                                )}
+                                                <section className="shipper-details-wrapper">
+                                                    <div className="shipper-role-name">
+                                                        <h3>
+                                                            {
+                                                                shipperInfo ?
+                                                                    <>
+                                                                        {shipperInfo.userShipperName}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </h3>
+                                                        <p>
+                                                            {shipperInfo ?
+                                                                <>
+                                                                    {shipperInfo.userShipperRole}
+                                                                </>
+                                                                :
+                                                                <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                    <div className="shipper-info-details">
+                                                        <p>USA, Los Angeles</p>
+                                                        <p>
+                                                            {
+                                                                shipperInfo ?
+                                                                    <>
+                                                                        {shipperInfo.userShipperPhoneNumber}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                        <p>
+                                                            {
+                                                                shipperInfo ?
+                                                                    <>
+                                                                        {shipperInfo.userShipperEmail}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                            <div className="shipper-nav-buttons">
+                                                <button
+                                                    onClick={scrollToSettingsRef}>
+                                                    <PencilIcon/>
+                                                </button>
+                                                <button onClick={toggleTooltip}>
+                                                    <IconInfo/>
+                                                    <Tooltip isVisible={isTooltipVisible}>
+                                                        Here you can change your credentials, then have a look of your
+                                                        current profile data
+                                                    </Tooltip>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="shipper-profile-status">
+                                            <p>Currently you don't have active status for your profile🚫</p>
+                                        </div>
+                                    </div>
                                     <h2>Account Info</h2>
                                     <div>
-                                        {avatarFromDB && <img src={avatarFromDB} alt="Shipper Avatar" />}
+                                        {avatarFromDB && <img src={avatarFromDB} alt="Shipper Avatar"/>}
                                     </div>
                                     <div className="account-info-details-container">
-                                        <div className="avatar-settings">
+                                        <div className="avatar-settings" ref={settingsRef}>
                                             {previewImage ? (
                                                 <img src={previewImage} className="avatar-user-photo"
                                                      alt="User Avatar"/>
@@ -355,7 +438,8 @@ const ShipperSettings = () => {
                             {activeSetting === 'Password' && (
                                 <>
                                     <h2>Password Settings</h2>
-                                    <p>To change your password, you need to enter your old password, then after this you need to enter your new password</p>
+                                    <p>To change your password, you need to enter your old password, then after this you
+                                        need to enter your new password</p>
                                     <section className="password-settings-container">
                                         <div className="google-input-wrapper">
                                             <input
@@ -365,7 +449,8 @@ const ShipperSettings = () => {
                                                 className="google-style-input"
                                                 required={true}
                                             />
-                                            <label htmlFor="oldPassword" className="google-style-input-label">Old Password</label>
+                                            <label htmlFor="oldPassword" className="google-style-input-label">Old
+                                                Password</label>
                                         </div>
                                         <div className="google-input-wrapper">
                                             <input
@@ -375,11 +460,13 @@ const ShipperSettings = () => {
                                                 className="google-style-input"
                                                 required={true}
                                             />
-                                            <label htmlFor="newPassword" className="google-style-input-label">New Password</label>
+                                            <label htmlFor="newPassword" className="google-style-input-label">New
+                                                Password</label>
                                         </div>
                                     </section>
                                     <section className="warning-message-section">
-                                        <h3>If you change your password, you will be able to change it again after 7 days</h3>
+                                        <h3>If you change your password, you will be able to change it again after 7
+                                            days</h3>
                                         <button className="apply-settings-button-bottom">Apply</button>
                                     </section>
                                 </>
@@ -389,10 +476,14 @@ const ShipperSettings = () => {
                                     <h2>Notification Settings</h2>
                                     <p>Your can in detail change service notification</p>
                                     <section className="password-settings-container">
-                                        <Switch isOn={isOnAI} handleToggle={handleToggleAI} label="Get notifications from AI" />
-                                        <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier} label="Get notifications from Carrier" />
-                                        <Switch isOn={isOnDriver} handleToggle={handleToggleDriver} label="Get notifications from Driver" />
-                                        <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates} label="Get notifications of updates" />
+                                        <Switch isOn={isOnAI} handleToggle={handleToggleAI}
+                                                label="Get notifications from AI"/>
+                                        <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
+                                                label="Get notifications from Carrier"/>
+                                        <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
+                                                label="Get notifications from Driver"/>
+                                        <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
+                                                label="Get notifications of updates"/>
                                     </section>
                                     <section className="warning-message-section">
                                         <h3>After confirmation, the changes take effect immediately</h3>
@@ -416,7 +507,8 @@ const ShipperSettings = () => {
                                                 required={true}
                                                 value={shipperInfo ? shipperInfo.userShipperEmail : ''}
                                             />
-                                            <label htmlFor="userEmail" className="google-style-input-label">Email</label>
+                                            <label htmlFor="userEmail"
+                                                   className="google-style-input-label">Email</label>
                                         </div>
                                         <div className="google-input-wrapper">
                                             <input
@@ -425,9 +517,10 @@ const ShipperSettings = () => {
                                                 autoComplete="off"
                                                 className="google-style-input"
                                                 required={true}
-                                                style={{ height: "150px" }}
+                                                style={{height: "150px"}}
                                             />
-                                            <label htmlFor="problemDescription" className="google-style-input-label">Your Problem Description</label>
+                                            <label htmlFor="problemDescription" className="google-style-input-label">Your
+                                                Problem Description</label>
                                         </div>
                                     </section>
                                     <button className="apply-settings-button-bottom">Send</button>
@@ -443,7 +536,8 @@ const ShipperSettings = () => {
                                                 required={true}
                                                 value={shipperInfo ? shipperInfo.userShipperEmail : ''}
                                             />
-                                            <label htmlFor="feedbackEmail" className="google-style-input-label">Email</label>
+                                            <label htmlFor="feedbackEmail"
+                                                   className="google-style-input-label">Email</label>
                                         </div>
                                         <div className="google-input-wrapper">
                                             <input
@@ -452,9 +546,10 @@ const ShipperSettings = () => {
                                                 autoComplete="off"
                                                 className="google-style-input"
                                                 required={true}
-                                                style={{ height: "150px" }}
+                                                style={{height: "150px"}}
                                             />
-                                            <label htmlFor="feedbackDescription" className="google-style-input-label">Your Feedback Description</label>
+                                            <label htmlFor="feedbackDescription" className="google-style-input-label">Your
+                                                Feedback Description</label>
                                         </div>
                                     </section>
                                     <button className="apply-settings-button-bottom">Send</button>

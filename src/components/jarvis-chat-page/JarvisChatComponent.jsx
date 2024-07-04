@@ -4839,12 +4839,11 @@ const JarvisChatComponent = () => {
             }
         };
         try {
-            const response = await fetch("${BACKEND_URL}/completions", options);
+            const response = await fetch(`${BACKEND_URL}/completions`, options);
             const data = await response.json();
             if (response.ok && data.choices && data.choices.length > 0) {
                 const assistantResponse = data.choices[0].message;
                 setMessage(assistantResponse);
-                // Save both user's message and assistant's response
                 saveChatMessage(value, 'You'); // User's message
                 saveChatMessage(assistantResponse.content, 'Assistant');
             } else {

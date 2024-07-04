@@ -1,0 +1,13 @@
+.custom-tooltip {
+    position: fixed; /* Changed from absolute to fixed to position according to the viewport */
+    background-color: #ffffff;
+    color: var(--dark-grey);
+    padding: 5px 10px;
+    border-radius: 4px;
+    max-width: 200px;
+    width: 100%;
+    font-size: 14px;
+    z-index: 1000;
+    transform: translateX(-50%);
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1);
+}
