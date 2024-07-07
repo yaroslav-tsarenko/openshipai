@@ -35,6 +35,7 @@ import ShipperActiveLoadsPanel from "../shipper-active-loads-panel/ShipperActive
 import {Skeleton} from "@mui/material";
 import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
+import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 
 const ShipperDashboard = () => {
     const address = process.env.REACT_APP_API_BASE_URL;
@@ -123,7 +124,7 @@ const ShipperDashboard = () => {
                                             color="#009f52"/>
 
                         </div>
-                        <JarvisChatComponent/>
+                        <OpenShipAIChat/>
                     </div>
                     <ShipperActiveLoadsPanel shipperID={shipperID}/>
                 </div>
