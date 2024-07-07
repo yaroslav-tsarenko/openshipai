@@ -130,7 +130,6 @@ const SuperAdminDashboard = () => {
                             />
                         </div>
                         <div className="user-details-wrapper">
-                            <UserAvatarComponent className="user-avatar"/>
                             <div className="user-details">
                                 <p className="user-name">{user ? user.name : 'Loading...'}</p>
                                 <p className="user-status">Customer</p>

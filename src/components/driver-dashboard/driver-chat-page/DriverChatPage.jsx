@@ -530,7 +530,7 @@ const DriverChatPage = () => {
                         <p className="inner-content-second-text-second">Be careful due scammers</p>
                     </div>
                     <div className="user-details-wrapper">
-                        <UserAvatarComponent className="user-avatar"/>
+                        <UserAvatarComponent/>
                         <div className="user-details">
                             {currentDriver ? currentDriver.firstName : <ClipLoader color={"#e7e7e7"} loading={true} size={25} />}
                             <p className="user-status">Driver</p>

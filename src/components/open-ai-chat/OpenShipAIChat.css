@@ -1,0 +1,242 @@
+.chat-container-wrapper {
+    display: flex;
+    border: 1px solid var(--light-grey);
+    border-radius: 40px;
+}
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 750px;
+    align-items: center;
+    justify-content: center;
+}
+
+.chat-window {
+    width: 90%;
+    max-width: 900px;
+    height: 70%;
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px;
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-message {
+    display: flex;
+    align-items: flex-start;
+    margin: 10px 0;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: appear 0.5s forwards;
+}
+
+.user {
+    flex-direction: row-reverse;
+}
+
+.assistant {
+    flex-direction: row;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ccc;
+    margin: 0 10px;
+}
+
+.user-avatar {
+    background: #0a53be;
+    background-size: cover;
+}
+
+.assistant-avatar {
+    background: red;
+    background-size: cover;
+}
+
+.message-content {
+    background-color: #e1e1e1;
+    padding: 10px;
+    font-size: 14px;
+    border-radius: 8px;
+    max-width: 70%;
+    color: #1a1d20;
+    word-wrap: break-word;
+}
+
+.message-label {
+    font-weight: bold;
+    font-size: 13px;
+    color: var(--dark-grey);
+}
+
+.user .message-content {
+    background-color: #d1e7dd;
+}
+
+.input-container {
+    display: flex;
+    width: 60%;
+    max-width: 800px;
+    margin-top: 20px;
+}
+
+.input-container input {
+    flex: 1;
+    padding: 10px;
+    border-radius: 8px 0 0 8px;
+    border: 1px solid #ccc;
+    outline: none;
+}
+
+.input-container button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    border-radius: 0 8px 8px 0;
+}
+
+.input-container button:hover {
+    background-color: #0056b3;
+}
+
+.burger-button {
+    width: 50px;
+    height: 50px;
+    border: 2px solid black;
+    background: #323232;
+    left: 10px;
+    z-index: 10;
+    cursor: pointer;
+    font-size: 24px;
+}
+
+.chat-sidebar {
+    display: flex;
+    flex-direction: column;
+    max-width: 250px;
+    width: 0;
+    height: 750px;
+    border-right: 1px solid var(--light-grey);
+    opacity: 0;
+    visibility: hidden;
+    transition: 0.3s ease-in-out;
+}
+
+.chat-sidebar.open {
+    width: 100%;
+    opacity: 1;
+    visibility: visible;
+    transition: 0.3s ease-in-out;
+}
+
+.chat-container-wrapper .chat-container {
+    transition: margin-left 0.3s ease;
+}
+
+.chat-sidebar.closed {
+    width: 0;
+    z-index: -9999;
+    transform: translateX(-250px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.05s ease-in-out, visibility 0.05s ease-in-out, width 0.2s ease;
+}
+
+.chat-sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background: none;
+    border-bottom: 1px solid #ccc;
+    text-align: center;
+    color: var(--royal-blue);
+    align-content: center;
+}
+
+.chat-sidebar-content {
+    width: 100%;
+    height: 100%;
+}
+
+.chat-sidebar-header h3 {
+    color: var(--royal-blue);
+}
+
+.chat-sidebar-footer {
+    border-top: 1px solid var(--light-grey);
+    padding: 15px;
+}
+
+.chat-sidebar-footer p {
+    width: 220px;
+    margin: 0;
+    color: var(--grey);
+    text-align: center;
+}
+
+.chat-container-wrapper.open .chat-container {
+    margin-left: 250px; /* Adjust based on sidebar width */
+}
+
+.chat-container-wrapper .chat-container {
+    transition: margin-left 0.3s ease;
+}
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+}
+
+.dot {
+    height: 8px;
+    width: 8px;
+    margin: 0 2px;
+    background-color: #333;
+    border-radius: 50%;
+    display: inline-block;
+    animation: typing 1.2s infinite;
+}
+
+@keyframes typing {
+    0% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+    50% {
+        transform: scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(0.8);
+        opacity: 0.6;
+    }
+}
+
+.dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes appear {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
