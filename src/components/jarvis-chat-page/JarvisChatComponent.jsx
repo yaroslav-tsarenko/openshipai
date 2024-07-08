@@ -4960,19 +4960,7 @@ const JarvisChatComponent = () => {
                 {isSidebarOpen ? <FaTimes/> : <FaBars/>}
             </button>
             <section className="main">
-                <div className="greeting-wrapper">
-                    <h1 className="greeting">Hello, John</h1>
-                    <span className="greeting-subtitle">
-                        <Typewriter
-                            options={{
-                                strings: ["How can i help you today?"],
-                                autoStart: true,
-                                loop: true,
-                                pauseFor: 4500,
-                            }}
-                        />
-                    </span>
-                </div>
+
                 {/* <ul className="feed">
                     {previousChats.map((chatMessage, index) => (
                         <li key={index} className={`message ${chatMessage.role}`}>
@@ -5167,12 +5155,7 @@ const JarvisChatComponent = () => {
                             </div>
                         </div>
                     </div>
-                    <p className="info">
-                        Jarvis may display inaccurate info, including about people, so double-check its response.
-                        <a href="">
-                            Your privacy & Openship
-                        </a>
-                    </p>
+
                 </div>
             </section>
         </div>

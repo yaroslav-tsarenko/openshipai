@@ -31,6 +31,7 @@ body {
     --grey: #707070;
     --light-grey: #cacaca;
     --light-grey-hovered: #e5e5e5;
+    --light-grey-hovered-2: #f6f6f6;
     --light-grey-hovered-transparent: rgba(229, 229, 229, 0.23);
     --load-credentials-background: #e6e6e6;
     --load-credentials-font-color: #9E9E9E;
