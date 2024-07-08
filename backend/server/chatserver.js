@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 7777;
 app.use(cors());
 app.use(bodyParser.json());
 
-const openaiApiKey = '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';
+const openaiApiKey = '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';
 
 app.post('/api/chat', async (req, res) => {
     const { message } = req.body;

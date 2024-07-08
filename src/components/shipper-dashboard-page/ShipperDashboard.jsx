@@ -38,7 +38,6 @@ import {BACKEND_URL} from "../../constants/constants";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 
 const ShipperDashboard = () => {
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
     const [shipperInfo, setShipperInfo] = useState(null);
@@ -124,7 +123,7 @@ const ShipperDashboard = () => {
                                             color="#009f52"/>
 
                         </div>
-                        <OpenShipAIChat/>
+                        <OpenShipAIChat userID={shipperID} userRole="shipper"/>
                     </div>
                     <ShipperActiveLoadsPanel shipperID={shipperID}/>
                 </div>
