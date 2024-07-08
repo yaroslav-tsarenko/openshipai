@@ -8,7 +8,7 @@ import {ReactComponent as FaPicture} from "../../assets/image-icon.svg";
 import {ReactComponent as PlusIcon} from "../../assets/plus-blue-icon.svg";
 import {ReactComponent as BarsIcon} from "../../assets/fa-bars-icon.svg";
 import {ReactComponent as TimesIcon} from "../../assets/fa-times-icon.svg";
-import {BACKEND_URL} from "../../constants/constants";
+import {ASSISTANT_URL, BACKEND_URL} from "../../constants/constants";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
 import {ReactComponent as AIStar} from "../../assets/stars-svg.svg";
 import Typewriter from "typewriter-effect";
@@ -100,7 +100,7 @@ const OpenShipAIChat = ({userID, userRole}) => {
             setIsTyping(true);
 
             try {
-                const response = await axios.post('http://localhost:7777/api/chat', {
+                const response = await axios.post(`${ASSISTANT_URL}/api/chat`, {
                     message: input,
                 });
 
