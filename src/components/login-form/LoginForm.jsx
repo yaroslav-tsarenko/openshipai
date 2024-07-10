@@ -14,8 +14,8 @@ function LoginForm() {
     const [email, setEmail] = useState()
     const [password, setPassword] = useState()
     const navigate = useNavigate()
-    const [isLoading, setIsLoading] = useState(false) // Add this line
-    const [message, setMessage] = useState(null) // Add this line
+    const [isLoading, setIsLoading] = useState(false)
+    const [message, setMessage] = useState(null)
 
     const handleSubmit = async (e) => {
         e.preventDefault();

@@ -2,18 +2,22 @@ const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const cors = require('cors');
+const multer = require('multer');
 require('dotenv').config();
 
 const app = express();
 const PORT = process.env.PORT || 7777;
 
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
+
 app.use(cors());
 app.use(bodyParser.json());
 
-const openaiApiKey = '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';
+const openaiApiKey = "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";
 
 app.post('/api/chat', async (req, res) => {
-    const { message } = req.body;
+    const { message, imageUrl } = req.body;
 
     try {
         const response = await axios.post(
@@ -35,6 +39,16 @@ app.post('/api/chat', async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error in processing your request');
+    }
+});
+
+app.post('/api/upload-image', upload.single('file'), async (req, res) => {
+    try {
+        const file = req.file;
+        res.json({ imageUrl: `https://dummyurl.com/${file.originalname}` });
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error uploading image');
     }
 });
 

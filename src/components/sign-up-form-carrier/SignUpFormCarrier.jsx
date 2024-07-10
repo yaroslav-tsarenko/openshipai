@@ -35,7 +35,7 @@ import {
     ReactComponent as ProgressBar10
 } from "../../assets/progres-bar-10-page.svg";
 import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
-import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
+import {BACKEND_URL} from "../../constants/constants";
 import {CircularProgress} from "@mui/material";
 
 function SignCarrierUpForm() {
@@ -112,7 +112,7 @@ function SignCarrierUpForm() {
     const handleSubmit = (e) => {
         e.preventDefault();
         setIsLoading(true);
-        axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-carrier-data', formData)
+        axios.post(`${BACKEND_URL}/save-carrier-data`, formData)
             .then(response => {
                 console.log(response);
                 if (response.status === 200) {

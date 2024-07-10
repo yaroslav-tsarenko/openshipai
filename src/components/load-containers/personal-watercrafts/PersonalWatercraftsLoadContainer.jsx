@@ -10,7 +10,7 @@ import RecommendationContainer from "../../reccomendation-container/Recommendati
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 import {ClipLoader} from "react-spinners";
-
+import {BACKEND_URL} from "../../../constants/constants";
 const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
@@ -99,7 +99,7 @@ const PersonalWatercraftsLoadContainer = ({pickupLocation, deliveryLocation, loa
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             if (response.status === 200) {
                 window.location.reload();
             }

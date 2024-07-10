@@ -1,20 +1,20 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './OpenShipAIChat.css';
-import {useParams} from 'react-router-dom';
-import {ReactComponent as FaMic} from "../../assets/mic-icon.svg";
-import {ReactComponent as FaSend} from "../../assets/send-icon.svg";
-import {ReactComponent as FaPicture} from "../../assets/image-icon.svg";
-import {ReactComponent as PlusIcon} from "../../assets/plus-blue-icon.svg";
-import {ReactComponent as BarsIcon} from "../../assets/fa-bars-icon.svg";
-import {ReactComponent as TimesIcon} from "../../assets/fa-times-icon.svg";
-import {ASSISTANT_URL, BACKEND_URL} from "../../constants/constants";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as AIStar} from "../../assets/stars-svg.svg";
+import { useParams } from 'react-router-dom';
+import { ReactComponent as FaMic } from "../../assets/mic-icon.svg";
+import { ReactComponent as FaSend } from "../../assets/send-icon.svg";
+import { ReactComponent as FaPicture } from "../../assets/image-icon.svg";
+import { ReactComponent as PlusIcon } from "../../assets/plus-blue-icon.svg";
+import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
+import { ReactComponent as TimesIcon } from "../../assets/fa-times-icon.svg";
+import { ASSISTANT_URL, BACKEND_URL } from "../../constants/constants";
+import { ReactComponent as DefaultUserAvatar } from "../../assets/default-avatar.svg";
+import { ReactComponent as AIStar } from "../../assets/stars-svg.svg";
 import Typewriter from "typewriter-effect";
 
-const OpenShipAIChat = ({userID, userRole}) => {
-    const {shipperID} = useParams();
+const OpenShipAIChat = ({ userID, userRole }) => {
+    const { shipperID } = useParams();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -26,7 +26,7 @@ const OpenShipAIChat = ({userID, userRole}) => {
     const [inputSetByButton, setInputSetByButton] = useState(false);
     const [hasStarted, setHasStarted] = useState(false);
     const [randomQuestions, setRandomQuestions] = useState([]);
-
+    const [selectedImage, setSelectedImage] = useState(null);
 
     const questions = [
         { text: "What's Logistics", value: "What's Logistics" },
@@ -92,19 +92,39 @@ const OpenShipAIChat = ({userID, userRole}) => {
     }, [shipperInfo, shipperID]);
 
     const handleSendMessage = async () => {
-        if (input.trim()) {
+        if (input.trim() || selectedImage) {
             if (!hasStarted) setHasStarted(true); // Change state to start chat
-            const userMessage = {role: 'user', content: input};
+            const userMessage = { role: 'user', content: input };
             setMessages([...messages, userMessage]);
             setInput('');
             setIsTyping(true);
 
+            if (selectedImage) {
+                const formData = new FormData();
+                formData.append('file', selectedImage);
+
+                try {
+                    const uploadResponse = await axios.post(`${ASSISTANT_URL}/api/upload-image`, formData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    userMessage.content = `${userMessage.content} (Image: ${uploadResponse.data.imageUrl})`;
+                } catch (error) {
+                    console.error('Error uploading image', error);
+                }
+
+                setSelectedImage(null);
+            }
+
             try {
                 const response = await axios.post(`${ASSISTANT_URL}/api/chat`, {
                     message: input,
+                    imageUrl: selectedImage ? selectedImage.name : null
                 });
 
-                const aiMessage = {role: 'assistant', content: response.data.message};
+                const aiMessage = { role: 'assistant', content: response.data.message };
                 setMessages((prevMessages) => [...prevMessages, aiMessage]);
             } catch (error) {
                 console.error('Error sending message', error);
@@ -131,7 +151,7 @@ const OpenShipAIChat = ({userID, userRole}) => {
             handleSendMessage();
             setInputSetByButton(false); // Reset the flag after sending the message
         }
-    }, [input, inputSetByButton]); // D
+    }, [input, inputSetByButton]);
 
     useEffect(() => {
         if (chatWindowRef.current) {
@@ -143,13 +163,19 @@ const OpenShipAIChat = ({userID, userRole}) => {
         setIsSidebarOpen(!isSidebarOpen);
     };
 
+    const handleImageChange = (event) => {
+        if (event.target.files && event.target.files[0]) {
+            setSelectedImage(event.target.files[0]);
+        }
+    };
+
     return (
         <div className="chat-container-wrapper">
             <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="chat-sidebar-header">
                     <h3>OpenShipAI</h3>
                     <button className="add-chat-button">
-                        <PlusIcon/>
+                        <PlusIcon />
                     </button>
                 </div>
                 <div className="chat-sidebar-content">
@@ -164,11 +190,11 @@ const OpenShipAIChat = ({userID, userRole}) => {
             <button className="burger-button" onClick={toggleSidebar}>
                 {isSidebarOpen ?
                     <button className="times-close-sidebar-button">
-                        <TimesIcon/>
+                        <TimesIcon />
                     </button>
                     :
                     <button className="bars-open-sidebar-button">
-                        <BarsIcon/>
+                        <BarsIcon />
                     </button>}
             </button>
             <div className="chat-container">
@@ -178,8 +204,7 @@ const OpenShipAIChat = ({userID, userRole}) => {
                             <div key={index} className={`chat-message ${msg.role} appear`}>
                                 <div className={`avatar ${msg.role}-avatar`}>
                                     {msg.role === 'user' && shipperInfo?.userShipperAvatar ? (
-                                        <img src={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                                             alt="User Avatar" className="user-avatar"/>
+                                        <img src={previewSavedImage ? previewSavedImage : DefaultUserAvatar} alt="User Avatar" className="user-avatar" />
                                     ) : null}
                                 </div>
                                 <div className="message-content">
@@ -204,21 +229,21 @@ const OpenShipAIChat = ({userID, userRole}) => {
                         <div className="greeting-wrapper">
                             <h1 className="greeting">Hello, John</h1>
                             <span className="greeting-subtitle">
-                        <Typewriter
-                            options={{
-                                strings: ["How can i help you today?"],
-                                autoStart: true,
-                                loop: true,
-                                pauseFor: 4500,
-                            }}
-                        />
-                    </span>
+                                <Typewriter
+                                    options={{
+                                        strings: ["How can I help you today?"],
+                                        autoStart: true,
+                                        loop: true,
+                                        pauseFor: 4500,
+                                    }}
+                                />
+                            </span>
                         </div>
                         <div className="question-buttons">
                             {randomQuestions.map((question, index) => (
                                 <section key={index}>
                                     <button onClick={() => handleSetInputValue(question.value)}>
-                                        <AIStar className="stars-chat-icon"/> {question.text}
+                                        <AIStar className="stars-chat-icon" /> {question.text}
                                     </button>
                                 </section>
                             ))}
@@ -226,6 +251,11 @@ const OpenShipAIChat = ({userID, userRole}) => {
                     </div>
                 )}
                 <div className="input-container">
+                    {selectedImage && (
+                        <div className="image-preview">
+                            <img src={URL.createObjectURL(selectedImage)} alt="Selected" style={{ height: '50px' }} />
+                        </div>
+                    )}
                     <input
                         type="text"
                         value={input}
@@ -233,9 +263,15 @@ const OpenShipAIChat = ({userID, userRole}) => {
                         onKeyDown={handleKeyPress}
                         placeholder="Enter prompt here..."
                     />
-                    <button onClick={handleSendMessage}><FaPicture className="ai-chat-input-icons"/></button>
-                    <button onClick={handleSendMessage}><FaMic className="ai-chat-input-icons"/></button>
-                    <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons"/></button>
+                    <input
+                        type="file"
+                        id="file-input"
+                        style={{ display: 'none' }}
+                        onChange={handleImageChange}
+                    />
+                    <button onClick={() => document.getElementById('file-input').click()}><FaPicture className="ai-chat-input-icons" /></button>
+                    <button onClick={handleSendMessage}><FaMic className="ai-chat-input-icons" /></button>
+                    <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons" /></button>
                 </div>
                 <p className="info">
                     OpenShip AI may display inaccurate info, including about people, so double-check its response.

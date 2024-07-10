@@ -19,6 +19,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
 import {ThemeProvider, createTheme, TextField} from "@mui/material";
 import Switch from "../../switcher-component/Switch";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -188,7 +189,7 @@ const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loa
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
