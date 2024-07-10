@@ -13,6 +13,7 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Box from "@mui/material/Box";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -100,7 +101,7 @@ const RVLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTyp
             ...formData,
         });
         try {
-            const response = await axios.post('https://jarvis-ai-logistic-db-server.onrender.com/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
