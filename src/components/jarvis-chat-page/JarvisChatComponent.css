@@ -20,16 +20,6 @@
     background-color: #575757;
 }
 
-.input-container-wrapper {
-    width: 100%;
-    max-width: 650px;
-    height: 79px;
-    padding: 15px 0 15px 0;
-    justify-content: start;
-    background-color: #f6f6f6;
-    border-radius: 40px;
-}
-
 
 .image-input-container-wrapper {
     display: flex;

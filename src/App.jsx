@@ -39,8 +39,11 @@ function App() {
         <Router>
             <Routes>
                 <Route path="/shipper-dashboard/:shipperID" element={<ShipperDashboard/>}/>
+                <Route path="/shipper-dashboard/:shipperID/:aiChatID" element={<ShipperDashboard/>}/>
                 <Route path="/shipper-loads/:shipperID" element={<ShipperLoadsPage/>}/>
                 <Route path="/shipper-chat-conversation/:shipperID" element={<ShipperChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:shipperID" element={<ShipperChatPage/>}/>
+                <Route path="/customer-deal-chat-conversation/:shipperID/:chatID" element={<ShipperChatPage/>}/>
                 <Route path="/shipper-qoutes/:shipperID" element={<ShipperBidsPage/>}/>
                 <Route path="/shipper-payments/:shipperID" element={<ShipperPaymentsPage/>}/>
                 <Route path="/shipper-profile/:shipperID" element={<ShipperProfilePage/>}/>
@@ -64,8 +67,7 @@ function App() {
 
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
 
-                <Route path="/customer-deal-chat-conversation/:shipperID" element={<ShipperChatPage/>}/>
-                <Route path="/customer-deal-chat-conversation/:shipperID/:chatID" element={<ShipperChatPage/>}/>
+
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
                 <Route path="/sign-up-shipper" element={<SignUpForm/>}/>
