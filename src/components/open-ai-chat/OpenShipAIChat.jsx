@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './OpenShipAIChat.css';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { ReactComponent as FaMic } from "../../assets/mic-icon.svg";
 import { ReactComponent as FaSend } from "../../assets/send-icon.svg";
 import { ReactComponent as FaPicture } from "../../assets/image-icon.svg";
@@ -14,7 +14,7 @@ import { ReactComponent as AIStar } from "../../assets/stars-svg.svg";
 import Typewriter from "typewriter-effect";
 
 const OpenShipAIChat = ({ userID, userRole }) => {
-    const { shipperID } = useParams();
+    const { shipperID, aiChatID } = useParams();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
     const [isTyping, setIsTyping] = useState(false);
@@ -23,10 +23,41 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [shipperInfo, setShipperInfo] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
     const [inputSetByButton, setInputSetByButton] = useState(false);
     const [hasStarted, setHasStarted] = useState(false);
     const [randomQuestions, setRandomQuestions] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
+    const [chatSessions, setChatSessions] = useState([]);
+
+    function generateChatID() {
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+        let result = '';
+        const charactersLength = characters.length;
+        for (let i = 0; i < 32; i++) {
+            result += characters.charAt(Math.floor(Math.random() * charactersLength));
+        }
+        return result;
+    }
+
+    const addChatSession = async () => {
+        const chatID = generateChatID();
+        const userID = shipperID;
+
+        try {
+            const response = await axios.post(`${ASSISTANT_URL}/create-ai-chat`, { aiChatID: chatID, userID });
+            const nextSessionNumber = chatSessions.length + 1;
+            setChatSessions([...chatSessions, { aiChatID: chatID, name: `Chat Session ${nextSessionNumber}`, ...response.data }]);
+            navigate(`/shipper-dashboard/${shipperID}/${chatID}`);
+        } catch (error) {
+            console.error('Error creating AIChat entity', error);
+        }
+
+    };
+
+    const handleChatSessionClick = (aiChatID) => {
+        navigate(`/shipper-dashboard/${shipperID}/${aiChatID}`);
+    };
 
     const questions = [
         { text: "What's Logistics", value: "What's Logistics" },
@@ -91,10 +122,46 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         getUser();
     }, [shipperInfo, shipperID]);
 
+    useEffect(() => {
+        const fetchAIChats = async () => {
+            try {
+                const response = await axios.get(`${ASSISTANT_URL}/get-ai-chats/${shipperID}`);
+                const sortedChats = response.data.sort((a, b) => {
+                    return new Date(a.createdAt) - new Date(b.createdAt);
+                });
+                const namedChats = sortedChats.map((chat, index) => ({
+                    ...chat,
+                    aiChatID: chat.aiChatID,
+                    name: `Chat Session ${index + 1}`,
+                }));
+                setChatSessions(namedChats);
+            } catch (error) {
+                console.error('Error fetching AI Chats', error);
+            }
+        };
+
+        fetchAIChats();
+    }, [shipperID]);
+
+    useEffect(() => {
+        const fetchMessages = async () => {
+            try {
+                const response = await axios.get(`${ASSISTANT_URL}/get-messages/${aiChatID}`);
+                setMessages(response.data);
+            } catch (error) {
+                console.error('Error fetching messages', error);
+            }
+        };
+
+        if (aiChatID) {
+            fetchMessages();
+        }
+    }, [aiChatID]);
+
     const handleSendMessage = async () => {
         if (input.trim() || selectedImage) {
-            if (!hasStarted) setHasStarted(true); // Change state to start chat
-            const userMessage = { role: 'user', content: input };
+            if (!hasStarted) setHasStarted(true);
+            const userMessage = { sender: 'user', content: input };
             setMessages([...messages, userMessage]);
             setInput('');
             setIsTyping(true);
@@ -118,14 +185,28 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                 setSelectedImage(null);
             }
 
+            const messageData = { aiChatID: aiChatID, sender: 'user', content: input };
+            try {
+                await axios.post(`${ASSISTANT_URL}/save-message`, messageData);
+            } catch (error) {
+                console.error('Error saving message', error);
+            }
+
             try {
                 const response = await axios.post(`${ASSISTANT_URL}/api/chat`, {
                     message: input,
                     imageUrl: selectedImage ? selectedImage.name : null
                 });
 
-                const aiMessage = { role: 'assistant', content: response.data.message };
+                const aiMessage = { sender: 'assistant', content: response.data.message };
                 setMessages((prevMessages) => [...prevMessages, aiMessage]);
+
+                const aiMessageData = { aiChatID: aiChatID, sender: 'assistant', content: response.data.message };
+                try {
+                    await axios.post(`${ASSISTANT_URL}/save-message`, aiMessageData);
+                } catch (error) {
+                    console.error('Error saving AI message', error);
+                }
             } catch (error) {
                 console.error('Error sending message', error);
             } finally {
@@ -137,19 +218,19 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     const handleKeyPress = (event) => {
         if (event.key === 'Enter') {
             handleSendMessage();
-            event.preventDefault(); // Prevent the default action to avoid form submission or newline in textarea
+            event.preventDefault();
         }
     };
 
     const handleSetInputValue = (value) => {
         setInput(value);
-        setInputSetByButton(true); // Indicate that the input was set by a button click
+        setInputSetByButton(true);
     };
 
     useEffect(() => {
         if (inputSetByButton) {
             handleSendMessage();
-            setInputSetByButton(false); // Reset the flag after sending the message
+            setInputSetByButton(false);
         }
     }, [input, inputSetByButton]);
 
@@ -174,14 +255,20 @@ const OpenShipAIChat = ({ userID, userRole }) => {
             <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="chat-sidebar-header">
                     <h3>OpenShipAI</h3>
-                    <button className="add-chat-button">
+                    <button className="add-chat-button" onClick={addChatSession}>
                         <PlusIcon />
                     </button>
                 </div>
                 <div className="chat-sidebar-content">
-                    <p>
-                        Current your list of chat history is empty
-                    </p>
+                    {chatSessions.length > 0 ? (
+                        chatSessions.map((session, index) => (
+                            <div key={index} className="chat-session-container" onClick={() => handleChatSessionClick(session.aiChatID)}>
+                                {session.name}
+                            </div>
+                        ))
+                    ) : (
+                        <p>Your list of chat history is empty</p>
+                    )}
                 </div>
                 <div className="chat-sidebar-footer">
                     <p>High powered AI model. Developed by openship.ai All rights are reserved</p>
@@ -201,14 +288,14 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                 {hasStarted ? (
                     <div className="chat-window" ref={chatWindowRef}>
                         {messages.map((msg, index) => (
-                            <div key={index} className={`chat-message ${msg.role} appear`}>
-                                <div className={`avatar ${msg.role}-avatar`}>
-                                    {msg.role === 'user' && shipperInfo?.userShipperAvatar ? (
+                            <div key={index} className={`chat-message ${msg.sender} appear`}>
+                                <div className={`avatar ${msg.sender}-avatar`}>
+                                    {msg.sender === 'user' && shipperInfo?.userShipperAvatar ? (
                                         <img src={previewSavedImage ? previewSavedImage : DefaultUserAvatar} alt="User Avatar" className="user-avatar" />
                                     ) : null}
                                 </div>
                                 <div className="message-content">
-                                    <div className="message-label">{msg.role === 'user' ? 'You' : 'Openship AI'}</div>
+                                    <div className="message-label">{msg.sender === 'user' ? 'You' : 'Openship AI'}</div>
                                     {msg.content}
                                 </div>
                             </div>
@@ -250,28 +337,31 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                         </div>
                     </div>
                 )}
-                <div className="input-container">
+                <div className="input-container-wrapper">
                     {selectedImage && (
-                        <div className="image-preview">
-                            <img src={URL.createObjectURL(selectedImage)} alt="Selected" style={{ height: '50px' }} />
+                        <div>
+                            <img className="image-preview" src={URL.createObjectURL(selectedImage)} alt="Selected"/>
                         </div>
                     )}
-                    <input
-                        type="text"
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        onKeyDown={handleKeyPress}
-                        placeholder="Enter prompt here..."
-                    />
-                    <input
-                        type="file"
-                        id="file-input"
-                        style={{ display: 'none' }}
-                        onChange={handleImageChange}
-                    />
-                    <button onClick={() => document.getElementById('file-input').click()}><FaPicture className="ai-chat-input-icons" /></button>
-                    <button onClick={handleSendMessage}><FaMic className="ai-chat-input-icons" /></button>
-                    <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons" /></button>
+                    <div className="input-container">
+                        <input
+                            type="text"
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyPress}
+                            placeholder="Enter prompt here..."
+                        />
+                        <input
+                            type="file"
+                            id="file-input"
+                            style={{display: 'none'}}
+                            onChange={handleImageChange}
+                        />
+                        <button onClick={() => document.getElementById('file-input').click()}><FaPicture
+                            className="ai-chat-input-icons"/></button>
+                        <button onClick={handleSendMessage}><FaMic className="ai-chat-input-icons"/></button>
+                        <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons"/></button>
+                    </div>
                 </div>
                 <p className="info">
                     OpenShip AI may display inaccurate info, including about people, so double-check its response.
