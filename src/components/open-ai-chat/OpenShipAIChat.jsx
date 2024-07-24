@@ -12,6 +12,8 @@ import { ASSISTANT_URL, BACKEND_URL } from "../../constants/constants";
 import { ReactComponent as DefaultUserAvatar } from "../../assets/default-avatar.svg";
 import { ReactComponent as AIStar } from "../../assets/stars-svg.svg";
 import Typewriter from "typewriter-effect";
+import Recorder from 'recorder-js';
+import {Bars} from "react-loader-spinner";
 
 const OpenShipAIChat = ({ userID, userRole }) => {
     const { shipperID, aiChatID } = useParams();
@@ -29,6 +31,10 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     const [randomQuestions, setRandomQuestions] = useState([]);
     const [selectedImage, setSelectedImage] = useState(null);
     const [chatSessions, setChatSessions] = useState([]);
+    const [recording, setRecording] = useState(false);
+    const [recorder, setRecorder] = useState(null);
+    const [audioURL, setAudioURL] = useState(null);
+    const [volumeBars, setVolumeBars] = useState([]);
 
     function generateChatID() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -52,7 +58,6 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         } catch (error) {
             console.error('Error creating AIChat entity', error);
         }
-
     };
 
     const handleChatSessionClick = (aiChatID) => {
@@ -159,13 +164,15 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     }, [aiChatID]);
 
     const handleSendMessage = async () => {
-        if (input.trim() || selectedImage) {
+        if (input.trim() || selectedImage || audioURL) {
             if (!hasStarted) setHasStarted(true);
             const userMessage = { sender: 'user', content: input };
             setMessages([...messages, userMessage]);
             setInput('');
             setIsTyping(true);
 
+            let imageUrl = null;
+            let audioUrl = null;
             if (selectedImage) {
                 const formData = new FormData();
                 formData.append('file', selectedImage);
@@ -177,7 +184,12 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                         }
                     });
 
-                    userMessage.content = `${userMessage.content} (Image: ${uploadResponse.data.imageUrl})`;
+                    imageUrl = uploadResponse.data.imageUrl;
+                    userMessage.content = (
+                        <div>
+                            {userMessage.content} <img src={imageUrl} alt="uploaded" style={{ height: '60px' }} />
+                        </div>
+                    );
                 } catch (error) {
                     console.error('Error uploading image', error);
                 }
@@ -185,7 +197,31 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                 setSelectedImage(null);
             }
 
-            const messageData = { aiChatID: aiChatID, sender: 'user', content: input };
+            if (audioURL) {
+                const audioFormData = new FormData();
+                audioFormData.append('file', audioURL);
+
+                try {
+                    const uploadResponse = await axios.post(`${ASSISTANT_URL}/api/upload-audio`, audioFormData, {
+                        headers: {
+                            'Content-Type': 'multipart/form-data'
+                        }
+                    });
+
+                    audioUrl = uploadResponse.data.audioUrl;
+                    userMessage.content = (
+                        <div>
+                            {userMessage.content} <audio controls src={audioUrl}></audio>
+                        </div>
+                    );
+                } catch (error) {
+                    console.error('Error uploading audio', error);
+                }
+
+                setAudioURL(null);
+            }
+
+            const messageData = { aiChatID: aiChatID, sender: 'user', content: userMessage.content, imageUrl, audioUrl };
             try {
                 await axios.post(`${ASSISTANT_URL}/save-message`, messageData);
             } catch (error) {
@@ -195,7 +231,8 @@ const OpenShipAIChat = ({ userID, userRole }) => {
             try {
                 const response = await axios.post(`${ASSISTANT_URL}/api/chat`, {
                     message: input,
-                    imageUrl: selectedImage ? selectedImage.name : null
+                    imageUrl,
+                    audioUrl
                 });
 
                 const aiMessage = { sender: 'assistant', content: response.data.message };
@@ -250,6 +287,39 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         }
     };
 
+    const handleMicDown = async () => {
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const recorder = new Recorder(audioContext, {
+                onAnalysed: (data) => {
+                    // Ensure data is an array before setting it to volumeBars
+                    if (Array.isArray(data)) {
+                        setVolumeBars(data);
+                    } else {
+                        console.error('Expected an array for volumeBars, received:', data);
+                        setVolumeBars([]); // Reset to empty array if data is not an array
+                    }
+                }
+            });
+            recorder.init(stream);
+            recorder.start();
+            setRecorder(recorder);
+            setRecording(true);
+        }
+    };
+
+    const handleMicUp = async () => {
+        if (recorder) {
+            const { blob } = await recorder.stop();
+            const audioUrl = URL.createObjectURL(blob);
+            setAudioURL(blob);
+            setRecorder(null);
+            setRecording(false);
+            handleSendMessage();
+        }
+    };
+
     return (
         <div className="chat-container-wrapper">
             <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
@@ -296,7 +366,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                                 </div>
                                 <div className="message-content">
                                     <div className="message-label">{msg.sender === 'user' ? 'You' : 'Openship AI'}</div>
-                                    {msg.content}
+                                    {typeof msg.content === 'string' ? msg.content : msg.content}
                                 </div>
                             </div>
                         ))}
@@ -343,6 +413,27 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                             <img className="image-preview" src={URL.createObjectURL(selectedImage)} alt="Selected"/>
                         </div>
                     )}
+                    {recording && (
+                        <div className="recording-indicator">
+                            <span>
+                                <Bars
+                                    height="40"
+                                    width="40"
+                                    color="#015ff8"
+                                    ariaLabel="bars-loading"
+                                    wrapperStyle={{}}
+                                    wrapperClass=""
+                                    visible={true}
+                                   className="bars-loader"
+                                />
+                            </span>
+                            <div className="volume-bars">
+                                {volumeBars.map((bar, index) => (
+                                    <div key={index} style={{ height: `${bar * 100}%` }} className="volume-bar"></div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <div className="input-container">
                         <input
                             type="text"
@@ -359,7 +450,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                         />
                         <button onClick={() => document.getElementById('file-input').click()}><FaPicture
                             className="ai-chat-input-icons"/></button>
-                        <button onClick={handleSendMessage}><FaMic className="ai-chat-input-icons"/></button>
+                        <button onMouseDown={handleMicDown} onMouseUp={handleMicUp}><FaMic className="ai-chat-input-icons"/></button>
                         <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons"/></button>
                     </div>
                 </div>

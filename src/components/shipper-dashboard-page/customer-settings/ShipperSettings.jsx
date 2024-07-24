@@ -100,9 +100,8 @@ const ShipperSettings = () => {
 
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
-            setLoading(true); // Start loading
+            setLoading(true);
             const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
             axios.get(avatarUrl)
                 .then(() => {
                     setPreviewSavedImage(avatarUrl);

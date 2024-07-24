@@ -1,0 +1,94 @@
+.driver-container-card {
+    display: flex;
+    width: 100%;
+    height: fit-content;
+    background: white;
+    margin: 20px 0 20px 0;
+    justify-content: space-between;
+    align-items: center;
+    border-radius: 65px;
+    border: 1px solid var(--light-grey);
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
+
+.driver-photo-example {
+    width: 170px;
+    height: 170px;
+    border-radius: 45px;
+    margin: 0 20px 0 20px;
+}
+
+.driver-container-card:hover {
+    background: var(--light-grey-hovered-transparent);
+    transition: 0.2s ease-in-out;
+    border: 1px solid var(--royal-blue);
+}
+
+.driver-info-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 250px;
+    padding: 50px 0 50px 0;
+}
+
+.driver-info-container section label {
+    color: var(--light-grey);
+    font-size: 1.3rem;
+    font-weight: normal;
+}
+
+.driver-info-container section h3 {
+    color: var(--royal-blue);
+    font-size: 1.7rem;
+    font-weight: bold;
+}
+
+
+.driver-info-action-container {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    padding: 20px;
+    height: 100%;
+    align-content: end;
+    align-items: end;
+}
+
+.driver-info-action-container button {
+    width: fit-content;
+    height: fit-content;
+    font-size: 1.4rem;
+    font-weight: normal;
+    border-radius: 40px;
+    border: none;
+    padding: 10px 15px 10px 15px;
+    background: var(--royal-green);
+    color: var(--royal-white);
+    transition: 0.3s ease-in-out;
+}
+
+.driver-info-action-container button:hover {
+    transition: 0.3s ease-in-out;
+    background: var(--royal-green-hovered);
+}
+
+.more-driver-info {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+    padding: 8px;
+    color: var(--grey);
+    transition: 0.2s ease-in-out;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.more-driver-info:hover{
+    background: var(--light-grey-hovered);
+}

@@ -1,34 +1,8 @@
 import React, {useEffect, useState, useRef} from "react";
 import './ShipperDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../assets/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../assets/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../assets/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../assets/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../assets/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../assets/logout-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../assets/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../assets/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../assets/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../assets/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../assets/settings-icon-white.svg";
-import {ReactComponent as QoutesIcon} from "../../assets/listing-icon-grey.svg";
-import {ReactComponent as QoutesIconWhite} from "../../assets/listing-icon-white.svg";
-import {ReactComponent as CarrierChatIcon} from "../../assets/chat-icon-grey.svg";
-import {ReactComponent as CarrierChatIconWhite} from "../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../assets/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
-
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
 import MetricCompoent from "../metric-component/MetricCompoent";
-import GoogleMapRealTimeTrafficComponent
-    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
-import JarvisChatComponent from "../jarvis-chat-page/JarvisChatComponent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import ShipperActiveLoadsPanel from "../shipper-active-loads-panel/ShipperActiveLoadsPanel";

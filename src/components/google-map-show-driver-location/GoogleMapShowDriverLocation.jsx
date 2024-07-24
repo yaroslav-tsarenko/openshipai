@@ -3,13 +3,14 @@ import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@r
 import _ from 'lodash';
 const googleMapsLibraries = ['places'];
 const containerStyle = {
-    width: '100%',
+    width: '550px',
     height: '100%',
     borderTopRightRadius: '45px',
     borderBottomRightRadius: '45px',
 };
 
 const GoogleMapShowDirection = React.memo(function GoogleMapShowDirection({ origin, destination }) {
+
     const [directionsResponse, setDirectionsResponse] = useState(null);
     const [currentRequest, setCurrentRequest] = useState({ origin, destination });
     const directionsServiceRef = useRef();
@@ -17,7 +18,7 @@ const GoogleMapShowDirection = React.memo(function GoogleMapShowDirection({ orig
     const debouncedDirectionsCallback = useCallback(_.debounce((origin, destination) => {
         setDirectionsResponse(null);
         setCurrentRequest({ origin, destination });
-    }, 500), []); // Debounce time is 500ms
+    }, 500), []);
 
     useEffect(() => {
         if (origin && destination && (origin !== currentRequest.origin || destination !== currentRequest.destination)) {

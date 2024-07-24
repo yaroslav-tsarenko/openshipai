@@ -1,66 +1,110 @@
 import React, {useEffect, useState, useRef} from "react";
 import './DriverDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../assets/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../assets/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../assets/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../assets/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../assets/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../assets/logout-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../assets/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../assets/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../assets/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../assets/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../assets/settings-icon-white.svg";
-import {ReactComponent as QoutesIcon} from "../../assets/listing-icon-grey.svg";
-import {ReactComponent as QoutesIconWhite} from "../../assets/listing-icon-white.svg";
-import {ReactComponent as driverChatIcon} from "../../assets/chat-icon-grey.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../assets/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../assets/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../assets/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../assets/load-box-icon.svg";
-import {ReactComponent as driverChatIconWhite} from "../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../assets/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
 import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
 import MetricCompoent from "../metric-component/MetricCompoent";
 import GoogleMapRealTimeTrafficComponent
     from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
-import JarvisChatComponent from "../jarvis-chat-page/JarvisChatComponent";
+import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
+import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
+import {BACKEND_URL} from "../../constants/constants";
+import {Skeleton} from "@mui/material";
+import axios from "axios";
 
 const DriverDashboard = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [hoveredButton, setHoveredButton] = useState('');
+    const [driverInfo, setDriverInfo] = useState(null);
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [loading, setLoading] = useState(false);
     const {driverID} = useParams();
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    useEffect(() => {
+        const fetchLoads = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
+                setLoads(response.data);
+            } catch (error) {
+                console.error('Error fetching loads:', error);
+            }
+        };
+
+        fetchLoads();
+    }, []);
+
+    const assignedLoads = loads.filter(load => load.loadAssignedDriverID === driverID);
+
+
+    useEffect(() => {
+        const getDriver = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-driver/${driverID}`);
+                const data = await response.json();
+                setDriverInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getDriver();
+
+    },[driverID]);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-driver-avatar/${driverID}`);
+                if (response.data.driverAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.driverAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getAvatar();
+    }, [driverID]);
+
+    useEffect(() => {
+        if (driverInfo && driverInfo.driverAvatar) {
+            setLoading(true);
+            const avatarUrl = `${BACKEND_URL}/${driverInfo.driverAvatar}`;
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [driverInfo]);
+
     return (
         <div className="driver-dashboard-wrapper">
             <DashboardSidebar
                 DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
                 Settings={{visible: true, route: `/driver-settings/${driverID}`}}
                 AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
-                Profile={{visible: true, route: `/driver-profile/${driverID}`}}
             />
             <div className="driver-dashboard-content">
                 <HeaderDashboard
-                    contentTitle="Driver Dashboard"
-                    contentSubtitle="Welcome to your dashboard"
-                    accountName="Jack Daniels"
-                    accountRole="Driver"
+                    contentTitle={driverInfo ?
+                        <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                        <Skeleton variant="text" width={250}/>}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60}/>}
+                    accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
                     profileLink={`/driver-profile/${driverID}`}
                     bellLink={`/driver-settings/${driverID}`}
                     settingsLink={`/driver-profile/${driverID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="driver-dashboard-content-body">
                     <div className="driver-dashboard-chat-metric">
@@ -79,7 +123,7 @@ const DriverDashboard = () => {
                                             color="#009f52"/>
 
                         </div>
-                        <JarvisChatComponent/>
+                        <OpenShipAIChat/>
                     </div>
                     <div className="driver-dashboard-side-panel-wrapper">
                         <div className="driver-map-container">

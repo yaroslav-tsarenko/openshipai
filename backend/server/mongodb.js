@@ -106,12 +106,12 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
 });
 
 const transporter = nodemailer.createTransport({
-    host: "live.smtp.mailtrap.io",
+    host: "smtp.ethereal.email",
     port: 587,
-    secure: false,
+    secure: false, // Use `true` for port 465, `false` for all other ports
     auth: {
-        user: "api",
-        pass: "497af0a880150a79c7a956d93902bdc9",
+        user: "maddison53@ethereal.email",
+        pass: "jn7jnAPss4f63QBp6D",
     },
 });
 
@@ -158,6 +158,17 @@ app.post('/create-bid', async (req, res) => {
         res.json(savedLoadBid);
     } catch (error) {
         res.status(500).json({message: error.message});
+    }
+});
+
+app.get('/get-drivers/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+    try {
+        const drivers = await Driver.find({ driverCreatedByCarrierID: carrierID });
+        res.json(drivers);
+    } catch (error) {
+        console.error('Error fetching drivers:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -213,6 +224,52 @@ app.post('/upload-shipper-avatar/:shipperID', upload.single('avatar'), async (re
         res.json(shipper);
     } catch (error) {
         console.error('Error uploading avatar:', error);
+        res.status(500).json({message: error.message});
+    }
+});
+
+app.post('/upload-driver-avatar/:driverID', upload.single('avatar'), async (req, res) => {
+    const {driverID} = req.params;
+
+    try {
+        if (!req.file) {
+            return res.status(400).json({message: 'No file uploaded'});
+        }
+        const avatarPath = `uploads/${req.file.filename}`;
+        const driver = await Driver.findOneAndUpdate(
+            {driverID: driverID},
+            {driverAvatar: avatarPath},
+            {new: true}
+        );
+
+        if (!driver) {
+            return res.status(404).json({message: 'Driver not found'});
+        }
+
+        res.json(driver);
+
+    } catch (error) {
+        console.error('Error uploading avatar:', error);
+        res.status(500).json({message: error.message});
+    }
+});
+
+app.put('/update-driver/:driverID', async (req, res) => {
+    const {driverID} = req.params;
+    const {driverFirstAndLastName, driverEmail, driverPhoneNumber} = req.body;
+
+    try {
+        const driver = await Driver.findOne({driverID: driverID});
+        if (!driver) {
+            return res.status(404).json({message: 'Driver not found'});
+        }
+        if (driverFirstAndLastName) driver.driverFirstAndLastName = driverFirstAndLastName;
+        if (driverEmail) driver.driverEmail = driverEmail;
+        if (driverPhoneNumber) driver.driverPhoneNumber = driverPhoneNumber;
+        await driver.save();
+        res.json(driver);
+    } catch (error) {
+        console.error('Error updating shipper:', error);
         res.status(500).json({message: error.message});
     }
 });
@@ -297,10 +354,27 @@ app.get('/get-shipper-avatar/:shipperID', async (req, res) => {
     }
 });
 
+app.get('/get-driver-avatar/:driverID', async (req, res) => {
+    try {
+        const driver = await Driver.findOne({driverID: req.params.driverID});
+        if (!driver || !driver.driverAvatar) {
+            return res.status(404).json({message: 'Driver or avatar not found'});
+        }
+        const imagePath = path.join(__dirname, driver.driverAvatar);
+        console.log('Attempting to serve image from:', imagePath);
+        if (fs.existsSync(imagePath)) {
+            res.sendFile(imagePath);
+        } else {
+            res.status(404).json({message: 'Image file not found'});
+        }
+    } catch (err) {
+        res.status(500).json({message: err.message});
+    }
+});
+
 app.put('/update-shipper/:shipperID', async (req, res) => {
     const {shipperID} = req.params;
     const {name, secondName, phoneNumber, email} = req.body;
-
     try {
         const shipper = await Shipper.findOne({userShipperID: shipperID});
         if (!shipper) {
