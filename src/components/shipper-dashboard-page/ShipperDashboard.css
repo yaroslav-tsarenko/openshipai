@@ -415,14 +415,14 @@
     height: 90px;
 }
 
-.warning-container-wrapper{
+.warning-container-wrapper {
     position: absolute;
     z-index: 1000;
     max-width: 1050px;
     width: 100%;
 }
 
-.success-container{
+.success-container {
     background: var(--royal-green);
     width: 100%;
     display: flex;
@@ -431,7 +431,7 @@
     border-radius: 15px;
 }
 
-.success-container-header{
+.success-container-header {
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -443,23 +443,23 @@
     border-bottom: 1px solid var(--light-grey);
 }
 
-.success-container-header h2{
+.success-container-header h2 {
     font-size: 2rem;
     margin: 5px 0 0 5px;
     color: var(--royal-white);
 }
 
-.success-container-body{
+.success-container-body {
     padding: 10px;
     display: flex;
 }
 
-.success-container-body p{
+.success-container-body p {
     font-size: 1.8rem;
     color: var(--royal-white);
 }
 
-.bol-container{
+.bol-container {
     margin: 10px 0 0 0;
     background: var(--royal-yellow);
     width: 100%;
@@ -469,7 +469,7 @@
     border-radius: 15px;
 }
 
-.bol-container-header{
+.bol-container-header {
     padding: 10px;
     display: flex;
     justify-content: space-between;
@@ -481,23 +481,23 @@
     border-bottom: 1px solid var(--light-grey);
 }
 
-.bol-container-header h2{
+.bol-container-header h2 {
     font-size: 2rem;
     margin: 5px 0 0 5px;
     color: var(--royal-white);
 }
 
-.bol-container-body{
+.bol-container-body {
     padding: 10px;
     display: flex;
 }
 
-.bol-container-body p{
+.bol-container-body p {
     font-size: 1.8rem;
     color: var(--royal-white);
 }
 
-.close-warning-container-button{
+.close-warning-container-button {
     border: none;
     border-radius: 50px;
     width: 50px;
@@ -506,7 +506,7 @@
     transition: 0.2s ease-in-out;
 }
 
-.close-warning-container-button:hover{
+.close-warning-container-button:hover {
     background: var(--light-grey-hovered-transparent);
 }
 
@@ -1332,32 +1332,72 @@
 }
 
 .shipper-filter-buttons {
-    width: 350px;
+    width: 250px;
     display: flex;
     justify-content: space-between;
 }
 
 .filter-buttons-shipper {
     background: var(--royal-white);
-    color: var(--royal-blue);
-    font-size: 1.7rem;
+    color: var(--grey);
+    font-size: 1.4rem;
     font-weight: bold;
-    width: 150px;
+    padding: 15px 22px 15px 22px;
+    margin: 0;
+    height: fit-content;
+    background: var(--light-grey-hovered);
+    width: fit-content;
     border: none;
     transition: 0.2s ease-in-out;
     border-radius: 55px;
 }
 
 .filter-buttons-shipper:hover {
-    background: var(--royal-blue);
+    background: var(--light-grey);
+}
+
+.dropdown-animation {
+    position: absolute;
+    background-color: #f9f9f9;
+    width: fit-content;
+    border-radius: 8px;
+    color: var(--grey);
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    animation: slideIn 0.5s ease-out;
+}
+
+.dropdown-animation p {
+    margin: 5px;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 1.4rem;
+    font-weight: bold;
+    color: var(--grey);
+    border-radius: 8px;
     transition: 0.2s ease-in-out;
-    color: var(--royal-white);
+}
+
+.dropdown-animation p:hover {
+    background: var(--light-grey-hovered);
+    transition: 0.2s ease-in-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(10px);
+    }
 }
 
 .create-load-button {
     border-radius: 55px;
     display: flex;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     justify-content: center;
     align-content: center;
     align-items: center;
@@ -1371,8 +1411,12 @@
     transition: 0.2s ease-in-out;
 }
 
+.add-load-icon{
+    margin-right: 5px;
+}
+
 .circle-plus-icon {
-   margin: 0 3px 1px 0;
+    margin: 0 3px 1px 0;
 }
 
 .create-load-button:hover {
@@ -1636,7 +1680,7 @@
     margin: 20px auto;
 }
 
-.chat-id-containers-wrapper{
+.chat-id-containers-wrapper {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -1705,19 +1749,19 @@
     padding: 5px 0 5px;
 }
 
-.user-avatar-chat{
+.user-avatar-chat {
     height: 65px;
     width: 65px;
     border-radius: 50px;
 }
 
-.chat-details h3{
+.chat-details h3 {
     font-size: 2rem;
     font-weight: bold;
     color: var(--dark-grey);
 }
 
-.chat-details h4{
+.chat-details h4 {
     font-size: 1.7rem;
     font-weight: normal;
     color: var(--grey);
@@ -2216,7 +2260,7 @@
     font-size: 1.5rem;
 }
 
-.clip-loader-style{
+.clip-loader-style {
     display: flex;
     position: absolute;
     margin: 50px auto;
@@ -2224,11 +2268,92 @@
     align-items: center;
 }
 
-.chat-user-name{
+.chat-user-name {
     margin: 0 0 0 10px;
 }
 
-.load-status-delivering{
+.overlay-popup-select {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.select-popup {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    background: white;
+    width: 300px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 9999;
+}
+
+.select-popup-header {
+    display: flex;
+    padding: 10px 20px 10px 20px;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    justify-items: center;
+    border-bottom: 1px solid var(--light-grey);
+}
+
+.select-popup-content{
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.select-popup-content p{
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding: 10px;
+    border-radius: 10px;
+    color: var(--grey);
+    margin: 0 0 10px 0;
+    transition: 0.1s ease-in-out;
+}
+
+.select-popup-content p:hover{
+    background: var(--light-grey-hovered);
+    cursor: pointer;
+
+}
+
+.select-popup-header h2 {
+    font-size: 1.5rem;
+    margin: 0;
+    font-weight: bold;
+    color: var(--grey);
+}
+
+.close-popup-button {
+    color: var(--royal-red);
+    width: fit-content;
+    height: fit-content;
+    font-size: 1.5rem;
+    padding: 10px 15px 10px 15px;
+    display: flex;
+    transition: 0.2s ease-in-out;
+    border: none;
+    border-radius: 30px;
+}
+
+.close-popup-button:hover {
+    background: var(--light-grey-hovered);
+}
+
+.load-status-delivering {
     background: var(--light-grey-hovered);
     color: var(--royal-green);
     padding: 10px;

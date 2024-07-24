@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const multer = require('multer');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const ffmpeg = require('fluent-ffmpeg');
 require('dotenv').config();
 const AIChat = require('./models/AIChat');
 
@@ -23,14 +25,35 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
 app.post('/api/chat', async (req, res) => {
-    const { message, imageUrl, aiChatID } = req.body;
+    const { message, imageUrl, audioUrl, aiChatID } = req.body;
 
     try {
+        let audioText = '';
+        if (audioUrl) {
+            const response = await axios.post(
+                'https://api.openai.com/v1/transcriptions',
+                {
+                    model: 'whisper-1',
+                    file: audioUrl,
+                    language: 'en'
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${openaiApiKey}`,
+                        'Content-Type': 'multipart/form-data',
+                    }
+                }
+            );
+            audioText = response.data.text;
+        }
+
+        const finalMessage = audioText ? `${message} ${audioText}` : message;
+
         const response = await axios.post(
             'https://api.openai.com/v1/chat/completions',
             {
                 model: 'gpt-4',
-                messages: [{ role: 'user', content: message }],
+                messages: [{ role: 'user', content: finalMessage }],
             },
             {
                 headers: {
@@ -56,12 +79,12 @@ app.post('/api/chat', async (req, res) => {
 });
 
 app.post('/save-message', async (req, res) => {
-    const { aiChatID, sender, content } = req.body;
+    const { aiChatID, sender, content, imageUrl, audioUrl } = req.body;
 
     try {
         const chat = await AIChat.findOne({ aiChatID });
         if (chat) {
-            chat.messages.push({ sender, content });
+            chat.messages.push({ sender, content, imageUrl, audioUrl });
             await chat.save();
             res.status(200).json({ message: 'Message saved successfully' });
         } else {
@@ -122,6 +145,31 @@ app.post('/api/upload-image', upload.single('file'), async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).send('Error uploading image');
+    }
+});
+
+app.post('/api/upload-audio', upload.single('file'), async (req, res) => {
+    try {
+        const file = req.file;
+        const filePath = `/uploads/${file.originalname}`;
+        fs.writeFileSync(filePath, file.buffer);
+
+        // Transcode the audio file to a format supported by OpenAI
+        const outputFilePath = `/uploads/${file.originalname.split('.')[0]}.mp3`;
+        ffmpeg(filePath)
+            .toFormat('mp3')
+            .on('end', () => {
+                fs.unlinkSync(filePath); // Remove the original file
+                res.json({ audioUrl: outputFilePath });
+            })
+            .on('error', (err) => {
+                console.error('Error transcoding audio file:', err);
+                res.status(500).send('Error transcoding audio file');
+            })
+            .save(outputFilePath);
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Error uploading audio');
     }
 });
 

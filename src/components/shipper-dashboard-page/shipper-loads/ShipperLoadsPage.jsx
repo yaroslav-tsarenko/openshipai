@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import '../ShipperDashboard.css';
 import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
 import {ReactComponent as ArrowRight} from '../../../assets/arrow-right-load-frame.svg';
@@ -6,10 +6,8 @@ import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
 import {ReactComponent as ArrowBack} from "../../../assets/arrow-back.svg";
 import {ReactComponent as LoadDirectionsIcon} from "../../../assets/create-load-direction.svg";
 import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
 import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
-import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
-import { CiCirclePlus } from "react-icons/ci";
+import {ReactComponent as AddLoadIcon} from "../../../assets/add-load-icon.svg";
 import VehicleLoadType from "../../../assets/vehicle-category.svg";
 import MovingLoadType from "../../../assets/moving-category.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
@@ -53,16 +51,22 @@ import FarmEquipmentLoadContainer from "../../load-containers/farm-equipment-loa
 import {Skeleton} from "@mui/material";
 import {BACKEND_URL} from "../../../constants/constants";
 
+
 const ShipperLoadsPage = () => {
-    const [hoveredButton, setHoveredButton] = useState('');
     const [createLoadSection, setCreateLoadSection] = useState(false);
     const {shipperID} = useParams();
     const [loads, setLoads] = useState([]);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [step, setStep] = useState(1);
+    const [sortedLoads, setSortedLoads] = useState([]);
     const [shipperInfo, setShipperInfo] = useState(null);
+    const dropdownRef = useRef(null);
     const [loading, setLoading] = useState(false);
-
+    const [selectedFilter, setSelectedFilter] = useState('');
+    const [showSortPopup, setShowSortPopup] = useState(false);
+    const [showFilterPopup, setShowFilterPopup] = useState(false);
+    const [sortOrder, setSortOrder] = useState('');
+    const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
     const [formData, setFormData] = useState({
         pickupLocation: '',
         pickupLocationDate: '',
@@ -74,41 +78,46 @@ const ShipperLoadsPage = () => {
         loadSubType: ''
     });
 
-
     useEffect(() => {
-        if (shipperInfo && shipperInfo.userShipperAvatar) {
-            setLoading(true);
-            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
-            axios.get(avatarUrl)
-                .then(() => {
-                    setPreviewSavedImage(avatarUrl);
-                    setLoading(false);
-                })
-                .catch(() => {
-                    console.error('Image does not exist');
-                    setLoading(false);
-                });
-        }
-    }, [shipperInfo]);
-
+        const filtered = getFilteredLoads(); // Assuming this function applies the selectedFilter to loads
+        const sorted = filtered.sort((a, b) => {
+            if (sortOrder === 'ascending') {
+                return a.loadPrice - b.loadPrice;
+            } else if (sortOrder === 'descending') {
+                return b.loadPrice - a.loadPrice;
+            }
+            return 0;
+        });
+        setSortedAndFilteredLoads(sorted);
+    }, [loads, selectedFilter, sortOrder]);
 
     useEffect(() => {
         const getUser = async () => {
             try {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
-
                 setShipperInfo(data);
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
-        getUser();
-    }, [shipperInfo, shipperID]);
+        const fetchAvatar = async () => {
+            if (shipperInfo && shipperInfo.userShipperAvatar) {
+                setLoading(true);
+                const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
 
-    useEffect(() => {
+                try {
+                    await axios.get(avatarUrl);
+                    setPreviewSavedImage(avatarUrl);
+                } catch (error) {
+                    console.error('Image does not exist');
+                } finally {
+                    setLoading(false);
+                }
+            }
+        };
+
         const fetchLoads = async () => {
             try {
                 const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
@@ -118,8 +127,45 @@ const ShipperLoadsPage = () => {
             }
         };
 
+        getUser();
+        fetchAvatar();
         fetchLoads();
-    }, []);
+    }, [shipperInfo, shipperID]);
+
+
+    const toggleSortPopup = () => setShowSortPopup(!showSortPopup);
+    const toggleFilterPopup = () => setShowFilterPopup(!showFilterPopup);
+
+    const getFilteredLoads = () => {
+        if (!selectedFilter) return loads; // No filter selected, return all loads
+        return loads.filter(load => load.loadType === selectedFilter);
+    };
+
+    const handleFilterSelection = (filterType) => {
+        setSelectedFilter(filterType);
+    };
+    const handleSortAscending = () => {
+        setSortOrder('ascending');
+        sortLoadsByPrice('ascending');
+    };
+
+    const sortLoadsByPrice = (order) => {
+        const sorted = [...loads].sort((a, b) => {
+            if (order === 'ascending') {
+                return a.loadPrice - b.loadPrice;
+            } else if (order === 'descending') {
+                return b.loadPrice - a.loadPrice;
+            }
+            return 0;
+        });
+        setSortedLoads(sorted);
+    };
+
+
+    const handleSortDescending = () => {
+        setSortOrder('descending');
+        sortLoadsByPrice('descending');
+    };
 
     const handleLoadFrameClick = (loadType) => {
         setFormData(prevState => ({...prevState, loadType}));
@@ -148,10 +194,10 @@ const ShipperLoadsPage = () => {
                 <HeaderDashboard
                     contentTitle={shipperInfo ?
                         <>Welcome back, {shipperInfo.userShipperName}!</> :
-                        <Skeleton variant="text" width={250} />}
+                        <Skeleton variant="text" width={250}/>}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
@@ -161,58 +207,90 @@ const ShipperLoadsPage = () => {
                     <div className="shipper-loads-dashboard-content-body">
                         <div className="shipper-dashboard-load-buttons">
                             <section className="shipper-filter-buttons">
-                                <button className="filter-buttons-shipper"
-                                        onMouseEnter={() => setHoveredButton('SortButton')}
-                                        onMouseLeave={() => setHoveredButton('')}>
-                                    {hoveredButton === 'SortButton' ?
-                                        <SortIconWhite className="button-nav-load-icon"/> :
-                                        <SortIcon className="button-nav-load-icon"/>}
+
+                                <button className="filter-buttons-shipper" onClick={toggleSortPopup}>
+                                    <SortIcon className="button-nav-load-icon"/>
                                     Sort
                                 </button>
-                                <button className="filter-buttons-shipper"
-                                        onMouseEnter={() => setHoveredButton('FilterButton')}
-                                        onMouseLeave={() => setHoveredButton('')}>
-                                    {hoveredButton === 'FilterButton' ?
-                                        <FilterIconWhite className="button-nav-load-icon"/> :
-                                        <FilterIcon className="button-nav-load-icon"/>}
+
+                                <button className="filter-buttons-shipper" onClick={toggleFilterPopup}>
+                                    <FilterIcon className="button-nav-load-icon"/>
                                     Filter
                                 </button>
+
+                                {showSortPopup && (
+                                    <div className="overlay-popup-select" onClick={toggleSortPopup}>
+                                        <div className="select-popup" onClick={e => e.stopPropagation()}>
+                                            <div className="select-popup-header">
+                                                <h2>Sort Options</h2>
+                                                <button onClick={toggleSortPopup} className="close-popup-button">Close
+                                                </button>
+                                            </div>
+                                            <div className="select-popup-content">
+                                                <p onClick={handleSortAscending}>In ascending order</p>
+                                                <p onClick={handleSortDescending}>In descending order</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {showFilterPopup && (
+                                    <div className="overlay-popup-select" onClick={toggleFilterPopup}>
+                                        <div className="select-popup" onClick={e => e.stopPropagation()}>
+                                            <div className="select-popup-header">
+                                                <h2>Filter Options</h2>
+                                                <button onClick={toggleFilterPopup} className="close-popup-button">Close</button>
+                                            </div>
+                                            <div className="select-popup-content">
+                                                <p onClick={() => handleFilterSelection('')}>Show All</p>
+                                                <p onClick={() => handleFilterSelection('Vehicle Load')}>Only Vehicle Load</p>
+                                                <p onClick={() => handleFilterSelection('Moving')}>Only Moving</p>
+                                                <p onClick={() => handleFilterSelection('Freight')}>Only Freight</p>
+                                                <p onClick={() => handleFilterSelection('Heavy Equipment')}>Only Heavy Equipment</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+
                             </section>
                             <button className="create-load-button" onClick={() => setCreateLoadSection(false)}>
-                                <CiCirclePlus className="circle-plus-icon"/>
+                                <AddLoadIcon className="add-load-icon"/>
                                 Create New Load
                             </button>
                         </div>
                         <div className="load-containers-wrapper">
-                            {/*<button className="apply-settings-button" onClick={deleteAllLoads}>delete all loads</button>*/}
-                            {loads.length > 0 ? (
-                                loads.map((load, index) => (
-                                    <div key={index}>
-                                        <LoadContainer
-                                            loadStatus={load.loadStatus}
-                                            loadPrice={load.loadPrice}
-                                            loadTitle={load.loadTitle}
-                                            loadTrailerType={load.loadTypeOfTrailer}
-                                            loadCredentialID={load.loadCredentialID}
-                                            loadWeight={load.loadWeight}
-                                            loadPickupTime={load.loadPickupDate}
-                                            loadDeliveryTime={load.loadPickupDate}
-                                            loadType={load.loadType}
-                                            shipperID={shipperID}
-                                            loadPickupLocation={load.loadPickupLocation}
-                                            loadDeliveryLocation={load.loadDeliveryLocation}
-                                            loadVehicleModel={load.loadVehicleModel}
-                                            loadVehicleYear={load.loadVehicleYear}
-                                            loadMilesTrip={load.loadMilesTrip}
-                                            loadQoutes={load.loadQoutes}
-                                            loadTypeOfPackaging={load.loadTypeOfPackaging}
-                                            loadDescription={load.loadDescription}
-                                        />
-                                    </div>
-                                ))
-                            ) : (
-                                <p className="load-empty-message">You don't have created any load</p>
-                            )}
+                            {
+                                loads.length === 0 ? (
+                                    <p className="load-empty-message">You haven't created any load</p>
+                                ) : sortedAndFilteredLoads.length > 0 ? (
+                                    sortedAndFilteredLoads.map((load, index) => (
+                                        <div key={index}>
+                                            <LoadContainer
+                                                loadStatus={load.loadStatus}
+                                                loadPrice={load.loadPrice}
+                                                loadTitle={load.loadTitle}
+                                                loadTrailerType={load.loadTypeOfTrailer}
+                                                loadCredentialID={load.loadCredentialID}
+                                                loadWeight={load.loadWeight}
+                                                loadPickupTime={load.loadPickupDate}
+                                                loadDeliveryTime={load.loadPickupDate}
+                                                loadType={load.loadType}
+                                                shipperID={shipperID}
+                                                loadPickupLocation={load.loadPickupLocation}
+                                                loadDeliveryLocation={load.loadDeliveryLocation}
+                                                loadVehicleModel={load.loadVehicleModel}
+                                                loadVehicleYear={load.loadVehicleYear}
+                                                loadMilesTrip={load.loadMilesTrip}
+                                                loadQoutes={load.loadQoutes}
+                                                loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                                loadDescription={load.loadDescription}
+                                            />
+                                        </div>
+                                    ))
+                                ) : (
+                                    <p className="load-empty-message">No loads match the selected filter</p>
+                                )
+                            }
                         </div>
                     </div>
                 ) : (

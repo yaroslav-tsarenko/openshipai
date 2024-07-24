@@ -1201,6 +1201,27 @@ export default ShipperSettings;
   }
 </style>
 
+<LoadContainer
+                                                loadStatus={load.loadStatus}
+                                                loadPrice={load.loadPrice}
+                                                loadTitle={load.loadTitle}
+                                                loadTrailerType={load.loadTypeOfTrailer}
+                                                loadCredentialID={load.loadCredentialID}
+                                                loadWeight={load.loadWeight}
+                                                loadPickupTime={load.loadPickupDate}
+                                                loadDeliveryTime={load.loadPickupDate}
+                                                loadType={load.loadType}
+                                                shipperID={shipperID}
+                                                loadPickupLocation={load.loadPickupLocation}
+                                                loadDeliveryLocation={load.loadDeliveryLocation}
+                                                loadVehicleModel={load.loadVehicleModel}
+                                                loadVehicleYear={load.loadVehicleYear}
+                                                loadMilesTrip={load.loadMilesTrip}
+                                                loadQoutes={load.loadQoutes}
+                                                loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                                loadDescription={load.loadDescription}
+                                            />
+
 
 
 

@@ -27,7 +27,7 @@ import CarrierProfilePage from "./components/carrier-dashboard/carrier-profile/C
 import CarrierPaymentsPage from "./components/carrier-dashboard/carrier-payments/CarrierPaymentsPage";
 import CarrierLoads from "./components/carrier-dashboard/carrier-loads-page/CarrierLoads";
 import DriverProfile from "./components/driver-dashboard/driver-details/DriverProfile";
-import DriverAssignedLoads from "./components/driver-dashboard/driver-pages/DriverAssignedLoads";
+import DriverAssignedLoads from "./components/driver-dashboard/driver-assigned-loads-page/DriverAssignedLoads";
 import ShipperLoadPage from "./components/shipper-dashboard-page/shipper-load/ShipperLoadPage";
 import SuccessPaymentPage from "./pages/success-payment/SuccessPaymentPage";
 import FailedPaymentPage from "./pages/failed-payment/FailedPaymentPage";

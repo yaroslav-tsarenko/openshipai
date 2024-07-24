@@ -1,51 +1,22 @@
 import React, {useEffect, useState, useRef} from "react";
 import './CarrierDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../assets/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../assets/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../assets/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../assets/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../assets/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../assets/logout-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../assets/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../assets/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../assets/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../assets/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../assets/settings-icon-white.svg";
-import {ReactComponent as QoutesIcon} from "../../assets/listing-icon-grey.svg";
-import {ReactComponent as QoutesIconWhite} from "../../assets/listing-icon-white.svg";
-import {ReactComponent as CarrierChatIcon} from "../../assets/chat-icon-grey.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../assets/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../assets/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../assets/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../assets/load-box-icon.svg";
-import {ReactComponent as CarrierChatIconWhite} from "../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../assets/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
 import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
 import {ReactComponent as CarrierIcon} from "../../assets/trane-logo-carrier.svg";
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
 import MetricCompoent from "../metric-component/MetricCompoent";
 import GoogleMapRealTimeTrafficComponent
     from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
-import JarvisChatComponent from "../jarvis-chat-page/JarvisChatComponent";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
 import {Skeleton} from "@mui/material";
+import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 
 const CarrierDashboard = () => {
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [hoveredButton, setHoveredButton] = useState('');
     const {carrierID} = useParams();
-
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
 
@@ -73,8 +44,6 @@ const CarrierDashboard = () => {
         getAvatar();
     }, [carrierID]);
 
-
-
     return (
         <div className="carrier-dashboard-wrapper">
             <DashboardSidebar
@@ -84,7 +53,6 @@ const CarrierDashboard = () => {
                 DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
-                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
             />
             <div className="carrier-dashboard-content">
@@ -117,7 +85,7 @@ const CarrierDashboard = () => {
                                             color="#009f52"/>
 
                         </div>
-                        <JarvisChatComponent/>
+                        <OpenShipAIChat/>
                     </div>
                     <div className="carrier-dashboard-side-panel-wrapper">
                         <div className="carrier-map-container">

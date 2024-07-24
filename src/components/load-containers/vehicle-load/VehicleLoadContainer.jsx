@@ -9,6 +9,7 @@ import RecommendationContainer from "../../reccomendation-container/Recommendati
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 import {BeatLoader, CircleLoader, ClipLoader} from "react-spinners";
+import {BACKEND_URL} from "../../../constants/constants";
 
 const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -98,7 +99,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
             ...formData,
         });
         try {
-            const response = await axios.post('${BACKEND_URL}/save-load-data', formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
             if (response.status === 200) {
                 window.location.reload();
             }

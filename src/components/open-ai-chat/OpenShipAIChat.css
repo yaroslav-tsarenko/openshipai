@@ -392,6 +392,19 @@
 .image-preview:hover {
 }
 
+.recording-indicator{
+    display: flex;
+    margin: 10px 0 0 40px;
+}
+
+.bars-loader{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px 0 0 40px;
+
+}
+
 .dot {
     height: 8px;
     width: 8px;
@@ -428,6 +441,8 @@
 .dot:nth-child(3) {
     animation-delay: 0.4s;
 }
+
+
 
 @keyframes appear {
     to {
