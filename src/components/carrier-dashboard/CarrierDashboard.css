@@ -1146,10 +1146,10 @@
 
 .load-status-section {
     display: flex;
-    padding: 5px;
+    padding: 5px 10px 5px 10px;
     margin: 0 0 10px 0;
     border-radius: 15px;
-    width: 70px;
+    width: fit-content;
     color: var(--grey);
     font-weight: 700;
     font-size: 1.2rem;
@@ -1231,6 +1231,7 @@
     display: flex;
     width: 7px;
     height: 7px;
+    margin: 0 4px 0 0;
     align-items: center;
     justify-content: center;
     background: var(--royal-green);
@@ -1243,11 +1244,7 @@
     overflow: hidden;
 }
 
-.metrics-container-wrapper {
-    width: 100%;
-    justify-content: space-between;
-    display: flex;
-}
+
 
 .ai-chat-content {
     display: flex;

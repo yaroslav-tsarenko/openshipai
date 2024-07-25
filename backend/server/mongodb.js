@@ -1346,6 +1346,24 @@ app.get('/get-driver/:driverID', async (req, res) => {
     }
 });
 
+app.put('/update-driver-info/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    const { driverLicenceClass, driverTruck, driverInsurance } = req.body;
+    try {
+        const driver = await Driver.findOne({ driverID });
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
+        driver.driverLicenceClass = driverLicenceClass;
+        driver.driverTruck = driverTruck;
+        driver.driverInsurance = driverInsurance;
+        await driver.save();
+        res.json({ message: 'Driver information updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.put('/update-load-assigning/:loadID', async (req, res) => {
     const {loadID} = req.params;
     const {loadAssignedDriverID} = req.body;

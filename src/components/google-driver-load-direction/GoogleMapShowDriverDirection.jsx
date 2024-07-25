@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, Marker } from '@react-google-maps/api';
 import _ from 'lodash';
 
 const containerStyle = {
@@ -9,9 +9,10 @@ const containerStyle = {
     borderTopLeftRadius: '45px',
 };
 
-const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDirection({ origin, destination }) {
+const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDirection({ origin, destination }) {
     const [directionsResponse, setDirectionsResponse] = useState(null);
     const [currentRequest, setCurrentRequest] = useState({ origin, destination });
+    const [currentLocation, setCurrentLocation] = useState(null);
     const directionsServiceRef = useRef();
 
     const debouncedDirectionsCallback = useCallback(_.debounce((origin, destination) => {
@@ -25,6 +26,22 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDirection(
     };
 
     useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setCurrentLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
+                },
+                (error) => {
+                    console.log(error);
+                },
+                { enableHighAccuracy: true }
+            );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }, []);
+
+    useEffect(() => {
         if (origin && destination && (origin !== currentRequest.origin || destination !== currentRequest.destination)) {
             debouncedDirectionsCallback(origin, destination);
         }
@@ -35,23 +52,13 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDirection(
             if (response.status === 'OK') {
                 setDirectionsResponse(response);
             } else if (response.status === 'ZERO_RESULTS') {
-                // Fallback: Try a different travel mode or route
-                directionsServiceRef.current.route({
-                    origin: currentRequest.origin,
-                    destination: currentRequest.destination,
-                    travelMode: 'WALKING' // Change this to a different travel mode
-                }, (result, status) => {
-                    if (status === 'OK') {
-                        setDirectionsResponse(result);
-                    } else {
-                        console.log('Directions request failed due to ' + status);
-                    }
-                });
+                console.log('No route could be found between the origin and destination.');
             } else {
                 console.log('Directions request failed due to ' + response.status);
             }
         }
     };
+
     return (
         <LoadScript
             googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM"
@@ -60,9 +67,13 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDirection(
         >
             <GoogleMap
                 mapContainerStyle={containerStyle}
-                center={directionsResponse ? directionsResponse.routes[0].bounds.getCenter() : { lat: -34.397, lng: 150.644 }}
+                center={currentLocation || { lat: -34.397, lng: 150.644 }}
                 zoom={10}
             >
+                {currentLocation && (
+                    <Marker position={currentLocation} />
+                )}
+
                 {origin && destination && !directionsResponse && (
                     <DirectionsService
                         ref={directionsServiceRef}
