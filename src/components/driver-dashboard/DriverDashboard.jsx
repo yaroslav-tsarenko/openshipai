@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import './DriverDashboard.css';
-import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import GoogleMapRealTimeTrafficComponent
@@ -12,6 +11,7 @@ import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import {BACKEND_URL} from "../../constants/constants";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
+import ActiveAssignedLoadContainer from "../active-assigned-load-container/ActiveAssignedLoadContainer";
 
 const DriverDashboard = () => {
 
@@ -20,8 +20,20 @@ const DriverDashboard = () => {
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const {driverID} = useParams();
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
+    const [loads, setLoads] = useState([]);
+    const [origin, setOrigin] = useState("");
+    const [destination, setDestination] = useState("");
+    const [showPopup, setShowPopup] = useState(false);
+    const [formData, setFormData] = useState({
+        driverLicenceClass: '',
+        driverTruck: '',
+        driverInsurance: ''
+    });
+
+
+    const handleClick = (load) => {
+        setOrigin(load.loadPickupLocation);
+        setDestination(load.loadDeliveryLocation);
     };
 
     useEffect(() => {
@@ -46,6 +58,9 @@ const DriverDashboard = () => {
                 const response = await fetch(`${BACKEND_URL}/get-driver/${driverID}`);
                 const data = await response.json();
                 setDriverInfo(data);
+                if (!data.driverLicenceClass || !data.driverTruck || !data.driverInsurance) {
+                    setShowPopup(true);
+                }
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -53,7 +68,7 @@ const DriverDashboard = () => {
 
         getDriver();
 
-    },[driverID]);
+    }, [driverID]);
 
     useEffect(() => {
         const getAvatar = async () => {
@@ -86,176 +101,138 @@ const DriverDashboard = () => {
         }
     }, [driverInfo]);
 
-    return (
-        <div className="driver-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
-            />
-            <div className="driver-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={driverInfo ?
-                        <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
-                        <Skeleton variant="text" width={250}/>}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60}/>}
-                    accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
-                    profileLink={`/driver-profile/${driverID}`}
-                    bellLink={`/driver-settings/${driverID}`}
-                    settingsLink={`/driver-profile/${driverID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                />
-                <div className="driver-dashboard-content-body">
-                    <div className="driver-dashboard-chat-metric">
-                        <div className="metrics-container-wrapper">
-                            <MetricCompoent text="Service Rating"
-                                            description="It’s yours global reputation on service"
-                                            percent={75}
-                                            color="#FFC107"/>
-                            <MetricCompoent text="Success agreement "
-                                            description="Average percent of  cooperate with driver"
-                                            percent={55}
-                                            color="#0061ff"/>
-                            <MetricCompoent text="Service Activity"
-                                            description="Monitoring, service usability, connections"
-                                            percent={86}
-                                            color="#009f52"/>
+    const handleChange = (e) => {
+        const {name, value} = e.target;
+        setFormData({...formData, [name]: value});
+    };
 
+    const handleSubmit = async () => {
+        try {
+            await axios.put(`${BACKEND_URL}/update-driver-info/${driverID}`, formData);
+            setShowPopup(false);
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
+
+    return (
+        <>
+            {showPopup && (
+                <div className="driver-data-popup-overlay">
+                    <div className="driver-popup">
+                        <h3>Complete Your Profile</h3>
+                        <div className="google-input-wrapper">
+                            <input
+                                type="text"
+                                name="driverLicenceClass"
+                                value={formData.driverLicenceClass}
+                                onChange={handleChange}
+                                className="google-style-input"
+                                required
+                            />
+                            <label className="google-style-input-label">Driver Licence Class</label>
                         </div>
-                        <OpenShipAIChat/>
+                        <div className="google-input-wrapper">
+                            <input
+                                type="text"
+                                name="driverTruck"
+                                value={formData.driverTruck}
+                                onChange={handleChange}
+                                className="google-style-input"
+                                required
+                            />
+                            <label className="google-style-input-label">Driver Truck</label>
+                        </div>
+                        <div className="google-input-wrapper">
+                            <input
+                                type="date"
+                                name="driverInsurance"
+                                value={formData.driverInsurance}
+                                onChange={handleChange}
+                                className="google-style-input"
+                                required
+                            />
+                            <label className="google-style-input-label">Driver Insurance Valid To</label>
+                        </div>
+                        <p>Before using or account, you need to completed you data, to satisfy our service!</p>
+                        <button className="submit-bid-button" onClick={handleSubmit}>Submit</button>
                     </div>
-                    <div className="driver-dashboard-side-panel-wrapper">
-                        <div className="driver-map-container">
-                            <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
-                                                               origin="New York" destination="Washington"/>
+                </div>
+            )}
+            <div className="driver-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
+                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
+                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                />
+                <div className="driver-dashboard-content">
+                    <HeaderDashboard
+                        contentTitle={driverInfo ?
+                            <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={driverInfo ? driverInfo.driverFirstAndLastName :
+                            <Skeleton variant="text" width={60}/>}
+                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
+                        profileLink={`/driver-profile/${driverID}`}
+                        bellLink={`/driver-settings/${driverID}`}
+                        settingsLink={`/driver-profile/${driverID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    />
+                    <div className="driver-dashboard-content-body">
+                        <div className="driver-dashboard-chat-metric">
+                            <div className="metrics-container-wrapper">
+                                <MetricCompoent text="Service Rating"
+                                                description="It’s yours global reputation on service"
+                                                percent={75}
+                                                color="#FFC107"/>
+                                <MetricCompoent text="Success agreement "
+                                                description="Average percent of  cooperate with driver"
+                                                percent={55}
+                                                color="#0061ff"/>
+                                <MetricCompoent text="Service Activity"
+                                                description="Monitoring, service usability, connections"
+                                                percent={86}
+                                                color="#009f52"/>
+
+                            </div>
+                            <OpenShipAIChat/>
                         </div>
-                        <div className="driver-dashboard-side-panel">
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-driver">
-                                    <driverIcon className="driver-icon"/>
-                                    <button className="chat-driver-button">Chat with Shipper</button>
-                                </div>
+                        <div className="driver-dashboard-side-panel-wrapper">
+                            <div className="driver-map-container">
+                                <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
+                                                                   origin={origin} destination={destination}/>
                             </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
+                            <div className="driver-dashboard-side-panel">
+
+                                {assignedLoads.length > 0 ? (
+                                    assignedLoads.map(load => (
+                                        <div onClick={() => handleClick(load)}>
+                                            <ActiveAssignedLoadContainer
+                                                key={load.loadID}
+                                                loadType={load.loadType}
+                                                driverID={driverID}
+                                                origin={load.loadPickupLocation}
+                                                destination={load.loadDeliveryLocation}
+                                                originTime={load.loadPickupDate}
+                                                destinationTime={load.loadDeliveryDate}
+                                                status={load.loadStatus}
+                                                distance={load.loadMilesTrip}
+                                                loadID={load.loadCredentialID}
+                                            />
                                         </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-driver">
-                                    <driverIcon className="driver-icon"/>
-                                    <button className="chat-driver-button">Chat with Shipper</button>
-                                </div>
-                            </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-driver">
-                                    <driverIcon className="driver-icon"/>
-                                    <button className="chat-driver-button">Chat with Shipper</button>
-                                </div>
-                            </div>
-                            <div className="active-load-container">
-                                <div className="load-container-status">
-                                    <section className="load-status-section">
-                                        <div className="load-status-icon"></div>
-                                        Booked
-                                    </section>
-                                    <div className="load-directions">
-                                        <DirectionIcon className="load-directions-icon"/>
-                                        <div className="origin-destination-container">
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">New York, USA</h3>
-                                                <p className="load-directions-description">13:00</p>
-                                            </section>
-                                            <section className="section-origin-destination">
-                                                <h3 className="load-directions-title">Washington, USA</h3>
-                                                <p className="load-directions-description">18:00</p>
-                                            </section>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="load-container-info">
-                                    <section className="load-info-section">Vehicle Load</section>
-                                    <section className="load-info-section">239 mil</section>
-                                    <section className="load-info-section">5674-5385-6525-8642</section>
-                                </div>
-                                <div className="load-container-driver">
-                                    <driverIcon className="driver-icon"/>
-                                    <button className="chat-driver-button">Chat with Shipper</button>
-                                </div>
+
+                                    ))
+                                ) : (
+                                    <p className="driver-assigned-load-message">Carrier didn't assign loads for you</p>
+                                )}
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+        </>
     );
 };
 

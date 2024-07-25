@@ -1,31 +1,27 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useEffect, useState } from "react";
 import '../DriverDashboard.css';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from "axios";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import { ReactComponent as DefaultUserAvatar } from "../../../assets/default-avatar.svg";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import { useNavigate } from 'react-router-dom';
 import GoogleMapShowDriverDirection from "../../google-driver-load-direction/GoogleMapShowDriverDirection";
 import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
 import ClipLoader from "react-spinners/ClipLoader";
-import {BACKEND_URL} from "../../../constants/constants";
-import {Skeleton} from "@mui/material";
+import { BACKEND_URL } from "../../../constants/constants";
+import { Skeleton } from "@mui/material";
 
 const DriverAssignedLoad = () => {
     const [isPickedUp, setIsPickedUp] = useState(false);
-    const {loadID} = useParams();
+    const { loadID, driverID } = useParams();
     const [loading, setLoading] = useState(false);
     const [driverInfo, setDriverInfo] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [isLoadDeliveredStatus, setIsLoadDeliveredStatus] = useState(false);
     const [isCompletingDelivering, setIsCompletingDelivering] = useState(false);
     const [load, setLoad] = useState([]);
-    let loadDeliveryLocation = load.loadDeliveryLocation;
-    let loadPickUpLocation = load.loadPickupLocation;
     const [currentLocation, setCurrentLocation] = useState(null);
-    const {driverID} = useParams();
-    const [currentDestination, setCurrentDestination] = useState(loadPickUpLocation);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -40,8 +36,7 @@ const DriverAssignedLoad = () => {
         };
 
         getDriver();
-
-    },[driverID]);
+    }, [driverID]);
 
     useEffect(() => {
         const getAvatar = async () => {
@@ -107,18 +102,16 @@ const DriverAssignedLoad = () => {
         setIsCompletingDelivering(false);
     };
 
-
-
     const updateLocation = () => {
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
-                    setCurrentLocation({lat: position.coords.latitude, lng: position.coords.longitude});
+                    setCurrentLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
                 },
                 (error) => {
                     console.log(error);
                 },
-                {enableHighAccuracy: true}
+                { enableHighAccuracy: true }
             );
         } else {
             alert("Geolocation is not supported by this browser.");
@@ -129,29 +122,27 @@ const DriverAssignedLoad = () => {
         updateLocation();
     }, []);
 
-
     const handlePickUp = () => {
         setIsPickedUp(true);
     };
 
-
     return (
         <>
-            {isLoadDeliveredStatus && <FloatingWindowSuccess text="You succesfully delivered load"/>}
+            {isLoadDeliveredStatus && <FloatingWindowSuccess text="You successfully delivered load" />}
             <div className="driver-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                    DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
+                    Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
+                    AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
                 />
                 <div className="driver-dashboard-content">
                     <HeaderDashboard
                         contentTitle={driverInfo ?
                             <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
-                            <Skeleton variant="text" width={250}/>}
+                            <Skeleton variant="text" width={250} />}
                         contentSubtitle="Monitor payments, loads, revenues"
-                        accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60}/>}
-                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
+                        accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60} />}
+                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40} />}
                         profileLink={`/driver-profile/${driverID}`}
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
@@ -163,6 +154,7 @@ const DriverAssignedLoad = () => {
                                 <GoogleMapShowDriverDirection
                                     origin={currentLocation}
                                     destination={isPickedUp ? load.loadDeliveryLocation : load.loadPickupLocation}
+                                    currentLocation={currentLocation}
                                 />
                             }
                         </div>
@@ -173,14 +165,15 @@ const DriverAssignedLoad = () => {
                                         3 hr 18 min
                                     </h2>
                                     <span>
-                                    <p>
-                                    150 mi
-                                    </p>
-                                    <p>
-                                    3:50pm
-                                    </p>
-                                </span>
+                                        <p>
+                                            150 mi
+                                        </p>
+                                        <p>
+                                            3:50pm
+                                        </p>
+                                    </span>
                                 </section>
+
                                 <button className="exit-button">Exit</button>
                             </div>
                             <div className="driver-map-direction-nav-body">
@@ -191,7 +184,7 @@ const DriverAssignedLoad = () => {
                                             {isCompletingDelivering ?
                                                 <>
                                                     <ClipLoader color="#fffff" loading={true} size={17}
-                                                                className="payment-loader"/>
+                                                                className="payment-loader" />
                                                     Processing...
                                                 </>
                                                 : 'Delivered'}
@@ -200,15 +193,13 @@ const DriverAssignedLoad = () => {
                                         <button className="pick-up-button" onClick={handlePickUp}>Picked Up</button>
                                     )}
                                 </div>
-                                <button className="transit-update-button" onClick={updateLocation}>Transit Update
-                                </button>
+                                <button className="transit-update-button" onClick={updateLocation}>Transit Update</button>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </>
-
     );
 };
 

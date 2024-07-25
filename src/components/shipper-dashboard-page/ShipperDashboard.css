@@ -1193,19 +1193,7 @@
     border-radius: 20px;
 }
 
-.load-status-section {
-    display: flex;
-    padding: 5px;
-    margin: 0 0 10px 0;
-    border-radius: 15px;
-    width: 70px;
-    color: var(--grey);
-    font-weight: 700;
-    font-size: 1.2rem;
-    background: var(--light-grey);
-    justify-content: space-between;
-    align-items: center;
-}
+
 
 .load-directions {
     display: flex;
@@ -1276,16 +1264,6 @@
 
 }
 
-.load-status-icon {
-    display: flex;
-    width: 7px;
-    height: 7px;
-    align-items: center;
-    justify-content: center;
-    background: var(--royal-green);
-    border-radius: 30px;
-
-}
 
 .shipper-info-google-map-container {
     border-radius: 15px;
@@ -1296,6 +1274,7 @@
     width: 100%;
     justify-content: space-between;
     display: flex;
+    gap: 20px;
 }
 
 .ai-chat-content {
