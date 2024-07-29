@@ -9,10 +9,9 @@ const containerStyle = {
     borderTopLeftRadius: '45px',
 };
 
-const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDirection({ origin, destination }) {
+const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDirection({ origin, destination, currentLocation }) {
     const [directionsResponse, setDirectionsResponse] = useState(null);
     const [currentRequest, setCurrentRequest] = useState({ origin, destination });
-    const [currentLocation, setCurrentLocation] = useState(null);
     const directionsServiceRef = useRef();
 
     const debouncedDirectionsCallback = useCallback(_.debounce((origin, destination) => {
@@ -24,22 +23,6 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDire
         console.error('An error occurred: ', message);
         return true;
     };
-
-    useEffect(() => {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    setCurrentLocation({ lat: position.coords.latitude, lng: position.coords.longitude });
-                },
-                (error) => {
-                    console.log(error);
-                },
-                { enableHighAccuracy: true }
-            );
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    }, []);
 
     useEffect(() => {
         if (origin && destination && (origin !== currentRequest.origin || destination !== currentRequest.destination)) {

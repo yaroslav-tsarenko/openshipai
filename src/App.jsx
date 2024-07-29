@@ -33,6 +33,7 @@ import SuccessPaymentPage from "./pages/success-payment/SuccessPaymentPage";
 import FailedPaymentPage from "./pages/failed-payment/FailedPaymentPage";
 import DriverAssignedLoad from "./components/driver-dashboard/driver-assigned-load/DriverAssignedLoad";
 import SuccessLoadDelivering from "./pages/success-load-delivering/SuccessLoadDelivering";
+import DistanceCalculator from "./components/distance-calculator/DistanceCalculator";
 
 function App() {
     return (
@@ -66,6 +67,7 @@ function App() {
                 <Route path="/driver-assigned-load/:driverID/:loadID" element={<DriverAssignedLoad/>}/>
 
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
+                <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
 
 
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />

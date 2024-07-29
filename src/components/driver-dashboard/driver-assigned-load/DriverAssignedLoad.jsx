@@ -23,6 +23,8 @@ const DriverAssignedLoad = () => {
     const [load, setLoad] = useState([]);
     const [currentLocation, setCurrentLocation] = useState(null);
     const navigate = useNavigate();
+    const [tripDuration, setTripDuration] = useState('');
+    const [arrivalTime, setArrivalTime] = useState('');
 
     useEffect(() => {
         const getDriver = async () => {
@@ -52,6 +54,32 @@ const DriverAssignedLoad = () => {
 
         getAvatar();
     }, [driverID]);
+
+    useEffect(() => {
+        if (load.loadMilesTrip) {
+            calculateTripDuration(load.loadMilesTrip);
+        }
+    }, [load.loadMilesTrip]);
+
+    const calculateTripDuration = (miles) => {
+        const averageSpeed = 60; // Assuming average speed is 60 miles per hour
+        const hours = Math.floor(miles / averageSpeed);
+        const minutes = Math.round(((miles / averageSpeed) - hours) * 60);
+        setTripDuration(`${hours} hr ${minutes} min`);
+        calculateArrivalTime(hours, minutes);
+    };
+
+    const calculateArrivalTime = (hours, minutes) => {
+        const now = new Date();
+        now.setHours(now.getHours() + hours);
+        now.setMinutes(now.getMinutes() + minutes);
+        const arrivalHours = now.getHours();
+        const arrivalMinutes = now.getMinutes();
+        const period = arrivalHours >= 12 ? 'pm' : 'am';
+        const formattedHours = arrivalHours % 12 || 12;
+        const formattedMinutes = arrivalMinutes < 10 ? `0${arrivalMinutes}` : arrivalMinutes;
+        setArrivalTime(`${formattedHours}:${formattedMinutes}${period}`);
+    };
 
     useEffect(() => {
         if (driverInfo && driverInfo.driverAvatar) {
@@ -161,19 +189,14 @@ const DriverAssignedLoad = () => {
                         <div className="driver-map-direction-nav">
                             <div className="driver-map-direction-nav-header">
                                 <section>
-                                    <h2>
-                                        3 hr 18 min
-                                    </h2>
+                                    <h2>{tripDuration}</h2>
                                     <span>
                                         <p>
-                                            150 mi
+                                            {load.loadMilesTrip} mil
                                         </p>
-                                        <p>
-                                            3:50pm
-                                        </p>
+                                        <p>{arrivalTime}</p>
                                     </span>
                                 </section>
-
                                 <button className="exit-button">Exit</button>
                             </div>
                             <div className="driver-map-direction-nav-body">

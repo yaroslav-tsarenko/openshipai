@@ -58,7 +58,10 @@ const DriverDashboard = () => {
                 const response = await fetch(`${BACKEND_URL}/get-driver/${driverID}`);
                 const data = await response.json();
                 setDriverInfo(data);
-                if (!data.driverLicenceClass || !data.driverTruck || !data.driverInsurance) {
+                console.log(data)
+                if (data.driverLicenceClass || data.driverTruck || data.driverInsurance) {
+                    setShowPopup(false);
+                } else {
                     setShowPopup(true);
                 }
             } catch (error) {

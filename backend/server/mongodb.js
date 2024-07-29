@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const port = 8080;
+const axios = require('axios');
 const mongoose = require('mongoose');
 const path = require('path');
 const shortid = require('shortid'); // Import the 'shortid' package
@@ -52,9 +53,7 @@ require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
-
-
-
+const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
@@ -81,29 +80,15 @@ function generatePersonalEndpoint() {
     return shortid.generate();
 }
 
-async function calculateDistance(loadPickupLocation, loadDeliveryLocation) {
-    const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
-    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${encodeURIComponent(loadPickupLocation)}&destinations=${encodeURIComponent(loadDeliveryLocation)}&key=${apiKey}`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0] && data.rows[0].elements[0].distance) {
-        const distance = data.rows[0].elements[0].distance.text;
-        return distance;
-    } else {
-        console.error('Error: Invalid data structure');
-        return null;
-    }
-}
-
 mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mongodb.net/', {
     useNewUrlParser: true,
-    useUnifiedTopology: true
+    useUnifiedTopology: true,
 }).then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => {
     console.error('Failed to connect to MongoDB:', err);
 });
+
 
 const transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",
@@ -115,6 +100,8 @@ const transporter = nodemailer.createTransport({
     },
 });
 
+
+
 async function sendEmailWithNode(driverEmail, driverPassword) {
     const info = await transporter.sendMail({
         from: "info@demomailtrap.com",
@@ -125,6 +112,8 @@ async function sendEmailWithNode(driverEmail, driverPassword) {
     });
     console.log("Message sent: %s", info.messageId);
 }
+
+
 
 app.post('/send-driver-credentials', async (req, res) => {
     const {driverEmail, driverPassword} = req.body;
@@ -158,6 +147,70 @@ app.post('/create-bid', async (req, res) => {
         res.json(savedLoadBid);
     } catch (error) {
         res.status(500).json({message: error.message});
+    }
+});
+
+app.get('/api/distance', async (req, res) => {
+    const { origin, destination } = req.query;
+    const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca'; // Replace with your OpenRouteService API key
+
+    try {
+        const originResponse = await axios.get(`https://api.openrouteservice.org/geocode/search`, {
+            params: {
+                api_key: apiKey,
+                text: origin,
+            },
+        });
+
+        const destinationResponse = await axios.get(`https://api.openrouteservice.org/geocode/search`, {
+            params: {
+                api_key: apiKey,
+                text: destination,
+            },
+        });
+
+        const originCoords = originResponse.data.features[0].geometry.coordinates;
+        const destinationCoords = destinationResponse.data.features[0].geometry.coordinates;
+
+        const distanceResponse = await axios.get('https://api.openrouteservice.org/v2/directions/driving-car', {
+            params: {
+                api_key: apiKey,
+                start: `${originCoords[0]},${originCoords[1]}`,
+                end: `${destinationCoords[0]},${destinationCoords[1]}`,
+            },
+        });
+
+        const distanceInMeters = distanceResponse.data.routes[0].summary.distance;
+        const distanceInMiles = (distanceInMeters / 1609.34).toFixed(2);
+
+        res.json({ distance: distanceInMiles });
+    } catch (err) {
+        res.status(500).json({ error: 'Error calculating distance' });
+    }
+});
+
+
+app.get('/calculate-distance', async (req, res) => {
+    const { origin, destination } = req.query;
+
+    if (!origin || !destination) {
+        return res.status(400).json({ error: 'Missing origin or destination' });
+    }
+
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
+
+    try {
+        const response = await axios.get(url);
+        const data = response.data;
+
+        if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
+            const distance = data.rows[0].elements[0].distance.text;
+            res.json({ distance });
+        } else {
+            res.status(400).json({ error: 'Error fetching distance', details: data.error_message });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Internal server error', details: error.message });
     }
 });
 

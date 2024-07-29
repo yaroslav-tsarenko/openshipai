@@ -66,6 +66,7 @@ const ShipperLoadsPage = () => {
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const [sortOrder, setSortOrder] = useState('');
+    const [distance, setDistance] = useState(null);
     const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
     const [formData, setFormData] = useState({
         pickupLocation: '',
@@ -75,8 +76,52 @@ const ShipperLoadsPage = () => {
         deliveryLocationDate: '',
         deliveryLocationTime: '',
         loadType: '',
-        loadSubType: ''
+        loadSubType: '',
+        loadMilesTrip: ''
     });
+
+
+    const calculateDistance = async (origin, destination) => {
+        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
+        try {
+            const originResponse = await axios.get(
+                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
+            );
+            const destinationResponse = await axios.get(
+                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${destination}`
+            );
+            const originCoords = originResponse.data.features[0].geometry.coordinates;
+            const destinationCoords = destinationResponse.data.features[0].geometry.coordinates;
+            const routeResponse = await axios.post(
+                `https://api.openrouteservice.org/v2/directions/driving-car`,
+                {
+                    coordinates: [originCoords, destinationCoords]
+                },
+                {
+                    headers: {
+                        Authorization: apiKey,
+                        'Content-Type': 'application/json'
+                    }
+                }
+            );
+            const distanceInMeters = routeResponse.data.routes[0].summary.distance;
+            const distanceInMiles = distanceInMeters / 1609.34;
+            setDistance(distanceInMiles.toFixed(2));
+            setFormData((prevData) => ({
+                ...prevData,
+                loadMilesTrip: distanceInMiles.toFixed(2)
+            }));
+        } catch (error) {
+            console.error('Error calculating distance:', error);
+            setDistance(null);
+        }
+    };
+
+    useEffect(() => {
+        if (formData.pickupLocation && formData.deliveryLocation) {
+            calculateDistance(formData.pickupLocation, formData.deliveryLocation);
+        }
+    }, [formData.pickupLocation, formData.deliveryLocation]);
 
     useEffect(() => {
         const filtered = getFilteredLoads(); // Assuming this function applies the selectedFilter to loads
@@ -233,25 +278,27 @@ const ShipperLoadsPage = () => {
                                         </div>
                                     </div>
                                 )}
-
                                 {showFilterPopup && (
                                     <div className="overlay-popup-select" onClick={toggleFilterPopup}>
                                         <div className="select-popup" onClick={e => e.stopPropagation()}>
                                             <div className="select-popup-header">
                                                 <h2>Filter Options</h2>
-                                                <button onClick={toggleFilterPopup} className="close-popup-button">Close</button>
+                                                <button onClick={toggleFilterPopup}
+                                                        className="close-popup-button">Close
+                                                </button>
                                             </div>
                                             <div className="select-popup-content">
                                                 <p onClick={() => handleFilterSelection('')}>Show All</p>
-                                                <p onClick={() => handleFilterSelection('Vehicle Load')}>Only Vehicle Load</p>
+                                                <p onClick={() => handleFilterSelection('Vehicle Load')}>Only Vehicle
+                                                    Load</p>
                                                 <p onClick={() => handleFilterSelection('Moving')}>Only Moving</p>
                                                 <p onClick={() => handleFilterSelection('Freight')}>Only Freight</p>
-                                                <p onClick={() => handleFilterSelection('Heavy Equipment')}>Only Heavy Equipment</p>
+                                                <p onClick={() => handleFilterSelection('Heavy Equipment')}>Only Heavy
+                                                    Equipment</p>
                                             </div>
                                         </div>
                                     </div>
                                 )}
-
                             </section>
                             <button className="create-load-button" onClick={() => setCreateLoadSection(false)}>
                                 <AddLoadIcon className="add-load-icon"/>
@@ -802,6 +849,11 @@ const ShipperLoadsPage = () => {
                                                 </div>
                                             </div>
                                             <div className="input-fields-with-date-time">
+                                                {distance !== null && (
+                                                    <div>
+                                                        <p style={{color: "black"}}>Distance: {distance} miles</p>
+                                                    </div>
+                                                )}
                                                 <div className="google-input-wrapper">
                                                     <input
                                                         type="text"
@@ -876,6 +928,7 @@ const ShipperLoadsPage = () => {
                                             loadPickupTime={formData.pickupLocationTime}
                                             deliveryLocation={formData.deliveryLocation}
                                             loadDeliveryDate={formData.deliveryLocationDate}
+                                            loadMilesTrip={formData.loadMilesTrip}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}

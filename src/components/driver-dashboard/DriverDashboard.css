@@ -106,11 +106,11 @@
     flex-direction: column;
     width: 100%;
     padding: 30px;
+    border-bottom-left-radius: 45px;
+    border-bottom-right-radius: 45px;
     height: fit-content;
-    border-bottom-right-radius: 20px;
-    border-bottom-left-radius: 20px;
     background: var(--royal-white);
-    box-shadow: 1px 1px 5px 0px var(--light-grey);
+    border: 1px solid var(--light-grey);
 }
 
 .driver-map-direction-nav-header {
@@ -173,14 +173,20 @@
 }
 
 .exit-button {
-    padding: 5px 15px 5px 15px;
+    padding: 10px 15px 10px 15px;
     background: var(--royal-red);
+    width: fit-content;
+    height: fit-content;
     color: var(--royal-white);
     border-radius: 30px;
     border: none;
     font-size: 13px;
     font-weight: bold;
+    transition: 0.3s ease-in-out;
+}
 
+.exit-button:hover {
+    background: var(--royal-red-hovered);
 }
 
 .payments-wrapper {

@@ -11,7 +11,7 @@ import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 import {BeatLoader, CircleLoader, ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
 
-const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const VehicleLoadContainer = ({pickupLocation, loadMilesTrip, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
@@ -44,6 +44,7 @@ const VehicleLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadS
         loadWidth: '',
         loadPhotos: '',
         loadFiles: '',
+        loadMilesTrip: loadMilesTrip,
         loadVehicleMake: '',
         loadVehicleYear: '',
         loadVehicleModel: '',

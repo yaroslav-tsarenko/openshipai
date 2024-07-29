@@ -1,5 +1,22 @@
 const mongoose = require('mongoose');
 
+// Function to calculate the distance between two locations
+async function calculateDistance(loadPickupLocation, loadDeliveryLocation) {
+    const fetch = await import('node-fetch').then(mod => mod.default);
+    const apiKey = 'YOUR_GOOGLE_MAPS_API_KEY'; // Replace with your actual API key
+    const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${encodeURIComponent(loadPickupLocation)}&destinations=${encodeURIComponent(loadDeliveryLocation)}&key=${apiKey}`;
+    const response = await fetch(url);
+    const data = await response.json();
+
+    if (data && data.rows && data.rows[0] && data.rows[0].elements && data.rows[0].elements[0] && data.rows[0].elements[0].distance) {
+        const distance = data.rows[0].elements[0].distance.text;
+        return distance;
+    } else {
+        console.error('Error: Invalid data structure');
+        return null;
+    }
+}
+
 const LoadSchema = new mongoose.Schema({
     loadID: String,
     loadType: String,
@@ -20,7 +37,7 @@ const LoadSchema = new mongoose.Schema({
     loadLength: String,
     loadWidth: String,
     loadQoutes: Number,
-    loadMilesTrip: String,
+    loadMilesTrip: { type: Number, default: null },
     loadPaymentStatus: String,
     loadAssignedDriverID: String,
     loadSpecifiedItem: String,
@@ -63,6 +80,16 @@ const LoadSchema = new mongoose.Schema({
     loadTypeOfTrailer: String,
     loadCredentialID: String,
     shipperID: String,
+});
+
+LoadSchema.pre('save', async function (next) {
+    if (!this.loadMilesTrip) {
+        const distance = await calculateDistance(this.loadPickupLocation, this.loadDeliveryLocation);
+        if (distance) {
+            this.loadMilesTrip = parseFloat(distance.replace(' mi', ''));
+        }
+    }
+    next();
 });
 
 module.exports = mongoose.model('Load', LoadSchema);
