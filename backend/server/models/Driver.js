@@ -11,6 +11,8 @@ const DriverSchema = new mongoose.Schema({
     driverPassword: String,
     driverAssignedLoadsID: [String],
     driverID: String,
+    driverLat: String,
+    driverLng: String,
     driverTruck: String,
     driverCreatedAt: { type: Date, default: Date.now },
     driverInsurance: String,
