@@ -1,3 +1,19 @@
+.custom-checkbox-content{
+    display: flex;
+}
+
+.custom-checkbox-content p{
+    font-size: 16px;
+    font-weight: 500;
+    color: var(--grey);
+    margin: 0 0 5px 0;
+    padding: 0;
+    text-align: left;
+    align-items: center;
+    align-content: center;
+    justify-content: center;
+}
+
 .checkbox-wrapper-4 * {
     box-sizing: border-box;
 }

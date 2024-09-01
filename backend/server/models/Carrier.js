@@ -158,6 +158,10 @@ const CarrierSchema = new Schema({
     carrierAvatar:{
         type: String,
     },
+    carrierNotificationFromDriver: Boolean,
+    carrierNotificationFromCarrier: Boolean,
+    carrierNotificationFromAI: Boolean,
+    carrierNotificationOfUpdates:Boolean,
     carrierID: {
             type: String,
             default: shortid.generate

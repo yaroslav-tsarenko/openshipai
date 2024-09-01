@@ -1,0 +1,11 @@
+.gridTwoColumns{
+  display: grid;
+  grid-template-columns: repeat(2, 2fr);
+  width: 100%;
+  align-items: center;
+  align-content: start;
+  margin: 0 auto;
+  justify-content: start;
+  justify-items: start;
+  gap: 10px;
+}

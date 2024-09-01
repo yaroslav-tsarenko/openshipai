@@ -1,15 +1,14 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../CarrierDashboard.css';
-import {ReactComponent as SettingsAccount} from "../../../assets/account-settings-icon.svg";
-import {ReactComponent as SettingsAccountWhite} from "../../../assets/account-settings-icon-white.svg";
-import {ReactComponent as SettingsPassword} from "../../../assets/lock-icon.svg";
-import {ReactComponent as SettingsPasswordWhite} from "../../../assets/lock-icon-white.svg";
-import {ReactComponent as SettingsNotifications} from "../../../assets/bell-settings-icon.svg";
-import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
-import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
-import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
+import {ReactComponent as SettingsAccount} from "../../../assets/person-settings.svg";
+import {ReactComponent as SettingsPassword} from "../../../assets/lock-settings.svg";
+import {ReactComponent as SettingsNotifications} from "../../../assets/notification-person.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/help-settings.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
+import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
+import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
+import {useNavigate} from "react-router-dom";
 import Switch from '../../switcher-component/Switch';
 import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
@@ -18,13 +17,21 @@ import {BACKEND_URL} from "../../../constants/constants";
 import axios from "axios";
 import {Skeleton} from "@mui/material";
 import {ClipLoader} from "react-spinners";
+import Tooltip from "../../tooltip/Tooltip";
+import Popup from "../../popup/Popup";
+import TextInput from "../../text-input/TextInput";
+import Grid from "../../grid-two-columns/Grid";
+import Button from "../../button/Button";
+import Alert from "../../floating-window-success/Alert";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const CarrierSettings = () => {
 
     const [activeSetting, setActiveSetting] = useState('Account');
     const [carrierInfo, setCarrierInfo] = useState(null);
-    const [hoveredButton, setHoveredButton] = useState('');
+    const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const {carrierID} = useParams();
+    const settingsRef = useRef();
     const fileInputRef = useRef();
     const [isOnAI, setIsOnAI] = useState(false);
     const [isOnCarrier, setIsOnCarrier] = useState(false);
@@ -40,8 +47,71 @@ const CarrierSettings = () => {
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [avatarFromDB, setAvatarFromDB] = useState(null);
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [alert, setAlert] = useState(false);
+    const [alertData, setAlertData] = useState({status: '', text: '', description: ''});
+    const [confirmDelete, setConfirmDelete] = useState('');
+    const navigate = useNavigate();
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+    const [email, setEmail] = useState(carrierInfo ? carrierInfo.userShipperEmail : '');
     const [carrierAvatar, setCarrierAvatar] = useState(null);
+    const [problemDescription, setProblemDescription] = useState('');
+    const [description, setDescription] = useState('');
+
+    const handleSubmitSupportQoutes = async () => {
+        setIsLoading(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-help-quote/${carrierID}`, {email, description, carrierID});
+            setAlertData({status: 'success', text: 'Success!', description: "Quote sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending quote. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmitFeedback = async () => {
+        setIsLoadingFeedback(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-feedback/${carrierID}`, {email, description, carrierID});
+            setAlertData({status: 'success', text: 'Success!', description: "Message sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending message. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoadingFeedback(false);
+        }
+    };
+
+    const scrollToSettingsRef = () => {
+        if (settingsRef.current) {
+            settingsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+            console.error('settingsRef is not assigned to any element');
+        }
+    };
+
+    const toggleTooltip = () => {
+        setIsTooltipVisible(!isTooltipVisible);
+        setTimeout(() => {
+            setIsTooltipVisible(false)
+        }, 2000);
+    };
+
+    const handleDeleteClick = () => {
+        setIsPopupVisible(true);
+    };
 
     const handleApplySettings = async () => {
         setIsLoading(true);
@@ -58,11 +128,25 @@ const CarrierSettings = () => {
             const response = await axios.put(`${BACKEND_URL}/update-carrier/${carrierID}`, updatedData);
             if (response.status === 200) {
                 setCarrierInfo(response.data);
+                setAlertData({
+                    status: 'success',
+                    text: 'Success',
+                    description: 'Changes applied successfully'
+                });
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
             }
+
         } catch (error) {
             console.error('Error updating shipper:', error);
         } finally {
-            setIsLoading(false);
+            setAlertData({
+                status: 'success',
+                text: 'Success',
+                description: 'Changes applied successfully'
+            });
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
         }
 
         if (carrierAvatar) {
@@ -124,6 +208,95 @@ const CarrierSettings = () => {
         }
     };
 
+
+    const handleUpdateNotificationsSettings = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-carrier-notifications/${carrierID}`, {
+                carrierNotificationFromDriver: isOnDriver,
+                carrierNotificationFromCarrier: isOnCarrier,
+                carrierNotificationFromAI: isOnAI,
+                carrierNotificationOfUpdates: isOnUpdates,
+            });
+            console.log(response);
+            if (response.status === 200) {
+                console.log('Notification settings updated successfully');
+                setAlertData({
+                    status: 'success',
+                    text: 'Success',
+                    description: 'Notification settings updated successfully'
+                });
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            console.error('Error updating notification settings:', error);
+            setAlertData({status: 'error', text: 'Error', description: 'Failed to update notification settings'});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleDeleteAccount = async () => {
+        const expectedValue = `acc delete ${carrierInfo.carrierAccountAccountEmail}`;
+        if (confirmDelete !== expectedValue) {
+            setAlertData({status: 'warning', text: 'Warning!', description: "Value didn't equal"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            await axios.delete(`${BACKEND_URL}/delete-account/carrier/${carrierID}`);
+            setAlertData({
+                status: 'success',
+                text: 'Success!',
+                description: "Account deleted, you will be redirected to the sign in after 3 sec"
+            });
+            setAlert(true);
+            setTimeout(() => {
+                setAlert(false);
+                navigate("/sign-in");
+            }, 3000);
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error!', description: "Error deleting account. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+    };
+
+    const handleChangePassword = async () => {
+        setIsLoading(true);
+        if (oldPassword !== carrierInfo.carrierAccountPassword) {
+            setIsLoading(false);
+            setAlertData({status: 'warning', text: 'Warning!', description: "Passwords didn't match"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-user-password/carrier/${carrierInfo.carrierID}`, {newPassword});
+            if (response.status === 200) {
+                setAlertData({status: 'success', text: 'Success!', description: "Password updated successfully"});
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error', description: "Error updating password. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+        setIsLoading(false);
+    };
+
+
+    const handleClosePopup = () => {
+        setIsPopupVisible(false);
+    };
+
     const handleAvatarDelete = () => {
         setCarrierAvatar(null);
     };
@@ -163,351 +336,372 @@ const CarrierSettings = () => {
     }, [carrierID]);
 
     return (
-        <div className="carrier-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
-                TakeLoad={{visible: true, route: `/carrier-take-loads/${carrierID}`}}
-                MyLoads={{visible: true, route: `/carrier-loads/${carrierID}`}}
-                DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
-                Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
-                ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
-                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
-                Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
-            />
-            <div className="carrier-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={carrierInfo ?
-                        <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
-                        <Skeleton variant="text" width={250} />}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
-                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
-                    profileLink={`/carrier-profile/${carrierID}`}
-                    bellLink={`/carrier-settings/${carrierID}`}
-                    settingsLink={`/carrier-profile/${carrierID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                />
-                <div className="settings-container">
-                    <section className="settings-nav">
-                        <button
-                            onMouseEnter={() => setHoveredButton('SettingsAccount')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Account')}
-                        >
-                            {hoveredButton === 'SettingsAccount' ?
-                                <SettingsAccountWhite className="link-nav-button-icon"/> :
-                                <SettingsAccount className="link-nav-button-icon"/>}
-                            Account
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('PasswordSettings')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Password')}
-                        >
-                            {hoveredButton === 'PasswordSettings' ?
-                                <SettingsPasswordWhite className="link-nav-button-icon"/> :
-                                <SettingsPassword className="link-nav-button-icon"/>}
-                            Password
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('NotificationsButton')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Notifications')}
-                        >
-                            {hoveredButton === 'NotificationsButton' ?
-                                <SettingsNotificationsWhite className="link-nav-button-icon"/> :
-                                <SettingsNotifications className="link-nav-button-icon"/>}
-                            Notifications
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('HelpSettings')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Help')}
-                        >
-                            {hoveredButton === 'HelpSettings' ? <SettingsHelpWhite className="link-nav-button-icon"/> :
-                                <SettingsHelp className="link-nav-button-icon"/>}
-                            Help
-                        </button>
-                    </section>
-                    <section className="settings-content">
-                        {activeSetting === 'Account' && (
-                            <>
-                                <h2>Account Info</h2>
-                                <div className="account-info-details-container">
-                                    <div className="avatar-settings">
-                                        {previewImage ? (
-                                            <img src={previewImage} className="avatar-user-photo"
-                                                 alt="User Avatar"/>
-                                        ) : previewSavedImage ? (
-                                            <img src={previewSavedImage} className="avatar-user-photo"
-                                                 alt="User Avatar"/>
-                                        ) : (
-                                            <DefaultUserAvatar className="avatar-user-photo"/>
-                                        )}
 
-                                        <section className="avatar-settings-wrapper">
-                                            <button className="change-avatar" onClick={triggerFileInput}>Change
-                                                Avatar
-                                            </button>
-                                            <button className="shipper-delete-avatar"
-                                                    onClick={handleAvatarDelete}>Delete Photo
-                                            </button>
-                                            <input type="file" ref={fileInputRef} style={{display: 'none'}}
-                                                   onChange={handleAvatarChange}/>
-                                        </section>
+        <>
+            {alert && <Alert status={alertData.status} text={alertData.text} description={alertData.description}/>}
+            {isPopupVisible && (
+                <Popup title="Confirm Deletion" onClose={handleClosePopup}
+                       footerText="After deleting you are not be able to return your account">
+                    <p className="delete-popup-text">All data in account such as loads, personal data, statuses,
+                        progress will be deleted permanently</p>
+                    <h4 className="delete-account-popup-title">Type <span>acc delete {carrierInfo.carrierAccountAccountEmail}</span> to
+                        confirm deleting</h4>
+                    <TextInput
+                        type="text"
+                        id="confirmDelete"
+                        label="Type here"
+                        value={confirmDelete}
+                        onChange={(e) => setConfirmDelete(e.target.value)}
+                    />
+                    <Grid columns="2, 2fr">
+                        <Button variant="neutral" onClick={handleClosePopup}>
+                            Cancel
+                        </Button>
+                        <Button variant="delete" onClick={handleDeleteAccount}>
+                            Delete Account
+                        </Button>
+                    </Grid>
+                </Popup>
+            )}
+            <div className="carrier-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
+                    TakeLoad={{visible: true, route: `/carrier-take-loads/${carrierID}`}}
+                    MyLoads={{visible: true, route: `/carrier-loads/${carrierID}`}}
+                    DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
+                    Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
+                    ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
+                    Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                />
+                <div className="shipper-dashboard-content-settings">
+                    <HeaderDashboard
+                        contentTitle={carrierInfo ?
+                            <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={carrierInfo ? carrierInfo.carrierContactCompanyName :
+                            <Skeleton variant="text" width={60}/>}
+                        accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40}/>}
+                        bellLink={`/carrier-settings/${carrierID}`}
+                        settingsLink={`/carrier-profile/${carrierID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    />
+                    <div className="settings-container">
+                        <section className="settings-nav">
+                            <button
+                                onClick={() => setActiveSetting('Account')}
+                            >
+                                <SettingsAccount className="link-nav-button-icon"/>
+                                Account
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Password')}
+                            >
+                                <SettingsPassword className="link-nav-button-icon"/>
+                                Password
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Notifications')}
+                            >
+                                <SettingsNotifications className="link-nav-button-icon"/>
+                                Notifications
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Help')}
+                            >
+                                <SettingsHelp className="link-nav-button-icon"/>
+                                Help
+                            </button>
+                        </section>
+                        <section className="settings-content">
+                            {activeSetting === 'Account' && (
+                                <>
+                                    <h2>Profile</h2>
+                                    <div className="profile-content-wrapper">
+                                        <div className="shipper-profile-content">
+                                            <div className="shipper-info">
+                                                {previewSavedImage ? (
+                                                    <img src={previewSavedImage} className="shipper-profile-avatar"
+                                                         alt="User Avatar"/>
+                                                ) : (
+                                                    <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                                )}
+                                                <section className="shipper-details-wrapper">
+                                                    <div className="shipper-role-name">
+                                                        <h3>
+                                                            {
+                                                                carrierInfo ?
+                                                                    <>
+                                                                        {carrierInfo.carrierAccountName}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </h3>
+                                                        <p>
+                                                            {carrierInfo ?
+                                                                <>
+                                                                    {carrierInfo.carrierAccountAccountEmail}
+                                                                </>
+                                                                :
+                                                                <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                    <div className="shipper-info-details">
+                                                        <p>USA, Los Angeles</p>
+                                                        <p>
+                                                            {
+                                                                carrierInfo ?
+                                                                    <>
+                                                                        {carrierInfo.carrierContactCompanyName}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                        <p>
+                                                            {
+                                                                carrierInfo ?
+                                                                    <>
+                                                                        {carrierInfo.userShipperEmail}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                            <div className="shipper-nav-buttons">
+                                                <button
+                                                    onClick={scrollToSettingsRef}>
+                                                    <PencilIcon/>
+                                                </button>
+                                                <button onClick={toggleTooltip}>
+                                                    <IconInfo/>
+                                                    <Tooltip isVisible={isTooltipVisible}>
+                                                        Here you can change your credentials, then have a look of your
+                                                        current profile data
+                                                    </Tooltip>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="shipper-profile-status">
+                                            <p>Currently you don't have active status for your profile🚫</p>
+                                        </div>
                                     </div>
-                                    <div className="account-info-settings">
-                                        <section className="account-info-settings-1">
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierFirstName"
-                                                    id="carrierFirstName"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierFirstName(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierFirstName" className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierAccountName}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierLastName"
-                                                    id="carrierLastName"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierLastName(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierLastName" className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierAccountLastName}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierCompanyName"
-                                                    id="carrierCompanyName"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierCompanyName(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierCompanyName"
-                                                       className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierContactCompanyName}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                        </section>
-                                        <section className="account-info-settings-2">
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierPhoneNumber"
-                                                    id="carrierPhoneNumber"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierPhoneNumber(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierPhoneNumber"
-                                                       className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierCorporatePhoneNumber}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierEmail"
-                                                    id="carrierEmail"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierEmail(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierEmail"
-                                                       className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierAccountAccountEmail}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}</label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="carrierDotNumber"
-                                                    id="carrierDotNumber"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    required={true}
-                                                    onChange={(e) => setCarrierDotNumber(e.target.value)}
-                                                />
-                                                <label htmlFor="carrierDotNumber"
-                                                       className="google-style-input-label">
-                                                    {carrierInfo ?
-                                                        <>
-                                                            {carrierInfo.carrierDotNumber}
-                                                        </> :
-                                                        <Skeleton variant="text" width={50}/>}</label>
-                                            </div>
-                                        </section>
+                                    <h2>Account Info</h2>
+                                    <div className="account-info-details-container">
+                                        <div className="avatar-settings" ref={settingsRef}>
+                                            {previewImage ? (
+                                                <img src={previewImage} className="avatar-user-photo"
+                                                     alt="User Avatar"/>
+                                            ) : previewSavedImage ? (
+                                                <img src={previewSavedImage} className="avatar-user-photo"
+                                                     alt="User Avatar"/>
+                                            ) : (
+                                                <DefaultUserAvatar className="avatar-user-photo"/>
+                                            )}
+
+                                            <section className="avatar-settings-wrapper">
+                                                <button className="change-avatar" onClick={triggerFileInput}>Change
+                                                    Avatar
+                                                </button>
+                                                <button className="shipper-delete-avatar"
+                                                        onClick={handleAvatarDelete}>Delete Photo
+                                                </button>
+                                                <input type="file" ref={fileInputRef} style={{display: 'none'}}
+                                                       onChange={handleAvatarChange}/>
+                                            </section>
+                                        </div>
+                                        <div className="account-info-settings">
+                                               <Grid columns="2, 2fr">
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierFirstName"
+                                                       value={carrierFirstName}
+                                                       onChange={(e) => setCarrierFirstName(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierAccountName : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierLastName"
+                                                       value={carrierLastName}
+                                                       onChange={(e) => setCarrierLastName(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierAccountLastName : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierCompanyName"
+                                                       value={carrierCompanyName}
+                                                       onChange={(e) => setCarrierCompanyName(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierPhoneNumber"
+                                                       value={carrierPhoneNumber}
+                                                       onChange={(e) => setCarrierPhoneNumber(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierCorporatePhoneNumber : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierEmail"
+                                                       value={carrierEmail}
+                                                       onChange={(e) => setCarrierEmail(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierAccountAccountEmail : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                                   <TextInput
+                                                       type="text"
+                                                       id="carrierDotNumber"
+                                                       value={carrierDotNumber}
+                                                       onChange={(e) => setCarrierDotNumber(e.target.value)}
+                                                       label={carrierInfo ? carrierInfo.carrierDotNumber : <Skeleton variant="text" width={50}/>}
+                                                   />
+                                               </Grid>
+                                        </div>
+                                        <Button onClick={handleApplySettings} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                                "Apply"
+
+                                            }
+                                        </Button>
                                     </div>
-                                    <button onClick={handleApplySettings} className="apply-settings-button">
-                                        {isLoading ?
-                                            <>
-                                                <ClipLoader color="#ffffff" loading={isLoading}
-                                                            className="apply-settings-button"
-                                                            size={25}/> Applying...
-                                            </> :
-                                            "Apply"}
-                                    </button>
-                                </div>
-                                <section className="deleting-account-section">
-                                    <h2>Delete Account</h2>
-                                    <a href="#">I want to permanently delete my account<DeleteRedBinIcon
-                                        className="delete-bin-icon"/></a>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Password' && (
-                            <>
+                                    <section className="deleting-account-section">
+                                        <h2>Delete Account</h2>
+                                        <a href="#" onClick={handleDeleteClick}>
+                                            I want to permanently delete my account
+                                            <DeleteRedBinIcon className="delete-bin-icon"/>
+                                        </a>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Password' && (
+                                <>
                                 <h2>Password Settings</h2>
-                                <p>To change your password, you need to enter your old password, then after this you
-                                    need to enter your new password</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="oldPassword"
+                                <h5 className="changing-password-text">To change your password, you need to enter
+                                    your old password, then after this you
+                                    need to enter your new password</h5>
+                                <div className="password-fields">
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
+                                            type="password"
                                             id="oldPassword"
                                             autoComplete="off"
                                             className="google-style-input"
-                                            required={true}
+                                            label="Old Password"
+                                            value={oldPassword}
+                                            onChange={(e) => setOldPassword(e.target.value)}
                                         />
-                                        <label htmlFor="oldPassword" className="google-style-input-label">Old
-                                            Password</label>
-                                    </div>
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="newPassword"
+                                        <TextInput
+                                            type="password"
                                             id="newPassword"
                                             autoComplete="off"
                                             className="google-style-input"
-                                            required={true}
+                                            label="New Password"
+                                            value={newPassword}
+                                            onChange={(e) => setNewPassword(e.target.value)}
                                         />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">New Password</label>
-                                    </div>
-                                </section>
-                                <section className="warning-message-section">
-                                    <h3>If you change your password, you will be able to change it again after 7
-                                        days</h3>
-                                    <button className="apply-settings-button-bottom">Apply</button>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Notifications' && (
-                            <>
-                                <h2>Notification Settings</h2>
-                                <p>Your can in detail change service notification</p>
-                                <section className="password-settings-container">
-                                    <Switch isOn={isOnAI} handleToggle={handleToggleAI}
-                                            label="Get notifications from AI"/>
-                                    <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
-                                            label="Get notifications from Carrier"/>
-                                    <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
-                                            label="Get notifications from Driver"/>
-                                    <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
-                                            label="Get notifications of updates"/>
-                                </section>
-                                <section className="warning-message-section">
-                                    <h3>After confirmation, the changes take effect immediately</h3>
-                                    <button className="apply-settings-button-bottom">Apply</button>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Help' && (
-                            <>
-                                <h2>Help</h2>
-                                <p>For help, you can contact us by email or phone</p>
-
-                                <h2>I have a problem using service</h2>
-                                <p>If you have any problem with service fill this form, then send it</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="userEmail"
-                                            id="userEmail"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                        />
-                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
-                                    </div>
-                                    <div className="google-input-wrapper">
-                                        <input
+                                    </Grid>
+                                </div>
+                                    <section className="warning-message-section">
+                                        <h3>If you change your password, you will be able to change it again after 7
+                                            days</h3>
+                                        <Button onClick={handleChangePassword} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                               "Apply"
+                                            }
+                                        </Button>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Notifications' && (
+                                <>
+                                    <h2>Notification Settings</h2>
+                                    <p>Your can in detail change service notification</p>
+                                    <Grid columns="1, 1fr">
+                                        <Switch isOn={isOnAI} handleToggle={handleToggleAI}
+                                                label="Get notifications from AI"/>
+                                        <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
+                                                label="Get notifications from Carrier"/>
+                                        <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
+                                                label="Get notifications from Driver"/>
+                                        <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
+                                                label="Get notifications of updates"/>
+                                    </Grid>
+                                    <section className="warning-message-section">
+                                        <h3>After confirmation, the changes take effect immediately</h3>
+                                        <Button onClick={handleUpdateNotificationsSettings} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                                "Apply"}
+                                        </Button>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Help' && (
+                                <>
+                                    <h2>Help</h2>
+                                    <p>For help, you can contact us by email or phone</p>
+                                    <h2>I have a problem using service</h2>
+                                    <h5 className="changing-password-text">If you have any problem with service fill
+                                        this form, then send it</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
                                             type="text"
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                            style={{
-                                                height: "150px"
-                                            }}
-                                        />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">Your Problem Description</label>
-                                    </div>
-                                </section>
-                                <button className="apply-settings-button-bottom">Send</button>
-                                <h2>I want to give feedback about project</h2>
-                                <p>Could us know in details, what satisfied you or what disappoint you</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="userEmail"
                                             id="userEmail"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
+                                            value={carrierInfo ? carrierInfo.carrierAccountAccountEmail : ''}
+                                            label="Email"
+                                            readOnly
                                         />
-                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
-                                    </div>
-                                    <div className="google-input-wrapper">
-                                        <input
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            label="Your Problem Description"
+                                            style={{height: "150px"}}
+                                            value={problemDescription}
+                                            onChange={(e) => setProblemDescription(e.target.value)}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitSupportQoutes}>
+                                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
+                                    <h2>I want to give feedback about project</h2>
+                                    <h5 className="changing-password-text">Could us know in details, what satisfied you
+                                        or what disappoint you</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
                                             type="text"
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                            style={{
-                                                height: "150px"
-                                            }}
+                                            id="userEmail"
+                                            value={carrierInfo.carrierAccountAccountEmail}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            label="Email"
                                         />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">Your Problem Description</label>
-                                    </div>
-                                </section>
-                                <button className="apply-settings-button-bottom">Send</button>
-                            </>
-                        )}
-                    </section>
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            label="Your Feedback here"
+                                            style={{height: "150px"}}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitFeedback}>
+                                            {isLoadingFeedback ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
+                                </>
+                            )}
+                        </section>
+                    </div>
                 </div>
             </div>
-        </div>
+
+        </>
     );
 };
 

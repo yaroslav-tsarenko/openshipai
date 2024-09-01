@@ -9,8 +9,11 @@ const cors = require('cors');
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const UserModel = require('./models/User');
+const CardModel = require('./models/Card');
 const User = require('./models/User');
 const SubscribedCarriers = require('./models/SubscribedCarriers');
+const Feedback = require('./models/Feedback');
+const SupportQoutes = require('./models/SupportQoutes');
 const SubscribedShippers = require('./models/SubscribedShippers');
 const Shipper = require('./models/Shipper');
 const ConfirmedLoad = require('./models/ConfirmedLoad');
@@ -20,6 +23,7 @@ const DealConversationChatHistoryMessage = require('./models/DealConversationCha
 const Carrier = require('./models/Carrier');
 const CommercialTruckLoad = require('./models/CommercialTruckLoad');
 const CarOrLightTruckLoad = require('./models/CarOrLightTruckLoad');
+const Transaction = require('./models/Transaction');
 const ConstructionEquipmentLoad = require('./models/ConstructionEquipmentLoad');
 const MotoEquipmentLoad = require('./models/MotoEquipmentLoad');
 const VehicleLoad = require('./models/VehicleLoad');
@@ -53,6 +57,7 @@ require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
+const {Card} = require("@mui/material");
 const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
@@ -82,7 +87,7 @@ function generatePersonalEndpoint() {
 
 mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mongodb.net/', {
     useNewUrlParser: true,
-    useUnifiedTopology: true,
+    useUnifiedTopology: true
 }).then(() => {
     console.log('Connected to MongoDB');
 }).catch(err => {
@@ -100,8 +105,6 @@ const transporter = nodemailer.createTransport({
     },
 });
 
-
-
 async function sendEmailWithNode(driverEmail, driverPassword) {
     const info = await transporter.sendMail({
         from: "info@demomailtrap.com",
@@ -113,7 +116,70 @@ async function sendEmailWithNode(driverEmail, driverPassword) {
     console.log("Message sent: %s", info.messageId);
 }
 
+app.get('/get-selected-card/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        if (!shipper) {
+            return res.status(404).json({ message: 'Shipper not found' });
+        }
+        const selectedCard = await CardModel.findOne({ cardNumber: shipper.userShipperSelectedCard });
+        if (!selectedCard) {
+            return res.status(404).json({ message: 'Selected card not found' });
+        }
+        res.status(200).json({ status: 'Success', card: selectedCard });
+    } catch (error) {
+        console.error('Error fetching selected card:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 
+app.put('/update-selected-card/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    const { cardNumber } = req.body;
+
+    try {
+        const shipper = await Shipper.findOneAndUpdate(
+            { userShipperID: shipperID },
+            { userShipperSelectedCard: cardNumber },
+            { new: true }
+        );
+
+        if (!shipper) {
+            return res.status(404).json({ status: 'Error', message: 'Shipper not found' });
+        }
+
+        res.status(200).json({ status: 'Success', shipper });
+    } catch (error) {
+        console.error('Error updating selected card:', error);
+        res.status(500).json({ status: 'Error', message: 'Server error' });
+    }
+});
+
+app.get('/get-cards/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    try {
+        const cards = await CardModel.find({ userID: shipperID });
+        if (cards.length > 0) {
+            res.status(200).json({ status: 'Success', cards: cards });
+        } else {
+            res.status(404).json({ status: 'Error', message: 'No cards found for this shipper' });
+        }
+    } catch (error) {
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
+
+app.post('/save-card', async (req, res) => {
+    try {
+        const cardData = req.body;
+        const newCard = new CardModel(cardData);
+        await newCard.save();
+        res.status(200).json({ status: 'Success', card: newCard });
+    } catch (error) {
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
 
 app.post('/send-driver-credentials', async (req, res) => {
     const {driverEmail, driverPassword} = req.body;
@@ -445,12 +511,148 @@ app.put('/update-shipper/:shipperID', async (req, res) => {
     }
 });
 
+app.post('/submit-help-quote/:userID', async (req, res) => {
+    const { email, description, shipperID, timestamp } = req.body;
+    const { userID } = req.params;
+    const newSupportQuote = new SupportQoutes({ email, description, shipperID, userID, timestamp });
+    try {
+        await newSupportQuote.save();
+        res.status(200).json({ message: 'Help quote submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
+        res.status(500).json({ message: 'Error submitting Help quote' });
+    }
+});
+
+
+app.post('/submit-feedback/:userID', async (req, res) => {
+    const { email, description, shipperID, timestamp } = req.body;
+    const { userID } = req.params; // Extract userID from URL parameters
+    const newFeedback = new Feedback({ email, description, shipperID, userID, timestamp });
+    try {
+        await newFeedback.save();
+        res.status(200).json({ message: 'Feedback submitted successfully' });
+    } catch (error) {
+        console.error('Error submitting feedback:', error);
+        res.status(500).json({ message: 'Error submitting feedback' });
+    }
+});
+
+app.put('/update-shipper-notifications/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    const { userShipperNotificationFromDriver, userShipperNotificationFromCarrier, userShipperNotificationFromAI, userShipperNotificationOfUpdates } = req.body;
+
+    try {
+        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        if (!shipper) {
+            return res.status(404).json({ message: 'Shipper not found' });
+        }
+
+        shipper.userShipperNotificationFromDriver = userShipperNotificationFromDriver;
+        shipper.userShipperNotificationFromCarrier = userShipperNotificationFromCarrier;
+        shipper.userShipperNotificationFromAI = userShipperNotificationFromAI;
+        shipper.userShipperNotificationOfUpdates = userShipperNotificationOfUpdates;
+
+        await shipper.save();
+        res.status(200).json({ message: 'Notification settings updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-driver-notifications/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    const { driverNotificationFromDriver, driverNotificationFromCarrier, driverNotificationFromAI, driverNotificationOfUpdates } = req.body;
+
+    try {
+        const carrier = await Driver.findOne({ driverID });
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        driver.driverNotificationFromDriver = driverNotificationFromDriver;
+        driver.driverNotificationFromCarrier = driverNotificationFromCarrier;
+        driver.driverNotificationFromAI = driverNotificationFromAI;
+        driver.driverNotificationOfUpdates = driverNotificationOfUpdates;
+
+        await carrier.save();
+        res.status(200).json({ message: 'Notification settings updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-carrier-notifications/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+    const { carrierNotificationFromDriver, carrierNotificationFromCarrier, carrierNotificationFromAI, carrierNotificationOfUpdates } = req.body;
+
+    try {
+        const carrier = await Carrier.findOne({ carrierID });
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        carrier.carrierNotificationFromDriver = carrierNotificationFromDriver;
+        carrier.carrierNotificationFromCarrier = carrierNotificationFromCarrier;
+        carrier.carrierNotificationFromAI = carrierNotificationFromAI;
+        carrier.carrierNotificationOfUpdates = carrierNotificationOfUpdates;
+
+        await carrier.save();
+        res.status(200).json({ message: 'Notification settings updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-user-password/:role/:id', async (req, res) => {
+    const { role, id } = req.params;
+    const { newPassword } = req.body;
+
+    try {
+        let user;
+        if (role === 'shipper') {
+            user = await Shipper.findOne({ userShipperID: id });
+        } else if (role === 'carrier') {
+            user = await Carrier.findOne({ carrierID: id });
+        } else if (role === 'driver') {
+            user = await Driver.findOne({ driverID: id });
+        } return res.status(400).json({ message: 'Invalid role specified' });
+
+        if (!user) {
+            return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
+        }
+
+        if (role === 'shipper') {
+            user.userShipperPassword = newPassword;
+        } else if (role === 'carrier') {
+            user.carrierPassword = newPassword;
+        }
+
+        await user.save();
+        res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
 app.get('/get-all-loads', async (req, res) => {
     try {
-        const loads = await Load.find();
-        res.json(loads);
+        const loads = await Load.find({});
+        res.status(200).json(loads);
     } catch (error) {
-        res.status(500).json({message: error.message});
+        console.error('Error fetching loads:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+
+app.get('/get-all-loads/:shipperID', async (req, res) => {
+    const { shipperID } = req.params;
+    try {
+        const loads = await Load.find({ shipperID });
+        res.status(200).json(loads);
+    } catch (error) {
+        console.error('Error fetching loads:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -704,12 +906,46 @@ app.post('/create-deal-chat-conversation', async (req, res) => {
     }
 });
 
-app.get('/get-all-deal-chat-conversations', async (req, res) => {
+app.delete('/delete-account/:role/:id', async (req, res) => {
+    const { role, id } = req.params;
     try {
-        const conversations = await DealChatConversation.find();
+        let result;
+        if (role === 'shipper') {
+            result = await Shipper.findOneAndDelete({ userShipperID: id });
+        } else if (role === 'carrier') {
+            result = await Carrier.findOneAndDelete({ carrierID: id });
+        } else if (role === 'driver') {
+            result = await Driver.findOneAndDelete({ driverID: id });
+        } else {
+            return res.status(400).json({ message: 'Invalid role specified' });
+        }
+
+        if (!result) {
+            return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
+        }
+
+        res.status(200).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} account deleted successfully` });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.get('/get-all-deal-chat-conversations/:carrierID', async (req, res) => {
+    const { carrierID } = req.params;
+    try {
+        const conversations = await DealChatConversation.find({ carrierID: carrierID });
         res.json(conversations);
     } catch (error) {
-        res.json({message: error});
+        res.json({ message: error.message });
+    }
+});
+
+app.get('/get-all-deal-chat-conversations', async (req, res) => {
+    try {
+        const conversations = await DealChatConversation.find({  });
+        res.json(conversations);
+    } catch (error) {
+        res.json({ message: error.message });
     }
 });
 
@@ -1341,6 +1577,62 @@ app.get('/get-construction-equipment-loads', async (req, res) => {
     }
 });
 
+app.put('/update-driver-location/:driverID', async (req, res) => {
+    const { driverID } = req.params;
+    const { driverLat, driverLng } = req.body;
+
+    try {
+        const driver = await Driver.findOne({ driverID });
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
+        driver.driverLat = driverLat;
+        driver.driverLng = driverLng;
+        await driver.save();
+        res.status(200).json({ message: 'Driver location updated successfully' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.put('/update-load-picked-up/:loadCredentialID', async (req, res) => {
+    const { loadCredentialID } = req.params;
+
+    try {
+        const load = await Load.findOne({ loadCredentialID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        load.loadDeliveredStatus = 'Picked Up';
+        await load.save();
+
+        res.status(200).json({ message: 'Load status updated to Picked Up successfully', load });
+    } catch (error) {
+        console.error('Error updating load status:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+app.put('/start-trip/:loadCredentialID', async (req, res) => {
+    const { loadCredentialID } = req.params;
+
+    try {
+        const load = await Load.findOne({ loadCredentialID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        load.loadTripStarted = 'Started';
+        await load.save();
+
+        res.status(200).json({ message: 'Trip started successfully', load });
+    } catch (error) {
+        console.error('Error starting trip:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.post('/submit-boat-load', async (req, res) => {
     const boatLoadData = req.body;
     const newBoatLoad = new BoatLoad(boatLoadData);
@@ -1730,10 +2022,40 @@ app.put('/update-load-payment-status/:chatID', async (req, res) => {
     }
 });
 
+app.get('/get-card-details/:cardID', async (req, res) => {
+    try {
+        const card = await CardModel.findOne({ cardNumber: req.params.cardID });
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+        res.status(200).json(card);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+const formatDate = (date) => {
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+};
+
+const formatTime = (date) => {
+    const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+    return date.toLocaleTimeString('en-US', options).toLowerCase();
+};
+
+app.get('/get-all-transactions/:userID', async (req, res) => {
+    const { userID } = req.params;
+    try {
+        const transactions = await Transaction.find({ userID: userID });
+        res.status(200).json(transactions);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
 app.post('/create-checkout-session-2', async (req, res) => {
-
     const {amount, loadType, description, shipperID, chatID} = req.body;
-
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -1743,7 +2065,7 @@ app.post('/create-checkout-session-2', async (req, res) => {
                     product_data: {
                         name: (loadType + (description))
                     },
-                    unit_amount: amount * 100, // Stripe expects the amount in cents
+                    unit_amount: amount * 100,
                 },
                 quantity: 1,
             }],
@@ -1752,6 +2074,16 @@ app.post('/create-checkout-session-2', async (req, res) => {
             cancel_url: 'http://localhost:3000/payment-failed',
         });
 
+        const newTransaction = new Transaction({
+            userID: shipperID,
+            amount: amount.toFixed(2), // Format amount to two decimal places
+            paymentStatus: "Payed to Safe",
+            currentDate: formatDate(new Date()), // Save formatted date
+            currentTime: formatTime(new Date())  // Save formatted time
+        });
+
+        await newTransaction.save();
+        console.log("Transaction Saved");
         res.json({sessionId: session.id});
     } catch (error) {
         console.error('Error creating checkout session:', error);

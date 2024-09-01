@@ -1,0 +1,14 @@
+.checkbox{
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  padding: 7px;
+  border-radius: 50px;
+  transition: 0.2s ease-in-out;
+  cursor: pointer;
+
+  &:hover{
+    background: var(--light-grey-hovered-2);
+  }
+
+}

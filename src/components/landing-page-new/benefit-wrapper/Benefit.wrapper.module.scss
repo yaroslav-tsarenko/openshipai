@@ -1,0 +1,24 @@
+.benefitWrapper {
+  margin: 90px auto auto auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  h1{
+    text-align: center;
+    display: flex;
+    margin: 90px auto 90px auto;
+    font-weight: bold;
+    font-size: 5rem;
+    color: var(--dark-grey);
+  }
+}
+
+.benefitWrapperContent {
+  display: grid;
+  grid-template-columns: repeat(2, 2fr);
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+}

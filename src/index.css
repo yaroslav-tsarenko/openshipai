@@ -1,6 +1,6 @@
 * {
-    font-family: "Google Sans", "sans-serif";
-    color: var(--dark-grey);
+    font-family: "Google Sans", "sans-serif" !important;
+    color: var(--royal-white);
 }
 
 html {
@@ -19,17 +19,24 @@ body {
     --royal-blue-hovered: #0061ff;
     --royal-blue-light: #4d93ff;
     --royal-blue-light-transparent: rgba(77, 147, 255, 0.11);
-    --royal-green: #19b66a;
+    --royal-green: #0c945c;
     --royal-yellow: #e4ad21;
     --royal-green-hovered: #009f52;
+    --royal-green-hovered-transparent: #d8f0e6;
+    --alert-success: #b6eacd;
+    --alert-info: #c2edfe;
+    --alert-warning: #fbeed9;
+    --alert-error: #fee3e1;
     --royal-red: #d83025;
     --royal-red-hovered: #ea3528;
     --royal-blue-transparent: rgba(2, 78, 201, 0.31);
     --royal-white: #ffffff;
+    --royal-white-dark: #f4f4f4;
     --royal-white-transparent: rgba(255, 255, 255, 0.66);
-    --dark-grey: #3B3B3B;
+    --dark-grey: #2e2a2a;
     --grey: #707070;
     --light-grey: #cacaca;
+    --grey-darker: #bcbcbc;
     --light-grey-hovered: #e5e5e5;
     --light-grey-hovered-2: #f6f6f6;
     --light-grey-hovered-transparent: rgba(229, 229, 229, 0.23);
@@ -37,4 +44,5 @@ body {
     --load-credentials-font-color: #9E9E9E;
     --search-bar-background: #efefef;
     --search-bar-placeholder-color: #B4B4B4;
+    --grey-design: #9390a0;
 }

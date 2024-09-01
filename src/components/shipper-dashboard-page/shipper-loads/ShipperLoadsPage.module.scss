@@ -1,0 +1,26 @@
+.specifyLoadSubTypeContent{
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+
+}
+
+.specifyLoadSubtype{
+  display: flex;
+  width: 100%;
+}
+
+.selectLoadType {
+  font-size: 15px;
+  font-weight: normal;
+  color: gray;
+  border-radius: 10px;
+  height: 50px; // Adjust the height as needed
+  width: 100%; // Adjust the width as needed
+}
+
+.optionLoadType {
+  font-size: 15px;
+  color: grey;
+  font-weight: normal;
+}

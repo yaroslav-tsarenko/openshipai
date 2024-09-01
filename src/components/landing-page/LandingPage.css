@@ -119,8 +119,8 @@ body {
     display: flex;
     position: relative;
     flex-direction: column;
-    background: var(--royal-blue);
-    color: white;
+    background: var(--light-grey);
+    color: var(--dark-grey);
     align-items: center;
     width: 100%;
 }
@@ -142,6 +142,18 @@ body {
     justify-content: space-between;
     width: 900px;
     height: 275px;
+    color: var(--dark-grey);
+}
+
+.footer-section-content h3 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: var(--dark-grey);
+}
+
+
+.footer-section-link{
+    color: var(--dark-grey);
 }
 
 .footer-section-content-newsletter {
@@ -157,7 +169,7 @@ body {
 .footer-section-content-newsletter p {
     font-size: 1.7rem;
     font-weight: normal;
-    color: var(--light-grey);
+    color: var(--dark-grey);
 }
 
 .footer-input-wrapper {
@@ -201,7 +213,7 @@ body {
 }
 
 .footer-section-content a {
-    color: var(--light-grey);
+    color: var(--dark-grey);
     text-decoration: none;
     font-size: 1.7rem;
     font-weight: normal;
@@ -242,17 +254,19 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
+    justify-items: center;
+    align-content: center;
     transition: 0.2s ease-in-out;
     cursor: pointer;
+    border-radius: 50px;
     margin: 0 0 0 0;
+    border: none;
+    background: var(--dark-grey);
 }
 
 .icon-container:hover {
-    background: var(--light-grey-hovered-transparent);
     transition: 0.2s ease-in-out;
+
 }
 
 .footer-icons {
@@ -626,7 +640,7 @@ body {
     transition: 0.2s ease-in-out;
 }
 
-.introduction-card-vector-mobile{
+.introduction-card-vector-mobile {
     display: none;
 }
 
@@ -1637,7 +1651,7 @@ body {
         height: 195vh;
     }
 
-    .benefit-container{
+    .benefit-container {
         width: 100%;
         margin: 20px 0 20px 0;
         padding: 20px 0 20px 0;

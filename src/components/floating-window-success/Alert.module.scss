@@ -1,0 +1,152 @@
+.floatingWindowComponent {
+  z-index: 1000;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  font-weight: bold;
+  width: 500px;
+  font-size: 1.2rem;
+  border-top-left-radius: 2px;
+  border-top-right-radius: 2px;
+  padding: 13px;
+  text-align: left;
+  align-content: center;
+  display: flex;
+  position: fixed;
+  right: 10px;
+  top: 55px;
+  animation: slide-in 0.5s forwards;
+  align-items: center;
+  justify-items: center;
+  justify-content: space-between;
+
+  div{
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+
+  }
+
+  button{
+    width: 35px;
+    height: 35px;
+    border-radius: 50px;
+    display: flex;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease-in-out;
+    border: none;
+
+    &:hover {
+      background: var(--light-grey);
+    }
+  }
+
+  section {
+
+    margin: 0 0 0 10px;
+
+    h3 {
+      font-weight: bold;
+      font-size: 15px;
+      padding: 0;
+      margin: 0;
+    }
+
+    p {
+      font-weight: lighter;
+      font-size: 13px;
+      padding: 0;
+      margin: 0;
+    }
+  }
+}
+
+.success {
+  background: var(--alert-success);
+  color: var(--alert-success);
+  border-bottom: 2px solid var(--royal-green);
+
+  h3 {
+    color: var(--royal-green); // Define this variable in your CSS variables
+  }
+
+  p {
+    color: var(--royal-green); // Define this variable in your CSS variables
+  }
+}
+
+.warning {
+  background: var(--alert-warning);
+  color: var(--alert-warning);
+  border-bottom: 2px solid var(--royal-yellow);
+
+  h3 {
+    color: var(--royal-yellow); // Define this variable in your CSS variables
+  }
+
+  p {
+    color: var(--royal-yellow); // Define this variable in your CSS variables
+  }
+}
+
+.info {
+  background: var(--alert-info);
+  color: var(--alert-info);
+  border-bottom: 2px solid var(--royal-blue);
+
+  h3 {
+    color: var(--royal-blue); // Define this variable in your CSS variables
+  }
+
+  p {
+    color: var(--royal-blue); // Define this variable in your CSS variables
+  }
+}
+
+.error {
+  background: var(--alert-error);
+  color: var(--alert-error);
+  border-bottom: 2px solid var(--royal-red);
+
+  h3 {
+    color: var(--royal-red); // Define this variable in your CSS variables
+  }
+
+  p {
+    color: var(--royal-red); // Define this variable in your CSS variables
+  }
+}
+
+.alertIcon {
+  width: 22px;
+  height: 22px;
+}
+
+@keyframes fill-border {
+  0% {
+    border-bottom-width: 0;
+  }
+  100% {
+    border-bottom-width: 2px;
+  }
+}
+
+@keyframes slide-in {
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-up {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}

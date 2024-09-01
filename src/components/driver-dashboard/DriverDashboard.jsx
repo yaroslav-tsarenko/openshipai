@@ -12,14 +12,15 @@ import {BACKEND_URL} from "../../constants/constants";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
 import ActiveAssignedLoadContainer from "../active-assigned-load-container/ActiveAssignedLoadContainer";
+import Grid from "../grid-two-columns/Grid";
 
 const DriverDashboard = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [driverInfo, setDriverInfo] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const {driverID} = useParams();
+    const { driverID } = useParams();
+    const [driverInfo, setDriverInfo] = useState(null);
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
@@ -29,6 +30,39 @@ const DriverDashboard = () => {
         driverTruck: '',
         driverInsurance: ''
     });
+
+    useEffect(() => {
+        const getCurrentPosition = () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        const { latitude, longitude } = position.coords;
+                        try {
+                            await axios.put(`${BACKEND_URL}/update-driver-location/${driverID}`, {
+                                driverLat: latitude,
+                                driverLng: longitude
+                            });
+                            console.log('Driver location updated');
+                        } catch (error) {
+                            console.error('Error updating driver location:', error);
+                        }
+                    },
+                    (error) => {
+                        console.error('Error getting current position:', error);
+                    },
+                    { enableHighAccuracy: true }
+                );
+            } else {
+                console.error('Geolocation is not supported by this browser.');
+            }
+        };
+
+        getCurrentPosition();
+
+        const intervalId = setInterval(getCurrentPosition, 60000); // Update every 60 seconds
+
+        return () => clearInterval(intervalId);
+    }, [driverID]);
 
 
     const handleClick = (load) => {
@@ -162,13 +196,13 @@ const DriverDashboard = () => {
                     </div>
                 </div>
             )}
-            <div className="driver-dashboard-wrapper">
+            <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
                     DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
                     Settings={{visible: true, route: `/driver-settings/${driverID}`}}
                     AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
                 />
-                <div className="driver-dashboard-content">
+                <div className="shipper-dashboard-content">
                     <HeaderDashboard
                         contentTitle={driverInfo ?
                             <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
@@ -182,54 +216,57 @@ const DriverDashboard = () => {
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                     />
-                    <div className="driver-dashboard-content-body">
-                        <div className="driver-dashboard-chat-metric">
-                            <div className="metrics-container-wrapper">
-                                <MetricCompoent text="Service Rating"
-                                                description="It’s yours global reputation on service"
-                                                percent={75}
-                                                color="#FFC107"/>
-                                <MetricCompoent text="Success agreement "
-                                                description="Average percent of  cooperate with driver"
-                                                percent={55}
-                                                color="#0061ff"/>
-                                <MetricCompoent text="Service Activity"
-                                                description="Monitoring, service usability, connections"
-                                                percent={86}
-                                                color="#009f52"/>
-
+                    <div className="shipper-dashboard-content-body">
+                        <div className="dashboard-content">
+                            <div className="chat-metric-content">
+                                <Grid columns="3, 3fr">
+                                    <MetricCompoent text="Service Rating"
+                                                    description="It’s yours global reputation on service"
+                                                    percent={75}
+                                                    color="#FFC107"/>
+                                    <MetricCompoent text="Success agreement "
+                                                    description="Average percent of  cooperate with carrier"
+                                                    percent={55}
+                                                    color="#0061ff"/>
+                                    <MetricCompoent text="Service Activity"
+                                                    description="Monitoring, service usability, connections"
+                                                    percent={86}
+                                                    color="#009f52"/>
+                                </Grid>
+                                <OpenShipAIChat userID={driverID} userRole="shipper"/>
                             </div>
-                            <OpenShipAIChat/>
-                        </div>
-                        <div className="driver-dashboard-side-panel-wrapper">
-                            <div className="driver-map-container">
-                                <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
-                                                                   origin={origin} destination={destination}/>
-                            </div>
-                            <div className="driver-dashboard-side-panel">
+                            <div className="driver-dashboard-side-panel-wrapper">
+                                <div className="driver-map-container">
+                                    <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
+                                                                       origin={origin} destination={destination}/>
+                                </div>
+                                <div className="driver-dashboard-side-panel">
 
-                                {assignedLoads.length > 0 ? (
-                                    assignedLoads.map(load => (
-                                        <div onClick={() => handleClick(load)}>
-                                            <ActiveAssignedLoadContainer
-                                                key={load.loadID}
-                                                loadType={load.loadType}
-                                                driverID={driverID}
-                                                origin={load.loadPickupLocation}
-                                                destination={load.loadDeliveryLocation}
-                                                originTime={load.loadPickupDate}
-                                                destinationTime={load.loadDeliveryDate}
-                                                status={load.loadStatus}
-                                                distance={load.loadMilesTrip}
-                                                loadID={load.loadCredentialID}
-                                            />
-                                        </div>
+                                    {assignedLoads.length > 0 ? (
+                                        assignedLoads.map(load => (
+                                            <div onClick={() => handleClick(load)}>
+                                                <ActiveAssignedLoadContainer
+                                                    key={load.loadID}
+                                                    loadType={load.loadType}
+                                                    driverID={driverID}
+                                                    origin={load.loadPickupLocation}
+                                                    destination={load.loadDeliveryLocation}
+                                                    originTime={load.loadPickupDate}
+                                                    destinationTime={load.loadDeliveryDate}
+                                                    status={load.loadStatus}
+                                                    distance={load.loadMilesTrip}
+                                                    loadID={load.loadCredentialID}
+                                                />
+                                            </div>
 
-                                    ))
-                                ) : (
-                                    <p className="driver-assigned-load-message">Carrier didn't assign loads for you</p>
-                                )}
+                                        ))
+                                    ) : (
+                                        <p className="driver-assigned-load-message">Carrier didn't assign loads for
+                                            you</p>
+                                    )}
+                                </div>
                             </div>
+
                         </div>
                     </div>
                 </div>

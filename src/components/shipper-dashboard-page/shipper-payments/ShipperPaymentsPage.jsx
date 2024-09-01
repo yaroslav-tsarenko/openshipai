@@ -1,25 +1,161 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as BlueCard} from "../../../assets/card-blue.svg";
-import {ReactComponent as RedCard} from "../../../assets/card-pink.svg";
-import {ReactComponent as AddNew} from "../../../assets/add-new-card.svg";
+import {ReactComponent as PlusIcon} from "../../../assets/plus-icon-static.svg";
 import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
+import {ReactComponent as DeleteIcon} from "../../../assets/delete-account-bin-icon.svg";
+import {ReactComponent as PinCodeSettingsIcon} from "../../../assets/pin-code-icon.svg";
+import {ReactComponent as CashbackIcon} from "../../../assets/cashback-icon.svg";
+import {ReactComponent as LockIcon} from "../../../assets/lock-card-icon.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-card.svg";
 import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
 import {BACKEND_URL} from "../../../constants/constants";
+import Popup from "../../popup/Popup";
+import Card from "../../card/Card";
+import styles from "./ShipperPayments.module.scss"
+import TransactionItem from "../../transaction-item/TransactionItem";
 
 const ShipperPaymentsPage = () => {
-
+    const [selectedCard, setSelectedCard] = useState(null);
     const {shipperID} = useParams();
-    const address = process.env.REACT_APP_API_BASE_URL;
     const [shipperInfo, setShipperInfo] = useState(null);
-
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [cards, setCards] = useState([]);
+    const [transactions, setTransactions] = useState([]);
+    const [loadingCards, setLoadingCards] = useState(true);
+    const [formData, setFormData] = useState({
+        cardLastNameFirstName: '',
+        userID: shipperID,
+        cardNumber: '',
+        expirationDate: '',
+        cvv: '',
+        cardPaymentSystem: '',
+        cardColor: (() => {
+            const colors = ['red', 'green', 'blue', "yellow"];
+            return colors[Math.floor(Math.random() * colors.length)];
+        })()
+    });
+
+
+    useEffect(() => {
+        const fetchCards = async () => {
+            try {
+                setLoadingCards(true);
+                const response = await fetch(`${BACKEND_URL}/get-cards/${shipperID}`);
+                const data = await response.json();
+                if (data.status === 'Success' && Array.isArray(data.cards)) {
+                    setCards(data.cards);
+                } else {
+                    console.error(data.message);
+                    setCards([]); // Set to empty array on error
+                }
+            } catch (error) {
+                console.error('Error fetching cards:', error);
+                setCards([]); // Set to empty array on error
+            } finally {
+                setLoadingCards(false);
+            }
+        };
+        const fetchTransactions = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-all-transactions/${shipperID}`);
+                setTransactions(response.data);
+            } catch (error) {
+                console.error('Error fetching transactions:', error);
+            }
+        };
+
+        fetchTransactions();
+        fetchCards();
+    }, [shipperID]);
+
+    const handleChange = (field) => (event) => {
+        setFormData({
+            ...formData,
+            [field]: event.target.value
+        });
+    };
+
+    const handleExpirationDateChange = (event) => {
+        let value = event.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+        if (value.length > 2) {
+            value = value.slice(0, 2) + '/' + value.slice(2, 4); // Insert '/' after the first two digits
+        }
+        if (value.length > 5) {
+            value = value.slice(0, 5); // Limit to 5 characters (MM/YY)
+        }
+        setFormData({
+            ...formData,
+            expirationDate: value
+        });
+    };
+
+    const handleCVVChange = (event) => {
+        let value = event.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+        if (value.length > 3) {
+            value = value.slice(0, 3); // Limit to 3 characters
+        }
+        setFormData({
+            ...formData,
+            cvv: value
+        });
+    };
+
+    const handleCardNumberChange = (event) => {
+        let value = event.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+        value = value.match(/.{1,4}/g)?.join(' ') || ''; // Insert space after every 4 digits
+        if (value.length > 19) {
+            value = value.slice(0, 19); // Limit to 19 characters (16 digits + 3 spaces)
+        }
+        setFormData({
+            ...formData,
+            cardNumber: value
+        });
+    };
+
+    const handleAddCard = async () => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/save-card`, formData);
+            if (response.data.status === 'Success') {
+                alert('Card added successfully');
+                console.log(response);
+            } else {
+                alert('Error adding card');
+            }
+        } catch (error) {
+            console.error('Error adding card:', error);
+            alert('Error adding card');
+        }
+    };
+
+    useEffect(() => {
+        const fetchSelectedCard = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-selected-card/${shipperID}`);
+                if (response.data.status === 'Success') {
+                    setSelectedCard(response.data.card);
+                    console.log(response);
+                } else {
+                    console.error(response.data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching selected card:', error);
+            }
+        };
+
+
+        fetchSelectedCard();
+    }, [shipperID]);
+
+    const togglePopup = () => {
+        setIsPopupOpen(!isPopupOpen);
+    };
 
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
@@ -38,6 +174,21 @@ const ShipperPaymentsPage = () => {
         }
     }, [shipperInfo]);
 
+    const handleCardClickAsync = async (cardNumber) => {
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-selected-card/${shipperID}`, {cardNumber});
+            if (response.data.status === 'Success') {
+                alert('Card selected successfully');
+            } else {
+                alert('Error selecting card');
+            }
+        } catch (error) {
+            console.error('Error selecting card:', error);
+            alert('Error selecting card');
+        }
+        window.location.reload();
+    };
+
     useEffect(() => {
         const getUser = async () => {
             try {
@@ -51,141 +202,194 @@ const ShipperPaymentsPage = () => {
         };
 
         getUser();
-    }, [shipperInfo, shipperID]);
+    }, [shipperID]);
 
     return (
-        <div className="shipper-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
-                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
-            />
-            <div className="shipper-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={shipperInfo ?
-                        <>Welcome back, {shipperInfo.userShipperName}!</> :
-                        <Skeleton variant="text" width={250} />}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
-                    profileLink={`/shipper-profile/${shipperID}`}
-                    bellLink={`/shipper-settings/${shipperID}`}
-                    settingsLink={`/shipper-profile/${shipperID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+        <>
+            {isPopupOpen && (
+                <Popup onClose={togglePopup} title="Add Card" footerText="You need to enter full data of your card">
+                    <div className="google-input-wrapper">
+                        <input
+                            type="text"
+                            id="cardLastNameFirstName"
+                            autoComplete="off"
+                            className="google-style-input"
+                            placeholder="JOHN DOE"
+                            required
+                            onChange={handleChange('cardLastNameFirstName')}
+                            value={formData.cardLastNameFirstName}
+                        />
+                        <label htmlFor="cardLastNameFirstName" className="google-style-input-label">Card Last Name &
+                            First Name</label>
+                    </div>
+                    <div className="google-input-wrapper">
+                        <input
+                            type="text"
+                            id="cardNumber"
+                            autoComplete="off"
+                            className="google-style-input"
+                            placeholder="1234 5678.."
+                            required
+                            onChange={handleCardNumberChange}
+                            value={formData.cardNumber}
+                        />
+                        <label htmlFor="cardNumber" className="google-style-input-label">Card Number</label>
+                    </div>
+                    <section className="card-data-section">
+                        <div className="google-input-wrapper">
+                            <input
+                                type="text"
+                                id="expirationDate"
+                                autoComplete="off"
+                                className="google-style-input"
+                                placeholder="MM/YY"
+                                required
+                                onChange={handleExpirationDateChange}
+                                value={formData.expirationDate}
+                            />
+                            <label htmlFor="expirationDate" className="google-style-input-label">Expiration Date</label>
+                        </div>
+                        <div className="google-input-wrapper">
+                            <input
+                                type="text"
+                                id="cvv"
+                                autoComplete="off"
+                                className="google-style-input"
+                                placeholder="CVV"
+                                required
+                                onChange={handleCVVChange}
+                                value={formData.cvv}
+                            />
+                            <label htmlFor="cvv" className="google-style-input-label">CVV</label>
+                        </div>
+                    </section>
+                    <div className="custom-select-wrapper">
+                        <select
+                            className="custom-select"
+                            onChange={handleChange('cardPaymentSystem')}
+                            value={formData.cardPaymentSystem}
+                        >
+                            <option value="Visa">Visa</option>
+                            <option value="Master Card">Master Card</option>
+                        </select>
+                    </div>
+                    <button className="custom-button" onClick={handleAddCard}>
+                        Add Card
+                    </button>
+                </Popup>
+            )}
+            <div className={styles.shipperDashboardContentWrapper}>
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
                 />
-                <div className="payments-wrapper">
-                    <div className="payment-selection-header">
-                        <h3 className="payment-selection-title">Select Payment Method</h3>
-                        <section className="select-payment-method">
-                            <button className="payment-method-button">Credit Card</button>
-                            <button className="payment-method-button">PayPal</button>
-                            <button className="payment-method-button">QR</button>
-                            <button className="payment-method-button">Other</button>
-                        </section>
+                <div className={styles.shipperDashboardContent}>
+                    <HeaderDashboard
+                        contentTitle={shipperInfo ?
+                            <>Welcome back, {shipperInfo.userShipperName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={shipperInfo ? shipperInfo.userShipperName :
+                            <Skeleton variant="text" width={60}/>}
+                        accountRole={shipperInfo ? shipperInfo.userShipperRole :
+                            <Skeleton variant="text" width={40}/>}
+                        profileLink={`/shipper-profile/${shipperID}`}
+                        bellLink={`/shipper-settings/${shipperID}`}
+                        settingsLink={`/shipper-profile/${shipperID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    />
+                    <div className={styles.paymentsMethodSelector}>
+                        <button>Credit Card</button>
                     </div>
-                    <div className="payment-method-content">
-                        <section className="user-card-container">
-                            <RedCard className="card-icon"/>
-                            <BlueCard className="card-icon"/>
-                            <AddNew className="card-icon"/>
-                        </section>
-                        <section className="transaction-history">
-                            <div className="transaction-history-header">
-                                <h3>Transaction History</h3>
-                                <button><SortIcon/> Sort</button>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
+                    <div className={styles.allCardsSection}>
+                        <h4>All cards</h4>
+                        <section>
+                            {loadingCards ? (
+                                <Skeleton variant="rounded" width={300} height={200}/>
+                            ) : (
+                                cards.map(card => (
+                                    <Card
+                                        key={card._id}
+                                        onClick={handleCardClickAsync}
+                                        cardNumber={card.cardNumber}
+                                        cardCVV={card.cvv}
+                                        cardColor={card.cardColor}
+                                        cardExpirationDate={card.expirationDate}
+                                        cardLastNameFirstName={card.cardLastNameFirstName}
+                                        cardPaymentSystem={card.cardPaymentSystem}
+                                    />
+                                ))
+                            )}
+                            <div className={styles.addNewCard} onClick={togglePopup}>
                                 <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
+                                    <PlusIcon/>
+                                    <h2>Add New</h2>
                                 </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
-                                <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
-                                </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
-                                <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
-                                </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
-                                <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
-                                </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
-                                <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
-                                </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
-                            </div>
-                            <div className="transaction-history-item">
-                                <DefaultUserAvatar/>
-                                <section>
-                                    <h4>You</h4>
-                                    <p>Payment to Carrier</p>
-                                </section>
-                                <section>
-                                    <h4>Mar 6, 2024</h4>
-                                    <p>3:12:23 am</p>
-                                </section>
-                                <h4>-200$</h4>
                             </div>
                         </section>
-                        <section className="card-settings">
-                            <div className="selected-card">
-                                <h2>Selected Card</h2>
-                                <RedCard className="card-icon"/>
-                            </div>
-                            <div className="card-settings-content">
-                                <a href="#">Pin Code Settings</a>
-                                <a href="#">Cashback</a>
-                                <a href="#">Settings Limits</a>
-                                <a href="#">Block card</a>
-                            </div>
-                            <button>Delete card</button>
-                        </section>
+
                     </div>
+                    <div className={styles.cardContentWrapper}>
+                        <div className={styles.transactionHistoryWrapper}>
+                            <div className={styles.transactionHistoryWrapperHeader}>
+                                <h4>Transaction History</h4>
+                                <button>
+                                    <SortIcon/>
+                                </button>
+                            </div>
+                            <div className={styles.transactionHistoryContent}>
+                                {transactions.map(transaction => (
+                                    <TransactionItem
+                                        key={transaction._id}
+                                        avatar={previewSavedImage}
+                                        currentUser="You"
+                                        monthAndYear={transaction.currentDate}
+                                        time={transaction.currentTime}
+                                        typeOfPayment={transaction.paymentStatus}
+                                        priceAmount={`${transaction.amount}$`}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                        <div className={styles.cardSettingsWrapper}>
+                            <div className={styles.cardSettingsWrapperHeader}>
+                                <h4>Selected Card</h4>
+                                <button>
+                                    <DeleteIcon/>
+                                </button>
+                            </div>
+
+                            <div className={styles.cardSettingsContent}>
+                                {selectedCard ? (
+                                    <Card
+                                        cardNumber={selectedCard.cardNumber}
+                                        cardCVV={selectedCard.cvv}
+                                        cardColor={selectedCard.cardColor}
+                                        cardExpirationDate={selectedCard.expirationDate}
+                                        cardLastNameFirstName={selectedCard.cardLastNameFirstName}
+                                        cardPaymentSystem={selectedCard.cardPaymentSystem}
+                                    />
+                                ) : (
+                                    <p>No card selected</p>
+                                )}
+                                <section>
+                                    <button><PinCodeSettingsIcon/> Pin code settings</button>
+                                    <button><CashbackIcon/> Cashback</button>
+                                    <button><LockIcon/> Block Card</button>
+                                    <button><SettingsIcon/> Settings Limits</button>
+                                </section>
+                            </div>
+                        </div>
+
+                    </div>
+
+
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 

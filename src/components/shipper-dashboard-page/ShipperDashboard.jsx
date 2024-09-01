@@ -10,6 +10,7 @@ import {Skeleton} from "@mui/material";
 import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
+import Grid from "../grid-two-columns/Grid";
 
 const ShipperDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -71,35 +72,38 @@ const ShipperDashboard = () => {
                 <HeaderDashboard
                     contentTitle={shipperInfo ?
                         <>Welcome back, {shipperInfo.userShipperName}!</> :
-                        <Skeleton variant="text" width={250} />}
+                        <Skeleton variant="text" width={250}/>}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
+                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-dashboard-content-body">
-                    <div className="shipper-dashboard-chat-metric">
-                        <div className="metrics-container-wrapper">
-                            <MetricCompoent text="Service Rating"
-                                            description="It’s yours global reputation on service"
-                                            percent={75}
-                                            color="#FFC107"/>
-                            <MetricCompoent text="Success agreement "
-                                            description="Average percent of  cooperate with carrier"
-                                            percent={55}
-                                            color="#0061ff"/>
-                            <MetricCompoent text="Service Activity"
-                                            description="Monitoring, service usability, connections"
-                                            percent={86}
-                                            color="#009f52"/>
-
+                    <div className="dashboard-content">
+                        <div className="chat-metric-content">
+                            <Grid columns="3, 3fr">
+                                <MetricCompoent text="Service Rating"
+                                                description="It’s yours global reputation on service"
+                                                percent={75}
+                                                color="#FFC107"/>
+                                <MetricCompoent text="Success agreement "
+                                                description="Average percent of  cooperate with carrier"
+                                                percent={55}
+                                                color="#0061ff"/>
+                                <MetricCompoent text="Service Activity"
+                                                description="Monitoring, service usability, connections"
+                                                percent={86}
+                                                color="#009f52"/>
+                            </Grid>
+                            <OpenShipAIChat userID={shipperID} userRole="shipper"/>
                         </div>
-                        <OpenShipAIChat userID={shipperID} userRole="shipper"/>
+                        <div className="map-content">
+                            <ShipperActiveLoadsPanel shipperID={shipperID}/>
+                        </div>
                     </div>
-                    <ShipperActiveLoadsPanel shipperID={shipperID}/>
                 </div>
             </div>
         </div>

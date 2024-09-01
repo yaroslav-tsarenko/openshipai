@@ -1,0 +1,126 @@
+.howItWorksWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 1200px;
+  width: 100%;
+  margin: 190px auto 190px auto;
+
+  h2 {
+    text-align: center;
+    display: flex;
+    margin: 50px auto 50px auto;
+    color: var(--dark-grey);
+    font-weight: bold;
+    font-size: 5rem;
+  }
+}
+
+.howItWorksContent {
+  width: 100%;
+  display: flex;
+  gap: 50px;
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  justify-items: center;
+
+  video{
+    width: 50%;
+    height: 100%;
+    border-radius: 15px;
+  }
+
+  section {
+    display: flex;
+    gap: 20px;
+    flex-direction: column;
+    max-width: 500px;
+    width: 100%;
+  }
+
+}
+
+/* Add this to your HowItWorks.module.scss */
+.video-transition {
+  transition: opacity 1s ease-in-out;
+  opacity: 0;
+}
+
+.video-visible {
+  opacity: 1;
+}
+
+.howItWorksItem {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 0 15px 0 15px;
+  max-height: fit-content;
+  height: 100%;
+  position: relative;
+  transition: max-height 0.5s ease-in-out, 0.1s ease-in-out;
+  border-radius: 2px 15px 15px 2px;
+
+  &:hover {
+    background: var(--light-grey-hovered-2);
+  }
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 4px;
+    height: 20px;
+    background-color: var(--grey);
+    border-radius: 2px;
+    transition: background-color 5s linear, height 0.5s ease-in-out;
+  }
+
+  &.active::before {
+    background-color: var(--royal-green);
+    height: 100%;
+    box-shadow: 0 0 10px var(--royal-green);
+  }
+
+  h4 {
+    display: flex;
+    color: var(--dark-grey);
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 0;
+    padding: 0;
+    transition: 0.2s ease-in-out;
+  }
+
+  p {
+    display: block;
+    color: var(--light-grey);
+    font-size: 1.8rem;
+    margin: 0;
+    padding: 0;
+    visibility: hidden;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: visibility 0.5s ease-in-out, opacity 0.5s ease-in-out, max-height 0.5s ease-in-out;
+  }
+
+  &.active p {
+    visibility: visible;
+    max-height: 80px;
+    opacity: 1;
+  }
+
+  &.active::before {
+    background-color: var(--royal-green);
+    box-shadow: 0 0 10px var(--royal-green);
+  }
+
+  &.active p {
+    display: block;
+    visibility: visible;
+    opacity: 1;
+  }
+}

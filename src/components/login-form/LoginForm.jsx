@@ -6,9 +6,10 @@ import {useNavigate} from "react-router-dom";
 import {GoogleLogin} from '@react-oauth/google';
 import Typewriter from "typewriter-effect";
 import {ClipLoader} from "react-spinners";
-import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
-import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import Alert from "../floating-window-success/Alert";
 import {BACKEND_URL} from "../../constants/constants";
+import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+import Button from "../button/Button";
 
 function LoginForm() {
     const [email, setEmail] = useState()
@@ -50,8 +51,8 @@ function LoginForm() {
 
     return (
         <>
-            {message && (message.type === 'success' ? <FloatingWindowSuccess text={message.text}/> :
-                <FloatingWindowFailed text={message.text}/>)}
+            {message && (message.type === 'success' ? <Alert status="success" description="You have succesfully logged in " text={message.text}/> :
+                <Alert description="Something went wrong. Try again"  status="error" text={message.text}/>)}
             <div className="sign-in-wrapper">
                 <div className="left-side">
                     <form onSubmit={handleSubmit} className="login-custom-form">
@@ -79,15 +80,15 @@ function LoginForm() {
                             />
                             <label htmlFor="password" className="google-style-input-label">Password</label>
                         </div>
-                        <button type="submit" className="sign-in-button">
+                        <Button variant="default">
                             {isLoading ?
                                 <>
-                                    <ClipLoader color="#ffffff" loading={isLoading} className="payment-loader"
-                                                size={25}/> Processing...
+                                    <RotatingLinesLoader title="Processing..."/>
+
                                 </>
                                 :
                                 "Sign In"}
-                        </button>
+                        </Button>
                         <div className="question-div">
                             <p className="question-p">Dont have account?</p>
                             <Link to="/sign-up" className="sign-in-link">Sign up now</Link>

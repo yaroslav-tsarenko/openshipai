@@ -99,13 +99,13 @@ const DriverAssignedLoads = () => {
     const assignedLoads = loads.filter(load => load.loadAssignedDriverID === driverID);
 
     return (
-        <div className="driver-dashboard-wrapper">
+        <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
                 DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
                 Settings={{visible: true, route: `/driver-settings/${driverID}`}}
                 AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
             />
-            <div className="driver-dashboard-content">
+            <div className="shipper-dashboard-content">
                 <HeaderDashboard
                     contentTitle={driverInfo ?
                         <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
@@ -118,8 +118,7 @@ const DriverAssignedLoads = () => {
                     settingsLink={`/driver-profile/${driverID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
-                <div className="driver-dashboard-content">
-                    <div className="driver-dashboard-content-body">
+                    <div className="shipper-dashboard-content-body">
                         <div className="loads-containers-block">
                             {assignedLoads.length > 0 ? (
                                 assignedLoads.map(load => (
@@ -142,7 +141,6 @@ const DriverAssignedLoads = () => {
                             )}
                         </div>
                     </div>
-                </div>
             </div>
         </div>
     );

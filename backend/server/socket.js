@@ -3,7 +3,6 @@ const app = express();
 const port = 8083;
 const http = require('http').createServer(app);
 const cors = require('cors');
-const { FRONTEND_URL } = require('../../src/constants/constants');
 
 const io = require('socket.io')(http, {
     cors: {
@@ -13,7 +12,7 @@ const io = require('socket.io')(http, {
 });
 
 app.use(cors({
-    origin: [FRONTEND_URL, 'http://localhost:3000']
+    origin: ['http://localhost:3000']
 }));
 
 io.on('connection', (socket) => {

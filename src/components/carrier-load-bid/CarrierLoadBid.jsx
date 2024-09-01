@@ -4,9 +4,10 @@ import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
 import {ClipLoader} from "react-spinners";
 import axios from "axios";
-import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import Alert from "../floating-window-success/Alert";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../constants/constants";
+import Button from "../button/Button";
 const CarrierLoadBid = ({
                             loadCarrierID,
                             loadBidPrice,
@@ -71,7 +72,7 @@ const CarrierLoadBid = ({
 
     return (
         <>
-            {isSuccess === true && <FloatingWindowSuccess text={statusMessage}/>}
+            {isSuccess === true && <Alert text={statusMessage}/>}
             {isSuccess === false && <FloatingWindowFailed text={statusMessage}/>}
             <div className="carrier-load-bid-container">
                 <div className="carrier-load-bid-container-header">
@@ -88,7 +89,10 @@ const CarrierLoadBid = ({
                     <p>{loadBidCoverLetter}</p>
                 </div>
                 <div className="carrier-load-bid-container-bottom">
-                    <button className="apply-bid-button" onClick={handleOpenPopup}>Apply Bid</button>
+                    <section style={{width: "250px"}}>
+                        <Button variant="apply" onClick={handleOpenPopup}>Apply Bid</Button>
+
+                    </section>
                 </div>
             </div>
             {isPopupOpen && (
@@ -118,9 +122,12 @@ const CarrierLoadBid = ({
                                 <p>Do not follow the carrier's instructions to conduct business in
                                     other messengers to prevent scam actions.</p>
                             </div>
-                            <button className="carrier-submit-bid-button" onClick={handleSubmit}>
-                                {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Continue"}
-                            </button>
+                            <section style={{width: "250px"}}>
+                                <Button variant="apply" onClick={handleSubmit}>
+                                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Continue"}
+                                </Button>
+                            </section>
+
                         </div>
                     </div>
                 </div>

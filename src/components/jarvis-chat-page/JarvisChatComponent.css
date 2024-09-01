@@ -184,10 +184,6 @@ li.message.You .audio-player {
     }
 }
 
-* {
-    color: white;
-    font-family: 'Poppins', sans-serif;
-}
 
 body {
     margin: 0;
@@ -741,11 +737,7 @@ p.p-text-message {
     align-items: center;
 }
 
-.icon-container {
-    display: flex;
-    justify-content: flex-end;
-    margin: 0 0 15px 0;
-}
+
 
 .fa-left-icon {
     border-radius: 50px;

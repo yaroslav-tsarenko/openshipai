@@ -1,30 +1,19 @@
 import React, {useEffect, useState, useRef} from 'react';
 import '../ShipperDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../../assets/openship-ai-logo-updated.svg";
-import {ReactComponent as ArrowRight} from '../../../assets/arrow-right-load-frame.svg';
-import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
-import {ReactComponent as ArrowBack} from "../../../assets/arrow-back.svg";
-import {ReactComponent as LoadDirectionsIcon} from "../../../assets/create-load-direction.svg";
 import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
 import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
 import {ReactComponent as AddLoadIcon} from "../../../assets/add-load-icon.svg";
-import VehicleLoadType from "../../../assets/vehicle-category.svg";
-import MovingLoadType from "../../../assets/moving-category.svg";
+import VehicleLoadType from "../../../assets/vehicle-load-type.png";
+import MovingLoadType from "../../../assets/movin-load-type.png";
+import FreightLoadType from "../../../assets/freight-load-type.png";
+import HeavyLoadType from "../../../assets/heavy-load-type.png";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import FreightLoadType from "../../../assets/freight-category.svg";
-import HeavyLoadType from "../../../assets/heavy-category.svg";
 import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainer from "../../load-container/LoadContainer";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
 import axios from 'axios';
-import HeavyEquipmentContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
-import VehicleLoadContainer from "../../load-containers/vehicle-load/VehicleLoadContainer";
+import CarOrLightTruckLoadContainer from "../../load-containers/car-or-light-truck/CarOrLightTruckLoadContainer";
 import MotoEquipmentLoadContainer from "../../load-containers/moto-equipment/MotoEquipmentLoadContainer";
 import BoatLoadContainer from "../../load-containers/boat-load/BoatLoadContainer";
 import CommercialTruckLoad from "../../load-containers/commercial-truck/CommercialTruckLoad";
@@ -44,16 +33,21 @@ import OfficeMoving from "../../load-containers/office-moving/OfficeMoving";
 import CorporateMoving from "../../load-containers/corporate-moving/CorporateMoving";
 import StudentMoving from "../../load-containers/student-moving/StudentMoving";
 import MilitaryMoving from "../../load-containers/military-moving/MilitaryMoving";
-import ExpediteLoadContainer from "../../load-containers/expedite-load-container/ExpediteLoadContainer";
+import FreightLoadContainer from "../../load-containers/expedite-load-container/FreightLoadContainer";
 import FTLLoadContainer from "../../load-containers/ftl-load-container/FTLLoadContainer";
 import LTLLoadContainer from "../../load-containers/ltl-load-container/LTLLoadContainer";
-import FarmEquipmentLoadContainer from "../../load-containers/farm-equipment-load-container/FarmEquipmentLoadContainer";
 import {Skeleton} from "@mui/material";
-import {BACKEND_URL} from "../../../constants/constants";
+import {BACKEND_URL} from "../../../constants/constants";//
+import Form from 'react-bootstrap/Form';
+import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
+import RoundedCheckbox from "../../rounded-checkbox/RoundedCheckbox";
+import CustomCheckBox from "../../custom-checkbox/CustomCheckBox";
+import HeavyEquipmentLoadContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
+import Button from "../../button/Button";
 
 
 const ShipperLoadsPage = () => {
-    const [createLoadSection, setCreateLoadSection] = useState(false);
+    const [createLoadSection, setCreateLoadSection] = useState(true);
     const {shipperID} = useParams();
     const [loads, setLoads] = useState([]);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
@@ -67,6 +61,7 @@ const ShipperLoadsPage = () => {
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const [sortOrder, setSortOrder] = useState('');
     const [distance, setDistance] = useState(null);
+    const [selectedLoadType, setSelectedLoadType] = useState('');
     const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
     const [formData, setFormData] = useState({
         pickupLocation: '',
@@ -80,6 +75,30 @@ const ShipperLoadsPage = () => {
         loadMilesTrip: ''
     });
 
+    const selectStyles = {
+        fontSize: '15px',
+        fontWeight: 'normal',
+        color: 'gray',
+        borderRadius: '10px',
+        height: '50px',
+        cursor: 'pointer',
+        marginTop: "17px",
+        marginBottom: "15px",
+        width: '100%'
+    };
+
+    const optionStyles = {
+        fontSize: '17px',
+        color: "grey",
+        fontWeight: 'normal',
+        cursor: "pointer",
+    };
+
+    console.log("Selected loadSubType:", formData.loadSubType);
+
+    const goToStepThree = () => {
+        setStep(3);
+    };
 
     const calculateDistance = async (origin, destination) => {
         const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
@@ -165,7 +184,7 @@ const ShipperLoadsPage = () => {
 
         const fetchLoads = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
+                const response = await axios.get(`${BACKEND_URL}/get-all-loads/${shipperID}`);
                 setLoads(response.data);
             } catch (error) {
                 console.error('Error fetching loads:', error);
@@ -178,11 +197,23 @@ const ShipperLoadsPage = () => {
     }, [shipperInfo, shipperID]);
 
 
+    const handleNextClick = () => {
+        if (selectedLoadType) {
+            if (selectedLoadType === "Heavy Equipment" || selectedLoadType === "Freight") {
+                setStep(3);
+            } else {
+                setStep(2);
+            }
+        } else {
+            alert('Please select a load type');
+        }
+    };
+
     const toggleSortPopup = () => setShowSortPopup(!showSortPopup);
     const toggleFilterPopup = () => setShowFilterPopup(!showFilterPopup);
 
     const getFilteredLoads = () => {
-        if (!selectedFilter) return loads; // No filter selected, return all loads
+        if (!selectedFilter) return loads;
         return loads.filter(load => load.loadType === selectedFilter);
     };
 
@@ -213,8 +244,8 @@ const ShipperLoadsPage = () => {
     };
 
     const handleLoadFrameClick = (loadType) => {
+        setSelectedLoadType(loadType);
         setFormData(prevState => ({...prevState, loadType}));
-        setStep(2);
     };
 
     const handleLoadChange = (input) => (e) => {
@@ -224,6 +255,10 @@ const ShipperLoadsPage = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setStep(step + 1);
+    };
+
+    const goBackToStepThree = () => {
+        setStep(3);
     };
 
     return (
@@ -238,7 +273,7 @@ const ShipperLoadsPage = () => {
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
                     contentTitle={shipperInfo ?
-                        <>Welcome back, {shipperInfo.userShipperName}!</> :
+                        <>Your Loads</> :
                         <Skeleton variant="text" width={250}/>}
                     contentSubtitle="Monitor payments, loads, revenues"
                     accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
@@ -249,20 +284,17 @@ const ShipperLoadsPage = () => {
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 {createLoadSection ? (
-                    <div className="shipper-loads-dashboard-content-body">
+                    <div className="dashboard-content-body">
                         <div className="shipper-dashboard-load-buttons">
                             <section className="shipper-filter-buttons">
-
-                                <button className="filter-buttons-shipper" onClick={toggleSortPopup}>
+                                <Button variant="filter" onClick={toggleSortPopup}>
                                     <SortIcon className="button-nav-load-icon"/>
                                     Sort
-                                </button>
-
-                                <button className="filter-buttons-shipper" onClick={toggleFilterPopup}>
+                                </Button>
+                                <Button variant="filter" onClick={toggleFilterPopup}>
                                     <FilterIcon className="button-nav-load-icon"/>
                                     Filter
-                                </button>
-
+                                </Button>
                                 {showSortPopup && (
                                     <div className="overlay-popup-select" onClick={toggleSortPopup}>
                                         <div className="select-popup" onClick={e => e.stopPropagation()}>
@@ -300,10 +332,12 @@ const ShipperLoadsPage = () => {
                                     </div>
                                 )}
                             </section>
-                            <button className="create-load-button" onClick={() => setCreateLoadSection(false)}>
-                                <AddLoadIcon className="add-load-icon"/>
-                                Create New Load
-                            </button>
+                            <section className="shipper-filter-buttons">
+                                <Button variant="apply" onClick={() => setCreateLoadSection(false)}>
+                                    <AddLoadIcon className="add-load-icon"/>
+                                    Create New Load
+                                </Button>
+                            </section>
                         </div>
                         <div className="load-containers-wrapper">
                             {
@@ -342,552 +376,281 @@ const ShipperLoadsPage = () => {
                     </div>
                 ) : (
                     <div className="shipper-loads-dashboard-content-body">
-                        <div className="create-load-container-header">
-                            <button onClick={() => setCreateLoadSection(true)}><ArrowNav/></button>
-                            <h3>Create Load</h3>
-                            {step > 1 &&
-                                <button className="go-previous-step-button" onClick={() => setStep(step - 1)}>
-                                    <ArrowBack className="arrow-back"/>Previous Step</button>}
-                        </div>
                         <div className="create-load-container-content">
                             {step === 1 && (
-                                <div className="load-type-frame-wrapper">
-                                    <section className="load-frame-description">
-                                        <h2>Choose Load Type</h2>
-                                        <p>Use our modern shipment system</p>
-                                    </section>
+
+                                <CreateLoadContainer
+                                    step={1}
+                                    title="Choose Load Type"
+                                    subTitle="Use our modern shipment system">
                                     <div className="load-type-frame-wrapper-content">
                                         <button className="load-frame-container"
                                                 onClick={() => handleLoadFrameClick("Vehicle Load")}>
                                             <img src={VehicleLoadType}/>
                                             <section>
+                                                <RoundedCheckbox isChecked={selectedLoadType === "Vehicle Load"}/>
                                                 <h2>Vehicle Load</h2>
-                                                <ArrowRight width="20"/>
                                             </section>
                                         </button>
                                         <button className="load-frame-container"
                                                 onClick={() => handleLoadFrameClick("Moving")}>
                                             <img src={MovingLoadType}/>
                                             <section>
+                                                <RoundedCheckbox isChecked={selectedLoadType === "Moving"}/>
                                                 <h2>Moving</h2>
-                                                <ArrowRight width="20"/>
                                             </section>
                                         </button>
                                         <button className="load-frame-container"
                                                 onClick={() => handleLoadFrameClick("Freight")}>
                                             <img src={FreightLoadType}/>
                                             <section>
+                                                <RoundedCheckbox isChecked={selectedLoadType === "Freight"}/>
                                                 <h2>Freight</h2>
-                                                <ArrowRight width="20"/>
                                             </section>
                                         </button>
                                         <button className="load-frame-container"
                                                 onClick={() => handleLoadFrameClick("Heavy Equipment")}>
                                             <img src={HeavyLoadType}/>
                                             <section>
+                                                <RoundedCheckbox isChecked={selectedLoadType === "Heavy Equipment"}/>
                                                 <h2>Heavy Equipment</h2>
-                                                <ArrowRight width="20"/>
                                             </section>
                                         </button>
                                     </div>
-                                </div>
+                                    <div className="create-load-buttons">
+                                        <Button variant="neutral" buttonText="Go Back"
+                                                onClick={() => setCreateLoadSection(true)}/>
+                                        <Button variant="default" buttonText="Next" onClick={handleNextClick}/>
+                                    </div>
+                                </CreateLoadContainer>
                             )}
                             {step === 2 && (
-                                <div className="create-load-first-step">
+                                <>
                                     {formData.loadType === "Vehicle Load" && (
-                                        <div className="create-load-first-step">
-                                            <div className="create-load-credentials-container">
-                                                <OpenshipLogo width="300" height="80"/>
-                                                <h2>Specify Vehicle Load Type</h2>
-                                                <p>By choosing load type, you will redirecting to the current form</p>
-                                            </div>
-                                            <div className="load-creation-input-fields">
-                                                <section>
-                                                    <Box sx={{minWidth: 180, marginTop: '70px'}}>
-                                                        <FormControl fullWidth style={{fontSize: '15px',}}>
-                                                            <InputLabel id="demo-simple-select-label"
-                                                                        style={{
-                                                                            fontSize: '15px',
-                                                                            fontWeight: 'normal'
-                                                                        }}>Load Subtype</InputLabel>
-                                                            <Select
-                                                                labelId="demo-simple-select-label"
-                                                                id="demo-simple-select"
-                                                                label="Load Subtype"
-                                                                name="loadType"
-                                                                value={formData.loadSubType}
-                                                                onChange={(event) => {
-                                                                    handleLoadChange("loadSubType")(event);
-                                                                }}
-                                                                style={{
-                                                                    fontSize: '15px',
-                                                                    fontWeight: 'normal',
-                                                                    color: 'gray',
-                                                                    borderRadius: '10px'
-                                                                }}
-                                                                MenuProps={{
-                                                                    anchorOrigin: {
-                                                                        vertical: "bottom",
-                                                                        horizontal: "left"
-                                                                    },
-                                                                    transformOrigin: {
-                                                                        vertical: "top",
-                                                                        horizontal: "left"
-                                                                    },
-                                                                    getContentAnchorEl: null,
-                                                                    PaperProps: {
-                                                                        style: {
-                                                                            maxHeight: '350px',
-                                                                        },
-                                                                    },
-                                                                }}
-                                                            >
-                                                                <MenuItem value="CarOrLightTruck"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Car or Light Truck</MenuItem>
-                                                                <MenuItem value="MotoEquipment"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Moto Equipment</MenuItem>
-                                                                <MenuItem value="Powerboats"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Powerboats</MenuItem>
-                                                                <MenuItem value="Sailboats"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Sailboats</MenuItem>
-                                                                <MenuItem value="PersonalWatercrafts"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Personal watercrafts</MenuItem>
-                                                                <MenuItem value="ATVs&PowerSports"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>ATVs & Power Sports</MenuItem>
-                                                                <MenuItem value="CommercialTruck"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Commercial Truck</MenuItem>
+                                        <CreateLoadContainer
+                                            step={2}
+                                            title="Specify Vehicle"
+                                            subTitle="By choosing load type, you will redirecting to the current form">
 
-                                                                <MenuItem value="Parts"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Parts</MenuItem>
-                                                                <MenuItem value="TrailerAndOtherVehicles"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>Trailer & Other Vehicles</MenuItem>
-                                                                <MenuItem value="RV"
-                                                                          style={{
-                                                                              fontSize: '15px',
-                                                                              color: 'grey',
-                                                                              fontWeight: 'normal'
-                                                                          }}>RV (Recreational Vehicles)</MenuItem>
-                                                            </Select>
-                                                        </FormControl>
-                                                    </Box>
-                                                    <div className="creation-load-buttons-nav">
-                                                        {step > 1 && <button className="go-previous-step-button"
-                                                                             onClick={() => setStep(step - 1)}>
-                                                            <ArrowBack
-                                                                className="arrow-back"/>Go Back</button>}
-                                                        <button className="create-load-submit-button"
-                                                                onClick={handleSubmit}>Next
-                                                        </button>
-                                                    </div>
-                                                </section>
+                                            <Form.Select
+                                                name="loadSubType"
+                                                value={formData.loadSubType}
+                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                style={selectStyles}
+                                            >
+                                                <option value="CarOrLightTruck" style={optionStyles}>Car or Light
+                                                    Truck
+                                                </option>
+                                                <option value="MotoEquipment" style={optionStyles}>Moto Equipment
+                                                </option>
+                                                <option value="Powerboats" style={optionStyles}>Powerboats</option>
+                                                <option value="Sailboats" style={optionStyles}>Sailboats</option>
+                                                <option value="PersonalWatercrafts" style={optionStyles}>Personal
+                                                    watercrafts
+                                                </option>
+                                                <option value="ATVs&PowerSports" style={optionStyles}>ATVs & Power
+                                                    Sports
+                                                </option>
+                                                <option value="CommercialTruck" style={optionStyles}>Commercial Truck
+                                                </option>
+                                                <option value="Parts" style={optionStyles}>Parts</option>
+                                                <option value="TrailerAndOtherVehicles" style={optionStyles}>Trailer &
+                                                    Other Vehicles
+                                                </option>
+                                                <option value="RV" style={optionStyles}>RV (Recreational Vehicles)
+                                                </option>
+                                            </Form.Select>
+                                            <div className="create-load-buttons">
+                                                {step > 1 &&
+                                                    <Button variant="neutral"
+                                                            buttonText="Go Back"
+                                                            onClick={() => setStep(step - 1)}
+                                                    />
+                                                }
+                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
                                             </div>
-                                        </div>
+
+
+                                        </CreateLoadContainer>
                                     )}
                                     {formData.loadType === "Moving" && (
-                                        <div className="load-container">
-                                            <div className="create-load-first-step">
-                                                <div className="create-load-credentials-container">
-                                                    <OpenshipLogo width="300" height="80"/>
-                                                    <h2>Specify Moving Load Type</h2>
-                                                    <p>By choosing load type, you will redirecting to the current
-                                                        form</p>
-                                                </div>
-                                                <div className="load-creation-input-fields">
-                                                    <section>
-                                                        <Box sx={{minWidth: 180, marginTop: '70px'}}>
-                                                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                                                <InputLabel id="demo-simple-select-label"
-                                                                            style={{
-                                                                                fontSize: '15px',
-                                                                                fontWeight: 'normal'
-                                                                            }}>Load Type</InputLabel>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    label="Load Type"
-                                                                    name="loadSubType"
-                                                                    value={formData.loadSubType}
-                                                                    onChange={(event) => {
-                                                                        handleLoadChange("loadSubType")(event);
-                                                                    }}
-                                                                    style={{
-                                                                        fontSize: '15px',
-                                                                        fontWeight: 'normal',
-                                                                        color: 'gray',
-                                                                        borderRadius: '10px'
-                                                                    }}
-                                                                    MenuProps={{
-                                                                        anchorOrigin: {
-                                                                            vertical: "bottom",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        transformOrigin: {
-                                                                            vertical: "top",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        getContentAnchorEl: null,
-                                                                        PaperProps: {
-                                                                            style: {
-                                                                                maxHeight: '350px',
-                                                                            },
-                                                                        },
-                                                                    }}
-                                                                >
-                                                                    <MenuItem value="LocalMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Local Moving (less then 50
-                                                                        mil)</MenuItem>
-                                                                    <MenuItem value="LongDistanceMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Long Distance Moving</MenuItem>
-                                                                    <MenuItem value="CommercialBusinessMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Commercial / Business Moving</MenuItem>
-                                                                    <MenuItem value="HeavyLiftingAndMovingOnly"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Heavy Lifting and Moving
-                                                                        Only</MenuItem>
-                                                                    <MenuItem value="HouseholdItem"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Household item</MenuItem>
-                                                                    <MenuItem value="OfficeMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Office Moving</MenuItem>
-                                                                    <MenuItem value="CorporateMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Corporate Moving</MenuItem>
-                                                                    <MenuItem value="StudentMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Student Moving</MenuItem>
-                                                                    <MenuItem value="MilitaryMoving"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Military Moving</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Box>
-                                                        <div className="creation-load-buttons-nav">
-                                                            {step > 1 && <button className="go-previous-step-button"
-                                                                                 onClick={() => setStep(step - 1)}>
-                                                                <ArrowBack
-                                                                    className="arrow-back"/>Go Back</button>}
-                                                            <button className="create-load-submit-button"
-                                                                    onClick={handleSubmit}>Next
-                                                            </button>
-                                                        </div>
-                                                    </section>
-                                                </div>
+                                        <CreateLoadContainer
+                                            step={2}
+                                            title="Specify Moving Load Type"
+                                            subTitle="By choosing load type, you will redirecting to the current form">
+                                            <Form.Select
+                                                name="loadType"
+                                                value={formData.loadSubType}
+                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                style={selectStyles}
+                                            >
+                                                <option value="LocalMoving" style={optionStyles}>Local Moving (less than
+                                                    50 miles)
+                                                </option>
+                                                <option value="LongDistanceMoving" style={optionStyles}>Long Distance
+                                                    Moving
+                                                </option>
+                                                <option value="CommercialBusinessMoving" style={optionStyles}>Commercial
+                                                    / Business Moving
+                                                </option>
+                                                <option value="HeavyLiftingAndMovingOnly" style={optionStyles}>Heavy
+                                                    Lifting and Moving Only
+                                                </option>
+                                                <option value="HouseholdItem" style={optionStyles}>Household item
+                                                </option>
+                                                <option value="OfficeMoving" style={optionStyles}>Office Moving</option>
+                                                <option value="CorporateMoving" style={optionStyles}>Corporate Moving
+                                                </option>
+                                                <option value="StudentMoving" style={optionStyles}>Student Moving
+                                                </option>
+                                                <option value="MilitaryMoving" style={optionStyles}>Military Moving
+                                                </option>
+                                            </Form.Select>
+                                            <div className="create-load-buttons">
+                                                {step > 1 && (
+                                                    <Button variant="neutral" buttonText="Go Back"
+                                                            onClick={() => setStep(step - 1)}/>
+                                                )}
+                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
                                             </div>
-
-                                        </div>
+                                        </CreateLoadContainer>
                                     )}
+
                                     {formData.loadType === "Freight" && (
-                                        <div className="load-container">
-                                            <div className="create-load-first-step">
-                                                <div className="create-load-credentials-container">
-                                                    <OpenshipLogo width="300" height="80"/>
-                                                    <h2>Specify Freight Load Type</h2>
-                                                    <p>By choosing load type, you will redirecting to the current
-                                                        form</p>
-                                                </div>
-                                                <div className="load-creation-input-fields">
-                                                    <section>
-                                                        <Box sx={{minWidth: 180, marginTop: '70px'}}>
-                                                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                                                <InputLabel id="demo-simple-select-label"
-                                                                            style={{
-                                                                                fontSize: '15px',
-                                                                                fontWeight: 'normal'
-                                                                            }}>Load
-                                                                    Type</InputLabel>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    label="Load Type"
-                                                                    name="loadType"
-                                                                    value={formData.loadSubType}
-                                                                    onChange={(event) => {
-                                                                        handleLoadChange("loadSubType")(event);
-                                                                    }}
-                                                                    style={{
-                                                                        fontSize: '15px',
-                                                                        fontWeight: 'normal',
-                                                                        color: 'gray',
-                                                                        borderRadius: '10px'
-                                                                    }}
-                                                                    MenuProps={{
-                                                                        anchorOrigin: {
-                                                                            vertical: "bottom",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        transformOrigin: {
-                                                                            vertical: "top",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        getContentAnchorEl: null,
-                                                                        PaperProps: {
-                                                                            style: {
-                                                                                maxHeight: '350px',
-                                                                            },
-                                                                        },
-                                                                    }}
-                                                                >
-                                                                    <MenuItem value="Expedite"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Expedite</MenuItem>
-                                                                    <MenuItem value="LTL"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>LTL</MenuItem>
-                                                                    <MenuItem value="FTL"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>FTL</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Box>
-                                                        <div className="creation-load-buttons-nav">
-                                                            {step > 1 && <button className="go-previous-step-button"
-                                                                                 onClick={() => setStep(step - 1)}>
-                                                                <ArrowBack
-                                                                    className="arrow-back"/>Go Back</button>}
-                                                            <button className="create-load-submit-button"
-                                                                    onClick={handleSubmit}>Next
-                                                            </button>
-                                                        </div>
-                                                    </section>
-                                                </div>
+                                        <CreateLoadContainer
+                                            step={2}
+                                            title="Specify Freight Load Type"
+                                            subTitle="By choosing load type, you will redirecting to the current form">
+                                            <Form.Select
+                                                name="loadType"
+                                                value={formData.loadSubType}
+                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                style={selectStyles}
+                                            >
+                                                <option value="Expedite" style={optionStyles}>Expedite</option>
+                                                <option value="LTL" style={optionStyles}>LTL</option>
+                                                <option value="FTL" style={optionStyles}>FTL</option>
+                                            </Form.Select>
+                                            <div className="create-load-buttons">
+                                                {step > 1 && (
+                                                    <Button variant="neutral" buttonText="Go Back"
+                                                            onClick={() => setStep(step - 1)}/>
+                                                )}
+                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
                                             </div>
+                                        </CreateLoadContainer>
+                                    )}
 
-                                        </div>
-                                    )}
                                     {formData.loadType === "Heavy Equipment" && (
-                                        <div className="load-container">
-                                            <div className="create-load-first-step">
-                                                <div className="create-load-credentials-container">
-                                                    <OpenshipLogo width="300" height="80"/>
-                                                    <h2>Specify Heavy Load Type</h2>
-                                                    <p>By choosing load type, you will redirecting to the current
-                                                        form</p>
-                                                </div>
-                                                <div className="load-creation-input-fields">
-                                                    <section>
-                                                        <Box sx={{minWidth: 180, marginTop: '70px'}}>
-                                                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                                                <InputLabel id="demo-simple-select-label"
-                                                                            style={{
-                                                                                fontSize: '15px',
-                                                                                fontWeight: 'normal'
-                                                                            }}>Load
-                                                                    Type</InputLabel>
-                                                                <Select
-                                                                    labelId="demo-simple-select-label"
-                                                                    id="demo-simple-select"
-                                                                    label="Load Type"
-                                                                    name="loadType"
-                                                                    value={formData.loadSubType}
-                                                                    onChange={handleLoadChange("loadSubType")}
-                                                                    style={{
-                                                                        fontSize: '15px',
-                                                                        fontWeight: 'normal',
-                                                                        color: 'gray',
-                                                                        borderRadius: '10px'
-                                                                    }}
-                                                                    MenuProps={{
-                                                                        anchorOrigin: {
-                                                                            vertical: "bottom",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        transformOrigin: {
-                                                                            vertical: "top",
-                                                                            horizontal: "left"
-                                                                        },
-                                                                        getContentAnchorEl: null,
-                                                                        PaperProps: {
-                                                                            style: {
-                                                                                maxHeight: '350px',
-                                                                            },
-                                                                        },
-                                                                    }}
-                                                                >
-                                                                    <MenuItem value="Farm Equipment"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Farm Equipment</MenuItem>
-                                                                    <MenuItem value="Construction Equipment"
-                                                                              style={{
-                                                                                  fontSize: '15px',
-                                                                                  color: 'grey',
-                                                                                  fontWeight: 'normal'
-                                                                              }}>Construction Equipment</MenuItem>
-                                                                </Select>
-                                                            </FormControl>
-                                                        </Box>
-                                                        <div className="creation-load-buttons-nav">
-                                                            {step > 1 && <button className="go-previous-step-button"
-                                                                                 onClick={() => setStep(step - 1)}>
-                                                                <ArrowBack
-                                                                    className="arrow-back"/>Go Back</button>}
-                                                            <button className="create-load-submit-button"
-                                                                    onClick={handleSubmit}>Next
-                                                            </button>
-                                                        </div>
-                                                    </section>
-                                                </div>
+                                        <CreateLoadContainer
+                                            step={2}
+                                            title="Specify Heavy Load Type"
+                                            subTitle="By choosing load type, you will redirecting to the current form">
+                                            <Form.Select
+                                                name="loadType"
+                                                value={formData.loadSubType}
+                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                style={selectStyles}
+                                            >
+                                                <option value="Farm Equipment" style={optionStyles}>Farm Equipment
+                                                </option>
+                                                <option value="Construction Equipment" style={optionStyles}>Construction
+                                                    Equipment
+                                                </option>
+                                            </Form.Select>
+                                            <div className="create-load-buttons">
+                                                {step > 1 && (
+                                                    <Button variant="neutral" buttonText="Go Back"
+                                                            onClick={() => setStep(step - 1)}/>
+                                                )}
+                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
                                             </div>
-                                        </div>
+                                        </CreateLoadContainer>
                                     )}
-                                </div>
+                                </>
                             )}
                             {step === 3 && (
-                                <div className="create-load-first-step">
-                                    <div className="create-load-credentials-container">
-                                        <OpenshipLogo width="300" height="80"/>
-                                        <h2>Create your load</h2>
-                                        <p>Create your load in few steps</p>
-                                    </div>
+                                <CreateLoadContainer
+                                    step={3}
+                                    title="Specify origin and delivery locations"
+                                    subTitle="We can better assist you if you provide us with the following information"
+                                >
                                     <div className="load-creation-input-fields">
-                                        <LoadDirectionsIcon className="create-load-direction-icon"/>
-                                        <section>
-                                            <div className="input-fields-with-date-time">
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="text"
-                                                        id="pickupLocation"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        onChange={handleLoadChange('pickupLocation')}
-                                                        value={formData.pickupLocation}
-                                                        required
-                                                    />
-                                                    <label htmlFor="pickupLocation"
-                                                           className="google-style-input-label">Pickup Location</label>
-                                                </div>
-                                                <div className="google-input-wrapper" style={{marginLeft: "10px"}}>
-                                                    <input
-                                                        type="date"
-                                                        id="pickupLocationDate"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        onChange={handleLoadChange('pickupLocationDate')}
-                                                        value={formData.pickupLocationDate}
-                                                        required
-                                                    />
-                                                    <label htmlFor="pickupLocation"
-                                                           className="google-style-input-label">Pickup Date</label>
-                                                </div>
+                                        <div className="input-fields-with-date-time">
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="pickupLocation"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('pickupLocation')}
+                                                    value={formData.pickupLocation}
+                                                    required
+                                                />
+                                                <label htmlFor="pickupLocation"
+                                                       className="google-style-input-label">Pickup Location</label>
                                             </div>
-                                            <div className="input-fields-with-date-time">
-                                                {distance !== null && (
-                                                    <div>
-                                                        <p style={{color: "black"}}>Distance: {distance} miles</p>
-                                                    </div>
-                                                )}
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="text"
-                                                        id="deliveryLocation"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        onChange={handleLoadChange('deliveryLocation')}
-                                                        value={formData.deliveryLocation}
-                                                        required
-                                                    />
-                                                    <label htmlFor="deliveryLocation"
-                                                           className="google-style-input-label">Delivery
-                                                        Location</label>
-                                                </div>
-                                                <div className="google-input-wrapper" style={{marginLeft: "10px"}}>
-                                                    <input
-                                                        type="date"
-                                                        id="deliveryLocationDate"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        onChange={handleLoadChange('deliveryLocationDate')}
-                                                        value={formData.deliveryLocationDate}
-                                                        required
-                                                    />
-                                                    <label htmlFor="deliveryLocationDate"
-                                                           className="google-style-input-label">Delivery Date</label>
-                                                </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="date"
+                                                    id="pickupLocationDate"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('pickupLocationDate')}
+                                                    value={formData.pickupLocationDate}
+                                                    required
+                                                />
+                                                <label htmlFor="pickupLocation"
+                                                       className="google-style-input-label">Pickup Date</label>
                                             </div>
-                                            <button className="create-load-submit-button"
-                                                    onClick={handleSubmit}>Next
-                                            </button>
-                                        </section>
+                                        </div>
+                                        <Button variant="slim" buttonText="+ Add Stop"/>
+                                        <div className="input-fields-with-date-time">
+
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="text"
+                                                    id="deliveryLocation"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('deliveryLocation')}
+                                                    value={formData.deliveryLocation}
+                                                    required
+                                                />
+                                                <label htmlFor="deliveryLocation"
+                                                       className="google-style-input-label">Delivery
+                                                    Location</label>
+                                            </div>
+                                            <div className="google-input-wrapper">
+                                                <input
+                                                    type="date"
+                                                    id="deliveryLocationDate"
+                                                    autoComplete="off"
+                                                    className="google-style-input"
+                                                    onChange={handleLoadChange('deliveryLocationDate')}
+                                                    value={formData.deliveryLocationDate}
+                                                    required
+                                                />
+                                                <label htmlFor="deliveryLocationDate"
+                                                       className="google-style-input-label">Delivery Date</label>
+                                            </div>
+                                        </div>
+                                        <div className="load-preference-checkboxes">
+                                            <CustomCheckBox id="checkbox1" label="I'm flexible"/>
+                                            <CustomCheckBox id="checkbox2" label="In the next few days"/>
+                                            <CustomCheckBox id="checkbox3" label="As soon as possible"/>
+                                        </div>
+                                        {distance !== null && (
+                                            <p className="distance-in-miles">Estimated distance: {distance} miles</p>
+                                        )}
+                                        <div className="create-load-buttons">
+                                            <Button variant="neutral" buttonText="Go Back"
+                                                    onClick={() => setStep(2)}/>
+                                            <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                        </div>
+
                                     </div>
-                                </div>
+                                </CreateLoadContainer>
                             )}
                             {step === 4 && (
                                 <div className="create-load-wrapper">
@@ -900,7 +663,23 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
+                                    {formData.loadSubType === 'CarOrLightTruck' && (
+                                        <CarOrLightTruckLoadContainer
+                                            pickupLocation={formData.pickupLocation}
+                                            loadMilesTrip={formData.loadMilesTrip}
+                                            deliveryLocation={formData.deliveryLocation}
+                                            loadType={formData.loadType}
+                                            loadSubType={formData.loadSubType}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            loadPickupTime={formData.pickupLocationTime}
+                                            loadDeliveryTime={formData.deliveryLocationTime}
+                                            goBack={goBackToStepThree}
+                                        />
+                                    )}
                                     {formData.loadSubType === 'Powerboats' &&
                                         <BoatLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -910,7 +689,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'MotoEquipment' &&
                                         <MotoEquipmentLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -920,18 +701,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
-                                    {formData.loadSubType === 'CarOrLightTruck' &&
-                                        <VehicleLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            loadMilesTrip={formData.loadMilesTrip}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}/>}
+
                                     {formData.loadSubType === 'Sailboats' &&
                                         <SailboatLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -941,7 +713,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'PersonalWatercrafts' &&
                                         <PersonalWatercraftsLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -951,7 +725,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'ATVs&PowerSports' &&
                                         <ATVLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -961,7 +737,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'CommercialTruck' &&
                                         <CommercialTruckLoad
                                             pickupLocation={formData.pickupLocation}
@@ -971,7 +749,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'Parts' &&
                                         <PartsLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -981,7 +761,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'TrailerAndOtherVehicles' &&
                                         <TrailerAndOtherVehicles
                                             pickupLocation={formData.pickupLocation}
@@ -991,7 +773,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'LocalMoving' &&
                                         <LocalMovingLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -1001,7 +785,8 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}/>}
                                     {formData.loadSubType === 'LongDistanceMoving' &&
                                         <LongDistanceMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1011,7 +796,8 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}/>}
                                     {formData.loadSubType === 'CommercialBusinessMoving' &&
                                         <CommercialBusinessMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1021,7 +807,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'HeavyLiftingAndMovingOnly' &&
                                         <HeavyLiftingMovingOnly
                                             pickupLocation={formData.pickupLocation}
@@ -1031,7 +819,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'HouseholdItem' &&
                                         <HouseHoldItem
                                             pickupLocation={formData.pickupLocation}
@@ -1041,7 +831,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'OfficeMoving' &&
                                         <OfficeMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1051,7 +843,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'CorporateMoving' &&
                                         <CorporateMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1061,7 +855,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'StudentMoving' &&
                                         <StudentMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1071,7 +867,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'MilitaryMoving' &&
                                         <MilitaryMoving
                                             pickupLocation={formData.pickupLocation}
@@ -1081,9 +879,11 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
-                                    {formData.loadSubType === 'Expedite' &&
-                                        <ExpediteLoadContainer
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
+                                    {formData.loadType === 'Freight' &&
+                                        <FreightLoadContainer
                                             pickupLocation={formData.pickupLocation}
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
@@ -1091,7 +891,9 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}
+                                        />}
                                     {formData.loadSubType === 'FTL' &&
                                         <FTLLoadContainer
                                             pickupLocation={formData.pickupLocation}
@@ -1112,8 +914,8 @@ const ShipperLoadsPage = () => {
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
                                             loadSubType={formData.loadSubType}/>}
-                                    {formData.loadSubType === 'Construction Equipment' &&
-                                        <HeavyEquipmentContainer
+                                    {formData.loadType === "Heavy Equipment" &&
+                                        <HeavyEquipmentLoadContainer
                                             pickupLocation={formData.pickupLocation}
                                             loadPickupDate={formData.pickupLocationDate}
                                             loadPickupTime={formData.pickupLocationTime}
@@ -1121,17 +923,8 @@ const ShipperLoadsPage = () => {
                                             loadDeliveryDate={formData.deliveryLocationDate}
                                             deliveryLocationTime={formData.deliveryLocationTime}
                                             loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
-                                    {formData.loadSubType === 'Farm Equipment' &&
-                                        <FarmEquipmentLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
+                                            loadSubType={formData.loadSubType}
+                                            goBack={goBackToStepThree}/>}
                                 </div>
                             )}
                         </div>

@@ -1,0 +1,9 @@
+.loadCategories {
+  display: grid;
+  grid-template-columns: repeat(4, 4fr);
+  gap: 15px;
+  max-width: 1200px;
+  height: fit-content;
+  margin: 0 auto;
+  width: 100%;
+}

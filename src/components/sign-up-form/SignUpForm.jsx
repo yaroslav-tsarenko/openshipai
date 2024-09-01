@@ -6,7 +6,7 @@ import {useNavigate} from "react-router-dom";
 import {GoogleLogin} from '@react-oauth/google';
 import ReCAPTCHA from "react-google-recaptcha";
 import Typewriter from "typewriter-effect";
-import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import Alert from "../floating-window-success/Alert";
 import {CircularProgress} from "@mui/material";
 import {BACKEND_URL} from "../../constants/constants";
 
@@ -79,7 +79,7 @@ function SignUpForm() {
     };
     return (
         <div className="sign-in-wrapper">
-            {message && <FloatingWindowSuccess text={message}/>}
+            {message && <Alert text={message}/>}
 
             <div className="left-side">
                 <form onSubmit={handleSubmit} className="sign-up-custom-form">

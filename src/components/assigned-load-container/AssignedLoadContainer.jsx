@@ -2,9 +2,9 @@ import React from 'react';
 import {ReactComponent as DirectionIconNumbers} from "../../assets/directions-number-icons.svg";
 import {ReactComponent as BidArrowIcon} from "../../assets/bid-arrow-icon.svg";
 import {Link, useParams} from "react-router-dom";
+import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
 
 const AssignedLoadContainer = ({loadTitle, driverID, loadPickupLocation, loadPickupLocationDate, loadCredentialID, loadDeliveryLocation, loadDeliveryLocationDate, loadType, loadWeight, loadTrip}) => {
-
 
     return (
         <div className="take-load-container">
@@ -43,7 +43,11 @@ const AssignedLoadContainer = ({loadTitle, driverID, loadPickupLocation, loadPic
             </div>
             <div className="instant-book-load">
                 <label>Assigned to you</label>
-                <Link to={`/driver-assigned-load/${driverID}/${loadCredentialID}`}  className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/></Link>
+                <Link to={`/driver-assigned-load/${driverID}/${loadCredentialID}`}
+                      className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/></Link>
+            </div>
+            <div className="map-load-section-load-container">
+                <GoogleMapShowDirection origin={loadPickupLocation} destination={loadDeliveryLocation}/>
             </div>
         </div>
     );

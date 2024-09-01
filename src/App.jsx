@@ -1,11 +1,8 @@
 import React from 'react'
 import {BrowserRouter as Router, Routes, Route} from 'react-router-dom'
 import LoginForm from "./components/login-form/LoginForm";
-import JarvisChatComponent from "./components/jarvis-chat-page/JarvisChatComponent";
 import SignUpForm from "./components/sign-up-form/SignUpForm";
-import UserPage from "./components/user-page/UserPage";
 import ShipperDashboard from "./components/shipper-dashboard-page/ShipperDashboard";
-import SuperAdminDashboard from "./components/super-admin-dashboard-page/SuperAdminDashboard";
 import SignUpFormCarrier from "./components/sign-up-form-carrier/SignUpFormCarrier";
 import CarrierDashboard from "./components/carrier-dashboard/CarrierDashboard";
 import CarrierTakeLoad from "./components/carrier-dashboard/carrier-take-load/CarrierTakeLoad";
@@ -14,7 +11,6 @@ import ShipperChatPage from "./components/shipper-dashboard-page/customer-chat-p
 import CarrierChatPage from "./components/carrier-dashboard/carrier-chat-page/CarrierChatPage";
 import CarrierSettings from "./components/carrier-dashboard/carrier-settings-page/CarrierSettings";
 import DriverDashboard from "./components/driver-dashboard/DriverDashboard";
-import DriverChatPage from "./components/driver-dashboard/driver-chat-page/DriverChatPage";
 import DriverSettings from "./components/driver-dashboard/driver-settings-page/DriverSettings";
 import CarrierDrivers from "./components/carrier-dashboard/carrier-drivers/CarrierDrivers";
 import ChoosingRolePage from "./components/choosing-role-page/ChoosingRolePage";
@@ -34,6 +30,8 @@ import FailedPaymentPage from "./pages/failed-payment/FailedPaymentPage";
 import DriverAssignedLoad from "./components/driver-dashboard/driver-assigned-load/DriverAssignedLoad";
 import SuccessLoadDelivering from "./pages/success-load-delivering/SuccessLoadDelivering";
 import DistanceCalculator from "./components/distance-calculator/DistanceCalculator";
+import LatAndLangConverter from "./components/lat-lang-converter/LatAndLangConverter";
+import LandingPageNew from "./components/landing-page-new/LandingPageNew";
 
 function App() {
     return (
@@ -68,19 +66,18 @@ function App() {
 
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
                 <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
-
+                <Route path="/lat-lang-converter" element={<LatAndLangConverter/>}/>
 
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
                 <Route path="/sign-up-shipper" element={<SignUpForm/>}/>
                 <Route path="/sign-up" element={<ChoosingRolePage/>}/>
                 <Route path="/sign-in" element={<LoginForm/>}/>
-                <Route path="/" element={<LandingPage/>}/>
-
+                <Route path="/old-landing" element={<LandingPage/>}/>
+                <Route path="/" element={<LandingPageNew/>}/>
                 <Route path="/payment-success/:shipperID/:chatID" element={<SuccessPaymentPage/>}/>
                 <Route path="/load-delivered-success/:driverID" element={<SuccessLoadDelivering/>}/>
                 <Route path="/payment-failed/:shipperID" element={<FailedPaymentPage/>}/>
-
             </Routes>
         </Router>
     )

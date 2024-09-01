@@ -8,7 +8,7 @@ import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg
 import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
 import {ReactComponent as CreateLoadIcon} from "../../../assets/add-driver-icon.svg";
 import {useParams} from 'react-router-dom';
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
@@ -16,6 +16,8 @@ import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
 import DriverContainer from "../../driver-container/DriverContainer";
 import {ClipLoader} from "react-spinners";
+import Button from "../../button/Button";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const CarrierDrivers = () => {
     const [selectedImage, setSelectedImage] = useState(null);
@@ -100,6 +102,7 @@ const CarrierDrivers = () => {
     });
 
     const handleSubmit = async (e) => {
+        setIsLoading(true);
         e.preventDefault();
         try {
             const response = await axios.post(`${BACKEND_URL}/create-driver`, formData);
@@ -115,6 +118,7 @@ const CarrierDrivers = () => {
         } catch (error) {
             console.error('Error:', error);
             setIsFail(true);
+            setIsLoading(false);
         }
     };
 
@@ -172,7 +176,6 @@ const CarrierDrivers = () => {
                     </div>
                 </div>
             )}
-
             {showFilterPopup && (
                 <div className="overlay-popup-select" onClick={toggleFilterPopup}>
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
@@ -188,6 +191,152 @@ const CarrierDrivers = () => {
                     </div>
                 </div>
             )}
+            {isDriverPopupOpen && (
+                <div className="create-driver-overlay">
+                    {isSuccess && <Alert status="success" text="Success!" description="Driver added succesfully"/>}
+                    {isFail && <FloatingWindowFailed text="Driver with this credentials already exist"/>}
+                    {sendEmailDriver && <Alert text="Driver's data sended to driver"/>}
+                    {sendDriverDataFailed && <FloatingWindowFailed text="Failed to send data to driver"/>}
+                    {isEmailSentSuccesfully && <Alert text="Email sent successfully"/>}
+                    {isSuccessCredentials ? (
+                        <div className="create-driver-popup">
+                            <section>
+                                <div>
+                                    <h3>Congratulations!</h3>
+                                    <p>Driver added successfully</p>
+                                </div>
+                                <button onClick={() => {
+                                    setIsDriverPopupOpen(false);
+                                    setIsSuccessCredentials(false);
+                                }} className="close-popup-button">Close
+                                </button>
+                            </section>
+                            <div className="create-driver-wrapper-success">
+                                <section>
+                                            <span>
+                                                <h3>Here is driver credentials</h3>
+                                                <p>Driver credentials must only be shared with driver, appreciate personal data </p>
+                                            </span>
+                                    <span>
+                                                <p>Driver Email</p>
+                                                <h3>{formData.driverEmail}</h3>
+                                            </span>
+                                    <span>
+                                                <p>Driver Password</p>
+                                                <h3>{formData.driverPassword}</h3>
+                                            </span>
+                                </section>
+                                <Button variant="apply" onClick={handleSendData}>
+                                    Send Data to Driver
+                                </Button>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="create-driver-popup">
+                            <section>
+                                <h3>Add Driver</h3>
+                                <button className="close-popup-button"
+                                        onClick={() => setIsDriverPopupOpen(false)}>Close
+                                </button>
+                            </section>
+                            <div className="create-driver-wrapper">
+                                <div className="add-driver-description">
+                                    <h2>Info</h2>
+                                    <p>Try to fill all fields by true information, this data will be
+                                        operable by AI, and it can better works with real data</p>
+                                </div>
+                                <div className="create-driver-content">
+                                    <>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageChange}
+                                            style={{display: 'none'}}
+                                            id="file-input"
+                                        />
+                                        <div
+                                            className="add-driver-avatar"
+                                            onClick={() => document.getElementById('file-input').click()}
+                                        >
+                                            {selectedImage ? (
+                                                <img src={selectedImage} alt="Driver" style={{
+                                                    width: '100%',
+                                                    height: '100%',
+                                                    borderRadius: '50%',
+                                                    objectFit: 'cover'
+                                                }}/>
+                                            ) : (
+                                                <>
+                                                    <h3>Add Driver Photo</h3>
+                                                </>
+                                            )}
+                                        </div>
+                                    </>
+                                    <div className="create-driver-input">
+                                        <div className="google-input-wrapper">
+                                            <input
+                                                type="text"
+                                                id="driverFirstAndLastName"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                required
+                                                onChange={handleChange('driverFirstAndLastName')}
+                                                value={formData.driverFirstAndLastName}
+                                            />
+                                            <label htmlFor="driverFirstAndLastName"
+                                                   className="google-style-input-label">First Name & Last
+                                                Name</label>
+                                        </div>
+                                        <div className="google-input-wrapper">
+                                            <input
+                                                type="text"
+                                                id="driverEmail"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                required
+                                                onChange={handleChange('driverEmail')}
+                                                value={formData.driverEmail}
+                                            />
+                                            <label htmlFor="driverEmail"
+                                                   className="google-style-input-label">Driver
+                                                Email</label>
+                                        </div>
+                                        <div className="google-input-wrapper">
+                                            <input
+                                                type="text"
+                                                id="driverPhoneNumber"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                required
+                                                onChange={handleChange('driverPhoneNumber')}
+                                                value={formData.driverPhoneNumber}
+                                            />
+                                            <label htmlFor="driverPhoneNumber"
+                                                   className="google-style-input-label">Driver
+                                                Phone Number</label>
+                                        </div>
+                                        <Button variant="apply" onClick={handleSubmit}>
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing"/>
+                                                </>
+                                                :
+                                                "Confirm"}
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="add-driver-description">
+                                    <h2>Note</h2>
+                                    <p>When you connect driver to your account,
+                                        in the next modal window you will see the driver
+                                        credentials, this credentials you can save or send to the driver's
+                                        email</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
             <div className="carrier-dashboard-wrapper">
                 <DashboardSidebar
                     DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
@@ -196,10 +345,9 @@ const CarrierDrivers = () => {
                     DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
                     Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                     ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
-                    Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
                     Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
                 />
-                <div className="carrier-dashboard-content">
+                <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
                         contentTitle={carrierInfo ?
                             <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
@@ -208,187 +356,48 @@ const CarrierDrivers = () => {
                         accountName={carrierInfo ? carrierInfo.carrierContactCompanyName :
                             <Skeleton variant="text" width={60}/>}
                         accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40}/>}
-                        profileLink={`/carrier-profile/${carrierID}`}
                         bellLink={`/carrier-settings/${carrierID}`}
                         settingsLink={`/carrier-profile/${carrierID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                     />
                     <div className="shipper-dashboard-load-buttons">
-                        <section className="shipper-filter-buttons">
-                            <button className="filter-buttons-shipper" onClick={toggleSortPopup}>
-                                <SortIcon className="button-nav-load-icon"/> Sort
-                            </button>
-
-                            <button className="filter-buttons-shipper" onClick={toggleFilterPopup}>
-                                <FilterIcon className="button-nav-load-icon"/> Filter
-                            </button>
-                        </section>
-                        <button className="create-load-button" onClick={() => setIsDriverPopupOpen(true)}>
-                            <CreateLoadIcon className="button-nav-load-icon"/>
-                            Add Driver
-                        </button>
-                        {isDriverPopupOpen && (
-                            <div className="create-driver-overlay">
-                                {isSuccess && <FloatingWindowSuccess text="Driver added succesfully"/>}
-                                {isFail && <FloatingWindowFailed text="Driver with this credentials already exist"/>}
-                                {sendEmailDriver && <FloatingWindowSuccess text="Driver's data sended to driver"/>}
-                                {sendDriverDataFailed && <FloatingWindowFailed text="Failed to send data to driver"/>}
-                                {isEmailSentSuccesfully && <FloatingWindowSuccess text="Email sent successfully"/>}
-                                {isSuccessCredentials ? (
-                                    <div className="create-driver-popup">
-                                        <section>
-                                            <div>
-                                                <h3>Congratulations!</h3>
-                                                <p>Driver added successfully</p>
-                                            </div>
-                                            <button onClick={() => {
-                                                setIsDriverPopupOpen(false);
-                                                setIsSuccessCredentials(false);
-                                            }} className="close-popup-button">Close
-                                            </button>
-                                        </section>
-                                        <div className="create-driver-wrapper-success">
-                                            <section>
-                                            <span>
-                                                <h3>Here is driver credentials</h3>
-                                                <p>Driver credentials must only be shared with driver, appreciate personal data </p>
-                                            </span>
-                                                <span>
-                                                <p>Driver Email</p>
-                                                <h3>{formData.driverEmail}</h3>
-                                            </span>
-                                                <span>
-                                                <p>Driver Password</p>
-                                                <h3>{formData.driverPassword}</h3>
-                                            </span>
-                                            </section>
-                                            <button onClick={handleSendData}>Send Data to Driver</button>
-                                        </div>
-                                    </div>
-                                ) : (
-                                    <div className="create-driver-popup">
-                                        <section>
-                                            <h3>Add Driver</h3>
-                                            <button className="close-popup-button" onClick={() => setIsDriverPopupOpen(false)}>Close</button>
-                                        </section>
-                                        <div className="create-driver-wrapper">
-                                            <div className="add-driver-description">
-                                                <h2>Info</h2>
-                                                <p>Try to fill all fields by true information, this data will be
-                                                    operable by AI, and it can better works with real data</p>
-                                            </div>
-                                            <div className="create-driver-content">
-                                                <>
-                                                    <input
-                                                        type="file"
-                                                        accept="image/*"
-                                                        onChange={handleImageChange}
-                                                        style={{display: 'none'}}
-                                                        id="file-input"
-                                                    />
-                                                    <div
-                                                        className="add-driver-avatar"
-                                                        onClick={() => document.getElementById('file-input').click()}
-                                                    >
-                                                        {selectedImage ? (
-                                                            <img src={selectedImage} alt="Driver" style={{
-                                                                width: '100%',
-                                                                height: '100%',
-                                                                borderRadius: '50%',
-                                                                objectFit: 'cover'
-                                                            }}/>
-                                                        ) : (
-                                                            <>
-                                                                <h3>Add Driver Photo</h3>
-                                                            </>
-                                                        )}
-                                                    </div>
-                                                </>
-                                                <div className="create-driver-input">
-                                                    <div className="google-input-wrapper">
-                                                        <input
-                                                            type="text"
-                                                            id="driverFirstAndLastName"
-                                                            autoComplete="off"
-                                                            className="google-style-input"
-                                                            required
-                                                            onChange={handleChange('driverFirstAndLastName')}
-                                                            value={formData.driverFirstAndLastName}
-                                                        />
-                                                        <label htmlFor="driverFirstAndLastName"
-                                                               className="google-style-input-label">First Name & Last
-                                                            Name</label>
-                                                    </div>
-                                                    <div className="google-input-wrapper">
-                                                        <input
-                                                            type="text"
-                                                            id="driverEmail"
-                                                            autoComplete="off"
-                                                            className="google-style-input"
-                                                            required
-                                                            onChange={handleChange('driverEmail')}
-                                                            value={formData.driverEmail}
-                                                        />
-                                                        <label htmlFor="driverEmail"
-                                                               className="google-style-input-label">Driver
-                                                            Email</label>
-                                                    </div>
-                                                    <div className="google-input-wrapper">
-                                                        <input
-                                                            type="text"
-                                                            id="driverPhoneNumber"
-                                                            autoComplete="off"
-                                                            className="google-style-input"
-                                                            required
-                                                            onChange={handleChange('driverPhoneNumber')}
-                                                            value={formData.driverPhoneNumber}
-                                                        />
-                                                        <label htmlFor="driverPhoneNumber"
-                                                               className="google-style-input-label">Driver
-                                                            Phone Number</label>
-                                                    </div>
-                                                    <button className="create-driver-button" onClick={handleSubmit}>
-                                                        {isLoading ?
-                                                            <>
-                                                                <ClipLoader color="#ffffff" loading={isLoading}
-                                                                            className="payment-loader"
-                                                                            size={25}/> Processing...
-                                                            </>
-                                                            :
-                                                            "Confirm"}
-                                                    </button>
-                                                </div>
-                                            </div>
-                                            <div className="add-driver-description">
-                                                <h2>Note</h2>
-                                                <p>When you connect driver to your account,
-                                                    in the next modal window you will see the driver
-                                                    credentials, this credentials you can save or send to the driver's
-                                                    email</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        )}
+                        <div className="nav-items-wrapper">
+                            <section className="shipper-filter-buttons">
+                                <Button variant="filter" className="filter-buttons-shipper" onClick={toggleSortPopup}>
+                                    <SortIcon className="button-nav-load-icon"/> Sort
+                                </Button>
+                                <Button variant="filter" className="filter-buttons-shipper" onClick={toggleFilterPopup}>
+                                    <FilterIcon className="button-nav-load-icon"/> Filter
+                                </Button>
+                            </section>
+                            <section className="add-driver-section">
+                                <Button variant="apply" className="create-load-button"
+                                        onClick={() => setIsDriverPopupOpen(true)}>
+                                    <CreateLoadIcon className="button-nav-load-icon"/>
+                                    Add Driver
+                                </Button>
+                            </section>
+                        </div>
                     </div>
                     <div className="carrier-dashboard-content-body">
-                            {drivers.length > 0 ? (
-                                drivers.map(driver => (
-                                    <DriverContainer
-                                        key={driver.driverID}
-                                        driverNameAndLastName={driver.driverFirstAndLastName}
-                                        driverTruck={driver.driverTruck}
-                                        driverEmail={driver.driverEmail}
-                                        driverCurrentLocation={driver.driverCurrentLocation}
-                                        driverExpiredInsurance={driver.driverExpiredInsurance}
-                                        driverInsuranceStatus={driver.driverInsuranceStatus}
-                                    />
-                                ))
-                            ) : (
-                                <p className="carrier-dashboard-drivers-message">Currently you didn't add any
-                                    driver..</p>
-                            )}
+                        {drivers.length > 0 ? (
+                            drivers.map(driver => (
+                                <DriverContainer
+                                    key={driver.driverID}
+                                    driverNameAndLastName={driver.driverFirstAndLastName}
+                                    driverTruck={driver.driverTruck}
+                                    driverEmail={driver.driverEmail}
+                                    driverCurrentLocation={driver.driverCurrentLocation}
+                                    driverExpiredInsurance={driver.driverExpiredInsurance}
+                                    driverInsuranceStatus={driver.driverInsuranceStatus}
+                                    driverLat={driver.driverLat}
+                                    driverLng={driver.driverLng}
+                                />
+                            ))
+                        ) : (
+                            <p className="carrier-dashboard-drivers-message">Currently you didn't add any
+                                driver..</p>
+                        )}
                     </div>
                 </div>
             </div>

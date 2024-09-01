@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import '../CarrierDashboard.css';
 import { ReactComponent as MarkerIcon } from "../../../assets/location-marker-icon.svg";
 import { ReactComponent as MarkerIconWhite } from "../../../assets/location-marker-icon-white.svg";
@@ -17,14 +17,17 @@ import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
 import { ReactComponent as DefaultUserAvatar } from "../../../assets/default-avatar.svg";
 import { BACKEND_URL } from "../../../constants/constants";
 import { Skeleton } from "@mui/material";
+import Button from "../../button/Button";
 
 const CarrierTakeLoad = () => {
     const [sortOrder, setSortOrder] = useState(null);
     const [loads, setLoads] = useState([]);
     const { carrierID } = useParams();
     const [focusedButton, setFocusedButton] = useState(null);
-    const [sliderValuePickup, setSliderValuePickup] = useState(null);
-    const [sliderValueDelivery, setSliderValueDelivery] = useState(null);
+    const [sliderValuePickup, setSliderValuePickup] = useState(0);
+    const [sliderValueDelivery, setSliderValueDelivery] = useState(0);
+    const [minWeight, setMinWeight] = useState(0); // Minimum weight state
+    const [maxWeight, setMaxWeight] = useState(20000); // Maximum weight state
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [showPickUpDatePopup, setShowPickUpDatePopup] = useState(false);
@@ -33,6 +36,8 @@ const CarrierTakeLoad = () => {
     const [showWeightPopup, setShowWeightPopup] = useState(false);
     const [showPricingTypePopup, setShowPricingTypePopup] = useState(false);
     const [showLocationTypePopup, setShowLocationTypePopup] = useState(false);
+    const [showAutomotiveSubOptions, setShowAutomotiveSubOptions] = useState(false);
+    const [showMovingSubOptions, setShowMovingSubOptions] = useState(false);
     const [selectedDateOption, setSelectedDateOption] = useState('');
     const [selectedLoadTypeOption, setSelectedLoadTypeOption] = useState('');
     const [selectedWeightOption, setSelectedWeightOption] = useState('');
@@ -40,7 +45,6 @@ const CarrierTakeLoad = () => {
     const [selectedLocationTypeOption, setSelectedLocationTypeOption] = useState('');
     const [pickupLocation, setPickupLocation] = useState('');
     const [deliveryLocation, setDeliveryLocation] = useState('');
-    const [apiLoads, setApiLoads] = useState([]);
 
     const toggleSortPopup = () => setShowPickUpDatePopup(!showPickUpDatePopup);
     const toggleFilterPopup = () => setShowSortPopup(!showSortPopup);
@@ -55,6 +59,20 @@ const CarrierTakeLoad = () => {
 
     const handleSelectLoadTypeOption = (option) => {
         setSelectedLoadTypeOption(option);
+        if (option === 'Automotive') {
+            setShowAutomotiveSubOptions(true);
+        } else if (option === 'Moving') {
+            setShowMovingSubOptions(true);
+        } else {
+            setShowAutomotiveSubOptions(false);
+            setShowMovingSubOptions(false);
+        }
+    };
+
+    const handleSelectSubLoadTypeOption = (subOption) => {
+        setSelectedLoadTypeOption(subOption);
+        setShowAutomotiveSubOptions(false);
+        setShowMovingSubOptions(false);
     };
 
     const handleSelectWeightOption = (option) => {
@@ -83,10 +101,9 @@ const CarrierTakeLoad = () => {
             })
             .then(data => {
                 setLoads(data); // Assuming the API returns an array of loads
-
             })
             .catch(error => {
-
+                console.error('Error fetching loads:', error);
             });
     }, []);
 
@@ -104,6 +121,57 @@ const CarrierTakeLoad = () => {
             return true;
         }
         return true;
+    };
+
+    const isLoadTypeMatching = (loadType) => {
+        if (selectedLoadTypeOption === 'All' || selectedLoadTypeOption === '') {
+            return true;
+        }
+        return loadType === selectedLoadTypeOption;
+    };
+
+    const isLoadWeightMatching = (loadWeight) => {
+        if (selectedWeightOption === 'All' || selectedWeightOption === '') {
+            return true;
+        }
+        return loadWeight >= minWeight && loadWeight <= maxWeight;
+    };
+
+    const isPricingTypeMatching = (pricingType) => {
+        if (selectedPricingTypeOption === 'All' || selectedPricingTypeOption === '') {
+            return true;
+        }
+        return pricingType === selectedPricingTypeOption;
+    };
+
+    const isLocationTypeMatching = (locationType) => {
+        if (selectedLocationTypeOption === 'All' || selectedLocationTypeOption === '') {
+            return true;
+        }
+        return locationType === selectedLocationTypeOption;
+    };
+
+    const isLoadMilesTripMatching = (loadMilesTrip) => {
+        if (sliderValuePickup === 0 && sliderValueDelivery === 0) {
+            return true;
+        }
+        if (sliderValuePickup !== 0 && loadMilesTrip <= sliderValuePickup) {
+            return true;
+        }
+        if (sliderValueDelivery !== 0 && loadMilesTrip <= sliderValueDelivery) {
+            return true;
+        }
+        return false;
+    };
+
+    const isPickupLocationMatching = (loadPickupLocation) => {
+        if (!pickupLocation) return true;
+        return loadPickupLocation.includes(pickupLocation);
+    };
+
+    const isDeliveryLocationMatching = (loadDeliveryLocation) => {
+        if (!deliveryLocation) return true;
+        return loadDeliveryLocation.includes(deliveryLocation);
     };
 
     useEffect(() => {
@@ -134,9 +202,18 @@ const CarrierTakeLoad = () => {
         setSliderValuePickup(newValue);
     };
 
-
     const handleSliderChangeDelivery = (event, newValue) => {
         setSliderValueDelivery(newValue);
+    };
+
+    const handleMinWeightChange = (event) => {
+        const value = Number(event.target.value);
+        setMinWeight(value);
+    };
+
+    const handleMaxWeightChange = (event) => {
+        const value = Number(event.target.value);
+        setMaxWeight(value);
     };
 
     const handleGeoLocationClick = async (setLocation) => {
@@ -145,8 +222,11 @@ const CarrierTakeLoad = () => {
                 const { latitude, longitude } = position.coords;
                 try {
                     const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
-                    const location = response.data.display_name;
-                    setLocation(location);
+                    const address = response.data.address;
+                    const country = address.country || '';
+                    const city = address.city || address.town || address.village || '';
+                    const formattedLocation = `${country}, ${city}`.trim();
+                    setLocation(formattedLocation);
                 } catch (error) {
                     console.error('Error fetching location:', error);
                 }
@@ -170,7 +250,16 @@ const CarrierTakeLoad = () => {
         fetchLoads();
     }, []);
 
-    const filteredLoads = loads.filter(load => isLoadDateMatching(load.loadPickUpDate));
+    const filteredLoads = loads.filter(load =>
+        isLoadDateMatching(load.loadPickUpDate) &&
+        isLoadTypeMatching(load.loadType) &&
+        isLoadWeightMatching(load.loadWeight) &&
+        isPricingTypeMatching(load.loadPricingType) &&
+        isLocationTypeMatching(load.loadLocationType) &&
+        isLoadMilesTripMatching(load.loadMilesTrip) &&
+        isPickupLocationMatching(load.loadPickupLocation) &&
+        isDeliveryLocationMatching(load.loadDeliveryLocation)
+    );
 
     const sortedAndFilteredLoads = filteredLoads.sort((a, b) => {
         if (sortOrder === 'Ascending order') {
@@ -190,23 +279,23 @@ const CarrierTakeLoad = () => {
                 DriversAndEquip={{ visible: true, route: `/carrier-drivers/${carrierID}` }}
                 Payments={{ visible: true, route: `/carrier-payments/${carrierID}` }}
                 ChatWithShipper={{ visible: true, route: `/carrier-chat-conversation/${carrierID}` }}
-                Profile={{ visible: true, route: `/carrier-profile/${carrierID}` }}
                 Settings={{ visible: true, route: `/carrier-settings/${carrierID}` }}
             />
-            <div className="carrier-dashboard-content">
+            <div className="shipper-dashboard-content">
                 <HeaderDashboard
                     contentTitle={carrierInfo ?
                         <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
                         <Skeleton variant="text" width={250} />}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
+                    accountName={carrierInfo ? carrierInfo.carrierContactCompanyName :
+                        <Skeleton variant="text" width={60} />}
                     accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
                     profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
-                <div className="carrier-dashboard-content-body">
+                <div className="shipper-dashboard-content-body">
                     <div className="filter-loads-container">
                         <h2>Filter Shipments</h2>
                         <section className="choose-location-wrapper">
@@ -247,7 +336,7 @@ const CarrierTakeLoad = () => {
                                 type="number"
                                 placeholder="Miles"
                                 value={sliderValuePickup}
-                                onChange={handleSliderChangePickup}
+                                onChange={(e) => setSliderValuePickup(e.target.value)}
                             />
                             <Slider
                                 size="big"
@@ -268,7 +357,8 @@ const CarrierTakeLoad = () => {
                                     value={deliveryLocation}
                                     onChange={(e) => setDeliveryLocation(e.target.value)}
                                 />
-                                <button onClick={() => handleGeoLocationClick(setDeliveryLocation)}><MarkerIcon /></button>
+                                <button onClick={() => handleGeoLocationClick(setDeliveryLocation)}><MarkerIcon />
+                                </button>
                             </div>
                         </section>
                         <section className="slider-wrapper-miles">
@@ -276,7 +366,7 @@ const CarrierTakeLoad = () => {
                                 type="number"
                                 placeholder="Miles"
                                 value={sliderValueDelivery}
-                                onChange={handleSliderChangeDelivery}
+                                onChange={(e) => setSliderValueDelivery(e.target.value)}
                             />
                             <Slider
                                 size="big"
@@ -295,11 +385,41 @@ const CarrierTakeLoad = () => {
                                 <h4>{selectedLoadTypeOption || 'All'}</h4>
                             </div>
                             <hr />
-                            <div className="load-filter" onClick={toggleWeightPopup}>
+                            <div className="load-filter-weight" >
                                 <label>Weight</label>
-                                <h4>{selectedWeightOption || 'All'}</h4>
+                                <Slider
+                                    value={[minWeight, maxWeight]}
+                                    onChange={(event, newValue) => {
+                                        setMinWeight(newValue[0]);
+                                        setMaxWeight(newValue[1]);
+                                    }}
+                                    valueLabelDisplay="auto"
+                                    max={20000}
+                                    step={100}
+                                    style={{marginTop: '10px'}}
+                                />
+                                    <section>
+                                        <input
+                                            type="number"
+                                            value={minWeight}
+                                            onChange={handleMinWeightChange}
+                                            min={0}
+                                            max={20000}
+                                            step={100}
+                                            placeholder={'Min'}
+                                        />
+                                        <input
+                                            type="number"
+                                            value={maxWeight}
+                                            onChange={handleMaxWeightChange}
+                                            min={0}
+                                            max={20000}
+                                            placeholder={'Max'}
+                                            step={100}
+                                        />
+                                    </section>
                             </div>
-                            <hr />
+                            <hr/>
                             <div className="load-filter" onClick={togglePricingTypePopup}>
                                 <label>Pricing Type</label>
                                 <h4>{selectedPricingTypeOption || 'All'}</h4>
@@ -313,17 +433,17 @@ const CarrierTakeLoad = () => {
                     </div>
                     <div className="loads-container-wrapper">
                         <div className="load-filter-container">
-
-                            <button className="filter-buttons-shipper" style={{ marginRight: "10px" }}
-                                    onClick={toggleSortPopup}>
-                                <DateIcon className="button-nav-load-icon" />
-                                {selectedDateOption || 'Pickup Date'}
-                            </button>
-
-                            <button className="filter-buttons-shipper" onClick={toggleFilterPopup}>
-                                <SortIcon className="button-nav-load-icon" />
-                                {sortOrder || 'Sort By'}
-                            </button>
+                            <section>
+                                <Button variant="filter" className="filter-buttons-shipper" style={{ marginRight: "10px" }}
+                                        onClick={toggleSortPopup}>
+                                    <DateIcon className="button-nav-load-icon" />
+                                    {selectedDateOption || 'Pickup Date'}
+                                </Button>
+                                <Button variant="filter" className="filter-buttons-shipper" onClick={toggleFilterPopup}>
+                                    <SortIcon className="button-nav-load-icon" />
+                                    {sortOrder || 'Sort By'}
+                                </Button>
+                            </section>
                             {showLoadTypePopup && (
                                 <div className="overlay-popup-select">
                                     <div className="select-popup" onClick={e => e.stopPropagation()}>
@@ -335,11 +455,62 @@ const CarrierTakeLoad = () => {
                                         </div>
 
                                         <div className="select-popup-content">
-                                            <p onClick={() => handleSelectLoadTypeOption('Vehicle Load')}>Vehicle Load</p>
-                                            <p onClick={() => handleSelectLoadTypeOption('Moving')}>Moving</p>
                                             <p onClick={() => handleSelectLoadTypeOption('Freight')}>Freight</p>
-                                            <p onClick={() => handleSelectLoadTypeOption('Heavy Construction')}>Heavy Construction</p>
+                                            <p onClick={() => handleSelectLoadTypeOption('Automotive')}>Automotive</p>
+                                            <p onClick={() => handleSelectLoadTypeOption('Moving')}>Moving</p>
+                                            <p onClick={() => handleSelectLoadTypeOption('Heavy Equipment')}>Heavy Equipment</p>
                                             <p onClick={() => handleSelectLoadTypeOption('All')}>All</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            )}
+                            {showAutomotiveSubOptions && (
+                                <div className="overlay-popup-select">
+                                    <div className="select-popup" onClick={e => e.stopPropagation()}>
+
+                                        <div className="select-popup-header">
+                                            <h2>Automotive Options</h2>
+                                            <button className="close-popup-button" onClick={() => setShowAutomotiveSubOptions(false)}>Close
+                                            </button>
+                                        </div>
+
+                                        <div className="select-popup-content">
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Car or Light Truck')}>Car or Light Truck</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Moto Equipment')}>Moto Equipment</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Powerboats')}>Powerboats</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Sailboats')}>Sailboats</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Personal watercrafts')}>Personal watercrafts</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Personal watercrafts')}>ATVs & Power Sports</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Commercial Truck')}>Commercial Truck</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Parts')}>Parts</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Trailers & Other Vehicles')}>Trailers & Other Vehicles</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('RV (Recreational Vehicles)')}>RV (Recreational Vehicles)</p>
+                                        </div>
+
+                                    </div>
+                                </div>
+                            )}
+                            {showMovingSubOptions && (
+                                <div className="overlay-popup-select">
+                                    <div className="select-popup" onClick={e => e.stopPropagation()}>
+
+                                        <div className="select-popup-header">
+                                            <h2>Moving Options</h2>
+                                            <button className="close-popup-button" onClick={() => setShowMovingSubOptions(false)}>Close
+                                            </button>
+                                        </div>
+
+                                        <div className="select-popup-content">
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Local Moving (less then 50 mil)')}>Local Moving (less then 50 mil)</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Long Distance Moving')}>Long Distance Moving</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Commercial / Business Moving')}>Commercial / Business Moving</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Heavy Lifting and Moving Only')}>Heavy Lifting and Moving Only</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Household item')}>Household item</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Office Moving')}>Office Moving</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Corporate Moving')}>Corporate Moving</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Student Moving')}>Student Moving</p>
+                                            <p onClick={() => handleSelectSubLoadTypeOption('Military Moving')}>Military Moving</p>
                                         </div>
 
                                     </div>
@@ -371,12 +542,14 @@ const CarrierTakeLoad = () => {
 
                                         <div className="select-popup-header">
                                             <h2>Pricing Type</h2>
-                                            <button className="close-popup-button" onClick={togglePricingTypePopup}>Close
+                                            <button className="close-popup-button"
+                                                    onClick={togglePricingTypePopup}>Close
                                             </button>
                                         </div>
 
                                         <div className="select-popup-content">
-                                            <p onClick={() => handleSelectPricingTypeOption('Fixed Price')}>Fixed Price</p>
+                                            <p onClick={() => handleSelectPricingTypeOption('Fixed Price')}>Fixed
+                                                Price</p>
                                             <p onClick={() => handleSelectPricingTypeOption('Negotiable')}>Negotiable</p>
                                             <p onClick={() => handleSelectPricingTypeOption('All')}>All</p>
                                         </div>
@@ -390,7 +563,8 @@ const CarrierTakeLoad = () => {
 
                                         <div className="select-popup-header">
                                             <h2>Location Type</h2>
-                                            <button className="close-popup-button" onClick={toggleLocationTypePopup}>Close
+                                            <button className="close-popup-button"
+                                                    onClick={toggleLocationTypePopup}>Close
                                             </button>
                                         </div>
 
@@ -429,11 +603,14 @@ const CarrierTakeLoad = () => {
                                     <div className="select-popup" onClick={e => e.stopPropagation()}>
                                         <div className="select-popup-header">
                                             <h2>Sort Options</h2>
-                                            <button className="close-popup-button" onClick={toggleFilterPopup}>Close</button>
+                                            <button className="close-popup-button" onClick={toggleFilterPopup}>Close
+                                            </button>
                                         </div>
                                         <div className="select-popup-content">
-                                            <p onClick={() => handleSortSelection('Ascending order')}>In ascending order</p>
-                                            <p onClick={() => handleSortSelection('Descending order')}>In descending order</p>
+                                            <p onClick={() => handleSortSelection('Ascending order')}>In ascending
+                                                order</p>
+                                            <p onClick={() => handleSortSelection('Descending order')}>In descending
+                                                order</p>
                                             <p onClick={() => handleSortSelection('Sort By')}>Clear</p>
                                         </div>
                                     </div>

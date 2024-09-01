@@ -4,30 +4,32 @@ import { BsTwitterX } from "react-icons/bs";
 import { FaLinkedinIn } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa";
 import { FaFacebookF } from "react-icons/fa";
+import {Link} from "react-router-dom";
+
 const LandingPageFooter = () => {
     return (
         <footer className="landing-page-footer-wrapper">
             <section className="footer-section-upper">
                 <div className="footer-section-content">
                     <h3>Company</h3>
-                    <a href="#">About Us</a>
-                    <a href="#">Why Choose Us</a>
-                    <a href="#">Pricing Directs</a>
-                    <a href="#">Project Management</a>
+                    <Link className="footer-section-link" to="#">About Us</Link>
+                    <Link className="footer-section-link" to="#">Why Choose Us</Link>
+                    <Link className="footer-section-link" to="#">Pricing Directs</Link>
+                    <Link className="footer-section-link" to="#">Project Management</Link>
                 </div>
                 <div className="footer-section-content">
                     <h3>Resources</h3>
-                    <a href="#">Privacy Policy</a>
-                    <a href="#">Terms And Conditions</a>
-                    <a href="#">Blog</a>
-                    <a href="#">Contact Us</a>
+                    <Link className="footer-section-link" to="#">Privacy Policy</Link>
+                    <Link className="footer-section-link" to="#">Terms And Conditions</Link>
+                    <Link className="footer-section-link" to="#">Blog</Link>
+                    <Link className="footer-section-link" to="#">Contact Us</Link>
                 </div>
                 <div className="footer-section-content">
                     <h3>Product</h3>
-                    <a href="#">Project Management</a>
-                    <a href="#">Time Tracker</a>
-                    <a href="#">Time Schedule</a>
-                    <a href="#">Lead Generate</a>
+                    <Link  className="footer-section-link" to="#">Project Management</Link>
+                    <Link  className="footer-section-link" to="#">Time Tracker</Link>
+                    <Link  className="footer-section-link" to="#">Time Schedule</Link>
+                    <Link  className="footer-section-link" to="#">Lead Generate</Link>
                 </div>
                 <div className="footer-section-content-newsletter">
                     <OpenshipLogoWhite/>
@@ -37,18 +39,18 @@ const LandingPageFooter = () => {
                         <button>Subscribe</button>
                     </div>
                     <div className="contact-icons-wrapper">
-                        <span className="icon-container">
+                        <button className="icon-container">
                         <BsTwitterX  className="footer-icons"/>
-                        </span>
-                        <span className="icon-container">
+                        </button>
+                        <button className="icon-container">
                         <FaLinkedinIn        className="footer-icons"/>
-                        </span>
-                        <span className="icon-container">
+                        </button>
+                        <button className="icon-container">
                         <FaInstagram className="footer-icons"/>
-                        </span>
-                        <span className="icon-container">
+                        </button>
+                        <button className="icon-container">
                         <FaFacebookF  className="footer-icons"/>
-                        </span>
+                        </button>
                     </div>
                 </div>
             </section>

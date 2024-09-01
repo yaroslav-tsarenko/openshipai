@@ -1,0 +1,78 @@
+.transactionItemWrapper {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  cursor: pointer;
+  align-content: center;
+  justify-items: center;
+  transition: 0.2s ease-in-out;
+  padding: 15px;
+  border-radius: 30px;
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.transactionItemContent {
+  display: flex;
+  border-bottom: 1px solid var(--light-grey);
+  justify-content: space-between;
+  width: 100%;
+  margin: 0 0 0 10px;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.userCredentials {
+  display: flex;
+  gap: 10px;
+
+  section {
+    display: flex;
+    flex-direction: column;
+
+    h1 {
+      color: var(--dark-grey);
+      font-size: 1.6rem;
+      font-weight: bold;
+    }
+
+    p {
+      color: var(--light-grey);
+      font-size: 1.4rem;
+    }
+  }
+}
+
+.paymentDate {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  justify-content: center;
+
+  h1 {
+    color: var(--dark-grey);
+    font-size: 1.6rem;
+    font-weight: bold;
+  }
+
+  p {
+    color: var(--light-grey);
+    font-size: 1.4rem;
+  }
+}
+
+.priceAmount {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  h1 {
+    color: var(--royal-red);
+    font-size: 1.7rem;
+    font-weight: bold;
+  }
+
+}
