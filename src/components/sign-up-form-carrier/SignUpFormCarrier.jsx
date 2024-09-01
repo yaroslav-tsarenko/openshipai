@@ -34,7 +34,7 @@ import {
 import {
     ReactComponent as ProgressBar10
 } from "../../assets/progres-bar-10-page.svg";
-import FloatingWindowSuccess from "../floating-window-success/FloatingWindowSuccess";
+import Alert from "../floating-window-success/Alert";
 import {BACKEND_URL} from "../../constants/constants";
 import {CircularProgress} from "@mui/material";
 
@@ -1134,7 +1134,7 @@ function SignCarrierUpForm() {
                                 {isLoading ? <CircularProgress size={30}/>
                                     : 'Create Account'}
                             </button>
-                            {message && <FloatingWindowSuccess text={message} />}
+                            {message && <Alert text={message} />}
                         </div>
                     </div>
                     <div className="carrier-sign-up-right-side">

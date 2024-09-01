@@ -14,7 +14,7 @@ const ShipperActiveLoadsPanel = () => {
     const [destination, setDestination] = useState("");
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-loads`)
+        axios.get(`${BACKEND_URL}/get-all-loads/${shipperID}`)
             .then(response => {
                 const filteredLoads = response.data.filter(load => load.shipperID === shipperID);
                 setLoads(filteredLoads);
@@ -38,21 +38,24 @@ const ShipperActiveLoadsPanel = () => {
                     destination={destination}/>
             </div>
             <div className="shipper-dashboard-side-panel">
-                {loads.map(load => (
-                    <div onClick={() => handleClick(load)}>
-                        <ActiveLoadContainer
-                            key={load.loadCredentialID}
-                            loadStatus={load.loadStatus}
-                            loadPickupLocation={load.loadPickupLocation}
-                            loadPickupDate={load.loadPickupDate}
-                            loadDeliveryLocation={load.loadDeliveryLocation}
-                            loadDeliveryDate={load.loadDeliveryDate}
-                            typeOfLoad={load.loadType}
-                            loadMilTrip={load.loadMilesTrip}
-                            loadCredentialID={load.loadCredentialID}
-                        />
-                    </div>
-                ))}
+                {loads.length === 0 ? (
+                    <p className="chat-message-alert">Currently you didn't create any load</p>
+                ) : (
+                    loads.map(load => (
+                        <div onClick={() => handleClick(load)} key={load.loadCredentialID}>
+                            <ActiveLoadContainer
+                                loadStatus={load.loadStatus}
+                                loadPickupLocation={load.loadPickupLocation}
+                                loadPickupDate={load.loadPickupDate}
+                                loadDeliveryLocation={load.loadDeliveryLocation}
+                                loadDeliveryDate={load.loadDeliveryDate}
+                                typeOfLoad={load.loadType}
+                                loadMilTrip={load.loadMilesTrip}
+                                loadCredentialID={load.loadCredentialID}
+                            />
+                        </div>
+                    ))
+                )}
             </div>
         </div>
     );

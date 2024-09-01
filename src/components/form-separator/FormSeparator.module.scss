@@ -1,0 +1,23 @@
+.formSeparatorWrapper {
+  width: 100%;
+  display: flex;
+  margin: 0 0 15px 0;
+  padding: 30px 0 20px 0;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  border-bottom: 1px solid var(--light-grey);
+
+  h2{
+    font-weight: bold;
+    font-size: 18px;
+    color: var(--dark-grey);
+  }
+
+  p{
+    font-weight: lighter;
+    font-size: 16px;
+    color: var(--light-grey);
+  }
+}

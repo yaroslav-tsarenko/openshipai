@@ -1,19 +1,15 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../DriverDashboard.css';
-import {ReactComponent as SettingsAccount} from "../../../assets/account-settings-icon.svg";
-import {ReactComponent as SettingsAccountWhite} from "../../../assets/account-settings-icon-white.svg";
-import {ReactComponent as SettingsPassword} from "../../../assets/lock-icon.svg";
-import {ReactComponent as SettingsPasswordWhite} from "../../../assets/lock-icon-white.svg";
-import {ReactComponent as SettingsNotifications} from "../../../assets/bell-settings-icon.svg";
-import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
-import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
-import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
+import {ReactComponent as SettingsAccount} from "../../../assets/person-settings.svg";
+import {ReactComponent as SettingsPassword} from "../../../assets/lock-settings.svg";
+import {ReactComponent as SettingsNotifications} from "../../../assets/notification-person.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/help-settings.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
 import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
 import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
 import Switch from '../../switcher-component/Switch';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
@@ -21,6 +17,12 @@ import {BACKEND_URL} from "../../../constants/constants";
 import axios from "axios";
 import {ClipLoader} from "react-spinners";
 import Tooltip from "../../tooltip/Tooltip";
+import Alert from "../../floating-window-success/Alert";
+import Popup from "../../popup/Popup";
+import TextInput from "../../text-input/TextInput";
+import Grid from "../../grid-two-columns/Grid";
+import Button from "../../button/Button";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const DriverSettings = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
@@ -34,6 +36,8 @@ const DriverSettings = () => {
     const fileInputRef = useRef();
     const [driverAvatar, setDriverAvatar] = useState(null);
     const [loading, setLoading] = useState(false);
+    const navigate = useNavigate();
+    const [isOnCarrier, setIsOnCarrier] = useState(false);
     const [avatarFromDB, setAvatarFromDB] = useState(null);
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const [previewImage, setPreviewImage] = useState(null);
@@ -42,9 +46,52 @@ const DriverSettings = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [driverFirstNameLastName, setDriverFirstNameLastName] = useState('');
     const [driverLastName, setDriverLastName] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
     const [driverPhoneNumber, setDriverPhoneNumber] = useState('');
     const [driverEmail, setDriverEmail] = useState('');
+    const [alert, setAlert] = useState(false);
+    const [alertData, setAlertData] = useState({status: '', text: '', description: ''});
+    const [confirmDelete, setConfirmDelete] = useState('');
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [problemDescription, setProblemDescription] = useState('');
+    const [description, setDescription] = useState('');
+    const [email, setEmail] = useState(driverInfo ? driverInfo.driverEmail : '');
+    const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
 
+    const handleSubmitSupportQoutes = async () => {
+        setIsLoading(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-help-quote/${driverID}`, {email, description, driverID});
+            setAlertData({status: 'success', text: 'Success!', description: "Quote sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending quote. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmitFeedback = async () => {
+        setIsLoadingFeedback(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-feedback/${driverID}`, {email, description, driverID});
+            setAlertData({status: 'success', text: 'Success!', description: "Message sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending message. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoadingFeedback(false);
+        }
+    };
     const toggleTooltip = () => {
         setIsTooltipVisible(!isTooltipVisible);
         setTimeout(() => {
@@ -53,7 +100,7 @@ const DriverSettings = () => {
     };
 
     const scrollToSettingsRef = () => {
-        settingsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }) // For smooth scroll
+        settingsRef.current.scrollIntoView({behavior: 'smooth', block: 'start'}) // For smooth scroll
     }
 
     useEffect(() => {
@@ -102,7 +149,40 @@ const DriverSettings = () => {
 
     }, [driverID]);
 
+    const handleUpdateNotificationsSettings = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-driver-notifications/${driverID}`, {
+                driverNotificationFromDriver: isOnDriver,
+                driverNotificationFromCarrier: isOnCarrier,
+                driverNotificationFromAI: isOnAI,
+                driverNotificationOfUpdates: isOnUpdates,
+            });
+            console.log(response);
+            if (response.status === 200) {
+                console.log('Notification settings updated successfully');
+                setAlertData({
+                    status: 'success',
+                    text: 'Success',
+                    description: 'Notification settings updated successfully'
+                });
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            console.error('Error updating notification settings:', error);
+            setAlertData({status: 'error', text: 'Error', description: 'Failed to update notification settings'});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
+
+    const handleToggleCarrier = () => {
+        setIsOnCarrier(!isOnCarrier);
+    };
 
     const handleApplySettings = async () => {
         setIsLoading(true);
@@ -142,6 +222,31 @@ const DriverSettings = () => {
         window.location.reload();
     };
 
+    const handleChangePassword = async () => {
+        setIsLoading(true);
+        if (oldPassword !== driverInfo.driverPassword) {
+            setIsLoading(false);
+            setAlertData({status: 'warning', text: 'Warning!', description: "Passwords didn't match"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-user-password/carrier/${driverInfo.driverID}`, {newPassword});
+            if (response.status === 200) {
+                setAlertData({status: 'success', text: 'Success!', description: "Password updated successfully"});
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error', description: "Error updating password. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+        setIsLoading(false);
+    };
+
     const handleAvatarChange = (event) => {
         const file = event.target.files[0];
         setDriverAvatar(file);
@@ -153,6 +258,11 @@ const DriverSettings = () => {
 
     const handleAvatarDelete = () => {
         setDriverAvatar(null);
+    };
+
+
+    const handleDeleteClick = () => {
+        setIsPopupVisible(true);
     };
 
     const triggerFileInput = () => {
@@ -172,365 +282,391 @@ const DriverSettings = () => {
         setIsOnUpdates(!isOnUpdates);
     };
 
+    const handleClosePopup = () => {
+        setIsPopupVisible(false);
+    };
+
+    const handleDeleteAccount = async () => {
+        const expectedValue = `acc delete ${driverInfo.driverEmail}`;
+        if (confirmDelete !== expectedValue) {
+            setAlertData({status: 'warning', text: 'Warning!', description: "Value didn't equal"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            await axios.delete(`${BACKEND_URL}/delete-account/driver/${driverID}`);
+            setAlertData({
+                status: 'success',
+                text: 'Success!',
+                description: "Account deleted, you will be redirected to the sign in after 3 sec"
+            });
+            setAlert(true);
+            setTimeout(() => {
+                setAlert(false);
+                navigate("/sign-in");
+            }, 3000);
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error!', description: "Error deleting account. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+    };
+
     return (
-        <div className="driver-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
-            />
-            <div className="driver-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={driverInfo ?
-                        <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
-                        <Skeleton variant="text" width={250}/>}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60}/>}
-                    accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
-                    profileLink={`/driver-profile/${driverID}`}
-                    bellLink={`/driver-settings/${driverID}`}
-                    settingsLink={`/driver-profile/${driverID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+
+        <>
+            {alert && <Alert status={alertData.status} text={alertData.text} description={alertData.description}/>}
+            {isPopupVisible && (
+                <Popup title="Confirm Deletion" onClose={handleClosePopup}
+                       footerText="After deleting you are not be able to return your account">
+                    <p className="delete-popup-text">All data in account such as loads, personal data, statuses,
+                        progress will be deleted permanently</p>
+                    <h4 className="delete-account-popup-title">Type <span>acc delete {driverInfo.driverEmail}</span> to
+                        confirm deleting</h4>
+                    <TextInput
+                        type="text"
+                        id="confirmDelete"
+                        label="Type here"
+                        value={confirmDelete}
+                        onChange={(e) => setConfirmDelete(e.target.value)}
+                    />
+                    <Grid columns="2, 2fr">
+                        <Button variant="neutral" onClick={handleClosePopup}>
+                            Cancel
+                        </Button>
+                        <Button variant="delete" onClick={handleDeleteAccount}>
+                            Delete Account
+                        </Button>
+                    </Grid>
+                </Popup>
+            )}
+            <div className="carrier-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
+                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
+                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
                 />
-                <div className="settings-container">
-                    <section className="settings-nav">
-                        <button
-                            onMouseEnter={() => setHoveredButton('SettingsAccount')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Account')}
-                        >
-                            {hoveredButton === 'SettingsAccount' ?
-                                <SettingsAccountWhite className="link-nav-button-icon"/> :
-                                <SettingsAccount className="link-nav-button-icon"/>}
-                            Account
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('PasswordSettings')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Password')}
-                        >
-                            {hoveredButton === 'PasswordSettings' ?
-                                <SettingsPasswordWhite className="link-nav-button-icon"/> :
-                                <SettingsPassword className="link-nav-button-icon"/>}
-                            Password
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('NotificationsButton')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Notifications')}
-                        >
-                            {hoveredButton === 'NotificationsButton' ?
-                                <SettingsNotificationsWhite className="link-nav-button-icon"/> :
-                                <SettingsNotifications className="link-nav-button-icon"/>}
-                            Notifications
-                        </button>
-                        <button
-                            onMouseEnter={() => setHoveredButton('HelpSettings')}
-                            onMouseLeave={() => setHoveredButton('')}
-                            onClick={() => setActiveSetting('Help')}
-                        >
-                            {hoveredButton === 'HelpSettings' ? <SettingsHelpWhite className="link-nav-button-icon"/> :
-                                <SettingsHelp className="link-nav-button-icon"/>}
-                            Help
-                        </button>
-                    </section>
-                    <section className="settings-content">
-                        {activeSetting === 'Account' && (
-                            <>
-                                <h2>Profile</h2>
-                                <div className="profile-content-wrapper">
-                                    <div className="shipper-profile-content">
-                                        <div className="shipper-info">
-                                            {previewSavedImage ? (
-                                                <img src={previewSavedImage} className="shipper-profile-avatar"
+                <div className="shipper-dashboard-content-settings">
+                    <HeaderDashboard
+                        contentTitle={driverInfo ?
+                            <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={driverInfo ? driverInfo.driverFirstAndLastName :
+                            <Skeleton variant="text" width={60}/>}
+                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
+                        profileLink={`/driver-profile/${driverID}`}
+                        bellLink={`/driver-settings/${driverID}`}
+                        settingsLink={`/driver-profile/${driverID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    />
+                    <div className="settings-container">
+                        <section className="settings-nav">
+                            <button
+                                onClick={() => setActiveSetting('Account')}
+                            >
+                                <SettingsAccount className="link-nav-button-icon"/>
+                                Account
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Password')}
+                            >
+                                <SettingsPassword className="link-nav-button-icon"/>
+                                Password
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Notifications')}
+                            >
+                                <SettingsNotifications className="link-nav-button-icon"/>
+                                Notifications
+                            </button>
+                            <button
+                                onClick={() => setActiveSetting('Help')}
+                            >
+                                <SettingsHelp className="link-nav-button-icon"/>
+                                Help
+                            </button>
+                        </section>
+                        <section className="settings-content">
+                            {activeSetting === 'Account' && (
+                                <>
+                                    <h2>Profile</h2>
+                                    <div className="profile-content-wrapper">
+                                        <div className="shipper-profile-content">
+                                            <div className="shipper-info">
+                                                {previewSavedImage ? (
+                                                    <img src={previewSavedImage} className="shipper-profile-avatar"
+                                                         alt="User Avatar"/>
+                                                ) : (
+                                                    <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                                )}
+                                                <section className="shipper-details-wrapper">
+                                                    <div className="shipper-role-name">
+                                                        <h3>
+                                                            {
+                                                                driverInfo ?
+                                                                    <>
+                                                                        {driverInfo.driverFirstAndLastName}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </h3>
+                                                        <p>
+                                                            {driverInfo ?
+                                                                <>
+                                                                    {driverInfo.role}
+                                                                </>
+                                                                :
+                                                                <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                    <div className="shipper-info-details">
+                                                        <p>USA, Los Angeles</p>
+                                                        <p>
+                                                            {
+                                                                driverInfo ?
+                                                                    <>
+                                                                        {driverInfo.driverPhoneNumber}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                        <p>
+                                                            {
+                                                                driverInfo ?
+                                                                    <>
+                                                                        {driverInfo.driverEmail}
+                                                                    </>
+                                                                    :
+                                                                    <Skeleton variant="text" width={250}/>}
+                                                        </p>
+                                                    </div>
+                                                </section>
+                                            </div>
+                                            <div className="shipper-nav-buttons">
+                                                <button
+                                                    onClick={scrollToSettingsRef}>
+                                                    <PencilIcon/>
+                                                </button>
+                                                <button onClick={toggleTooltip}>
+                                                    <IconInfo/>
+                                                    <Tooltip isVisible={isTooltipVisible}>
+                                                        Here you can change your credentials, then have a look of your
+                                                        current profile data
+                                                    </Tooltip>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div className="shipper-profile-status">
+                                            <p>Currently you don't have active status for your profile🚫</p>
+                                        </div>
+                                    </div>
+                                    <h2>Account Info</h2>
+                                    <div className="account-info-details-container">
+                                        <div className="avatar-settings" ref={settingsRef}>
+                                            {previewImage ? (
+                                                <img src={previewImage} className="avatar-user-photo"
+                                                     alt="User Avatar"/>
+                                            ) : previewSavedImage ? (
+                                                <img src={previewSavedImage} className="avatar-user-photo"
                                                      alt="User Avatar"/>
                                             ) : (
-                                                <DefaultUserAvatar className="shipper-profile-avatar"/>
+                                                <DefaultUserAvatar className="avatar-user-photo"/>
                                             )}
-                                            <section className="shipper-details-wrapper">
-                                                <div className="shipper-role-name">
-                                                    <h3>
-                                                        {
-                                                            driverInfo ?
-                                                                <>
-                                                                    {driverInfo.driverFirstAndLastName}
-                                                                </>
-                                                                :
-                                                                <Skeleton variant="text" width={250}/>}
-                                                    </h3>
-                                                    <p>
-                                                        {driverInfo ?
-                                                            <>
-                                                                {driverInfo.role}
-                                                            </>
-                                                            :
-                                                            <Skeleton variant="text" width={250}/>}
-                                                    </p>
-                                                </div>
-                                                <div className="shipper-info-details">
-                                                    <p>USA, Los Angeles</p>
-                                                    <p>
-                                                        {
-                                                            driverInfo ?
-                                                                <>
-                                                                    {driverInfo.driverPhoneNumber}
-                                                                </>
-                                                                :
-                                                                <Skeleton variant="text" width={250}/>}
-                                                    </p>
-                                                    <p>
-                                                        {
-                                                            driverInfo ?
-                                                                <>
-                                                                    {driverInfo.driverEmail}
-                                                                </>
-                                                                :
-                                                                <Skeleton variant="text" width={250}/>}
-                                                    </p>
-                                                </div>
+                                            <section className="avatar-settings-wrapper">
+                                                <button className="change-avatar" onClick={triggerFileInput}>Change
+                                                    Avatar
+                                                </button>
+                                                <button className="shipper-delete-avatar"
+                                                        onClick={handleAvatarDelete}>Delete Photo
+                                                </button>
+                                                <input type="file" ref={fileInputRef} style={{display: 'none'}}
+                                                       onChange={handleAvatarChange}/>
                                             </section>
                                         </div>
-                                        <div className="shipper-nav-buttons">
-                                            <button
-                                                onClick={scrollToSettingsRef}>
-                                                <PencilIcon/>
-                                            </button>
-                                            <button onClick={toggleTooltip}>
-                                                <IconInfo/>
-                                                <Tooltip isVisible={isTooltipVisible}>
-                                                    Here you can change your credentials, then have a look of your
-                                                    current profile data
-                                                </Tooltip>
-                                            </button>
-                                        </div>
-                                    </div>
-                                    <div className="shipper-profile-status">
-                                        <p>Currently you don't have active status for your profile🚫</p>
-                                    </div>
-                                </div>
-                                <h2>Account Info</h2>
-                                <div className="account-info-details-container">
-                                    <div className="avatar-settings" ref={settingsRef}>
-                                        {previewImage ? (
-                                            <img src={previewImage} className="avatar-user-photo"
-                                                 alt="User Avatar"/>
-                                        ) : previewSavedImage ? (
-                                            <img src={previewSavedImage} className="avatar-user-photo"
-                                                 alt="User Avatar"/>
-                                        ) : (
-                                            <DefaultUserAvatar className="avatar-user-photo"/>
-                                        )}
-                                        <section className="avatar-settings-wrapper">
-                                            <button className="change-avatar" onClick={triggerFileInput}>Change
-                                                Avatar
-                                            </button>
-                                            <button className="shipper-delete-avatar"
-                                                    onClick={handleAvatarDelete}>Delete Photo
-                                            </button>
-                                            <input type="file" ref={fileInputRef} style={{display: 'none'}}
-                                                   onChange={handleAvatarChange}/>
-                                        </section>
-                                    </div>
-                                    <div className="account-info-settings">
-                                        <section className="account-info-settings-1">
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="driverFirstAndLastName"
+                                        <div className="account-info-settings">
+                                            <Grid columns="2, 2fr">
+                                                <TextInput
+                                                    type="text"
                                                     id="driverFirstAndLastName"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    value={driverFirstNameLastName}
                                                     onChange={(e) => setDriverFirstNameLastName(e.target.value)}
-                                                />
-                                                <label htmlFor="driverFirstAndLastName" className="google-style-input-label">
-                                                    {driverInfo ?
-                                                        <>
-                                                            {driverInfo.driverFirstAndLastName}
-                                                        </> :
+                                                    label={driverInfo ? driverInfo.driverFirstAndLastName :
                                                         <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-
-                                        </section>
-                                        <section className="account-info-settings-2">
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="driverPhoneNumber"
+                                                />
+                                                <TextInput
+                                                    type="text"
                                                     id="driverPhoneNumber"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    value={driverPhoneNumber}
                                                     onChange={(e) => setDriverPhoneNumber(e.target.value)}
-                                                />
-                                                <label htmlFor="driverPhoneNumber" className="google-style-input-label">
-                                                    {driverInfo ?
-                                                        <>
-                                                            {driverInfo.driverPhoneNumber}
-                                                        </> :
+                                                    label={driverInfo ? driverInfo.driverPhoneNumber :
                                                         <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="driverEmail"
+                                                />
+                                                <TextInput
+                                                    type="email"
                                                     id="driverEmail"
                                                     autoComplete="off"
                                                     className="google-style-input"
                                                     required={true}
+                                                    value={driverEmail}
                                                     onChange={(e) => setDriverEmail(e.target.value)}
-                                                />
-                                                <label htmlFor="driverEmail" className="google-style-input-label">
-                                                    {driverInfo ?
-                                                        <>
-                                                            {driverInfo.driverEmail}
-                                                        </> :
+                                                    label={driverInfo ? driverInfo.driverEmail :
                                                         <Skeleton variant="text" width={50}/>}
-                                                </label>
-                                            </div>
-                                        </section>
+                                                />
+                                            </Grid>
+                                        </div>
+                                        <Button variant="apply" onClick={handleApplySettings}>
+                                            {isLoading ?
+                                                <>
+                                                    <ClipLoader color="#ffffff" loading={isLoading}
+                                                                className="apply-settings-button"
+                                                                size={25}/> Applying...
+                                                </> :
+                                                "Apply"}
+                                        </Button>
                                     </div>
-                                    <button className="apply-settings-button" onClick={handleApplySettings}>
-                                        {isLoading ?
-                                            <>
-                                                <ClipLoader color="#ffffff" loading={isLoading}
-                                                            className="apply-settings-button"
-                                                            size={25}/> Applying...
-                                            </> :
-                                            "Apply"}
-                                    </button>
-                                </div>
-                                <section className="deleting-account-section">
-                                    <h2>Delete Account</h2>
-                                    <a href="#">I want to permanently delete my account<DeleteRedBinIcon
-                                        className="delete-bin-icon"/></a>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Password' && (
-                            <>
-                                <h2>Password Settings</h2>
-                                <p>To change your password, you need to enter your old password, then after this you
-                                    need to enter your new password</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="oldPassword"
-                                            id="oldPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                        />
-                                        <label htmlFor="oldPassword" className="google-style-input-label">Old
-                                            Password</label>
+                                    <section className="deleting-account-section">
+                                        <h2>Delete Account</h2>
+                                        <a href="#" onClick={handleDeleteClick}>
+                                            I want to permanently delete my account
+                                            <DeleteRedBinIcon className="delete-bin-icon"/>
+                                        </a>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Password' && (
+                                <>
+                                    <h2>Password Settings</h2>
+                                    <h5 className="changing-password-text">To change your password, you need to enter
+                                        your old password, then after this you
+                                        need to enter your new password</h5>
+                                    <div className="password-fields">
+                                        <Grid columns="1, 1fr">
+                                            <TextInput
+                                                type="password"
+                                                id="oldPassword"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                label="Old Password"
+                                                value={oldPassword}
+                                                onChange={(e) => setOldPassword(e.target.value)}
+                                            />
+                                            <TextInput
+                                                type="password"
+                                                id="newPassword"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                label="New Password"
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
+                                            />
+                                        </Grid>
                                     </div>
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="newPassword"
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                        />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">New Password</label>
-                                    </div>
-                                </section>
-                                <section className="warning-message-section">
-                                    <h3>If you change your password, you will be able to change it again after 7
-                                        days</h3>
-                                    <button className="apply-settings-button-bottom">Apply</button>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Notifications' && (
-                            <>
-                                <h2>Notification Settings</h2>
-                                <p>Your can in detail change service notification</p>
-                                <section className="password-settings-container">
-                                    <Switch isOn={isOnAI} handleToggle={handleToggleAI}
-                                            label="Get notifications from AI"/>
-                                    <Switch isOn={isOndriver} handleToggle={handleToggledriver}
-                                            label="Get notifications from driver"/>
-                                    <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
-                                            label="Get notifications from Driver"/>
-                                    <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
-                                            label="Get notifications of updates"/>
-                                </section>
-                                <section className="warning-message-section">
-                                    <h3>After confirmation, the changes take effect immediately</h3>
-                                    <button className="apply-settings-button-bottom">Apply</button>
-                                </section>
-                            </>
-                        )}
-                        {activeSetting === 'Help' && (
-                            <>
-                                <h2>Help</h2>
-                                <p>For help, you can contact us by email or phone</p>
-
-                                <h2>I have a problem using service</h2>
-                                <p>If you have any problem with service fill this form, then send it</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="userEmail"
-                                            id="userEmail"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                        />
-                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
-                                    </div>
-                                    <div className="google-input-wrapper">
-                                        <textarea
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                            style={{
-                                                height: "150px"
-                                            }}
-                                        />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">Your Problem Description</label>
-                                    </div>
-                                </section>
-                                <button className="apply-settings-button-bottom">Send</button>
-                                <h2>I want to give feedback about project</h2>
-                                <p>Could us know in details, what satisfied you or what disappoint you</p>
-                                <section className="password-settings-container">
-                                    <div className="google-input-wrapper">
-                                        <input
-                                            type="userEmail"
-                                            id="userEmail"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                        />
-                                        <label htmlFor="userEmail" className="google-style-input-label">Email</label>
-                                    </div>
-                                    <div className="google-input-wrapper">
-                                        <textarea
+                                    <section className="warning-message-section">
+                                        <h3>After confirmation, the changes take effect immediately</h3>
+                                        <Button onClick={handleUpdateNotificationsSettings} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                                "Apply"}
+                                        </Button>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Notifications' && (
+                                <>
+                                    <h2>Notification Settings</h2>
+                                    <p>Your can in detail change service notification</p>
+                                    <Grid columns="1, 1fr">
+                                        <Switch isOn={isOnAI} handleToggle={handleToggleAI}
+                                                label="Get notifications from AI"/>
+                                        <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
+                                                label="Get notifications from Carrier"/>
+                                        <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
+                                                label="Get notifications from Driver"/>
+                                        <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
+                                                label="Get notifications of updates"/>
+                                    </Grid>
+                                    <section className="warning-message-section">
+                                        <h3>After confirmation, the changes take effect immediately</h3>
+                                        <Button onClick={handleUpdateNotificationsSettings} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                                "Apply"}
+                                        </Button>
+                                    </section>
+                                </>
+                            )}
+                            {activeSetting === 'Help' && (
+                                <>
+                                    <h2>Help</h2>
+                                    <p>For help, you can contact us by email or phone</p>
+                                    <h2>I have a problem using service</h2>
+                                    <h5 className="changing-password-text">If you have any problem with service fill
+                                        this form, then send it</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
                                             type="text"
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required={true}
-                                            style={{
-                                                minHeight: "50px",
-                                                height: "150px"
-                                            }}
+                                            id="userEmail"
+                                            value={driverInfo ? driverInfo.driverEmail : ''}
+                                            label="Email"
+                                            readOnly
                                         />
-                                        <label htmlFor="newPassword"
-                                               className="google-style-input-label">Your Problem Description</label>
-                                    </div>
-                                </section>
-                                <button className="apply-settings-button-bottom">Send</button>
-                            </>
-                        )}
-                    </section>
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            label="Your Problem Description"
+                                            style={{height: "150px"}}
+                                            value={problemDescription}
+                                            onChange={(e) => setProblemDescription(e.target.value)}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitSupportQoutes}>
+                                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
+                                    <h2>I want to give feedback about project</h2>
+                                    <h5 className="changing-password-text">Could us know in details, what satisfied you
+                                        or what disappoint you</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
+                                            type="text"
+                                            id="userEmail"
+                                            value={driverInfo.driverEmail}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            label="Email"
+                                        />
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            label="Your Feedback here"
+                                            style={{height: "150px"}}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitFeedback}>
+                                            {isLoadingFeedback ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
+                                </>
+                            )}
+                        </section>
+                    </div>
                 </div>
             </div>
-        </div>
+
+
+        </>
     );
 };
 

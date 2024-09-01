@@ -1,0 +1,75 @@
+
+.google-input-wrapper {
+  position: relative;
+  width: 100%;
+  margin-bottom: 1rem;
+  cursor: pointer;
+}
+
+.google-style-input {
+  width: 100%;
+  padding: 10px;
+  height: 50px;
+  cursor: pointer;
+  border: 1px solid var(--light-grey);
+  border-radius: 7px;
+  color: var(--dark-grey);
+  font-size: 1.7rem;
+  outline: none;
+  font-weight: normal;
+  transition: 0.1s ease-in-out;
+}
+
+.optionValue {
+  font-size: 1.8rem;
+  font-weight: normal;
+  padding: 10px;
+  height: 150px;
+  color: var(--dark-grey);
+  border: none;
+  border-radius: 0px;
+  cursor: pointer;
+}
+
+.optionValueDisabled{
+  font-size: 1.8rem;
+  font-weight: normal;
+  padding: 10px;
+  color: transparent;
+  background: none;
+}
+
+.google-style-input:focus {
+  transition: 0.1s ease-in-out;
+  border: 1px solid var(--royal-blue);
+}
+
+.google-style-input:hover {
+  transition: 0.1s ease-in-out;
+  border: 1px solid var(--royal-blue);
+}
+
+.google-style-input-label {
+  position: absolute;
+  top: 5px;
+  font-weight: normal;
+  font-size: 1.5rem;
+  left: 10px;
+  padding: 10px;
+  transition: 0.3s;
+  pointer-events: none;
+  color: var(--light-grey);
+  background-color: white;
+}
+
+.google-style-input:valid + .google-style-input-label,
+.google-style-input:focus + .google-style-input-label,
+.google-style-input:-webkit-autofill + .google-style-input-label {
+  top: -11px;
+  transition: 0.25s;
+  color: var(--royal-blue);
+  background-color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0 5px;
+}

@@ -13,12 +13,9 @@ import FullPageSlider from "./flicking-slider/FullPageSlider";
 import GetStartedContainer from "./get-started-container/GetStartedContainer";
 import AdvantagesContainer from "./advantages-container/AdvantagesContainer";
 import CardIntroduction from "./card-introduction/CardIntroduction";
-import LoadTypes from "./load-types/LoadTypes";
-import ServiceSubscribe from "./subscribe-for-service/ServiceSubscribe";
 import RolesContainer from "./roles-container/RolesContainer";
 import MainBenefits from "./main-benefits/MainBenefits";
 import SlidersContainer from "./sliders-container/SlidersContainer";
-import HowItWorks from "./howitworks-container/HowItWorks";
 
 const LandingPage = () => {
 

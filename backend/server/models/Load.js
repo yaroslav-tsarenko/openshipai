@@ -73,6 +73,7 @@ const LoadSchema = new mongoose.Schema({
     loadTrike: Boolean,
     loadIsCrate: String,
     loadIsPallet: String,
+    loadTripStarted: String,
     loadAdditionalSelectedLoadOptions: [String],
     loadIsBox: String,
     isOnTrailer: Boolean,

@@ -11,11 +11,12 @@
     border: 1px solid var(--light-grey);
     border-radius: 50px;
     transition: 0.2s ease-in-out;
+    background: var(--royal-white);
 }
 
 .metric-container:hover {
     transition: 0.2s ease-in-out;
-    background: var(--light-grey-hovered);
+    background: var(--royal-white);
     border: 1px solid var(--royal-blue);
     cursor: pointer;
 }

@@ -1,0 +1,232 @@
+.shipperDashboardContentWrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+}
+
+.shipperDashboardContent {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100vh;
+  gap: 20px;
+  background: var(--royal-white-dark);
+  justify-content: space-between;
+}
+
+.paymentsMethodSelector {
+  display: flex;
+  margin: 0 20px 0 20px;
+
+  button {
+    background: var(--light-grey-hovered);
+    width: fit-content;
+    padding: 12px 15px 12px 15px;
+    border: none;
+    border-radius: 50px;
+    color: var(--dark-grey);
+    font-weight: bold;
+    font-size: 1.5rem;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      background: var(--royal-blue);
+      color: var(--royal-white);
+    }
+  }
+}
+
+.allCardsSection {
+  display: flex;
+  margin: 0 20px 0 20px;
+  max-height: 400px;
+  flex-direction: column;
+  justify-content: space-between;
+  height: fit-content;
+  background: var(--royal-white);
+  border-radius: 24px;
+  padding: 20px;
+  border: 1px solid var(--light-grey-hovered);
+
+  h4 {
+    color: var(--dark-grey);
+    margin: 0 0 15px 0;
+    font-size: 2rem;
+  }
+
+  section {
+    display: flex;
+    gap: 20px;
+    width: 100%;
+  }
+}
+
+.addNewCard {
+  width: 390px;
+  height: 234px;
+  display: flex;
+  flex-direction: column;
+  background: var(--light-grey-hovered);
+  padding: 10px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.01);
+
+  }
+
+  section {
+    background: var(--royal-white);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border-radius: 20px;
+    border: 2px dashed var(--dark-grey);
+    text-align: center;
+    justify-content: center;
+    align-items: center;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      border: 2px dashed var(--royal-blue);
+      color: var(--royal-blue);
+    }
+
+    h2 {
+      color: var(--dark-grey);
+      transition: 0.2s ease-in-out;
+
+      &:hover {
+        color: var(--royal-blue);
+      }
+    }
+  }
+}
+
+.cardContentWrapper {
+  display: flex;
+  gap: 20px;
+  height: 500px;
+  margin: 0 20px 20px 20px;
+}
+
+.transactionHistoryWrapper {
+  width: 70%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  background: var(--royal-white);
+  border-radius: 24px;
+  padding: 20px;
+  border: 1px solid var(--light-grey-hovered);
+}
+
+.transactionHistoryWrapperHeader {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+
+
+  button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: none;
+    border-radius: 50px;
+    border: none;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      background: var(--light-grey-hovered);
+    }
+  }
+
+  h4 {
+    color: var(--dark-grey);
+    font-size: 2rem;
+  }
+}
+
+.transactionHistoryContent{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: auto;
+  overflow-x: hidden;
+}
+
+.cardSettingsWrapper {
+  width: 30%;
+  height: 100%;
+  padding: 20px;
+  gap: 20px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 24px;
+  border: 1px solid var(--light-grey-hovered);
+  background: var(--royal-white);
+}
+
+.cardSettingsWrapperHeader {
+  display: flex;
+  justify-content: space-between;
+  text-align: center;
+  align-items: center;
+  align-content: center;
+
+  button {
+    background: none;
+    color: var(--royal-white);
+    border: none;
+    border-radius: 50px;
+    font-size: 1.5rem;
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+
+    &:hover {
+      background: var(--light-grey-hovered);
+    }
+  }
+
+  h4 {
+    color: var(--dark-grey);
+    font-size: 2rem;
+  }
+}
+
+.cardSettingsContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  align-content: center;
+  justify-content: center;
+  justify-items: center;
+
+  section {
+    display: grid;
+    width: 100%;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    padding: 10px;
+
+    button {
+      border: none;
+      border-radius: 50px;
+      width: 100%;
+      background: var(--light-grey-hovered);
+      font-weight: lighter;
+      color: var(--grey-design);
+      font-size: 1.5rem;
+      transition: 0.2s ease-in-out;
+
+      &:hover {
+        background: var(--light-grey-hovered-2);
+      }
+    }
+  }
+}

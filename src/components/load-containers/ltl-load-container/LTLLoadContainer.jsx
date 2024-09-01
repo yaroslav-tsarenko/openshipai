@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 import axios from 'axios';
 import {useParams} from "react-router-dom";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
@@ -211,7 +211,7 @@ const LTLLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTy
 
     return (
         <div className="ltl-load-container-wrapper">
-            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
+            {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
             <div className="ltl-load-container-content">
                 <section className="load-title-section">

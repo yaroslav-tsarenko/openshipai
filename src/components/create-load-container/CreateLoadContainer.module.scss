@@ -1,0 +1,44 @@
+.createLoadContainerWrapper {
+  display: flex;
+  flex-direction: column;
+  background: var(--royal-white);
+  border-radius: 24px;
+  border: 1px solid var(--light-grey-hovered);
+  gap: 20px;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  height: fit-content;
+  margin: 0 auto;
+  padding: 25px 20px 20px 20px;
+}
+
+.createLoadContainerSection {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+
+  h2 {
+    color: var(--dark-grey);
+    font-weight: bold;
+    transition: 0.2s ease-in-out;
+    font-size: 24px;
+  }
+
+  p {
+    color: var(--light-grey);
+    font-size: 16px;
+  }
+}
+
+.stepIllustration {
+  display: flex;
+  margin: 0 auto;
+}
+
+.createLoadContainerContent {
+  display: flex;
+  width: 100%;
+  flex-direction: column;
+  margin: 0 auto;
+}

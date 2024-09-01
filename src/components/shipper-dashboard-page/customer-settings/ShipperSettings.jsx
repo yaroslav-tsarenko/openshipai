@@ -1,43 +1,44 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
 import axios from 'axios';
-import {ReactComponent as SettingsAccount} from "../../../assets/account-settings-icon.svg";
-import {ReactComponent as SettingsAccountWhite} from "../../../assets/account-settings-icon-white.svg";
-import {ReactComponent as SettingsPassword} from "../../../assets/lock-icon.svg";
-import {ReactComponent as SettingsPasswordWhite} from "../../../assets/lock-icon-white.svg";
-import {ReactComponent as SettingsNotifications} from "../../../assets/bell-settings-icon.svg";
-import {ReactComponent as SettingsNotificationsWhite} from "../../../assets/bell-settings-icon-white.svg";
-import {ReactComponent as SettingsHelp} from "../../../assets/help-settings-icon.svg";
-import {ReactComponent as SettingsHelpWhite} from "../../../assets/help-settings-icon-white.svg";
+import {ReactComponent as SettingsAccount} from "../../../assets/person-settings.svg";
+import {ReactComponent as SettingsPassword} from "../../../assets/lock-settings.svg";
+import {ReactComponent as SettingsNotifications} from "../../../assets/notification-person.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/help-settings.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
 import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
 import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
 import Switch from '../../switcher-component/Switch';
-import {useParams} from 'react-router-dom';
+import {useNavigate, useParams} from 'react-router-dom';
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {Skeleton} from "@mui/material";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
 import Tooltip from "../../tooltip/Tooltip";
+import Grid from "../../grid-two-columns/Grid";
+import TextInput from "../../text-input/TextInput";
+import Popup from "../../popup/Popup";
+import Button from "../../button/Button";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const ShipperSettings = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
-    const [hoveredButton, setHoveredButton] = useState('');
     const {shipperID} = useParams();
-    const [isOnAI, setIsOnAI] = useState(false);
-    const [isOnCarrier, setIsOnCarrier] = useState(false);
-    const [isOnDriver, setIsOnDriver] = useState(false);
-    const [isOnUpdates, setIsOnUpdates] = useState(false);
     const [shipperInfo, setShipperInfo] = useState(null);
+    const [isOnAI, setIsOnAI] = useState(shipperInfo?.userShipperNotificationFromAI ?? false);
+    const [isOnCarrier, setIsOnCarrier] = useState(shipperInfo?.userShipperNotificationFromCarrier ?? false);
+    const [isOnDriver, setIsOnDriver] = useState(shipperInfo?.userShipperNotificationFromDriver ?? false);
+    const [isOnUpdates, setIsOnUpdates] = useState(shipperInfo?.userShipperNotificationOfUpdates ?? false);
     const [shipperAvatar, setShipperAvatar] = useState(null);
     const fileInputRef = useRef();
+    const navigate = useNavigate();
     const [status, setStatus] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -46,10 +47,116 @@ const ShipperSettings = () => {
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
     const [avatarFromDB, setAvatarFromDB] = useState(null);
+    const [email, setEmail] = useState(shipperInfo ? shipperInfo.userShipperEmail : '');
+    const [description, setDescription] = useState('');
     const settingsRef = useRef();
+    const [isPopupVisible, setIsPopupVisible] = useState(false);
+    const [confirmDelete, setConfirmDelete] = useState('');
+    const [oldPassword, setOldPassword] = useState('');
+    const [newPassword, setNewPassword] = useState('');
+    const [alert, setAlert] = useState(false);
+    const [alertData, setAlertData] = useState({status: '', text: '', description: ''});
+    const [problemDescription, setProblemDescription] = useState('');
+
+    const handleSubmitSupportQoutes = async () => {
+        setIsLoading(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-help-quote/${shipperID}`, {email, description, shipperID});
+            setAlertData({status: 'success', text: 'Success!', description: "Quote sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending quote. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const handleSubmitFeedback = async () => {
+        setIsLoadingFeedback(true);
+        try {
+            await axios.post(`${BACKEND_URL}/submit-feedback/${shipperID}`, {email, description, shipperID});
+            setAlertData({status: 'success', text: 'Success!', description: "Message sent successfully!"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } catch (error) {
+            console.error('Error submitting feedback:', error);
+            setAlertData({status: 'error', text: 'Error!', description: "Error sending message. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoadingFeedback(false);
+        }
+    };
+
+
+    const handleChangePassword = async () => {
+        setIsLoading(true);
+        if (oldPassword !== shipperInfo.userShipperPassword) {
+            setIsLoading(false);
+            setAlertData({status: 'warning', text: 'Warning!', description: "Passwords didn't match"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-user-password/shipper/${shipperInfo.userShipperID}`, {newPassword});
+            if (response.status === 200) {
+                setAlertData({status: 'success', text: 'Success!', description: "Password updated successfully"});
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error', description: "Error updating password. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+        setIsLoading(false);
+    };
+
+    const handleDeleteAccount = async () => {
+        const expectedValue = `acc delete ${shipperInfo.userShipperEmail}`;
+        if (confirmDelete !== expectedValue) {
+            setAlertData({status: 'warning', text: 'Warning!', description: "Value didn't equal"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+            return;
+        }
+
+        try {
+            await axios.delete(`${BACKEND_URL}/delete-account/shipper/${shipperID}`);
+            setAlertData({
+                status: 'success',
+                text: 'Success!',
+                description: "Account deleted, you will be redirected to the sign in after 3 sec"
+            });
+            setAlert(true);
+            setTimeout(() => {
+                setAlert(false);
+                navigate("/sign-in");
+            }, 3000);
+        } catch (error) {
+            setAlertData({status: 'error', text: 'Error!', description: "Error deleting account. Try again"});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        }
+    };
+
+
+    const handleDeleteClick = () => {
+        setIsPopupVisible(true);
+    };
+
+    const handleClosePopup = () => {
+        setIsPopupVisible(false);
+    };
 
     const scrollToSettingsRef = () => {
-        settingsRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }) // For smooth scroll
+        settingsRef.current.scrollIntoView({behavior: 'smooth', block: 'start'}) // For smooth scroll
     }
 
     const toggleTooltip = () => {
@@ -160,15 +267,49 @@ const ShipperSettings = () => {
         getUser();
     }, [shipperID]);
 
+    const handleUpdateNotificationsSettings = async () => {
+        setIsLoading(true);
+        try {
+            const response = await axios.put(`${BACKEND_URL}/update-shipper-notifications/${shipperID}`, {
+                userShipperNotificationFromDriver: isOnDriver,
+                userShipperNotificationFromCarrier: isOnCarrier,
+                userShipperNotificationFromAI: isOnAI,
+                userShipperNotificationOfUpdates: isOnUpdates,
+            });
+            console.log(response);
+            if (response.status === 200) {
+                console.log('Notification settings updated successfully');
+                setAlertData({
+                    status: 'success',
+                    text: 'Success',
+                    description: 'Notification settings updated successfully'
+                });
+                setAlert(true);
+                setTimeout(() => setAlert(false), 5000);
+            }
+        } catch (error) {
+            console.error('Error updating notification settings:', error);
+            setAlertData({status: 'error', text: 'Error', description: 'Failed to update notification settings'});
+            setAlert(true);
+            setTimeout(() => setAlert(false), 5000);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+
     const handleToggleAI = () => {
         setIsOnAI(!isOnAI);
     };
+
     const handleToggleCarrier = () => {
         setIsOnCarrier(!isOnCarrier);
     };
+
     const handleToggleDriver = () => {
         setIsOnDriver(!isOnDriver);
     };
+
     const handleToggleUpdates = () => {
         setIsOnUpdates(!isOnUpdates);
     };
@@ -176,7 +317,32 @@ const ShipperSettings = () => {
 
     return (
         <>
-            {status === 'Success' && <FloatingWindowSuccess text="New changes applied"/>}
+            {alert && <Alert status={alertData.status} text={alertData.text} description={alertData.description}/>}
+            {isPopupVisible && (
+                <Popup title="Confirm Deletion" onClose={handleClosePopup}
+                       footerText="After deleting you are not be able to return your account">
+                    <p className="delete-popup-text">All data in account such as loads, personal data, statuses,
+                        progress will be deleted permanently</p>
+                    <h4 className="delete-account-popup-title">Type <span>acc delete {shipperInfo.userShipperEmail}</span> to
+                        confirm deleting</h4>
+                    <TextInput
+                        type="text"
+                        id="confirmDelete"
+                        label="Type here"
+                        value={confirmDelete}
+                        onChange={(e) => setConfirmDelete(e.target.value)}
+                    />
+                    <Grid columns="2, 2fr">
+                        <Button variant="neutral" onClick={handleClosePopup}>
+                            Cancel
+                        </Button>
+                        <Button variant="delete" onClick={handleDeleteAccount}>
+                            Delete Account
+                        </Button>
+                    </Grid>
+                </Popup>
+            )}
+            {status === 'Success' && <Alert text="New changes applied"/>}
             {status === 'Error' && <FloatingWindowFailed text="Something went wrong. Try again"/>}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
@@ -186,7 +352,7 @@ const ShipperSettings = () => {
                     ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                     MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
                 />
-                <div className="shipper-dashboard-content">
+                <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
                         contentTitle={shipperInfo ?
                             <>Welcome back, {shipperInfo.userShipperName}!</> :
@@ -202,43 +368,27 @@ const ShipperSettings = () => {
                     <div className="settings-container">
                         <section className="settings-nav">
                             <button
-                                onMouseEnter={() => setHoveredButton('SettingsAccount')}
-                                onMouseLeave={() => setHoveredButton('')}
                                 onClick={() => setActiveSetting('Account')}
                             >
-                                {hoveredButton === 'SettingsAccount' ?
-                                    <SettingsAccountWhite className="link-nav-button-icon"/> :
-                                    <SettingsAccount className="link-nav-button-icon"/>}
+                                <SettingsAccount className="link-nav-button-icon"/>
                                 Account
                             </button>
                             <button
-                                onMouseEnter={() => setHoveredButton('PasswordSettings')}
-                                onMouseLeave={() => setHoveredButton('')}
                                 onClick={() => setActiveSetting('Password')}
                             >
-                                {hoveredButton === 'PasswordSettings' ?
-                                    <SettingsPasswordWhite className="link-nav-button-icon"/> :
-                                    <SettingsPassword className="link-nav-button-icon"/>}
+                                <SettingsPassword className="link-nav-button-icon"/>
                                 Password
                             </button>
                             <button
-                                onMouseEnter={() => setHoveredButton('NotificationsButton')}
-                                onMouseLeave={() => setHoveredButton('')}
                                 onClick={() => setActiveSetting('Notifications')}
                             >
-                                {hoveredButton === 'NotificationsButton' ?
-                                    <SettingsNotificationsWhite className="link-nav-button-icon"/> :
-                                    <SettingsNotifications className="link-nav-button-icon"/>}
+                                <SettingsNotifications className="link-nav-button-icon"/>
                                 Notifications
                             </button>
                             <button
-                                onMouseEnter={() => setHoveredButton('HelpSettings')}
-                                onMouseLeave={() => setHoveredButton('')}
                                 onClick={() => setActiveSetting('Help')}
                             >
-                                {hoveredButton === 'HelpSettings' ?
-                                    <SettingsHelpWhite className="link-nav-button-icon"/> :
-                                    <SettingsHelp className="link-nav-button-icon"/>}
+                                <SettingsHelp className="link-nav-button-icon"/>
                                 Help
                             </button>
                         </section>
@@ -344,129 +494,103 @@ const ShipperSettings = () => {
                                             </section>
                                         </div>
                                         <div className="account-info-settings">
-                                            <section className="account-info-settings-1">
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="firstName"
-                                                        id="firstName"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        required={true}
-                                                        onChange={(e) => setFirstName(e.target.value)}
-                                                    />
-                                                    <label htmlFor="firstName" className="google-style-input-label">
-                                                        {shipperInfo ?
-                                                            <>
-                                                                {shipperInfo.userShipperName}
-                                                            </> :
-                                                            <Skeleton variant="text" width={50}/>}
-                                                    </label>
-                                                </div>
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="lastName"
-                                                        id="lastName"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        required={true}
-                                                        onChange={(e) => setLastName(e.target.value)}
-                                                    />
-                                                    <label htmlFor="lastName" className="google-style-input-label">
-                                                        {shipperInfo ?
-                                                            <>
-                                                                {shipperInfo.userShipperSecondName}
-                                                            </> :
-                                                            <Skeleton variant="text" width={50}/>}
-                                                    </label>
-                                                </div>
-                                            </section>
-                                            <section className="account-info-settings-2">
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="phoneNumber"
-                                                        id="phoneNumber"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        required={true}
-                                                        onChange={(e) => setPhoneNumber(e.target.value)}
-                                                    />
-                                                    <label htmlFor="phoneNumber" className="google-style-input-label">
-                                                        {shipperInfo ?
-                                                            <>
-                                                                {shipperInfo.userShipperPhoneNumber}
-                                                            </> :
-                                                            <Skeleton variant="text" width={50}/>}
-                                                    </label>
-                                                </div>
-                                                <div className="google-input-wrapper">
-                                                    <input
-                                                        type="shipperEmail"
-                                                        id="shipperEmail"
-                                                        autoComplete="off"
-                                                        className="google-style-input"
-                                                        required={true}
-                                                        onChange={(e) => setShipperEmail(e.target.value)}
-                                                    />
-                                                    <label htmlFor="shipperEmail" className="google-style-input-label">
-                                                        {shipperInfo ?
-                                                            <>
-                                                                {shipperInfo.userShipperEmail}
-                                                            </> :
-                                                            <Skeleton variant="text" width={50}/>}
-                                                    </label>
-                                                </div>
-                                            </section>
+                                            <Grid columns="2, 2fr">
+                                                <TextInput
+                                                    type="text"
+                                                    id="firstName"
+                                                    value={firstName}
+                                                    onChange={(e) => setFirstName(e.target.value)}
+                                                    label={shipperInfo ? shipperInfo.userShipperName :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="lastName"
+                                                    value={lastName}
+                                                    onChange={(e) => setLastName(e.target.value)}
+                                                    label={shipperInfo ? shipperInfo.userShipperSecondName :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="phoneNumber"
+                                                    value={phoneNumber}
+                                                    onChange={(e) => setPhoneNumber(e.target.value)}
+                                                    label={shipperInfo ? shipperInfo.userShipperPhoneNumber :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="shipperEmail"
+                                                    value={shipperEmail}
+                                                    onChange={(e) => setShipperEmail(e.target.value)}
+                                                    label={shipperInfo ? shipperInfo.userShipperEmail :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                            </Grid>
                                         </div>
-                                        <button onClick={handleApplySettings} className="apply-settings-button">
+                                        <Button onClick={handleApplySettings} variant="apply">
                                             {isLoading ?
                                                 <>
-                                                    <ClipLoader color="#ffffff" loading={isLoading}
-                                                                className="apply-settings-button"
-                                                                size={25}/> Applying...
+                                                    <RotatingLinesLoader title="Processing..."/>
+
                                                 </> :
-                                                "Apply"}
-                                        </button>
+                                                "Apply"
+
+                                            }
+                                        </Button>
                                     </div>
                                     <section className="deleting-account-section">
                                         <h2>Delete Account</h2>
-                                        <a href="#">I want to permanently delete my account<DeleteRedBinIcon
-                                            className="delete-bin-icon"/></a>
+                                        <a href="#" onClick={handleDeleteClick}>
+                                            I want to permanently delete my account
+                                            <DeleteRedBinIcon className="delete-bin-icon"/>
+                                        </a>
                                     </section>
                                 </>
                             )}
                             {activeSetting === 'Password' && (
                                 <>
                                     <h2>Password Settings</h2>
-                                    <p>To change your password, you need to enter your old password, then after this you
-                                        need to enter your new password</p>
-                                    <section className="password-settings-container">
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="oldPassword"
+                                    <h5 className="changing-password-text">To change your password, you need to enter
+                                        your old password, then after this you
+                                        need to enter your new password</h5>
+                                    <div className="password-fields">
+                                        <Grid columns="1, 1fr">
+                                            <TextInput
+                                                type="password"
                                                 id="oldPassword"
                                                 autoComplete="off"
                                                 className="google-style-input"
-                                                required={true}
+                                                label="Old Password"
+                                                value={oldPassword}
+                                                onChange={(e) => setOldPassword(e.target.value)}
                                             />
-                                            <label htmlFor="oldPassword" className="google-style-input-label">Old
-                                                Password</label>
-                                        </div>
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="newPassword"
+                                            <TextInput
+                                                type="password"
                                                 id="newPassword"
                                                 autoComplete="off"
                                                 className="google-style-input"
-                                                required={true}
+                                                label="New Password"
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
                                             />
-                                            <label htmlFor="newPassword" className="google-style-input-label">New
-                                                Password</label>
-                                        </div>
-                                    </section>
+                                        </Grid>
+
+                                    </div>
                                     <section className="warning-message-section">
                                         <h3>If you change your password, you will be able to change it again after 7
                                             days</h3>
-                                        <button className="apply-settings-button-bottom">Apply</button>
+                                        <Button onClick={handleChangePassword} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+
+                                                </> :
+                                                "Apply"
+
+                                            }
+                                        </Button>
                                     </section>
                                 </>
                             )}
@@ -475,18 +599,27 @@ const ShipperSettings = () => {
                                     <h2>Notification Settings</h2>
                                     <p>Your can in detail change service notification</p>
                                     <section className="password-settings-container">
-                                        <Switch isOn={isOnAI} handleToggle={handleToggleAI}
-                                                label="Get notifications from AI"/>
-                                        <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
-                                                label="Get notifications from Carrier"/>
-                                        <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
-                                                label="Get notifications from Driver"/>
-                                        <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
-                                                label="Get notifications of updates"/>
+                                        <Grid columns="1, 1fr">
+                                            <Switch isOn={isOnAI} handleToggle={handleToggleAI}
+                                                    label="Get notifications from AI"/>
+                                            <Switch isOn={isOnCarrier} handleToggle={handleToggleCarrier}
+                                                    label="Get notifications from Carrier"/>
+                                            <Switch isOn={isOnDriver} handleToggle={handleToggleDriver}
+                                                    label="Get notifications from Driver"/>
+                                            <Switch isOn={isOnUpdates} handleToggle={handleToggleUpdates}
+                                                    label="Get notifications of updates"/>
+                                        </Grid>
+
                                     </section>
                                     <section className="warning-message-section">
                                         <h3>After confirmation, the changes take effect immediately</h3>
-                                        <button className="apply-settings-button-bottom">Apply</button>
+                                        <Button onClick={handleUpdateNotificationsSettings} variant="apply">
+                                            {isLoading ?
+                                                <>
+                                                    <RotatingLinesLoader title="Processing..."/>
+                                                </> :
+                                                "Apply"}
+                                        </Button>
                                     </section>
                                 </>
                             )}
@@ -495,63 +628,52 @@ const ShipperSettings = () => {
                                     <h2>Help</h2>
                                     <p>For help, you can contact us by email or phone</p>
                                     <h2>I have a problem using service</h2>
-                                    <p>If you have any problem with service fill this form, then send it</p>
-                                    <section className="password-settings-container">
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="userEmail"
-                                                id="userEmail"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                required={true}
-                                                value={shipperInfo ? shipperInfo.userShipperEmail : ''}
-                                            />
-                                            <label htmlFor="userEmail"
-                                                   className="google-style-input-label">Email</label>
-                                        </div>
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="text"
-                                                id="problemDescription"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                required={true}
-                                                style={{height: "150px"}}
-                                            />
-                                            <label htmlFor="problemDescription" className="google-style-input-label">Your
-                                                Problem Description</label>
-                                        </div>
-                                    </section>
-                                    <button className="apply-settings-button-bottom">Send</button>
+                                    <h5 className="changing-password-text">If you have any problem with service fill
+                                        this form, then send it</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
+                                            type="text"
+                                            id="userEmail"
+                                            value={shipperInfo ? shipperInfo.userShipperEmail : ''}
+                                            label="Email"
+                                            readOnly
+                                        />
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            label="Your Problem Description"
+                                            style={{height: "150px"}}
+                                            value={problemDescription}
+                                            onChange={(e) => setProblemDescription(e.target.value)}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitSupportQoutes}>
+                                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
+
                                     <h2>I want to give feedback about project</h2>
-                                    <p>Could us know in details, what satisfied you or what disappoint you</p>
-                                    <section className="password-settings-container">
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="userEmail"
-                                                id="feedbackEmail"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                required={true}
-                                                value={shipperInfo ? shipperInfo.userShipperEmail : ''}
-                                            />
-                                            <label htmlFor="feedbackEmail"
-                                                   className="google-style-input-label">Email</label>
-                                        </div>
-                                        <div className="google-input-wrapper">
-                                            <input
-                                                type="text"
-                                                id="feedbackDescription"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                required={true}
-                                                style={{height: "150px"}}
-                                            />
-                                            <label htmlFor="feedbackDescription" className="google-style-input-label">Your
-                                                Feedback Description</label>
-                                        </div>
-                                    </section>
-                                    <button className="apply-settings-button-bottom">Send</button>
+                                    <h5 className="changing-password-text">Could us know in details, what satisfied you
+                                        or what disappoint you</h5>
+                                    <Grid columns="1, 1fr">
+                                        <TextInput
+                                            type="text"
+                                            id="userEmail"
+                                            value={shipperInfo.userShipperEmail}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            label="Email"
+                                        />
+                                        <TextInput
+                                            type="textarea"
+                                            id="problemDescription"
+                                            value={description}
+                                            onChange={(e) => setDescription(e.target.value)}
+                                            label="Your Feedback here"
+                                            style={{height: "150px"}}
+                                        />
+                                        <Button variant="apply" onClick={handleSubmitFeedback}>
+                                            {isLoadingFeedback ? <RotatingLinesLoader title="Processing..."/> : "Send"}
+                                        </Button>
+                                    </Grid>
                                 </>
                             )}
                         </section>

@@ -1,34 +1,32 @@
-import React, { useRef, useState } from 'react';
+import React, {useRef, useState} from 'react';
 import axios from 'axios';
 import {useParams} from "react-router-dom";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
-import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
-import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
-import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
-import { pink } from '@mui/material/colors';
-import "./HeavyLiftinMovingOnly.css";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Box from "@mui/material/Box";
-import OutlinedInput from '@mui/material/OutlinedInput';
-import ListItemText from '@mui/material/ListItemText';
-import Checkbox from '@mui/material/Checkbox';
-import {ThemeProvider, createTheme, TextField} from "@mui/material";
-import Switch from "../../switcher-component/Switch";
+import {pink} from '@mui/material/colors';
+import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
+import Grid from "../../grid-two-columns/Grid";
+import Button from "../../button/Button";
+import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
+import TextInput from "../../text-input/TextInput";
+import FormSeparator from "../../form-separator/FormSeparator";
 
-const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const HeavyLiftingAndMovingOnly = ({
+                                pickupLocation,
+                                deliveryLocation,
+                                loadType,
+                                loadSubType,
+                                loadPickupDate,
+                                loadDeliveryDate,
+                                loadPickupTime,
+                                loadDeliveryTime,
+                                goBack
+                            }) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
-    const [isFirstOption, setIsFirstOption] = useState(false);
-    const [isSecondOption, setIsSecondOption] = useState(false);
-    const [isThirdOption, setIsThirdOption] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
     const fileInputRef = useRef();
+    const [isLoading, setIsLoading] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const {shipperID} = useParams();
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
@@ -49,9 +47,7 @@ const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loa
         loadPickupTime: loadPickupTime,
         loadDeliveryTime: loadDeliveryTime,
         loadDescription: '',
-        loadBusinessName: '',
         loadDestinationOptions: '',
-        loadLiftedItemsQuantity: '',
         loadAdditionalSelectedLoadOptions: [],
         loadWeight: '',
         loadLength: '',
@@ -76,23 +72,6 @@ const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loa
         selectedLoadOptions: [],
     });
 
-    const theme = createTheme({
-        palette: {
-            primary: {
-                main: '#024ec9',
-            },
-            secondary: {
-                main: '#024ec9',
-            },
-            text: {
-                primary: '#000000',
-                secondary: '#757575',
-            },
-        },
-        typography: {
-            fontSize: 23,
-        },
-    });
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -134,16 +113,15 @@ const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loa
 
     const handleOptionChange = (event) => {
         const {
-            target: { value },
+            target: {value},
         } = event;
         setSelectedOptions(
             typeof value === 'string' ? value.split(',') : value,
         );
 
-        // Update the formData state
         setFormData(prevState => ({
             ...prevState,
-            selectedLoadOptions: typeof value === 'string' ? value.split(',') : value,
+            loadAdditionalSelectedLoadOptions: typeof value === 'string' ? value.split(',') : value,
         }));
     };
 
@@ -185,653 +163,242 @@ const HeavyLiftingMovingOnly = ({pickupLocation, deliveryLocation, loadType, loa
     };
 
     const handleCreateLoad = async () => {
+        setIsLoading(true);
         setFormData({
             ...formData,
         });
         try {
             const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
             console.log(response.data);
             setIsLoadCreatedSuccess(true);
         } catch (error) {
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+        setIsLoading(false);
     };
 
     return (
-        <div className="heavy-lifting-and-moving-load-container-wrapper">
-            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
+        <>
+            {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
-            <div className="heavy-lifting-and-moving-load-container-content">
-                <section className="load-title-section">
-                    <h1>Heavy lifting and Moving only</h1>
-                    <p>Try to fill all necessary fields</p>
-                </section>
-                <div className="heavy-lifting-and-moving-loads-container-inputs">
-                    <section>
-                        <Box sx={{minWidth: 180, height: '50px'}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Moving Size</InputLabel>
-                                <Select
-                                    labelId="loadMovingSize"
-                                    id="loadMovingSize"
-                                    label="Moving Size"
-                                    name="loadMovingSize"
-                                    value={formData.loadMovingSize}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadMovingSize")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="Studio"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>Studio</MenuItem>
-                                    <MenuItem value="1-bedroom apartment/home/condo"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1-bedroom apartment/home/condo</MenuItem>
-                                    <MenuItem value="2-bedroom apartment/home/condo"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2-bedroom apartment/home/condo</MenuItem>
-                                    <MenuItem value="3-bedroom apartment/home/condo"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>3-bedroom apartment/home/condo</MenuItem>
-                                    <MenuItem value="4-bedroom apartment/home/condo"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>4-bedroom apartment/home/condo</MenuItem>
-                                    <MenuItem value="House"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>House</MenuItem>
-                                    <MenuItem value="Villa"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>Villa</MenuItem>
-                                    <MenuItem value="Office"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>Office</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </section>
-                    <section>
-                        <Box sx={{minWidth: 180, height: '50px'}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Number of
-                                    bedrooms</InputLabel>
-                                <Select
-                                    labelId="loadNumberOfBedrooms"
-                                    id="loadNumberOfBedrooms"
-                                    label="Number of bedrooms"
-                                    name="loadNumberOfBedrooms"
-                                    value={formData.loadNumberOfBedrooms}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadNumberOfBedrooms")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="1"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1</MenuItem>
-                                    <MenuItem value="2"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2</MenuItem>
-                                    <MenuItem value="3"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>3</MenuItem>
-                                    <MenuItem value="4"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>4</MenuItem>
-                                    <MenuItem value="4-bedroom apartment/home/condo"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>5+</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </section>
-                    <section>
-                        <Box sx={{minWidth: 180, height: '50px'}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Pickup stories</InputLabel>
-                                <Select
-                                    labelId="loadPickupStories"
-                                    id="loadPickupStories"
-                                    label="Pickup stories"
-                                    name="loadPickupStories"
-                                    value={formData.loadPickupStories}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadPickupStories")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="1"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1</MenuItem>
-                                    <MenuItem value="2"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2</MenuItem>
-                                    <MenuItem value="3+"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>3+</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </section>
-                    <section>
-                        <Box sx={{minWidth: 180, height: '50px'}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Delivery
-                                    stories</InputLabel>
-                                <Select
-                                    labelId="loadDeliveryStories"
-                                    id="loadDeliveryStories"
-                                    label="Pickup stories"
-                                    name="loadDeliveryStories"
-                                    value={formData.loadDeliveryStories}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadDeliveryStories")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="1"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1</MenuItem>
-                                    <MenuItem value="2"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2</MenuItem>
-                                    <MenuItem value="3+"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>+3</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </section>
-                </div>
-                <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
-                    another load
-                </button>
-                <div className="heavy-lifting-and-moving-type-of-trailer-load">
-                    <h2>How many items need to be lifted</h2>
-                    <p>Choose option</p>
-                    <div className="heavy-lifting-and-moving-loads-container-inputs">
-                        <Box sx={{minWidth: "100%", height: '50px', marginBottom: "20px"}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Choose option</InputLabel>
-                                <Select
-                                    labelId="loadLiftedItemsQuantity"
-                                    id="loadLiftedItemsQuantity"
-                                    label="Choose option"
-                                    name="loadLiftedItemsQuantity"
-                                    value={formData.loadLiftedItemsQuantity}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadLiftedItemsQuantity")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="1"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1</MenuItem>
-                                    <MenuItem value="2"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2</MenuItem>
-                                    <MenuItem value="3"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>3</MenuItem>
-                                    <MenuItem value="4+"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>4+</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                </div>
-                <div className="heavy-lifting-and-moving-type-of-trailer-load">
-                    <h2>Specify pickup / delivery floors</h2>
-                    <p>Choose option</p>
-                    <div className="heavy-lifting-and-moving-loads-container-inputs">
-                        <div className="heavy-lifting-and-moving-loads-container-inputs">
-                            <section>
-                                <Box sx={{width: '100%', height: '50px', marginBottom: '10px'}}>
-                                    <FormControl fullWidth style={{fontSize: '15px',}}>
-                                        <InputLabel id="demo-simple-select-label"
-                                                    style={{fontSize: '15px', fontWeight: 'normal'}}>Pickup
-                                            floor</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            label="Pickup floor"
-                                            name="pickupFloor"
-                                            value={formData.pickupFloor}
-                                            onChange={(event) => {
-                                                handleLoadChange("pickupFloor")(event);
-                                            }}
-                                            style={{
-                                                fontSize: '15px',
-                                                fontWeight: 'normal',
-                                                color: 'gray',
-                                                borderRadius: '5px'
-                                            }}
-                                        >
-                                            <MenuItem value="1"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>1</MenuItem>
-                                            <MenuItem value="2"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>2</MenuItem>
-                                            <MenuItem value="3"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>3</MenuItem>
-                                            <MenuItem value="4"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>4</MenuItem>
-                                            <MenuItem value="5+"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>5+</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                            </section>
-                            <section>
-                                <Box sx={{width: '100%', height: '50px', marginBottom: '10px'}}>
-                                    <FormControl fullWidth style={{fontSize: '15px',}}>
-                                        <InputLabel id="demo-simple-select-label"
-                                                    style={{fontSize: '15px', fontWeight: 'normal'}}>Delivery
-                                            floor</InputLabel>
-                                        <Select
-                                            labelId="demo-simple-select-label"
-                                            id="demo-simple-select"
-                                            label="Delivery floor"
-                                            name="deliveryFloor"
-                                            value={formData.pickupFloor}
-                                            onChange={(event) => {
-                                                handleLoadChange("deliveryFloor")(event);
-                                            }}
-                                            style={{
-                                                fontSize: '15px',
-                                                fontWeight: 'normal',
-                                                color: 'gray',
-                                                borderRadius: '5px'
-                                            }}
-                                        >
-                                            <MenuItem value="1"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>1</MenuItem>
-                                            <MenuItem value="2"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>2</MenuItem>
-                                            <MenuItem value="3"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>3</MenuItem>
-                                            <MenuItem value="4"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>4</MenuItem>
-                                            <MenuItem value="5+"
-                                                      style={{
-                                                          fontSize: '15px',
-                                                          color: 'grey',
-                                                          fontWeight: 'normal'
-                                                      }}>5+</MenuItem>
-                                        </Select>
-                                    </FormControl>
-                                </Box>
-                            </section>
-                        </div>
-                    </div>
-                </div>
-                <div className="vehicle-loads-container-switchers">
-                    <Switch
-                        handleToggle={() => {
-                            setIsFirstOption(!isFirstOption);
-                            setFormData({...formData, loadItemsReassembled: !isFirstOption});
+            <CreateLoadContainer step={4} title="Heavy Lifting and Moving only" subTitle="Try to fill all neccesary fields">
+                <TextInput
+                    id="loadTitle"
+                    value={formData.loadTitle}
+                    onChange={handleChange('loadTitle')}
+                    label="Load Title"
+                />
+                <FormSeparator title="Fill All Fields" subTitle="Choose options"/>
+                <Grid columns="4, 4fr">
+                    <TextInput
+                        type="select"
+                        id="loadMovingSize"
+                        value={formData.loadMovingSize}
+                        onChange={handleLoadChange('loadMovingSize')}
+                        label="Moving Size"
+                        options={[
+                            {value: 'Studio', label: 'Studio'},
+                            {value: '1-bedroom apartment/home/condo', label: '1-bedroom apartment/home/condo'},
+                            {value: '2-bedroom apartment/home/condo', label: '2-bedroom apartment/home/condo'},
+                            {value: '3-bedroom apartment/home/condo', label: '3-bedroom apartment/home/condo'},
+                            {value: '4-bedroom apartment/home/condo', label: '4-bedroom apartment/home/condo'},
+                            {value: 'House', label: 'House'},
+                            {value: 'Villa', label: 'Villa'},
+                            {value: 'Office', label: 'Office'}
+                        ]}
+                        style={{
+                            fontSize: '15px',
+                            fontWeight: 'normal',
+                            color: 'gray',
+                            borderRadius: '5px'
                         }}
-                        label="Items re-assembled"
-                        tip="Will cubicles or other items need to be re-assembled?"
                     />
-                    <Switch
-                        handleToggle={() => {
-                            setIsSecondOption(!isSecondOption);
-                            setFormData({...formData, loadElevator: !isSecondOption});
+                    <TextInput
+                        type="select"
+                        id="loadNumberOfBedrooms"
+                        value={formData.loadNumberOfBedrooms}
+                        onChange={handleLoadChange('loadNumberOfBedrooms')}
+                        label="Number of bedrooms"
+                        options={[
+                            {value: '1', label: '1'},
+                            {value: '2', label: '2'},
+                            {value: '3', label: '3'},
+                            {value: '4', label: '4'},
+                            {value: '5+', label: '5+'}
+                        ]}
+                        style={{
+                            fontSize: '15px',
+                            fontWeight: 'normal',
+                            color: 'gray',
+                            borderRadius: '5px'
                         }}
-                        label="Elevator"
-                        tip="Does building have elevator / freight elevator"
                     />
-                    <Switch
-                        handleToggle={() => {
-                            setIsThirdOption(!isThirdOption);
-                            setFormData({...formData, loadTruckParking: !isThirdOption});
+                    <TextInput
+                        type="select"
+                        id="loadPickupStories"
+                        value={formData.loadPickupStories}
+                        onChange={handleLoadChange('loadPickupStories')}
+                        label="Pickup stories"
+                        options={[
+                            {value: '1', label: '1'},
+                            {value: '2', label: '2'},
+                            {value: '3+', label: '3+'}
+                        ]}
+                        style={{
+                            fontSize: '15px',
+                            fontWeight: 'normal',
+                            color: 'gray',
+                            borderRadius: '5px'
                         }}
-                        label="Truck parking"
-                        tip="Is truck parking available?"
                     />
-                </div>
-                <div className="commercial-business-moving-type-of-trailer-load">
-                    <h2>Does the area have shopping, entertainment, or restaurants?</h2>
-                    <p>Choose option</p>
-                    <div className="ltl-load-container-inputs">
-                        <Box sx={{minWidth: "100%", height: '50px', marginBottom: "20px"}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Choose option</InputLabel>
-                                <Select
-                                    labelId="loadAreaOption"
-                                    id="loadAreaOption"
-                                    label="Choose option"
-                                    name="loadAreaOption"
-                                    value={formData.loadAreaOption}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadAreaOption")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="1 floor"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>1 floor</MenuItem>
-                                    <MenuItem value="2 floor"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>2 floor</MenuItem>
-                                    <MenuItem value="3+"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>+3 floor</MenuItem>
-                                    <MenuItem value="Load via passanger or freight + elevator"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>Load via passanger or freight + elevator</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                </div>
-                <div className="commercial-business-moving-type-of-trailer-load">
-                    <h2>Do you need item move upon down at your destination</h2>
-                    <p>Choose option</p>
-                    <div className="ltl-load-container-inputs">
-                        <Box sx={{minWidth: "100%", height: '50px', marginBottom: "20px"}}>
-                            <FormControl fullWidth style={{fontSize: '15px',}}>
-                                <InputLabel id="demo-simple-select-label"
-                                            style={{fontSize: '15px', fontWeight: 'normal'}}>Choose option</InputLabel>
-                                <Select
-                                    labelId="loadDestinationOptions"
-                                    id="loadDestinationOptions"
-                                    label="Choose option"
-                                    name="loadDestinationOptions"
-                                    value={formData.loadDestinationOptions}
-                                    onChange={(event) => {
-                                        handleLoadChange("loadDestinationOptions")(event);
-                                    }}
-                                    style={{
-                                        fontSize: '15px',
-                                        fontWeight: 'normal',
-                                        color: 'gray',
-                                        borderRadius: '5px'
-                                    }}
-                                >
-                                    <MenuItem value="Some"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>Some</MenuItem>
-                                    <MenuItem value="I need"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>I need</MenuItem>
-                                    <MenuItem value="I do not need"
-                                              style={{
-                                                  fontSize: '15px',
-                                                  color: 'grey',
-                                                  fontWeight: 'normal'
-                                              }}>I do not need</MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Box>
-                    </div>
-                </div>
-                <div className="commercial-business-moving-type-of-trailer-load">
-                    <h2>Is there anything else</h2>
-                    <p>Choose option</p>
-                    <div className="ltl-load-container-inputs">
-                        <ThemeProvider theme={theme}>
-                            <Box sx={{minWidth: "100%", height: '50px', fontSize: '20px', marginBottom: '25px'}}>
-                                <FormControl fullWidth>
-                                    <InputLabel id="demo-multiple-checkbox-label"
-                                                sx={{fontSize: '15px', color: 'black'}}>Options</InputLabel>
-                                    <Select
-                                        labelId="demo-multiple-checkbox-label"
-                                        id="demo-multiple-checkbox"
-                                        multiple
-                                        value={selectedOptions}
-                                        onChange={handleOptionChange}
-                                        input={<OutlinedInput label="Options"/>}
-                                        renderValue={(selected) => selected.join(', ')}
-                                        MenuProps={MenuProps}
-                                    >
-                                        {options.map((option) => (
-                                            <MenuItem key={option} value={option}
-                                                      sx={{fontSize: '15px', color: 'black'}}>
-                                                <Checkbox checked={selectedOptions.indexOf(option) > -1} sx={{
-                                                    color: pink[800],
-                                                    '&.Mui-checked': {
-                                                        color: pink[600],
-                                                    },
-                                                }}/>
-                                                <ListItemText primary={option}/>
-                                            </MenuItem>
-                                        ))}
-                                    </Select>
-                                </FormControl>
-                            </Box>
-                        </ThemeProvider>
-                    </div>
-                </div>
-
-                <div className="heavy-lifting-and-moving-load-optional-inputs">
-                    <h2>For better experience attach files</h2>
-                    <p>AI can better analyze your preferences</p>
-                    <div className="additional-preferences-buttons">
-                        <button className="rv-additional-preferences-button"
-                                onClick={() => fileInputRef.current.click()}>
-                            <AttachFile className="additional-preferences-button-icon"/> Attach Files
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{display: 'none'}}
-                            onChange={handleFileChangeForButton}
-                            multiple
-                        />
-                        <button className="rv-additional-preferences-button" onClick={handleButtonClick}>
-                            <CameraIcon className="additional-preferences-button-icon"/> Make a Photo
-                        </button>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            ref={fileInputRef}
-                            style={{display: 'none'}}
-                            onChange={handleFileChange}
-                            multiple
-                        />
-                    </div>
+                    <TextInput
+                        type="select"
+                        id="loadDeliveryStories"
+                        value={formData.loadDeliveryStories}
+                        onChange={handleLoadChange('loadDeliveryStories')}
+                        label="Delivery stories"
+                        options={[
+                            {value: '1', label: '1'},
+                            {value: '2', label: '2'},
+                            {value: '3+', label: '3+'}
+                        ]}
+                        style={{
+                            fontSize: '15px',
+                            fontWeight: 'normal',
+                            color: 'gray',
+                            borderRadius: '5px'
+                        }}
+                    />
+                </Grid>
+                <Button variant="slim">
+                    + Add another load
+                </Button>
+                <FormSeparator title="Does the area have shopping, entertainment, or restaurants?"
+                               subTitle="Choose option"/>
+                <TextInput
+                    type="select"
+                    id="loadAreaOption"
+                    value={formData.loadAreaOption}
+                    onChange={handleLoadChange('loadAreaOption')}
+                    label="Choose option"
+                    options={[
+                        {value: '1 floor', label: '1 floor'},
+                        {value: '2 floor', label: '2 floor'},
+                        {value: '3+', label: '3+'},
+                        {
+                            value: 'Load via passanger or freight + elevator',
+                            label: 'Load via passanger or freight + elevator'
+                        }
+                    ]}
+                    style={{
+                        fontSize: '15px',
+                        fontWeight: 'normal',
+                        color: 'gray',
+                        borderRadius: '5px'
+                    }}
+                />
+                <FormSeparator title="Do you need item move upon down at your destination" subTitle="Choose option"/>
+                <TextInput
+                    type="select"
+                    id="loadDestinationOptions"
+                    value={formData.loadDestinationOptions}
+                    onChange={handleLoadChange('loadDestinationOptions')}
+                    label="Choose option"
+                    options={[
+                        {value: 'Some', label: 'Some'},
+                        {value: 'I need', label: 'I need'},
+                        {value: 'I do not need', label: 'I do not need'}
+                    ]}
+                    style={{
+                        fontSize: '15px',
+                        fontWeight: 'normal',
+                        color: 'gray',
+                        borderRadius: '5px'
+                    }}
+                />
+                <FormSeparator title="Is there anything else" subTitle="Fill all necessary fields"/>
+                <TextInput
+                    type="select"
+                    id="demo-multiple-checkbox"
+                    value={selectedOptions}
+                    onChange={handleOptionChange}
+                    label="Options"
+                    options={options.map(option => ({value: option, label: option}))}
+                    multiple
+                    renderValue={(selected) => selected.join(', ')}
+                    MenuProps={MenuProps}
+                    style={{
+                        minWidth: "100%",
+                        height: '50px',
+                        fontSize: '20px',
+                        marginBottom: '25px',
+                        color: 'black'
+                    }}
+                    checkboxStyle={{
+                        color: pink[800],
+                        '&.Mui-checked': {
+                            color: pink[600],
+                        },
+                    }}
+                />
+                <FormSeparator title="Load Specifications" subTitle="Fill all necessary fields"/>
+                <Grid columns="2, 2fr">
+                    <Button variant="attach-file"
+                            onClick={() => fileInputRef.current.click()}>
+                        Attach Files
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{display: 'none'}}
+                        onChange={handleFileChangeForButton}
+                        multiple
+                    />
+                    <Button variant="attach-photo" onClick={handleButtonClick}>
+                        Make a Photo
+                    </Button>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        ref={fileInputRef}
+                        style={{display: 'none'}}
+                        onChange={handleFileChange}
+                        multiple
+                    />
                     {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
                         <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
                     ))}
                     {filePreviewUrl.map((url, index) => (
                         <img key={index} src={url} alt="Preview"/>
                     ))}
-                </div>
-                <div className="heavy-lifting-and-moving-load-description">
-                    <h2>You can add personal note to this load</h2>
-                    <p>These can be your preferences, questions or requests</p>
-                    <div className="google-input-wrapper">
-                            <textarea
-                                id="loadDescription"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                style={{height: '170px', maxHeight: '200px'}}
-                                onChange={handleChange('loadDescription')}
-                                value={formData.loadDescription}
-                            />
-                        <label htmlFor="loadDescription" className="google-style-input-label">Personal
-                            Description</label>
-                    </div>
-                </div>
-                <div className="note-container">
-                    <h4>Note</h4>
-                    <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
-                        marketplace</p>
-                </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>Create Load</button>
-            </div>
-            <div className="heavy-lifting-and-moving-load-container-content-tips">
-                <RecommendationContainer title="Details Matter"
-                                         description="The quotes you get are only asaccurate as your listing. Make it as detailed as possible to avoid delays, price increases, and cancellations."/>
-                <RecommendationContainer title="Double Check Locations"
-                                         description="Include correct locations for accurate pricing."/>
-            </div>
-        </div>
+                </Grid>
+                <FormSeparator title="Add Note" subTitle="Fill all necessary fields"/>
+                <TextInput
+                    type="textarea"
+                    id="loadDescription"
+                    value={formData.loadDescription}
+                    onChange={handleChange('loadDescription')}
+                    label="Personal Description"
+                    style={{height: '170px', maxHeight: '200px'}}
+                />
+                <Grid columns="2, 2fr">
+                    <Button variant="neutral" onClick={goBack}>
+                        Go Back
+                    </Button>
+                    <Button var="default" onClick={handleCreateLoad}>
+                        {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                    </Button>
+                </Grid>
+
+            </CreateLoadContainer>
+
+        </>
     );
 };
 
-export default HeavyLiftingMovingOnly;
+export default HeavyLiftingAndMovingOnly;

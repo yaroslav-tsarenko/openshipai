@@ -1,0 +1,209 @@
+.default {
+  background-color: #007bff;
+  border: none;
+  width: 100%;
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--royal-white);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--royal-blue-hovered);
+  }
+}
+
+.attach-photo {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--light-grey);
+  border-radius: 16px;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  justify-content: center;
+  color: var(--dark-grey);
+  background: transparent;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--light-grey-hovered-2);
+  }
+}
+
+.more {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--dark-grey);
+  border-radius: 16px;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  justify-content: center;
+  color: var(--dark-grey);
+  background: transparent;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--light-grey-hovered-2);
+  }
+}
+
+.attach-file {
+  display: flex;
+  width: 100%;
+  border: 1px solid var(--light-grey);
+  border-radius: 16px;
+  text-align: center;
+  align-content: center;
+  align-items: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  justify-content: center;
+  color: var(--dark-grey);
+  background: transparent;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--light-grey-hovered-2);
+  }
+}
+
+.delete {
+  background-color: var(--royal-red);
+  border: none;
+  width: 100%;
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--royal-white);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--royal-red-hovered);
+  }
+}
+
+.apply {
+  background-color: var(--royal-green);
+  border: none;
+  width: 100%;
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  font-size: 16px;
+  color: var(--royal-white);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--royal-green-hovered);
+  }
+}
+
+.slim {
+  display: flex;
+  background-color: transparent;
+  border-radius: 50px;
+  height: fit-content;
+  width: 100%;
+  text-align: left;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: var(--royal-blue);
+  font-size: 16px;
+  border: none;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.filter {
+  background-color: var(--light-grey);
+  width: 100%;
+  border: none;
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: bold;
+  color: var(--grey);
+  font-size: 16px;
+  outline: none;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--grey-darker);
+    color: var(--grey);
+  }
+}
+
+.neutral {
+  background-color: transparent;
+  width: 100%;
+  border: 1px solid var(--light-grey);
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: var(--light-grey);
+  font-size: 16px;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    border: 1px solid var(--grey);
+    color: var(--grey);
+  }
+}
+
+.icon {
+  margin-right: 8px; /* Adjust the spacing as needed */
+}
+
+.sendButton {
+  background: var(--royal-blue);
+  display: flex;
+  height: 50px;
+  width: 50px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  transition: 0.2s ease-in-out;
+}
+
+.sendButton:hover {
+  background: var(--royal-blue-hovered);
+}
+
+.attachMaterial {
+  background: transparent;
+  display: flex;
+  height: 50px;
+  width: 55px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50px;
+  transition: 0.2s ease-in-out;
+}
+
+.attachMaterial:hover {
+  background: var(--light-grey-hovered);
+}

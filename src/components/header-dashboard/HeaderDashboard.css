@@ -5,7 +5,9 @@
     align-content: center;
     align-items: center;
     justify-items: center;
-    margin-bottom: 20px;
+    border-bottom: 1px solid var(--light-grey);
+    padding: 15px;
+    background: var(--royal-white);
 }
 
 .dashboard-content-title {
@@ -44,9 +46,9 @@
     background: var(--search-bar-background);
     display: flex;
     width: 300px;
-    height: 55px;
+    height: fit-content;
     padding: 0 15px 0 17px;
-    border-radius: 40px;
+    border-radius: 35px;
     justify-content: center;
     justify-items: center;
     align-items: center;
@@ -92,6 +94,23 @@
 .dashboard-searchbar-expanded input::placeholder {
     color: var(--light-grey);
     font-size: 1.8rem;
+}
+
+.bars-button {
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 40px;
+    font-size: 1.8rem;
+    transition: 0.2s ease-in-out;
+    border: none;
+}
+
+.bars-button:hover {
+    background: var(--search-bar-background);
+    transition: 0.2s ease-in-out;
 }
 
 .dashboard-searchbar-expanded:hover {
@@ -141,6 +160,8 @@
 .user-header-avatar {
     border-radius: 50%;
     object-fit: cover;
+    width: 60px;
+    height: 60px;
 }
 
 .header-dashboard-account-info-role {
@@ -172,8 +193,12 @@
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 @keyframes slideIn {
@@ -221,7 +246,24 @@
     transition: 0.2s ease-in-out;
 }
 
-.suggestions-list li h2{
+.searchbar-button-mobile{
+    display: none;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 40px;
+    font-size: 1.8rem;
+    transition: 0.2s ease-in-out;
+    border: none;
+}
+
+.searchbar-button-mobile:hover{
+    background: var(--light-grey-hovered);
+    transition: 0.2s ease-in-out;
+}
+
+.suggestions-list li h2 {
     font-size: 16px;
     color: var(--grey);
     width: 100%;
@@ -247,5 +289,60 @@
 .suggestions-list::-webkit-scrollbar-thumb {
     background: rgba(136, 136, 136, 0.25); /* Color of the scrollbar thumb */
     border-radius: 6px; /* Optional: Rounds the corners of the scrollbar thumb */
+}
+
+@media screen and (max-width: 1300px) {
+    .account-info-buttons {
+        display: none;
+    }
+
+    .account-container {
+        max-width: 350px;
+        width: 100%;
+    }
+
+    .dashboard-account-info {
+        width: fit-content;
+    }
+
+    .account-info {
+        width: fit-content;
+    }
+
+    .dashboard-searchbar{
+        padding: 7px 15px 7px 17px;
+    }
+
+    .dashboard-account-info-text {
+        display: none;
+    }
+}
+
+@media screen and (max-width: 600px) {
+
+    .searchbar-button-mobile{
+        display: flex;
+    }
+
+    .account-container {
+        width: fit-content;
+    }
+
+    .dashboard-content-title {
+        display: none;
+    }
+
+    .dashboard-searchbar {
+        display: none;
+    }
+
+    .bars-button {
+        display: flex;
+    }
+
+    .user-header-avatar{
+        width: 45px;
+        height: 45px;
+    }
 }
 

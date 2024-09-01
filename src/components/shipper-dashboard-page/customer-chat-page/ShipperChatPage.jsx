@@ -6,6 +6,8 @@ import {LiaTimesSolid} from "react-icons/lia";
 import {ReactComponent as SearchBarIcon} from "../../../assets/search-bar-icon.svg";
 import {ReactComponent as UserChatAvatar} from "../../../assets/userAvatar.svg";
 import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
+import {ReactComponent as AttachFile} from "../../../assets/skrepka-icon.svg";
+import {ReactComponent as SendVoiceMessage} from "../../../assets/mic-chat-icon.svg";
 import useSound from 'use-sound';
 import notificationSound from '../../../assets/sound-effects/message-sent.mp3';
 import {Link, useNavigate, useParams} from "react-router-dom";
@@ -13,8 +15,10 @@ import axios from 'axios';
 import {loadStripe} from '@stripe/stripe-js';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader, FadeLoader} from "react-spinners";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
+import Button from "../../button/Button";
+import {Skeleton} from "@mui/material";
 
 const ShipperChatPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -38,8 +42,14 @@ const ShipperChatPage = () => {
     const socketRef = useRef();
     const [userName, setUserName] = useState("");
     const [shipper, setShipper] = useState("");
-    const [shipperHeaderData, setShipperHeaderData] = useState("");
+    const [selectedCard, setSelectedCard] = useState(null);
     const [play] = useSound(notificationSound);
+    const [cardData, setCardData] = useState({
+        cardNumber: '',
+        cardLastNameFirstName: '',
+        expirationDate: '',
+        cvv: ''
+    });
     const [dealChatConversations, setDealChatConversations] = useState([]);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
     const [showSuccessContainer, setShowSuccessContainer] = useState(false);
@@ -114,14 +124,13 @@ const ShipperChatPage = () => {
     }, [chatID]);
 
 
-
     useEffect(() => {
         const fetchCarrier = async () => {
             try {
-                const dealChatConversationResponse = await axios.get(`/get-deal-chat-conversation/${chatID}`);
+                const dealChatConversationResponse = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
                 const dealChatConversation = dealChatConversationResponse.data;
 
-                const carrierResponse = await axios.get(`/get-carrier/${dealChatConversation.carrierID}`);
+                const carrierResponse = await axios.get(`${BACKEND_URL}/get-carrier/${dealChatConversation.carrierID}`);
                 const carrier = carrierResponse.data;
 
                 setCarrier(carrier);
@@ -210,7 +219,7 @@ const ShipperChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations`)
+        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations/${shipperID}`)
             .then(response => {
                 setConversations(response.data);
             })
@@ -260,11 +269,11 @@ const ShipperChatPage = () => {
     useEffect(() => {
         const fetchChatMessages = async () => {
             try {
-                const response = await axios.get(`/get-chat-messages/${chatID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-chat-messages/${chatID}`);
                 setChatMessages(response.data);
-                const chatConversationResponse = await axios.get(`/get-user/${chatID}`);
+                const chatConversationResponse = await axios.get(`${BACKEND_URL}/get-user/${chatID}`);
                 const carrierID = chatConversationResponse.data.carrierID;
-                const carrierResponse = await axios.get(`/get-carrier/${carrierID}`);
+                const carrierResponse = await axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`);
                 setCarrier(carrierResponse.data);
             } catch (error) {
                 console.error('Error fetching chat messages:', error);
@@ -287,7 +296,7 @@ const ShipperChatPage = () => {
     }, [shipperID]);
 
     useEffect(() => {
-        axios.get('${BACKEND_URL}/get-all-bids')
+        axios.get(`${BACKEND_URL}/get-all-bids`)
             .then(response => {
                 setBids(response.data);
             })
@@ -339,7 +348,7 @@ const ShipperChatPage = () => {
 
     const handleApprove = async () => {
         setIsApproved(true);
-        socketRef.current.emit('shipper approval', { message: 'Shipper approved your agreement' });
+        socketRef.current.emit('shipper approval', {message: 'Shipper approved your agreement'});
     };
 
     useEffect(() => {
@@ -403,12 +412,59 @@ const ShipperChatPage = () => {
         };
     }, [selectedChatID]);
 
+    useEffect(() => {
+        const fetchSelectedCard = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-selected-card/${shipperID}`);
+                const card = response.data.card;
+                setCardData({
+                    cardNumber: card.cardNumber,
+                    cardLastNameFirstName: card.cardLastNameFirstName,
+                    expirationDate: card.expirationDate,
+                    cvv: card.cvv
+                });
+                if (response.data.status === 'Success') {
+                    setSelectedCard(response.data.card);
+                    console.log(cardData);
+                } else {
+                    console.error(response.data.message);
+                }
+            } catch (error) {
+                console.error('Error fetching selected card:', error);
+            }
+        };
+
+
+        fetchSelectedCard();
+    }, [shipperID]);
+
+
     const handlePayClick = async () => {
         setIsProcessingPayment(true);
         try {
-            const response = await axios.post(`${BACKEND_URL}/create-checkout-session-2`, { amount: load.loadPrice * 1.03, loadType: load.loadType, description: " (Including taxes and fee)", shipperID: shipperID, chatID: chatID  });
+            // Fetch the current shipper's selected card details
+            const shipperResponse = await axios.get(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
+            const userShipperSelectedCard = shipperResponse.data.userShipperSelectedCard;
+            console.log(userShipperSelectedCard);
+
+            const cardResponse = await axios.get(`${BACKEND_URL}/get-card-details/${userShipperSelectedCard}`);
+            const {cardNumber, expirationDate, cvv} = cardResponse.data;
+            console.log(cardNumber, expirationDate, cvv);
+
+            // Create a Stripe checkout session with the card details
+            const response = await axios.post(`${BACKEND_URL}/create-checkout-session-2`, {
+                amount: load.loadPrice * 1.03,
+                loadType: load.loadType,
+                description: " (Including taxes and fee)",
+                shipperID: shipperID,
+                chatID: chatID,
+                cardNumber: cardNumber,
+                expirationDate: expirationDate,
+                cvv: cvv
+            });
             const sessionId = response.data.sessionId;
 
+            // Redirect to the Stripe checkout page
             const stripe = await stripePromise;
             const {error} = await stripe.redirectToCheckout({sessionId});
 
@@ -421,220 +477,229 @@ const ShipperChatPage = () => {
         setIsProcessingPayment(false);
     };
 
+    const handleSearchChange = (event) => {
+        const searchTerm = event.target.value.toLowerCase();
+        const filteredConversations = conversations.filter(conversation =>
+            conversation.chatID.toLowerCase().includes(searchTerm)
+        );
+        setConversations(filteredConversations);
+    };
+
+
     return (
-        <div className="shipper-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
-                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
-            />
-            {showSuccessWindow && <FloatingWindowSuccess text="Carrier approved your agreement. Now you need to pay to go through next steps" />}
-            <div className="shipper-deal-conversations-sidebar">
-                <div className="chat-conversation-search-bar">
-                    <SearchBarIcon width="15"/>
-                    <input type="text" placeholder="Search chat by load ID..."/>
-                </div>
-                <div className="chat-id-containers-wrapper">
-                    {conversations.map((conversation, index) => (
-                        <div key={index} className="chat-id-container"
-                             onClick={() => handleChatSelection(conversation.chatID)}>
-                            <UserChatAvatar className="user-avatar-chat"/>
-                            <div className="chat-details">
-                                <h3>Carrier Name</h3>
-                                <h4>{conversation.chatID}</h4>
-                            </div>
+        <>
+            {showSuccessWindow &&
+                <Alert status="success"
+                       text="Carrier approved your agreement. Now you need to pay to go through next steps"/>}
+            <div className="shipper-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                />
+                <div className="chat-content">
+                    <div className="shipper-deal-conversations-sidebar">
+                        <div className="chat-conversation-search-bar">
+                            <SearchBarIcon width="15"/>
+                            <input
+                                type="text"
+                                placeholder="Search chat by load ID..."
+                                onChange={handleSearchChange}
+                            />
                         </div>
-                    ))}
-                </div>
-            </div>
-            <div className="shipper-dashboard-content">
-                <div className="shipper-chat-header">
-                    <div className="shipper-carrier-chat-header">
-                        <span className="status-circle"></span>
-                        <h1 className="chat-user-name">{carrier ? carrier.carrierContactCompanyName :
-                            <ClipLoader color="#024ecc" loading={true} size={25}/>}</h1>
+                        <div className="chat-id-containers-wrapper">
+                            {conversations.length === 0 ? (
+                                <p className="chat-message-alert">Currently you don't have any active chats</p>
+                            ) : (
+                                conversations
+                                    .filter(conversation => conversation.shipperID === shipperID)
+                                    .map((conversation, index) => (
+                                        <div key={index} className="chat-id-container"
+                                             onClick={() => handleChatSelection(conversation.chatID)}>
+                                            <UserChatAvatar className="user-avatar-chat"/>
+                                            <div className="chat-details">
+                                                <h3>{/*{conversation.carrierID}*/} FedEx - Vehicle Load</h3>
+                                                <h4>{/*{conversation.chatID}*/} Typing...</h4>
+                                            </div>
+                                        </div>
+                                    ))
+                            )}
+                        </div>
                     </div>
-                    {load && load.loadCarrierConfirmation === 'Confirmed' ? (
-                        load.loadPaymentStatus === 'Paid' ? (
-                            load.loadDeliveredStatus === 'Delivered' ? (
-                                <h4 className="load-status-delivering">Load Delivered successfully</h4>
+                    <div className="chat-messages-content">
+                        <div className="shipper-chat-header">
+                            <div className="shipper-carrier-chat-header">
+                                <span className="status-circle"></span>
+                                <h1 className="chat-user-name">
+                                    <Skeleton width={200} height={45}/>
+                                </h1>
+                            </div>
+                            {load && load.loadCarrierConfirmation === 'Confirmed' ? (
+                                load.loadPaymentStatus === 'Paid' ? (
+                                    load.loadDeliveredStatus === 'Delivered' ? (
+                                        <h4 className="load-status-delivering">Load Delivered successfully</h4>
+                                    ) : (
+                                        <button className="waiting-for-approval-button" disabled>
+                                            <ClipLoader className="fade-loader" color="#cacaca" loading={true}
+                                                        size={15}/>
+                                            Carrier assigning driver for load
+                                        </button>
+                                    )
+                                ) : (
+                                    <button className="pay-button" onClick={handlePayClick}>
+                                        {isProcessingPayment ?
+                                            <>
+                                                <ClipLoader color="#fffff" loading={true} size={17}
+                                                            className="payment-loader"/>
+                                                Pay
+                                            </>
+                                            : "Pay"
+                                        }
+                                    </button>
+                                )
+                            ) : !isApproved ? (
+                                <button className="send-bol-button" onClick={handleApprove}>Approve Agreement</button>
                             ) : (
                                 <button className="waiting-for-approval-button" disabled>
                                     <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
-                                    Carrier assigning driver for load
+                                    Waiting for Carrier's approval
                                 </button>
-                            )
-                        ) : (
-                            <button className="pay-button" onClick={handlePayClick}>
-                                {isProcessingPayment ?
-                                    <>
-                                        <ClipLoader color="#fffff" loading={true} size={17} className="payment-loader"/>
-                                        Pay
-                                    </>
-                                    : "Pay"
-                                }
-                            </button>
-                        )
-                    ) : !isApproved ? (
-                        <button className="send-bol-button" onClick={handleApprove}>Approve Agreement</button>
-                    ) : (
-                        <button className="waiting-for-approval-button" disabled>
-                            <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
-                            Waiting for Carrier's approval
-                        </button>
-                    )}
+                            )}
+                        </div>
+                        {chatID ? (
+                            <>
+                                {isLoading ? (
+                                   <>
+                                   </>
+                                ) : (
+                                    <div className="messaging-chat-wrapper">
 
-                </div>
-                {chatID ? (
-                        <>
-                            {isLoading ? (
-                                <ClipLoader color="#024ecc" loading={true} size={40} className="clip-loader-style"/>
-                            ) : (
-
-                                <div className="messaging-chat-wrapper">
-                                    <div className="warning-container-wrapper">
-                                        {showSuccessContainer && (
-                                            <div className="success-container">
-                                                <div className="success-container-header">
-                                                    <h2>Congrats, you have successfully submitted bid</h2>
-                                                    <button className="close-warning-container-button"
-                                                            onClick={() => setShowSuccessContainer(false)}>
-                                                        <LiaTimesSolid/></button>
-                                                </div>
-                                                <div className="success-container-body">
-                                                    <p>You have successfully submitted qoute, now, the rest steps you
-                                                        will complete
-                                                        with current carrier</p>
-                                                </div>
-                                            </div>
-                                        )}
-                                        {showBOLContainer && (
-                                            <div className="bol-container">
-                                                <div className="bol-container-header">
-                                                    <h2>BOL document</h2>
-                                                    <button className="close-warning-container-button"
-                                                            onClick={() => setShowBOLContainer(false)}><LiaTimesSolid/>
-                                                    </button>
-                                                </div>
-                                                <div className="bol-container-body">
-                                                    <p>Cooperation with this carrier requires to sign a provided by
-                                                        carrier BOL
-                                                        Document, after successful sign you will be able to complete
-                                                        next staps
-
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    <div className="chat-messages">
-                                        {chatMessages.map((message, index) => (
-                                            <div key={index} style={{
-                                                display: 'flex',
-                                                justifyContent: message.sender === 'shipperID' ? 'flex-end' : 'flex-start'
-                                            }}>
-                                                {message.sender !== 'shipperID' && <UserAvatarComponent/>}
-                                                <div style={{
-                                                    backgroundColor: message.sender === 'shipperID' ? '#0084FF' : '#F3F3F3',
-                                                    color: message.sender === 'shipperID' ? '#ffffff' : '#707070',
-                                                    alignItems: 'start',
-                                                    textAlign: 'left',
-                                                    fontSize: '1.3rem',
-                                                    padding: '10px',
-                                                    maxWidth: '200px',
-                                                    width: '100%',
-                                                    borderRadius: '10px',
-                                                    margin: '10px'
+                                        <div className="chat-messages">
+                                            {chatMessages.map((message, index) => (
+                                                <div key={index} style={{
+                                                    display: 'flex',
+                                                    justifyContent: message.sender === 'shipperID' ? 'flex-end' : 'flex-start'
                                                 }}>
-                                                    <div className="user-role-name">
-                                                        {message.sender === 'carrierID' &&
-                                                            <div style={{
-                                                                display: "flex",
-                                                                justifyContent: "space-between"
-                                                            }}>
-                                                                {carrier ?
-                                                                    <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
-                                                                        <ClipLoader color="#024ec9" loading={true}
-                                                                                    size={25}/>}</p> :
-                                                                    <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
-                                                                        <ClipLoader color="#024ec9" loading={true}
-                                                                                    size={25}/>}</p>}
-                                                                {message.sender !== 'shipperID' &&
-                                                                    <div
-                                                                        style={{color: "darkgrey"}}>Carrier</div>}
-                                                            </div>}
-                                                    </div>
-                                                    <div className="user-role-name">
-                                                        {message.sender === 'shipperID' &&
-                                                            <div style={{
-                                                                display: "flex",
-                                                                justifyContent: "space-between"
-                                                            }}>{shipper ?
-                                                                <p style={{color: "#bfbfbf"}}>{shipper.userShipperName}</p> :
-                                                                <p>Loading...</p>}
-                                                                {message.sender === 'shipperID' &&
-                                                                    <div
-                                                                        style={{color: "#bfbfbf"}}>Shipper</div>}
-                                                            </div>}
-                                                    </div>
-                                                    {message.text}
+                                                    {message.sender !== 'shipperID' && <UserAvatarComponent/>}
                                                     <div style={{
-                                                        color: message.sender === 'shipperID' ? 'white' : 'darkgrey',
-                                                        alignItems: 'end',
-                                                        textAlign: 'end',
-                                                    }}
-                                                    >{new Date(message.date).toLocaleTimeString([], {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: false
-                                                    })}</div>
+                                                        backgroundColor: message.sender === 'shipperID' ? '#0084FF' : '#F3F3F3',
+                                                        color: message.sender === 'shipperID' ? '#ffffff' : '#707070',
+                                                        alignItems: 'start',
+                                                        textAlign: 'left',
+                                                        fontSize: '1.3rem',
+                                                        padding: '10px',
+                                                        maxWidth: '200px',
+                                                        width: '100%',
+                                                        borderRadius: '10px',
+                                                        borderTopRightRadius: message.sender === 'shipperID' ? '0' : '10px',
+                                                        borderTopLeftRadius: message.sender !== 'shipperID' ? '0' : '10px',
+                                                        margin: '10px'
+                                                    }}>
+                                                        <div className="user-role-name">
+                                                            {message.sender === 'carrierID' &&
+                                                                <div style={{
+                                                                    display: "flex",
+                                                                    justifyContent: "space-between"
+                                                                }}>
+                                                                    {carrier ?
+                                                                        <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
+                                                                            <ClipLoader color="#024ec9" loading={true}
+                                                                                        size={25}/>}</p> :
+                                                                        <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
+                                                                            <ClipLoader color="#024ec9" loading={true}
+                                                                                        size={25}/>}</p>}
+                                                                    {message.sender !== 'shipperID' &&
+                                                                        <div
+                                                                            style={{color: "darkgrey"}}>Carrier</div>}
+                                                                </div>}
+                                                        </div>
+                                                        <div className="user-role-name">
+                                                            {message.sender === 'shipperID' &&
+                                                                <div style={{
+                                                                    display: "flex",
+                                                                    justifyContent: "space-between"
+                                                                }}>{shipper ?
+                                                                    <p style={{color: "#bfbfbf"}}>{shipper.userShipperName}</p> :
+                                                                    <p>Loading...</p>}
+                                                                    {message.sender === 'shipperID' &&
+                                                                        <div
+                                                                            style={{color: "#bfbfbf"}}>Shipper</div>}
+                                                                </div>}
+                                                        </div>
+                                                        {message.text}
+                                                        <div style={{
+                                                            color: message.sender === 'shipperID' ? 'white' : 'darkgrey',
+                                                            alignItems: 'end',
+                                                            textAlign: 'end',
+                                                        }}
+                                                        >{new Date(message.date).toLocaleTimeString([], {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                            hour12: false
+                                                        })}</div>
+                                                    </div>
+                                                    {message.sender === 'shipperID' && <UserAvatarComponent/>}
                                                 </div>
-                                                {message.sender === 'shipperID' && <UserAvatarComponent/>}
+                                            ))}
+                                        </div>
+                                        <div className="chat-input-area-wrapper">
+                                            <div className="images-preview-wrapper">
+
                                             </div>
-                                        ))}
-                                    </div>
-                                    <div className="chat-input-area-wrapper">
-                                        <div className="images-preview-wrapper">
+                                            <div className="chat-input-area">
+                                                <Button
+                                                    variant="attachMaterial"
 
-                                        </div>
-                                        <div className="chat-input-area">
-                                            <input
-                                                type="text"
-                                                className="chat-input"
-                                                placeholder="Type your message here..."
-                                                value={inputMessage}
-                                                onChange={e => setInputMessage(e.target.value)}
-                                                onKeyDown={handleKeyDown}
-                                            />
-                                            {/*  <AttachCamera className="chat-input-icons"/>
-                                <AttachImage className="chat-input-icons"/>
-                                <AttachFile className="chat-input-icons"/>*/}
-                                            <button
-                                                className="chat-send-button"
-                                                onClick={() => {
-                                                    sendMessage(inputMessage);
-                                                    setInputMessage("");
-                                                }}
-                                            >
-                                                <SendButtonIcon width="30"/>
-                                            </button>
+                                                >
+                                                    <AttachFile/>
+                                                </Button>
+                                                <input
+                                                    type="text"
+                                                    className="chat-input"
+                                                    placeholder="Type your message here..."
+                                                    value={inputMessage}
+                                                    onChange={e => setInputMessage(e.target.value)}
+                                                    onKeyDown={handleKeyDown}
+                                                />
+                                                {/*
+                                                <AttachCamera className="chat-input-icons"/>
+                                                <AttachImage className="chat-input-icons"/>
+
+                                                */}
+                                                <Button
+                                                    variant="attachMaterial"
+                                                >
+                                                    <SendVoiceMessage/>
+                                                </Button>
+                                                <Button
+                                                    variant="sendButton"
+                                                    onClick={() => {
+                                                        sendMessage(inputMessage);
+                                                        setInputMessage("");
+                                                    }}
+                                                >
+                                                    <SendButtonIcon/>
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                            }
-                        </>
+                                )
+                                }
+                            </>
 
-                ) : (
-                    <div className="choose-chat-conversation">
-                        <p>Choose chat to start speaking with carrier!👋</p>
+                        ) : (
+                            <div className="choose-chat-conversation">
+                                <p>Choose chat to start speaking with carrier!👋</p>
+                            </div>
+                        )}
                     </div>
-                )}
+                </div>
+
             </div>
-        </div>
+
+        </>
     );
 };
 

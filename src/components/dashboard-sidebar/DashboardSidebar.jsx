@@ -22,13 +22,6 @@ import {ReactComponent as TireIcon} from "../../assets/TireIcon.svg";
 import {ReactComponent as TireIconWhite} from "../../assets/tire-icon-white.svg";
 import {ReactComponent as LoadBoxIcon} from "../../assets/load-box-icon.svg";
 import {ReactComponent as CarrierChatIconWhite} from "../../assets/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../assets/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
-import {ReactComponent as DirectionIcon} from "../../assets/direction-icon.svg";
-import {ReactComponent as CarrierIcon} from "../../assets/trane-logo-carrier.svg";
 
 const DashboardSidebar = ({
                               DashboardAI, MyLoads, TakeLoad, AssignedLoad,
@@ -43,7 +36,7 @@ const DashboardSidebar = ({
         <div className="dashboard-sidebar-wrapper">
             <div className={`dashboard-sidebar ${isSidebarOpen ? '' : 'closed'}`}>
                 <section className="dashboard-sidebar-main-buttons">
-                    <OpenshipLogo width="200"/>
+                    <OpenshipLogo className="dashboard-logo"/>
                     {DashboardAI && DashboardAI.visible && (
                         <Link
                             className="dashboard-link-nav-button"

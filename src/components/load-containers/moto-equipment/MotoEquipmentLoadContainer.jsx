@@ -4,15 +4,30 @@ import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import {ReactComponent as PlusIcon} from "../../../assets/plus-blue-icon.svg";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import RecommendationContainer from "../../reccomendation-container/RecommendationContainer";
 import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
+import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
+import Grid from "../../grid-two-columns/Grid";
+import TextInput from "../../text-input/TextInput";
+import Button from "../../button/Button";
+import FormSeparator from "../../form-separator/FormSeparator";
 
-const MotoEquipmentLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
+const MotoEquipmentLoadContainer = ({
+                                        pickupLocation,
+                                        deliveryLocation,
+                                        loadType,
+                                        loadSubType,
+                                        loadPickupDate,
+                                        loadDeliveryDate,
+                                        loadPickupTime,
+                                        loadDeliveryTime,
+                                        goBack
+                                    }) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
@@ -116,73 +131,41 @@ const MotoEquipmentLoadContainer = ({pickupLocation, deliveryLocation, loadType,
     };
 
     return (
-        <div className="moto-load-container-wrapper">
-            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully"/>}
+        <>
+            {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
-            <div className="moto-load-container-content">
-                <section className="load-title-section">
-                    <h1>Moto Load</h1>
-                    <p>Try to fill all necessary fields</p>
-                </section>
-                <div className="moto-loads-container-inputs">
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadTitle"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadTitle')}
-                                value={formData.loadTitle}
-                            />
-                            <label htmlFor="loadTitle" className="google-style-input-label">Load Title</label>
-                        </div>
-                    </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadVehicleYear"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadVehicleYear')}
-                                value={formData.loadVehicleYear}
-                            />
-                            <label htmlFor="loadVehicleYear" className="google-style-input-label">Vehicle year</label>
-                        </div>
-                    </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadVehicleMake"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadVehicleMake')}
-                                value={formData.loadVehicleMake}
-                            />
-                            <label htmlFor="loadVehicleMake" className="google-style-input-label">Vehicle Make</label>
-                        </div>
-                    </section>
-                    <section>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="loadVehicleModel"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                onChange={handleChange('loadVehicleModel')}
-                                value={formData.loadVehicleModel}
-                            />
-                            <label htmlFor="loadVehicleModel" className="google-style-input-label">Vehicle Model</label>
-                        </div>
-                    </section>
-                </div>
-                <div className="moto-loads-container-switchers">
+            <CreateLoadContainer step={4} title="Moto Equipment" subTitle="Fill all data">
+
+                <Grid columns="4, 4fr">
+                    <TextInput
+                        id="loadTitle"
+                        value={formData.loadTitle}
+                        onChange={handleChange('loadTitle')}
+                        label="Load Title"
+                    />
+                    <TextInput
+                        type="text"
+                        id="loadVehicleYear"
+                        value={formData.loadVehicleYear}
+                        onChange={handleChange('loadVehicleYear')}
+                        label="Vehicle year"
+                    />
+                    <TextInput
+                        type="text"
+                        id="loadVehicleMake"
+                        value={formData.loadVehicleMake}
+                        onChange={handleChange('loadVehicleMake')}
+                        label="Vehicle Make"
+                    />
+                    <TextInput
+                        type="text"
+                        id="loadVehicleModel"
+                        value={formData.loadVehicleModel}
+                        onChange={handleChange('loadVehicleModel')}
+                        label="Vehicle Model"
+                    />
+                </Grid>
+                <Grid columns="4, 4fr">
                     <Switch
                         /* isOn={isOperable}*/
                         handleToggle={() => {
@@ -223,113 +206,92 @@ const MotoEquipmentLoadContainer = ({pickupLocation, deliveryLocation, loadType,
                         label="Modified"
                         tip="Has the vehicle been altered from its original factory specifications?"
                     />
-                </div>
-                <button className="add-another-object-button"><PlusIcon className="another-object-plus-icon"/>Add
-                    another moto
-                </button>
-                <div className="moto-type-of-trailer-load">
-                    <h2>Choose type of trailer</h2>
-                    <p>These can be your preferences, questions or requests</p>
-                    <div className="type-of-trailer-switchers">
-                        <div className="type-of-trailer-switchers">
-                            <Switch
-                                handleToggle={() => {
-                                    setIsOpenTrailer(!isOpenTrailer);
-                                    setFormData({...formData, loadTypeOfTrailer: isOpenTrailer ? 'Open Trailer' : ''});
-                                }}
-                                label="Open Trailer (Cost loss)"
-                                tip="Vehicle is open to the trailer?"
-                            />
-                            <Switch
-                                handleToggle={() => {
-                                    setIsEnclosedTrailer(!isEnclosedTrailer);
-                                    setFormData({
-                                        ...formData,
-                                        loadTypeOfTrailer: isEnclosedTrailer ? 'Enclosed Trailer' : ''
-                                    });
-                                }}
-                                label="Enclosed Trailer (Costs More)"
-                                tip="Vehicle protected"
-                            />
-                            <Switch
-                                handleToggle={() => {
-                                    setIsBoth(!isBoth);
-                                    setFormData({...formData, loadTypeOfTrailer: isBoth ? 'Both' : ''});
-                                }}
-                                label="Both"
-                                tip="You can opt for open or enclosed trailer"
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="moto-load-optional-inputs">
-                    <h2>For better experience attach files</h2>
-                    <p>AI can better analyze your preferences</p>
-                    <div className="additional-preferences-buttons">
-                        <button className="rv-additional-preferences-button"
-                                onClick={() => fileInputRef.current.click()}>
-                            <AttachFile className="additional-preferences-button-icon"/> Attach Files
-                        </button>
-                        <input
-                            type="file"
-                            ref={fileInputRef}
-                            style={{display: 'none'}}
-                            onChange={handleFileChangeForButton}
-                            multiple
-                        />
-                        <button className="rv-additional-preferences-button" onClick={handleButtonClick}>
-                            <CameraIcon className="additional-preferences-button-icon"/> Make a Photo
-                        </button>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            capture="environment"
-                            ref={fileInputRef}
-                            style={{display: 'none'}}
-                            onChange={handleFileChange}
-                            multiple
-                        />
-                    </div>
-                    {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
-                        <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
-                    ))}
-                    {filePreviewUrl.map((url, index) => (
-                        <img key={index} src={url} alt="Preview"/>
-                    ))}
-                </div>
-                <div className="moto-load-optional-inputs">
-                    <h2>You can add personal note to this load</h2>
-                    <p>These can be your preferences, questions or requests</p>
-                    <div className="google-input-wrapper">
-                            <textarea
-                                id="loadDescription"
-                                autoComplete="off"
-                                className="google-style-input"
-                                required
-                                style={{height: '170px', maxHeight: '200px'}}
-                                onChange={handleChange('loadDescription')}
-                                value={formData.loadDescription}
-                            />
-                        <label htmlFor="loadDescription" className="google-style-input-label">Personal
-                            Description</label>
-                    </div>
-                </div>
-                <div className="note-container">
-                    <h4>Note</h4>
-                    <p>After creating load, load will be automatically visible in your dashboard, and on the carrier’s
-                        marketplace</p>
-                </div>
-                <button className="creating-load-button" onClick={handleCreateLoad}>
-                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
-                </button>
-            </div>
-            <div className="moto-load-container-content-tips">
-                <RecommendationContainer title="Details Matter"
-                                         description="The quotes you get are only asaccurate as your listing. Make it as detailed as possible to avoid delays, price increases, and cancellations."/>
-                <RecommendationContainer title="Double Check Locations"
-                                         description="Include correct locations for accurate pricing."/>
-            </div>
-        </div>
+                </Grid>
+                <FormSeparator title="Choose type of trailer" subTitle="These can be your preferences"/>
+                <Grid columns="3, 3fr">
+
+                    <Switch
+                        handleToggle={() => {
+                            setIsOpenTrailer(!isOpenTrailer);
+                            setFormData({...formData, loadTypeOfTrailer: isOpenTrailer ? 'Open Trailer' : ''});
+                        }}
+                        label="Open Trailer (Cost loss)"
+                        tip="Vehicle is open to the trailer?"
+                    />
+                    <Switch
+                        handleToggle={() => {
+                            setIsEnclosedTrailer(!isEnclosedTrailer);
+                            setFormData({
+                                ...formData,
+                                loadTypeOfTrailer: isEnclosedTrailer ? 'Enclosed Trailer' : ''
+                            });
+                        }}
+                        label="Enclosed Trailer (Costs More)"
+                        tip="Vehicle protected"
+                    />
+                    <Switch
+                        handleToggle={() => {
+                            setIsBoth(!isBoth);
+                            setFormData({...formData, loadTypeOfTrailer: isBoth ? 'Both' : ''});
+                        }}
+                        label="Both"
+                        tip="You can opt for open or enclosed trailer"
+                    />
+                </Grid>
+                <FormSeparator title="For better experience you can attach files"
+                               subTitle="AI can better analyze your preferences"/>
+                <Grid columns="2, 2fr">
+                    <Button variant="attach-file"
+                            onClick={() => fileInputRef.current.click()}>
+                        Attach Files
+                    </Button>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        style={{display: 'none'}}
+                        onChange={handleFileChangeForButton}
+                        multiple
+                    />
+                    <Button variant="attach-photo" onClick={handleButtonClick}>
+                        Make a Photo
+                    </Button>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        capture="environment"
+                        ref={fileInputRef}
+                        style={{display: 'none'}}
+                        onChange={handleFileChange}
+                        multiple
+                    />
+                </Grid>
+                {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
+                    <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
+                ))}
+                {filePreviewUrl.map((url, index) => (
+                    <img key={index} src={url} alt="Preview"/>
+                ))}
+                <FormSeparator title="You can add personal note to this load" subTitle="These can be your preferences, questions or requests"/>
+                <TextInput
+                    type="textarea"
+                    id="loadDescription"
+                    value={formData.loadDescription}
+                    onChange={handleChange('loadDescription')}
+                    label="Personal Description"
+                    style={{height: '170px', maxHeight: '200px'}}
+                />
+                <Grid columns="2, 2fr">
+                    <Button variant="neutral" onClick={goBack}>
+                        Go Back
+                    </Button>
+                    <Button variant="default" onClick={handleCreateLoad}>
+                        {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                    </Button>
+                </Grid>
+
+
+            </CreateLoadContainer>
+        </>
     );
 };
 

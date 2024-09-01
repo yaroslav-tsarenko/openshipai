@@ -293,12 +293,11 @@ const OpenShipAIChat = ({ userID, userRole }) => {
             const audioContext = new (window.AudioContext || window.webkitAudioContext)();
             const recorder = new Recorder(audioContext, {
                 onAnalysed: (data) => {
-                    // Ensure data is an array before setting it to volumeBars
                     if (Array.isArray(data)) {
                         setVolumeBars(data);
                     } else {
                         console.error('Expected an array for volumeBars, received:', data);
-                        setVolumeBars([]); // Reset to empty array if data is not an array
+                        setVolumeBars([]);
                     }
                 }
             });

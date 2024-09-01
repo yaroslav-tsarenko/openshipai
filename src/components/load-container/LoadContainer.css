@@ -9,6 +9,7 @@
     border: 1px solid var(--light-grey);
     border-radius: 45px;
     cursor: pointer;
+    background: var(--royal-white);
     margin: 10px 0 10px 0;
     transition: 0.2s ease-in-out;
 }

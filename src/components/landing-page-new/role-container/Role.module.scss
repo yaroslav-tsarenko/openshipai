@@ -1,0 +1,74 @@
+.roleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: var(--light-grey);
+  padding: 20px 20px 0 20px;
+  height: 480px;
+  width: 395px;
+  border-radius: 20px;
+  justify-content: space-between;
+  position: relative;
+
+  p{
+    color: var(--dark-grey);
+    font-size: 2.2rem;
+    margin: 0;
+  }
+
+  h2 {
+    color: var(--dark-grey);
+    font-size: 3rem;
+    text-align: center;
+    margin: 20px 0 0 0;
+    font-weight: bold;
+  }
+
+  .content {
+    position: relative;
+    height: 310px;
+  }
+
+  .description, .image {
+    position: absolute;
+    transition: opacity 0.5s ease-in-out;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .fadeIn {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .fadeOut {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  img {
+    width: 320px;
+    height: 310px;
+    bottom: 0;
+  }
+
+  &.shipper {
+    background: linear-gradient(45deg, #f0f8ff, #bfd3e6);
+    background-size: cover;
+  }
+
+  &.carrier {
+    background: linear-gradient(45deg, #e6ffe6, #c2e6c2);
+    background-size: cover;
+  }
+
+  &.broker {
+    background: linear-gradient(45deg, #fff0f0, #e6c2c2);
+    background-size: cover;
+  }
+
+  &.dispatch {
+    background: linear-gradient(45deg, #f0f0ff, #c2c2e6);
+    background-size: cover;
+  }
+}

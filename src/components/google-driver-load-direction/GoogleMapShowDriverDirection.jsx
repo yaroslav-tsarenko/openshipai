@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, OverlayView } from '@react-google-maps/api';
 import _ from 'lodash';
 
 const containerStyle = {
@@ -9,7 +9,27 @@ const containerStyle = {
     borderTopLeftRadius: '45px',
 };
 
-const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDirection({ origin, destination, currentLocation }) {
+const CustomMarker = ({ position, children }) => (
+    <OverlayView
+        position={position}
+        mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+    >
+        <div style={{
+            position: 'absolute',
+            transform: 'translate(-50%, -50%)',
+            borderRadius: '50%',
+            border: '3px solid white',
+            width: '50px',
+            height: '50px',
+            overflow: 'hidden',
+            objectFit: 'cover',
+        }}>
+            {children}
+        </div>
+    </OverlayView>
+);
+
+const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDirection({ origin, destination, currentLocation, driverAvatar, isTripStarted }) {
     const [directionsResponse, setDirectionsResponse] = useState(null);
     const [currentRequest, setCurrentRequest] = useState({ origin, destination });
     const directionsServiceRef = useRef();
@@ -54,7 +74,13 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDire
                 zoom={10}
             >
                 {currentLocation && (
-                    <Marker position={currentLocation} />
+                    <CustomMarker position={currentLocation}>
+                        <img
+                            src={driverAvatar}
+                            alt="Driver Avatar"
+                            style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                        />
+                    </CustomMarker>
                 )}
 
                 {origin && destination && !directionsResponse && (
@@ -75,6 +101,26 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDire
                             directions: directionsResponse
                         }}
                     />
+                )}
+
+                {isTripStarted === "Not Started" && (
+                    <div style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        width: '100%',
+                        height: '100%',
+                        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        color: 'white',
+                        fontSize: '24px',
+                        zIndex: 1,
+                        backdropFilter: 'blur(5px)'
+                    }}>
+                        Click on "Start Trip" to start your journey
+                    </div>
                 )}
             </GoogleMap>
         </LoadScript>

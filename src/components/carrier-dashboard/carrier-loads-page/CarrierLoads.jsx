@@ -79,10 +79,9 @@ const CarrierLoads = () => {
                 DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
-                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
             />
-            <div className="carrier-dashboard-content">
+            <div className="shipper-dashboard-content">
                 <HeaderDashboard
                     contentTitle={carrierInfo ?
                         <>Welcome back, {carrierInfo.carrierContactCompanyName}!</> :
@@ -90,7 +89,6 @@ const CarrierLoads = () => {
                     contentSubtitle="Monitor payments, loads, revenues"
                     accountName={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={60} />}
                     accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40} />}
-                    profileLink={`/carrier-profile/${carrierID}`}
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}

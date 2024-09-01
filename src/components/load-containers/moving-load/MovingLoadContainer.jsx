@@ -3,7 +3,7 @@ import "./MovingLoadContainer.css";
 import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../../constants/constants";
 
@@ -71,7 +71,7 @@ const MovingLoadContainer = ({pickupLocation, deliveryLocation, loadType}) => {
 
     return (
         <div className="moving-load-container-wrapper">
-            {isLoadCreatedSuccess && <FloatingWindowSuccess text="Load Created Successfully" />}
+            {isLoadCreatedSuccess && <Alert text="Load Created Successfully" />}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again" />}
             <section>
                 <h1>Moving Load</h1>

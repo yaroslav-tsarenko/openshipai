@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import ClipLoader from 'react-spinners/ClipLoader';
 import axios from "axios";
-import FloatingWindowSuccess from "../../floating-window-success/FloatingWindowSuccess";
+import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../../constants/constants";
 const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID }) => {
@@ -36,7 +36,7 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
 
     return (
         <>
-            {isAssignSuccess && <FloatingWindowSuccess text="You succesfully asigned load for driver"  />}
+            {isAssignSuccess && <Alert text="You succesfully asigned load for driver"  />}
             {isAssignFailed && <FloatingWindowFailed text="Something went wrong. Try again"  />}
             <div className="driver-container-entity">
                 <div className="driver-entity-info">

@@ -6,6 +6,7 @@ import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.s
 import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
 import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
 import {ReactComponent as SearchbarIcon } from '../../assets/settings-ios-icon.svg';
+import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
 
 const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
 
@@ -62,23 +63,26 @@ const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRo
             <div className="dashboard-content-header">
                 <div>
                     <h2 className="dashboard-content-title">{contentTitle}</h2>
-                    <p className="dashboard-content-subtitle">{contentSubtitle}</p>
+                    <button className="bars-button">
+                        <BarsIcon />
+                    </button>
                 </div>
                 <div className="account-container">
                     <div className="dashboard-searchbar" onClick={() => setIsSearchPopupOpen(true)}>
                         <SearchIcon className="search-icon-searchbar"/>
                         <input type="text" placeholder="Search anything..."/>
                     </div>
+                    <button className="searchbar-button-mobile" onClick={() => setIsSearchPopupOpen(true)}>
+                        <SearchIcon/>
+                    </button>
                     <div className="dashboard-account-info">
                         <section className="account-info">
-
                             {avatar ? (
-                                <img src={avatar} className="user-header-avatar" alt="User Avatar" width="60"
-                                     height="60"/>
+                                <img src={avatar} className="user-header-avatar" alt="User Avatar"
+                                     />
                             ) : (
-                                <DefaultUserAvatar width="60" height="60"/>
+                                <DefaultUserAvatar className="user-header-avatar" width="60" height="60"/>
                             )}
-
                             <Link to={profileLink} className="dashboard-account-info-text">
                                 <h3 className="header-dashboard-account-info-name">{accountName}</h3>
                                 <p className="header-dashboard-account-info-role">{accountRole}</p>

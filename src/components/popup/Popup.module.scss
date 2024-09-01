@@ -1,0 +1,70 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: white;
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  max-width: 450px;
+  height: fit-content;
+  width: 100%;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px;
+  border-bottom: 1px solid #ccc;
+
+  h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: var(--grey);
+  }
+
+}
+
+
+.closeButton {
+  background: none;
+  border: none;
+  color: var(--royal-red);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: 0.2s ease-in-out;
+  border-radius: 50px;
+}
+
+.closeButton:hover {
+  color: red;
+  background: var(--light-grey-hovered);
+}
+
+.content {
+  padding: 20px;
+}
+
+.footer {
+  display: flex;
+  padding: 12px;
+  border-top: 1px solid #ccc;
+
+  p {
+    margin: 0;
+    font-size: 1.3rem;
+    color: var(--grey);
+  }
+}
