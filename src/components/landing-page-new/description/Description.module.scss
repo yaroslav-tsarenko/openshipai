@@ -1,0 +1,23 @@
+.descriptionWrapper{
+  display: flex;
+  flex-direction: column;
+  margin: 120px auto 120px auto;
+  max-width: 1200px;
+  gap: 30px;
+  height: fit-content;
+
+  h1{
+    font-size: 4rem;
+    font-weight: bold;
+    color: var(--dark-grey);
+    text-align: center;
+
+  }
+
+  p{
+    font-size: 2rem;
+    font-weight: lighter;
+    color: var(--light-grey);
+    text-align: center;
+  }
+}

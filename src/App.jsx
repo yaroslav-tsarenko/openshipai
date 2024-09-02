@@ -32,6 +32,13 @@ import SuccessLoadDelivering from "./pages/success-load-delivering/SuccessLoadDe
 import DistanceCalculator from "./components/distance-calculator/DistanceCalculator";
 import LatAndLangConverter from "./components/lat-lang-converter/LatAndLangConverter";
 import LandingPageNew from "./components/landing-page-new/LandingPageNew";
+import OpenPage from "./pages/open-page/OpenPage";
+import ShipPage from "./pages/ship-page/ShipPage";
+import AIPage from "./pages/ai-page/AIPage";
+import SafetyPage from "./pages/safety-page/SafetyPage";
+import PartnersPage from "./pages/partners-page/PartnersPage";
+import BlogPage from "./pages/blog/BlogPage";
+import AboutPage from "./pages/about/AboutPage";
 
 function App() {
     return (
@@ -67,6 +74,16 @@ function App() {
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
                 <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
                 <Route path="/lat-lang-converter" element={<LatAndLangConverter/>}/>
+
+
+                <Route path="/open-page" element={<OpenPage/>}/>
+                <Route path="/ship-page" element={<ShipPage/>}/>
+                <Route path="/ai-page" element={<AIPage/>}/>
+                <Route path="/safety-page" element={<SafetyPage/>}/>
+                <Route path="/partners-page" element={<PartnersPage/>}/>
+                <Route path="/blog-page" element={<BlogPage/>}/>
+                <Route path="/about-page" element={<AboutPage/>}/>
+
 
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>

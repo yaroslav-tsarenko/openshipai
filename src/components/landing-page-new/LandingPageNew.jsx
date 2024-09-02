@@ -26,6 +26,7 @@ import FullPageSlider from "./full-slider/FullPageSlider";
 import LandingPageFooter from "../landing-page/landing-footer/LandingPageFooter";
 import FAQSection from "./faq-section/FAQSection";
 import FAQItem from "./faq-item/FAQItem";
+import GetStartedSection from "./get-started-section/GetStartedSection";
 
 const images = [
     sliderPhoto1,
@@ -42,11 +43,13 @@ const LandingPageNew = () => {
             <Header/>
             <MainHeading/>
             <LoadCategories>
-                <LoadCategory loadLabel="Vehicles & Boats" loadTitle="Cars, Boats, Motorcycles, Rvs, Trailers, Parts"
+                <LoadCategory loadLabel="Vehicles & Boats"
+                              loadTitle="Cars, Boats, Motorcycles, Rvs, Trailers, Parts"
                               loadImage={vehicleLoadCategory} link="/vehicle-load"/>
                 <LoadCategory loadLabel="Moving" loadTitle="Furniture, Appliances" loadImage={movingLoadCategory}
                               link="/moving-load"/>
-                <LoadCategory loadLabel="Heavy Equipment" loadTitle="Farm, Сonstruction" loadImage={heavyLoadCategory}
+                <LoadCategory loadLabel="Heavy Equipment" loadTitle="Farm, Сonstruction"
+                              loadImage={heavyLoadCategory}
                               link="/construction-load"/>
                 <LoadCategory loadLabel="Freight" loadTitle="LTL, FTL" loadImage={freightLoadCategory}
                               link="/freight-load"/>
@@ -166,15 +169,26 @@ const LandingPageNew = () => {
                                   avatar={clientAvatar}
                                   reverse="row-reverse"/>
             </ClientReviewContent>
-            <FullPageSlider images={images} title="Full Control Over Your Shipments" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            <FullPageSlider
+                images={images}
+                title="Full Control Over Your Shipments"
+                description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                                    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
             <FAQSection>
-                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
-                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
-                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
-                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"}
+                         description={"The cost of the service depends on the type of load and the distance it needs " +
+                             "to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"}
+                         description={"The cost of the service depends on the type of load and the distance it needs " +
+                             "to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"}
+                         description={"The cost of the service depends on the type of load and the distance it needs " +
+                             "to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"}
+                         description={"The cost of the service depends on the type of load and the distance it needs " +
+                             "to be transported. You can get a quote by posting your load."}/>
             </FAQSection>
-
+            <GetStartedSection/>
             <LandingPageFooter/>
         </>
     );

@@ -6,15 +6,17 @@ import {Link} from "react-router-dom";
 const Header = () => {
     return (
         <header className={styles.header}>
-            <Logo/>
+            <Link to="/">
+                <Logo/>
+            </Link>
             <nav className={styles.navContent}>
-                <Link to={"/"} className={styles.navLink}>Open</Link>
-                <Link to={"/"} className={styles.navLink}>Ship</Link>
-                <Link to={"/"} className={styles.navLink}>AI</Link>
-                <Link to={"/"} className={styles.navLink}>Safety</Link>
-                <Link to={"/"} className={styles.navLink}>Partners</Link>
-                <Link to={"/"} className={styles.navLink}>Blog</Link>
-                <Link to={"/"} className={styles.navLink}>About</Link>
+                <Link to={"/open-page"} className={styles.navLink}>Open</Link>
+                <Link to={"/ship-page"} className={styles.navLink}>Ship</Link>
+                <Link to={"/ai-page"} className={styles.navLink}>AI</Link>
+                <Link to={"/safety-page"} className={styles.navLink}>Safety</Link>
+                <Link to={"/partners-page"} className={styles.navLink}>Partners</Link>
+                <Link to={"/blog-page"} className={styles.navLink}>Blog</Link>
+                <Link to={"/about-page"} className={styles.navLink}>About</Link>
             </nav>
             <section>
                 <Link to={"/sign-in"} className={styles.loginButton}>Sign In</Link>

@@ -1,16 +1,17 @@
 .faqItem {
   display: flex;
   margin: 50px auto 50px auto;
-  max-width: 1200px;
+  max-width: 900px;
   max-height: fit-content;
-  height: 100%;
+  height: 120%;
   flex-direction: column;
-  border-bottom: 3px solid var(--royal-blue-light);
+  border-bottom: 1px solid var(--royal-blue);
   transition: 0.2s ease-in-out;
 
   p{
-    font-size: 2.5rem;
+    font-size: 1.7rem;
     font-weight: 300;
+    max-width: 800px;
     color: var(--grey-design);
     margin-bottom: 20px;
   }
@@ -18,10 +19,10 @@
   section {
 
     h2 {
-      font-size: 3rem;
+      font-size: 2.2rem;
       font-weight: 500;
       color: var(--royal-blue);
-      margin-bottom: 20px;
+      margin-bottom: 30px;
     }
 
     display: flex;
@@ -38,7 +39,7 @@
       transition: 0.2s ease-in-out;
 
       &:hover{
-        background: var(--light-grey);
+        background: var(--light-grey-hovered);
       }
     }
   }
