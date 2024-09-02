@@ -1,0 +1,20 @@
+.faqSectionWrapper {
+  margin: 90px auto 90px auto;
+  height: fit-content;
+  width: 100%;
+  background: var(--light-grey-hovered-transparent);
+  padding: 70px 0 70px 0;
+
+  h1 {
+    font-size: 4rem;
+    font-weight: 700;
+    color: var(--dark-grey);
+    margin-bottom: 20px;
+    text-align: center;
+  }
+}
+
+.faqSectionContent{
+  display: flex;
+  flex-direction: column;
+}
