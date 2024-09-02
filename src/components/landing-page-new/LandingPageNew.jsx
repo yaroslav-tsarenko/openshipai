@@ -24,6 +24,8 @@ import clientAvatar2 from "../../assets/avatar-client-2.svg";
 import sliderPhoto1 from "../../assets/sliderImage1.svg";
 import FullPageSlider from "./full-slider/FullPageSlider";
 import LandingPageFooter from "../landing-page/landing-footer/LandingPageFooter";
+import FAQSection from "./faq-section/FAQSection";
+import FAQItem from "./faq-item/FAQItem";
 
 const images = [
     sliderPhoto1,
@@ -166,6 +168,13 @@ const LandingPageNew = () => {
             </ClientReviewContent>
             <FullPageSlider images={images} title="Full Control Over Your Shipments" description="Lorem ipsum dolor sit amet, consectetur adipiscing elit.
                                    Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua."/>
+            <FAQSection>
+                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
+                <FAQItem title={"What is the cost of the service?"} description={"The cost of the service depends on the type of load and the distance it needs to be transported. You can get a quote by posting your load."}/>
+            </FAQSection>
+
             <LandingPageFooter/>
         </>
     );
