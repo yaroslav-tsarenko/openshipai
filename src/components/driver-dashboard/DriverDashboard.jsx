@@ -2,8 +2,6 @@ import React, {useEffect, useState, useRef} from "react";
 import './DriverDashboard.css';
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
-import GoogleMapRealTimeTrafficComponent
-    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
@@ -11,7 +9,6 @@ import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import {BACKEND_URL} from "../../constants/constants";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
-import ActiveAssignedLoadContainer from "../active-assigned-load-container/ActiveAssignedLoadContainer";
 import Grid from "../grid-two-columns/Grid";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 
@@ -20,11 +17,13 @@ const DriverDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const { driverID } = useParams();
+    const {driverID} = useParams();
     const [driverInfo, setDriverInfo] = useState(null);
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({
         driverLicenceClass: '',
@@ -37,7 +36,7 @@ const DriverDashboard = () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
-                        const { latitude, longitude } = position.coords;
+                        const {latitude, longitude} = position.coords;
                         try {
                             await axios.put(`${BACKEND_URL}/update-driver-location/${driverID}`, {
                                 driverLat: latitude,
@@ -51,7 +50,7 @@ const DriverDashboard = () => {
                     (error) => {
                         console.error('Error getting current position:', error);
                     },
-                    { enableHighAccuracy: true }
+                    {enableHighAccuracy: true}
                 );
             } else {
                 console.error('Geolocation is not supported by this browser.');
@@ -72,9 +71,7 @@ const DriverDashboard = () => {
     };
 
 
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
+
 
     useEffect(() => {
         const fetchLoads = async () => {
@@ -158,6 +155,10 @@ const DriverDashboard = () => {
         }
     }
 
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+
     return (
         <>
             {showPopup && (
@@ -207,21 +208,19 @@ const DriverDashboard = () => {
                     DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
                     Settings={{visible: true, route: `/driver-settings/${driverID}`}}
                     AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content">
                     <HeaderDashboard
-                        contentTitle={driverInfo ?
-                            <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
-                            <Skeleton variant="text" width={250}/>}
+                        contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> : <Skeleton variant="text" width={250} />}
                         contentSubtitle="Monitor payments, loads, revenues"
-                        accountName={driverInfo ? driverInfo.driverFirstAndLastName :
-                            <Skeleton variant="text" width={60}/>}
-                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
+                        accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60} />}
+                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40} />}
                         profileLink={`/driver-profile/${driverID}`}
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                    onBurgerClick={toggleSidebar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="shipper-dashboard-content-body">
                         <div className="dashboard-content">
