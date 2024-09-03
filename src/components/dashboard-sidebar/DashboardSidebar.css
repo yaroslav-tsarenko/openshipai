@@ -143,7 +143,6 @@
 
 @media screen and (max-width: 1024px){
     .dashboard-sidebar{
-        width: 0;
-        transform: translateX(-150px);
+        display: none;
     }
 }
