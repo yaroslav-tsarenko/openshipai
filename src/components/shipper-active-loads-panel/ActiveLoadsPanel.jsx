@@ -7,7 +7,7 @@ import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
 
 import { BACKEND_URL } from "../../constants/constants";
 
-const ShipperActiveLoadsPanel = () => {
+const ActiveLoadsPanel = ({driver, carrier, shipper}) => {
     const { shipperID } = useParams();
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
@@ -61,4 +61,4 @@ const ShipperActiveLoadsPanel = () => {
     );
 };
 
-export default ShipperActiveLoadsPanel;
+export default ActiveLoadsPanel;

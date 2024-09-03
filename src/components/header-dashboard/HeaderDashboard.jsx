@@ -8,7 +8,7 @@ import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.
 import {ReactComponent as SearchbarIcon } from '../../assets/settings-ios-icon.svg';
 import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
 
-const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
+const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
 
     const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
@@ -63,7 +63,7 @@ const HeaderDashboard = ({ contentTitle, contentSubtitle, accountName, accountRo
             <div className="dashboard-content-header">
                 <div>
                     <h2 className="dashboard-content-title">{contentTitle}</h2>
-                    <button className="bars-button">
+                    <button className="bars-button" onClick={onBurgerClick}>
                         <BarsIcon />
                     </button>
                 </div>

@@ -13,6 +13,7 @@ import {Skeleton} from "@mui/material";
 import axios from "axios";
 import ActiveAssignedLoadContainer from "../active-assigned-load-container/ActiveAssignedLoadContainer";
 import Grid from "../grid-two-columns/Grid";
+import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 
 const DriverDashboard = () => {
 
@@ -68,6 +69,11 @@ const DriverDashboard = () => {
     const handleClick = (load) => {
         setOrigin(load.loadPickupLocation);
         setDestination(load.loadDeliveryLocation);
+    };
+
+
+    const toggleSidebar = () => {
+        setIsSidebarOpen(!isSidebarOpen);
     };
 
     useEffect(() => {
@@ -215,6 +221,7 @@ const DriverDashboard = () => {
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleSidebar}
                     />
                     <div className="shipper-dashboard-content-body">
                         <div className="dashboard-content">
@@ -235,7 +242,7 @@ const DriverDashboard = () => {
                                 </Grid>
                                 <OpenShipAIChat userID={driverID} userRole="shipper"/>
                             </div>
-                            <div className="driver-dashboard-side-panel-wrapper">
+                            {/*<div className="driver-dashboard-side-panel-wrapper">
                                 <div className="driver-map-container">
                                     <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
                                                                        origin={origin} destination={destination}/>
@@ -265,8 +272,10 @@ const DriverDashboard = () => {
                                             you</p>
                                     )}
                                 </div>
+                            </div>*/}
+                            <div className="map-content">
+                                <ActiveLoadsPanel shipperID={driverID}/>
                             </div>
-
                         </div>
                     </div>
                 </div>

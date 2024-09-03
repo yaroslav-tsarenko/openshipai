@@ -5,7 +5,7 @@ import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
-import ShipperActiveLoadsPanel from "../shipper-active-loads-panel/ShipperActiveLoadsPanel";
+import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import {Skeleton} from "@mui/material";
 import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
@@ -101,7 +101,7 @@ const ShipperDashboard = () => {
                             <OpenShipAIChat userID={shipperID} userRole="shipper"/>
                         </div>
                         <div className="map-content">
-                            <ShipperActiveLoadsPanel shipperID={shipperID}/>
+                            <ActiveLoadsPanel shipperID={shipperID}/>
                         </div>
                     </div>
                 </div>

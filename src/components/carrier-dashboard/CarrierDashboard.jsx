@@ -9,7 +9,7 @@ import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
 import {Skeleton} from "@mui/material";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
-import ShipperActiveLoadsPanel from "../shipper-active-loads-panel/ShipperActiveLoadsPanel";
+import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import Grid from "../grid-two-columns/Grid";
 
 const CarrierDashboard = () => {
@@ -92,7 +92,7 @@ const CarrierDashboard = () => {
                             <OpenShipAIChat userID={carrierID} userRole="shipper"/>
                         </div>
                         <div className="map-content">
-                            <ShipperActiveLoadsPanel shipperID={carrierID}/>
+                            <ActiveLoadsPanel shipperID={carrierID}/>
                         </div>
                     </div>
                 </div>
