@@ -1878,11 +1878,9 @@
 .dashboard-content-mobile{
     display: none;
     flex-direction: column;
-    height: 100dvh;
+    height: 100%;
     padding: 10px;
     width: 100%;
-
-
 }
 
 .dashboard-buttons-mobile{
@@ -1911,7 +1909,8 @@
 
     .dashboard-content-mobile{
         display: flex;
-        height: 100dvh;
+        height: 100%;
         flex-direction: column;
+        gap: 10px;
     }
 }
