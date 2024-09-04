@@ -1,5 +1,6 @@
 .chat-container-wrapper {
     display: flex;
+    position: relative;
     border: 1px solid var(--light-grey);
     border-radius: 40px;
     height: 100%;
@@ -30,7 +31,8 @@
 }
 
 .question-buttons {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(2, 2fr);
     justify-content: center;
     align-items: center;
     flex-wrap: wrap; /* Ensure items can wrap */
@@ -451,5 +453,35 @@
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+
+@media screen and (max-width: 768px){
+    .burger-button{
+        position: absolute;
+        top: 20px;
+        left: 20px;
+    }
+
+    .chat-container{
+        height: 82vh;
+    }
+
+    .info{
+        width: 100%;
+        margin: 10px ;
+    }
+
+    .input-container-wrapper{
+        margin: 0 5px 0 5px;
+    }
+
+    .input-container{
+        padding: 10px;
+    }
+
+    .input-container input{
+        padding: 0 0 0 25px;
     }
 }
