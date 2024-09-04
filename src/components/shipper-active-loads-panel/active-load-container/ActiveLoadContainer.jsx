@@ -2,6 +2,7 @@ import React from 'react';
 
 import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
 import {ReactComponent as CarrierIcon} from "../../../assets/trane-logo-carrier.svg";
+import Button from "../../button/Button";
 
 const ActiveLoadContainer = ({loadStatus, loadPickupLocation, loadPickupDate, loadDeliveryLocation, loadDeliveryDate, typeOfLoad, loadMilTrip, loadCredentialID}) => {
     return (
@@ -32,7 +33,7 @@ const ActiveLoadContainer = ({loadStatus, loadPickupLocation, loadPickupDate, lo
             </div>
             <div className="load-container-carrier">
                 <CarrierIcon className="carrier-icon"/>
-                <button className="chat-carrier-button">Chat with Carrier</button>
+                <Button variant="default" className="chat-carrier-button">View</Button>
             </div>
         </div>
     );

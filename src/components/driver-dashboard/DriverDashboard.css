@@ -1913,4 +1913,12 @@
         flex-direction: column;
         gap: 10px;
     }
+
+    .load-info-section{
+        font-size: 0.9rem;
+    }
+
+    .load-directions-title{
+        font-size: 1.2rem;
+    }
 }

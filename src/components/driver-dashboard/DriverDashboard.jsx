@@ -279,9 +279,7 @@ const DriverDashboard = () => {
                                 </div>
                             )}
                             {activeTab === "Loads" && (
-                                <div className="active-loads-panel">
-                                    <ActiveLoadsPanel shipperID={driverID}/>
-                                </div>
+                                    <ActiveLoadsPanel user="driver" userID={driverID}/>
                             )}
                         </div>
                     </div>
