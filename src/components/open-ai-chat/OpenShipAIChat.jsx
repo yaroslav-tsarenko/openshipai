@@ -35,6 +35,8 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     const [recorder, setRecorder] = useState(null);
     const [audioURL, setAudioURL] = useState(null);
     const [volumeBars, setVolumeBars] = useState([]);
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
 
     function generateChatID() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -277,9 +279,37 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         }
     }, [messages, isTyping]);
 
+
+
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartX - touchEndX > 50) {
+            setIsSidebarOpen(false);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchend', handleTouchEnd);
+
+        return () => {
+            window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [touchStartX, touchEndX]);
 
     const handleImageChange = (event) => {
         if (event.target.files && event.target.files[0]) {
@@ -343,14 +373,14 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                     <p>High powered AI model. Developed by openship.ai All rights are reserved</p>
                 </div>
             </div>
-            <button className="burger-button" onClick={toggleSidebar}>
+            <button className={`burger-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}>
                 {isSidebarOpen ?
                     <button className="times-close-sidebar-button">
-                        <TimesIcon />
+                        <TimesIcon/>
                     </button>
                     :
                     <button className="bars-open-sidebar-button">
-                        <BarsIcon />
+                        <BarsIcon/>
                     </button>}
             </button>
             <div className="chat-container">
