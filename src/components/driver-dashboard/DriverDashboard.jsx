@@ -1,28 +1,65 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, { useState, useEffect } from "react";
 import './DriverDashboard.css';
-import {useParams} from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
+import { ReactComponent as DefaultUserAvatar } from "../../assets/default-avatar.svg";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
-import {BACKEND_URL} from "../../constants/constants";
-import {Skeleton} from "@mui/material";
+import { BACKEND_URL } from "../../constants/constants";
+import { Skeleton } from "@mui/material";
 import axios from "axios";
 import Grid from "../grid-two-columns/Grid";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
+import Button from "../button/Button";
 
 const DriverDashboard = () => {
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [loading, setLoading] = useState(false);
-    const {driverID} = useParams();
+    const { driverID } = useParams();
     const [driverInfo, setDriverInfo] = useState(null);
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const [touchStartX, setTouchStartX] = useState(0);
+    const [touchEndX, setTouchEndX] = useState(0);
+    const [activeTab, setActiveTab] = useState("Statistics");
+
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+
+    const handleTouchStart = (e) => {
+        setTouchStartX(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEndX(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStartX - touchEndX > 50) {
+            setIsMobileSidebarOpen(false);
+        }
+
+        if (touchEndX - touchStartX > 50) {
+            setIsMobileSidebarOpen(true);
+        }
+    };
+
+    useEffect(() => {
+        window.addEventListener('touchstart', handleTouchStart);
+        window.addEventListener('touchmove', handleTouchMove);
+        window.addEventListener('touchend', handleTouchEnd);
+
+        return () => {
+            window.removeEventListener('touchstart', handleTouchStart);
+            window.removeEventListener('touchmove', handleTouchMove);
+            window.removeEventListener('touchend', handleTouchEnd);
+        };
+    }, [touchStartX, touchEndX]);
 
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({
@@ -36,11 +73,11 @@ const DriverDashboard = () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
-                        const {latitude, longitude} = position.coords;
+                        const { latitude, longitude } = position.coords;
                         try {
                             await axios.put(`${BACKEND_URL}/update-driver-location/${driverID}`, {
-                                driverLat: latitude,
-                                driverLng: longitude
+                                latitude,
+                                longitude
                             });
                             console.log('Driver location updated');
                         } catch (error) {
@@ -50,7 +87,7 @@ const DriverDashboard = () => {
                     (error) => {
                         console.error('Error getting current position:', error);
                     },
-                    {enableHighAccuracy: true}
+                    { enableHighAccuracy: true }
                 );
             } else {
                 console.error('Geolocation is not supported by this browser.');
@@ -64,14 +101,10 @@ const DriverDashboard = () => {
         return () => clearInterval(intervalId);
     }, [driverID]);
 
-
     const handleClick = (load) => {
         setOrigin(load.loadPickupLocation);
         setDestination(load.loadDeliveryLocation);
     };
-
-
-
 
     useEffect(() => {
         const fetchLoads = async () => {
@@ -87,7 +120,6 @@ const DriverDashboard = () => {
     }, []);
 
     const assignedLoads = loads.filter(load => load.loadAssignedDriverID === driverID);
-
 
     useEffect(() => {
         const getDriver = async () => {
@@ -142,8 +174,8 @@ const DriverDashboard = () => {
     }, [driverInfo]);
 
     const handleChange = (e) => {
-        const {name, value} = e.target;
-        setFormData({...formData, [name]: value});
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
     };
 
     const handleSubmit = async () => {
@@ -153,10 +185,10 @@ const DriverDashboard = () => {
         } catch (error) {
             console.error('Error:', error);
         }
-    }
+    };
 
-    const toggleMobileSidebar = () => {
-        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
     };
 
     return (
@@ -205,23 +237,65 @@ const DriverDashboard = () => {
             )}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                    DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
+                    Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
+                    AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
                     isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content">
                     <HeaderDashboard
-                        contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> : <Skeleton variant="text" width={250} />}
+                        contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                            <Skeleton variant="text" width={250}/>}
                         contentSubtitle="Monitor payments, loads, revenues"
-                        accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60} />}
-                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40} />}
+                        accountName={driverInfo ? driverInfo.driverFirstAndLastName :
+                            <Skeleton variant="text" width={60}/>}
+                        accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
                         profileLink={`/driver-profile/${driverID}`}
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                         onBurgerClick={toggleMobileSidebar}
                     />
+                    <div className="dashboard-content-mobile">
+                        <section>
+                            <Button variant={activeTab === "Statistics" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Statistics")}>Statistics</Button>
+                            <Button variant={activeTab === "Chat" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Chat")}>Chat</Button>
+                            <Button variant={activeTab === "Loads" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Loads")}>Loads</Button>
+                        </section>
+                        <div className="dashboard-content-mobile-body">
+                            {activeTab === "Statistics" && (
+                                <div>
+                                    <Grid columns="1, 1fr">
+                                        <MetricCompoent text="Service Rating"
+                                                        description="It’s yours global reputation on service"
+                                                        percent={75}
+                                                        color="#FFC107"/>
+                                        <MetricCompoent text="Success agreement "
+                                                        description="Average percent of  cooperate with carrier"
+                                                        percent={55}
+                                                        color="#0061ff"/>
+                                        <MetricCompoent text="Service Activity"
+                                                        description="Monitoring, service usability, connections"
+                                                        percent={86}
+                                                        color="#009f52"/>
+                                    </Grid>
+                                </div>
+                            )}
+                            {activeTab === "Chat" && (
+                                <div>
+                                    <OpenShipAIChat userID={driverID} userRole="shipper"/>
+                                </div>
+                            )}
+                            {activeTab === "Loads" && (
+                                <div className="active-loads-panel">
+                                    <ActiveLoadsPanel shipperID={driverID}/>
+                                </div>
+                            )}
+                        </div>
+                    </div>
                     <div className="shipper-dashboard-content-body">
                         <div className="dashboard-content">
                             <div className="chat-metric-content">
@@ -241,45 +315,14 @@ const DriverDashboard = () => {
                                 </Grid>
                                 <OpenShipAIChat userID={driverID} userRole="shipper"/>
                             </div>
-                            {/*<div className="driver-dashboard-side-panel-wrapper">
-                                <div className="driver-map-container">
-                                    <GoogleMapRealTimeTrafficComponent className="driver-info-google-map-container"
-                                                                       origin={origin} destination={destination}/>
-                                </div>
-                                <div className="driver-dashboard-side-panel">
-
-                                    {assignedLoads.length > 0 ? (
-                                        assignedLoads.map(load => (
-                                            <div onClick={() => handleClick(load)}>
-                                                <ActiveAssignedLoadContainer
-                                                    key={load.loadID}
-                                                    loadType={load.loadType}
-                                                    driverID={driverID}
-                                                    origin={load.loadPickupLocation}
-                                                    destination={load.loadDeliveryLocation}
-                                                    originTime={load.loadPickupDate}
-                                                    destinationTime={load.loadDeliveryDate}
-                                                    status={load.loadStatus}
-                                                    distance={load.loadMilesTrip}
-                                                    loadID={load.loadCredentialID}
-                                                />
-                                            </div>
-
-                                        ))
-                                    ) : (
-                                        <p className="driver-assigned-load-message">Carrier didn't assign loads for
-                                            you</p>
-                                    )}
-                                </div>
-                            </div>*/}
                             <div className="map-content">
                                 <ActiveLoadsPanel shipperID={driverID}/>
                             </div>
                         </div>
+
                     </div>
                 </div>
             </div>
-
         </>
     );
 };

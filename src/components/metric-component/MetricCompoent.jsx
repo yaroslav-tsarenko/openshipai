@@ -1,10 +1,28 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './MetricComponent.css';
 
-const MetricComponent = ({text, description, percent, color}) => {
+const MetricComponent = ({ text, description, percent, color }) => {
     const radius = 50;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percent / 100) * circumference;
+    const [strokeWidth, setStrokeWidth] = useState(10);
+
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth <= 1380) {
+                setStrokeWidth(20);
+            } else {
+                setStrokeWidth(10);
+            }
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize(); // Call initially to set the correct strokeWidth
+
+        return () => {
+            window.removeEventListener('resize', handleResize);
+        };
+    }, []);
 
     return (
         <div className="metric-container">
@@ -15,7 +33,7 @@ const MetricComponent = ({text, description, percent, color}) => {
             <svg width="80" height="80" viewBox="0 0 120 120">
                 <circle
                     stroke="#eee"
-                    strokeWidth="10"
+                    strokeWidth={strokeWidth}
                     fill="transparent"
                     r={radius}
                     cx="60"
@@ -23,7 +41,7 @@ const MetricComponent = ({text, description, percent, color}) => {
                 />
                 <circle
                     stroke={color}
-                    strokeWidth="10"
+                    strokeWidth={strokeWidth}
                     fill="transparent"
                     r={radius}
                     cx="60"
