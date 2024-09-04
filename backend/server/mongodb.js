@@ -644,6 +644,22 @@ app.get('/get-all-loads', async (req, res) => {
     }
 });
 
+app.get('/get-assigned-driver-loads/:userID', async (req, res) => {
+    const { userID } = req.params;
+    try {
+        const driver = await Driver.findOne({ driverID: userID });
+        if (!driver) {
+            return res.status(404).json({ message: 'Driver not found' });
+        }
+        const { driverAssignedLoadsID } = driver;
+        const loads = await Load.find({ loadCredentialID: { $in: driverAssignedLoadsID } });
+        res.status(200).json({ status: 'Success', loads });
+    } catch (error) {
+        console.error('Error fetching assigned loads:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
 
 app.get('/get-all-loads/:shipperID', async (req, res) => {
     const { shipperID } = req.params;
