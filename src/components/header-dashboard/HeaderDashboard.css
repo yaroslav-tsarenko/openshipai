@@ -318,6 +318,13 @@
     }
 }
 
+@media screen and (max-width: 768px) {
+    .dashboard-content-header{
+        padding: 5px;
+
+    }
+}
+
 @media screen and (max-width: 600px) {
 
     .searchbar-button-mobile{

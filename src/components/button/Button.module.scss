@@ -207,3 +207,14 @@
 .attachMaterial:hover {
   background: var(--light-grey-hovered);
 }
+
+@media screen and (max-width: 768px){
+  .default{
+    padding: 3px 10px 3px 10px;
+  }
+
+  .neutral{
+    padding: 3px 10px 3px 10px;
+  }
+}
+
