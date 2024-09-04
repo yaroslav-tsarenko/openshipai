@@ -261,15 +261,7 @@ nav {
     max-width: 750px;
 }
 
-.greeting-wrapper {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    max-width: 650px;
-    width: 100%;
-    margin: 50px 0 0 0;
-    height: 100px;
-}
+
 
 .history {
     padding: 10px;
@@ -385,15 +377,7 @@ nav {
     }
 }
 
-.greeting-subtitle {
-    display: flex;
-    flex-direction: column;
-    text-align: left;
-    width: 350px;
-    height: 100px;
-    margin: 0 170px 0 0;
 
-}
 
 .greeting-subtitle span {
     background: linear-gradient(to right, var(--light-grey), var(--light-grey-hovered));

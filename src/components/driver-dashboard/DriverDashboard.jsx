@@ -49,17 +49,6 @@ const DriverDashboard = () => {
         }
     };
 
-    useEffect(() => {
-        window.addEventListener('touchstart', handleTouchStart);
-        window.addEventListener('touchmove', handleTouchMove);
-        window.addEventListener('touchend', handleTouchEnd);
-
-        return () => {
-            window.removeEventListener('touchstart', handleTouchStart);
-            window.removeEventListener('touchmove', handleTouchMove);
-            window.removeEventListener('touchend', handleTouchEnd);
-        };
-    }, [touchStartX, touchEndX]);
 
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({
@@ -257,14 +246,14 @@ const DriverDashboard = () => {
                         onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="dashboard-content-mobile">
-                        <section>
+                        <div className="dashboard-buttons-mobile">
                             <Button variant={activeTab === "Statistics" ? "default" : "neutral"}
                                     onClick={() => handleTabChange("Statistics")}>Statistics</Button>
                             <Button variant={activeTab === "Chat" ? "default" : "neutral"}
                                     onClick={() => handleTabChange("Chat")}>Chat</Button>
                             <Button variant={activeTab === "Loads" ? "default" : "neutral"}
                                     onClick={() => handleTabChange("Loads")}>Loads</Button>
-                        </section>
+                        </div>
                         <div className="dashboard-content-mobile-body">
                             {activeTab === "Statistics" && (
                                 <div>
