@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-import GoogleMapRealTimeTrafficComponent from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+import React, {useEffect, useState} from 'react';
+import {useParams} from 'react-router-dom';
+import GoogleMapRealTimeTrafficComponent
+    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 import axios from 'axios';
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
-import { BACKEND_URL } from "../../constants/constants";
+import {BACKEND_URL} from "../../constants/constants";
 
-const ActiveLoadsPanel = ({ user, userID }) => {
+const ActiveLoadsPanel = ({user, userID}) => {
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
@@ -46,7 +47,7 @@ const ActiveLoadsPanel = ({ user, userID }) => {
                 <GoogleMapRealTimeTrafficComponent
                     className="shipper-info-google-map-container"
                     origin={origin}
-                    destination={destination} />
+                    destination={destination}/>
             </div>
             <div className="shipper-dashboard-side-panel">
                 {loads.length === 0 ? (
@@ -67,6 +68,7 @@ const ActiveLoadsPanel = ({ user, userID }) => {
                         </div>
                     ))
                 )}
+
             </div>
         </div>
     );
