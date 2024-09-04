@@ -547,7 +547,7 @@
         position: fixed;
         background: white;
         z-index: 1000;
-        height: 85dvh;
+        height: 80dvh;
         border-top-left-radius: 25px;
         border-bottom-left-radius: 25px;
         border: 1px solid var(--light-grey);
