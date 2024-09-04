@@ -1874,3 +1874,43 @@
     font-weight: bold;
     color: var(--grey);
 }
+
+.dashboard-content-mobile{
+    display: none;
+    flex-direction: column;
+    height: 100dvh;
+    padding: 10px;
+    width: 100%;
+
+    section{
+        display: grid;
+        grid-template-columns: repeat(3, 3fr);
+        width: 100%;
+        gap: 10px;
+        margin: 0 0 10px 0;
+    }
+
+}
+
+.active-loads-panel{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    justify-content: space-between;
+}
+
+@media screen and (max-width: 1380px) {
+    .dashboard-content{
+        display: none;
+    }
+
+    .shipper-dashboard-content-body{
+        display: none;
+    }
+
+    .dashboard-content-mobile{
+        display: flex;
+        height: 100dvh;
+        flex-direction: column;
+    }
+}

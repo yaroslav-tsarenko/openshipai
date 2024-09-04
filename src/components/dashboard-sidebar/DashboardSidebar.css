@@ -200,8 +200,19 @@
     animation: fadeIn 0.3s ease-in-out;
 }
 
-.mobile-sidebar-overlay.hidden {
-    animation: fadeOut 0.3s ease-in-out;
+/* Ensure slideOut animation is defined correctly */
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-100%);
+    }
+}
+
+/* Add a class for the closing state of the mobile sidebar */
+.mobile-sidebar.closing {
+    animation: slideOut 0.3s ease-in-out;
 }
 
 .mobile-sidebar {
@@ -219,6 +230,7 @@
 .mobile-sidebar.hidden {
     animation: slideOut 0.3s ease-in-out;
 }
+
 @media (max-width: 768px) {
     .mobile-sidebar-toggle {
         display: block;

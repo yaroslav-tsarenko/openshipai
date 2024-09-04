@@ -31,7 +31,16 @@ const DashboardSidebar = ({
                           }) => {
     const [hoveredButton, setHoveredButton] = useState('');
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+    const [isClosing, setIsClosing] = useState(false);
 
+    // Manage the closing animation
+    const handleCloseSidebar = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            toggleMobileSidebar();  // This function should set isMobileSidebarOpen to false
+            setIsClosing(false);
+        }, 300);  // Match the timeout to the animation duration
+    };
 
     return (
         <>
@@ -197,8 +206,8 @@ const DashboardSidebar = ({
             </div>
 
             {isMobileSidebarOpen && (
-                <div className={`mobile-sidebar-overlay ${isMobileSidebarOpen ? '' : 'hidden'}`} onClick={toggleMobileSidebar}>
-                    <div className={`mobile-sidebar ${isMobileSidebarOpen ? '' : 'hidden'}`} onClick={(e) => e.stopPropagation()}>
+                <div className={`mobile-sidebar-overlay ${isMobileSidebarOpen ? '' : 'hidden'}`} onClick={handleCloseSidebar}>
+                    <div className={`mobile-sidebar ${isClosing ? 'closing' : ''}`} onClick={(e) => e.stopPropagation()}>
                         <section className="dashboard-sidebar-main-buttons">
                             <img src={OpenshipLogoPng} alt="Logo" className="dashboard-logo"/>
                             {DashboardAI && DashboardAI.visible && (

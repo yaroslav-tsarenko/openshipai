@@ -81,3 +81,18 @@
     font-size: 10px;
     color: #000;
 }
+
+@media screen and (max-width: 1380px) {
+    .metric-container{
+        height: 130px;
+        border-radius: 20px;
+    }
+
+    .metric-container-title{
+        font-size: 2rem;
+    }
+
+    .metric-container-description{
+        font-size: 1.4rem;
+    }
+}

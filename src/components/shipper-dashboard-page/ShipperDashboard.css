@@ -2635,3 +2635,12 @@
     color: var(--grey);
     pointer-events: none;
 }
+
+@media screen and (max-width: 1380px) {
+
+    .shipper-dashboard-side-panel-wrapper{
+        margin: 0;
+        height: 80dvh;
+    }
+
+}
