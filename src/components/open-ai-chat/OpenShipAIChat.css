@@ -484,7 +484,7 @@
     }
 
     .chat-container-wrapper{
-        height: 85dvh;
+        height: 80dvh;
         display: flex;
         border-radius: 25px;
     }
@@ -516,6 +516,8 @@
 
     .input-container input{
         padding: 0 0 0 25px;
+        font-size: 13px;
+        margin: 0;
     }
 
     .input-container input::placeholder{

@@ -1,28 +1,39 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import GoogleMapRealTimeTrafficComponent
-    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+import GoogleMapRealTimeTrafficComponent from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 import axios from 'axios';
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
-
 import { BACKEND_URL } from "../../constants/constants";
 
-const ActiveLoadsPanel = ({driver, carrier, shipper}) => {
-    const { shipperID } = useParams();
+const ActiveLoadsPanel = ({ user, userID }) => {
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-loads/${shipperID}`)
-            .then(response => {
-                const filteredLoads = response.data.filter(load => load.shipperID === shipperID);
-                setLoads(filteredLoads);
-            })
-            .catch(error => {
-                console.error('Error fetching loads:', error);
-            });
-    }, [shipperID]);
+        if (user === 'shipper') {
+            axios.get(`${BACKEND_URL}/get-all-loads/${userID}`)
+                .then(response => {
+                    const filteredLoads = response.data.filter(load => load.shipperID === userID);
+                    setLoads(filteredLoads);
+                })
+                .catch(error => {
+                    console.error('Error fetching loads:', error);
+                });
+        } else if (user === 'driver') {
+            axios.get(`${BACKEND_URL}/get-all-loads`)
+                .then(response => {
+                    const filteredLoads = response.data.filter(load => load.loadAssignedDriverID === userID);
+                    setLoads(filteredLoads);
+                    console.log('Loads:', response.data);
+                })
+                .catch(error => {
+                    console.error('Error fetching loads:', error);
+                });
+        } else if (user === 'carrier') {
+
+        }
+    }, [user, userID]);
 
     const handleClick = (load) => {
         setOrigin(load.loadPickupLocation);
@@ -35,11 +46,11 @@ const ActiveLoadsPanel = ({driver, carrier, shipper}) => {
                 <GoogleMapRealTimeTrafficComponent
                     className="shipper-info-google-map-container"
                     origin={origin}
-                    destination={destination}/>
+                    destination={destination} />
             </div>
             <div className="shipper-dashboard-side-panel">
                 {loads.length === 0 ? (
-                    <p className="chat-message-alert">Currently you didn't create any load</p>
+                    <p className="chat-message-alert">Currently you didn't have any active loads</p>
                 ) : (
                     loads.map(load => (
                         <div onClick={() => handleClick(load)} key={load.loadCredentialID}>
