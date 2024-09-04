@@ -5,7 +5,7 @@ const libraries = ['places'];
 const containerStyle = {
     width: '100%',
     height: '100%',
-    borderRadius: '30px',
+    borderRadius: '10px',
 };
 
 function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
