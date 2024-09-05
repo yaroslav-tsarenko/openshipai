@@ -32,7 +32,10 @@ const DriverAssignedLoad = () => {
     const [destination, setDestination] = useState('');
     const [distance, setDistance] = useState(null);
     const [arrivalTime, setArrivalTime] = useState(null);
-
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const calculateDistance = async (origin, destination) => {
         const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
         try {
@@ -296,14 +299,10 @@ const DriverAssignedLoad = () => {
     };
 
     useEffect(() => {
-        updateLocation(); // Initial call to set the location
-        const intervalId = setInterval(updateLocation, 60000); // Update every 60 seconds
-        return () => clearInterval(intervalId); // Cleanup interval on component unmount
+        updateLocation();
+        const intervalId = setInterval(updateLocation, 60000);
+        return () => clearInterval(intervalId);
     }, []);
-
-    const handlePickUp = () => {
-        setIsPickedUp(true);
-    };
 
     useEffect(() => {
         const fetchRouteData = async () => {
@@ -322,10 +321,8 @@ const DriverAssignedLoad = () => {
                     const route = response.routes[0];
                     const duration = route.summary.duration / 60; // Convert to minutes
                     const distance = route.summary.distance / 1000; // Convert to kilometers
-
                     const arrival = new Date();
                     arrival.setMinutes(arrival.getMinutes() + duration);
-
                     setTripDuration(`${Math.round(duration)} mins`);
                     setLoadMilesTrip(`${Math.round(distance * 0.621371)} miles`); // Convert km to miles
                     setArrivalTime(arrival.toLocaleTimeString());
@@ -344,14 +341,14 @@ const DriverAssignedLoad = () => {
             {isLoadDeliveredStatus && <Alert text="You successfully delivered load"/>}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                    DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
+                    Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
+                    AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content">
                     <HeaderDashboard
-                        contentTitle={driverInfo ?
-                            <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                        contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
                             <Skeleton variant="text" width={250}/>}
                         contentSubtitle="Monitor payments, loads, revenues"
                         accountName={driverInfo ? driverInfo.driverFirstAndLastName :
@@ -361,8 +358,9 @@ const DriverAssignedLoad = () => {
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
-                    <div className="driver-dashboard-content">
+                    <div className="driver-dashboard-content-assigned-load">
                         <div className="driver-map-direction-wrapper">
                             {currentLocation &&
                                 <GoogleMapShowDriverDirection

@@ -8,6 +8,11 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import AssignedLoadContainer from "../../assigned-load-container/AssignedLoadContainer";
 import {Skeleton} from "@mui/material";
+import Button from "../../button/Button";
+import Grid from "../../grid-two-columns/Grid";
+import MetricCompoent from "../../metric-component/MetricCompoent";
+import OpenShipAIChat from "../../open-ai-chat/OpenShipAIChat";
+import ActiveLoadsPanel from "../../shipper-active-loads-panel/ActiveLoadsPanel";
 
 const DriverAssignedLoads = () => {
 
@@ -18,7 +23,10 @@ const DriverAssignedLoads = () => {
     const [driver, setDriver] = useState(null);
     const [loads, setLoads] = useState([]);
     const [loading, setLoading] = useState(false);
-
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -101,46 +109,71 @@ const DriverAssignedLoads = () => {
     return (
         <div className="shipper-dashboard-wrapper">
             <DashboardSidebar
-                DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
+                Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
+                AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
-                    contentTitle={driverInfo ?
-                        <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                    contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
                         <Skeleton variant="text" width={250}/>}
                     contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={driverInfo ? driverInfo.driverFirstAndLastName : <Skeleton variant="text" width={60}/>}
+                    accountName={driverInfo ? driverInfo.driverFirstAndLastName :
+                        <Skeleton variant="text" width={60}/>}
                     accountRole={driverInfo ? driverInfo.role : <Skeleton variant="text" width={40}/>}
                     profileLink={`/driver-profile/${driverID}`}
                     bellLink={`/driver-settings/${driverID}`}
                     settingsLink={`/driver-profile/${driverID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleMobileSidebar}
                 />
-                    <div className="shipper-dashboard-content-body">
-                        <div className="loads-containers-block">
-                            {assignedLoads.length > 0 ? (
-                                assignedLoads.map(load => (
-                                    <AssignedLoadContainer
-                                        key={load.loadID}
-                                        loadTitle={load.loadTitle}
-                                        loadWeight={load.loadWeight}
-                                        loadType={load.loadType}
-                                        driverID={driverID}
-                                        loadTrip={load.loadMilesTrip}
-                                        loadCredentialID={load.loadCredentialID}
-                                        loadPickupLocation={load.loadPickupLocation}
-                                        loadPickupLocationDate={load.loadPickupDate}
-                                        loadDeliveryLocation={load.loadDeliveryLocation}
-                                        loadDeliveryLocationDate={load.loadDeliveryDate}
-                                    />
-                                ))
-                            ) : (
-                                <p className="driver-assigned-load-message">Carrier didn't assign loads for you</p>
-                            )}
-                        </div>
+                <div className="shipper-dashboard-content-body">
+                    <div className="loads-containers-block">
+                        {assignedLoads.length > 0 ? (
+                            assignedLoads.map(load => (
+                                <AssignedLoadContainer
+                                    key={load.loadID}
+                                    loadTitle={load.loadTitle}
+                                    loadWeight={load.loadWeight}
+                                    loadType={load.loadType}
+                                    driverID={driverID}
+                                    loadTrip={load.loadMilesTrip}
+                                    loadCredentialID={load.loadCredentialID}
+                                    loadPickupLocation={load.loadPickupLocation}
+                                    loadPickupLocationDate={load.loadPickupDate}
+                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                    loadDeliveryLocationDate={load.loadDeliveryDate}
+                                />
+                            ))
+                        ) : (
+                            <p className="driver-assigned-load-message">Carrier didn't assign loads for you</p>
+                        )}
                     </div>
+                </div>
+                <div className="dashboard-content-mobile">
+                    <div className="dashboard-content-mobile-body">
+                        {assignedLoads.length > 0 ? (
+                            assignedLoads.map(load => (
+                                <AssignedLoadContainer
+                                    key={load.loadID}
+                                    loadTitle={load.loadTitle}
+                                    loadWeight={load.loadWeight}
+                                    loadType={load.loadType}
+                                    driverID={driverID}
+                                    loadTrip={load.loadMilesTrip}
+                                    loadCredentialID={load.loadCredentialID}
+                                    loadPickupLocation={load.loadPickupLocation}
+                                    loadPickupLocationDate={load.loadPickupDate}
+                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                    loadDeliveryLocationDate={load.loadDeliveryDate}
+                                />
+                            ))
+                        ) : (
+                            <p className="driver-assigned-load-message">Carrier didn't assign loads for you</p>
+                        )}
+                    </div>
+                </div>
             </div>
         </div>
     );
