@@ -1725,14 +1725,6 @@
     transition: 0.2s ease-in-out;
 }
 
-.account-info-settings {
-    display: flex;
-    margin: 30px auto;
-    width: 460px;
-    justify-content: space-between;
-    border-bottom: 1px solid var(--light-grey);
-    height: 100%;
-}
 
 .account-info-settings-1 {
     width: 225px;

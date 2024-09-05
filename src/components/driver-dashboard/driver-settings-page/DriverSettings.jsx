@@ -26,7 +26,6 @@ import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const DriverSettings = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
-    const [hoveredButton, setHoveredButton] = useState('');
     const {driverID} = useParams();
     const [isOnAI, setIsOnAI] = useState(false);
     const [isOndriver, setIsOndriver] = useState(false);
@@ -58,6 +57,14 @@ const DriverSettings = () => {
     const [description, setDescription] = useState('');
     const [email, setEmail] = useState(driverInfo ? driverInfo.driverEmail : '');
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+
+    const handleButtonClick = (setting) => {
+        setActiveSetting(setting);
+    };
 
     const handleSubmitSupportQoutes = async () => {
         setIsLoading(true);
@@ -344,14 +351,14 @@ const DriverSettings = () => {
             )}
             <div className="carrier-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
-                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
-                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
+                    DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
+                    Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
+                    AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
-                        contentTitle={driverInfo ?
-                            <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
+                        contentTitle={driverInfo ? <>Welcome back, {driverInfo.driverFirstAndLastName}!</> :
                             <Skeleton variant="text" width={250}/>}
                         contentSubtitle="Monitor payments, loads, revenues"
                         accountName={driverInfo ? driverInfo.driverFirstAndLastName :
@@ -361,8 +368,15 @@ const DriverSettings = () => {
                         bellLink={`/driver-settings/${driverID}`}
                         settingsLink={`/driver-profile/${driverID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="settings-container">
+                        <section className="settings-nav-mobile">
+                            <Button variant={activeSetting === 'Account' ? 'default' : 'neutral'} onClick={() => handleButtonClick('Account')}>Account</Button>
+                            <Button variant={activeSetting === 'Password' ? 'default' : 'neutral'} onClick={() => handleButtonClick('Password')}>Password</Button>
+                            <Button variant={activeSetting === 'Notifications' ? 'default' : 'neutral'} onClick={() => handleButtonClick('Notifications')}>Notifications</Button>
+                            <Button variant={activeSetting === 'Help' ? 'default' : 'neutral'} onClick={() => handleButtonClick('Help')}>Help</Button>
+                        </section>
                         <section className="settings-nav">
                             <button
                                 onClick={() => setActiveSetting('Account')}
