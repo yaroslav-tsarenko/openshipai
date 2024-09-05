@@ -833,26 +833,6 @@
     overflow-x: hidden;
 }
 
-.take-load-container {
-    width: 100%;
-    height: 250px;
-    background: white;
-    display: flex;
-    margin: 20px 0 20px 0;
-    justify-content: space-between;
-    align-items: center;
-    border-radius: 45px;
-    border: 1px solid var(--light-grey);
-    transition: 0.2s ease-in-out;
-    cursor: pointer;
-}
-
-.take-load-container:hover {
-    background: var(--light-grey-hovered-transparent);
-    transition: 0.2s ease-in-out;
-    border: 1px solid var(--royal-blue);
-}
-
 .carrier-load-directions-wrapper span label {
     color: var(--grey);
     font-size: 1.2rem;

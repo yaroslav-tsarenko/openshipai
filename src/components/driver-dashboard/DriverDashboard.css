@@ -99,6 +99,13 @@
     height: 72dvh;
 }
 
+.driver-dashboard-content-assigned-load {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
 .driver-map-direction-nav {
     display: flex;
     justify-content: space-between;
@@ -211,7 +218,6 @@
     font-weight: bold;
     color: var(--dark-grey);
 }
-
 
 
 .payment-method-button {
@@ -330,8 +336,6 @@
     background: var(--light-grey-hovered);
     transition: 0.2s ease-in-out;
 }
-
-
 
 
 .card-settings-content {
@@ -795,7 +799,7 @@
     justify-items: center;
 }
 
-.carrier-dashboard-drivers-message{
+.carrier-dashboard-drivers-message {
     display: flex;
     width: 100%;
     height: 90%;
@@ -806,7 +810,6 @@
     color: var(--light-grey);
 
 }
-
 
 
 .pickup-delivery-location-wrapper {
@@ -883,7 +886,7 @@
     cursor: pointer;
 }
 
-.driver-load-directions-wrapper{
+.driver-load-directions-wrapper {
     padding: 0 0 0 30px;
 }
 
@@ -1155,7 +1158,6 @@
 }
 
 
-
 .load-directions {
     display: flex;
 }
@@ -1288,11 +1290,9 @@
 }
 
 
-
 .button-nav-load-icon {
     margin-right: 10px;
 }
-
 
 
 .driver-loads-wrapper {
@@ -1504,8 +1504,6 @@
 }
 
 
-
-
 .chat-input-icons {
     margin: 0 15px 0 5px;
     cursor: pointer;
@@ -1516,8 +1514,6 @@
     transition: 0.1s ease-in-out;
     cursor: pointer;
 }
-
-
 
 
 .chat-input-area input {
@@ -1574,7 +1570,6 @@
 }
 
 
-
 .password-settings-container {
     display: flex;
     margin: 20px 0 0 0;
@@ -1582,7 +1577,6 @@
     justify-content: space-between;
     width: 350px;
 }
-
 
 
 .settings-content h2 {
@@ -1601,7 +1595,6 @@
     margin: 20px 0 0 0;
 
 }
-
 
 
 .apply-settings-button {
@@ -1623,9 +1616,6 @@
 }
 
 
-
-
-
 .apply-settings-button-bottom {
     background: var(--royal-green);
     border: none;
@@ -1642,7 +1632,6 @@
     color: var(--royal-white);
     transition: 0.2s ease-in-out;
 }
-
 
 
 .delete-bin-icon {
@@ -1763,8 +1752,6 @@
 }
 
 
-
-
 .create-driver-overlay {
     position: fixed;
     top: 0;
@@ -1826,7 +1813,7 @@
     color: var(--grey);
 }
 
-.driver-assigned-load-message{
+.driver-assigned-load-message {
     display: flex;
     width: 100%;
     height: 90%;
@@ -1839,7 +1826,7 @@
 }
 
 
-.driver-data-popup-overlay{
+.driver-data-popup-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -1853,7 +1840,7 @@
     align-items: center;
 }
 
-.driver-popup{
+.driver-popup {
     display: flex;
     flex-direction: column;
     width: 500px;
@@ -1863,19 +1850,19 @@
     padding: 20px;
 }
 
-.driver-popup h3{
+.driver-popup h3 {
     font-size: 2.3rem;
     font-weight: bold;
     color: var(--royal-blue);
 }
 
-.driver-popup p{
+.driver-popup p {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--grey);
 }
 
-.dashboard-content-mobile{
+.dashboard-content-mobile {
     display: none;
     flex-direction: column;
     height: 100%;
@@ -1883,7 +1870,7 @@
     width: 100%;
 }
 
-.dashboard-buttons-mobile{
+.dashboard-buttons-mobile {
     display: grid;
     grid-template-columns: repeat(3, 3fr);
     width: 100%;
@@ -1891,7 +1878,7 @@
     margin: 0 0 10px 0;
 }
 
-.active-loads-panel{
+.active-loads-panel {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -1899,26 +1886,74 @@
 }
 
 @media screen and (max-width: 1380px) {
-    .dashboard-content{
+    .dashboard-content {
         display: none;
     }
 
-    .shipper-dashboard-content-body{
+    .shipper-dashboard-content-body {
         display: none;
     }
 
-    .dashboard-content-mobile{
+    .dashboard-content-mobile {
         display: flex;
         height: 100%;
         flex-direction: column;
         gap: 10px;
     }
 
-    .load-info-section{
+    .load-info-section {
         font-size: 0.9rem;
     }
 
-    .load-directions-title{
+    .load-directions-title {
         font-size: 1.2rem;
+    }
+}
+
+
+@media screen and (max-width: 768px) {
+    .map-load-section-load-container {
+        display: none;
+    }
+
+    .take-load-container {
+        padding: 5px 20px 5px 20px;
+        border-radius: 15px;
+        font-size: 8px;
+    }
+
+    .driver-load-directions-wrapper {
+        padding: 0 0 0 0
+    }
+
+    .driver-load-directions {
+        max-width: 170px;
+        width: 100%;
+    }
+
+    .load-short-info {
+        width: fit-content;
+        margin: 0 10px 0 10px;
+    }
+
+    .instant-book-load {
+        width: 90px;
+    }
+
+    .load-driver-direction section h3 {
+        font-size: 12px;
+    }
+
+    .driver-map-direction-nav{
+        border-radius: 0;
+    }
+
+    .load-driver-direction section p {
+        font-size: 12px;
+
+    }
+
+    .driver-map-direction-nav-body {
+        margin: 10px 0 0 0;
     }
 }
