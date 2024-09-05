@@ -9,3 +9,9 @@
   justify-items: start;
   gap: 10px;
 }
+
+@media screen and (max-width: 768px) {
+    .gridTwoColumns{
+        grid-template-columns: repeat(1, 1fr) !important;
+    }
+}

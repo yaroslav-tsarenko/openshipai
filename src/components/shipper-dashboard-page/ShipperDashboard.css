@@ -596,7 +596,7 @@
     width: 100%;
     border: 1px solid var(--light-grey);
     justify-content: space-between;
-    height: 300px;
+    height: fit-content;
     border-radius: 25px;
 }
 
@@ -2153,6 +2153,7 @@
     padding: 10px 15px 10px 15px;
     font-size: 1.5rem;
     font-weight: normal;
+    color: var(--royal-white);
     border-radius: 25px;
     cursor: pointer;
     transition: 0.2s ease-in-out;
@@ -2590,6 +2591,10 @@
     border-color: var(--royal-blue);
 }
 
+.settings-nav-mobile{
+    display: none;
+}
+
 .custom-select-wrapper::after {
     content: '\25BC';
     position: absolute;
@@ -2603,6 +2608,33 @@
 
 @media screen and (max-width: 1380px) {
 
+    .settings-content{
+        width: 100%;
+    }
+
+    .shipper-profile-status{
+        display: none;
+    }
+
+    .settings-nav{
+        display: none;
+    }
+
+    .password-fields{
+        width: 100%;
+    }
+
+    .settings-nav-mobile{
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        gap: 15px;
+    }
+
+    .settings-container{
+        flex-direction: column;
+    }
+
     .shipper-dashboard-side-panel-wrapper{
         margin: 0;
         height: 85dvh;
@@ -2611,6 +2643,51 @@
 }
 
 @media screen and (max-width: 768px) {
+
+    .settings-content{
+        padding: 15px;
+    }
+
+    .account-info-settings{
+        width: 100%;
+    }
+
+    .shipper-nav-buttons{
+        display: none;
+    }
+
+    .shipper-profile-content{
+        flex-direction: column;
+        height: fit-content;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        justify-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .account-info-details-container{
+        width: 100%;
+    }
+
+    .shipper-info{
+        flex-direction: column;
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        height: fit-content;
+        justify-items: center;
+        text-align: center;
+    }
+
+    .settings-nav-mobile{
+        width: 100%;
+        overflow: scroll;
+        overflow-y: hidden;
+    }
+
 
     .shipper-map-container{
         height: 45%;
