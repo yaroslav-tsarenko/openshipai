@@ -25,7 +25,7 @@ const MainHeading = () => {
                 <Button variant="apply">
                     Become Shipper
                 </Button>
-                <Button variant="neutral">
+                <Button variant="neutral-non-responsive">
                     Become Carrier
                 </Button>
             </section>

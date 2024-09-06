@@ -23,10 +23,10 @@ const GetStartedSection = () => {
             <h1>Ready Get Started?</h1>
             <p>Start your journey with us today</p>
             <section>
-                <Button variant={activeButton === 'shipper' ? 'default' : 'neutral'} onClick={handleShipperClick}>
+                <Button variant={activeButton === 'shipper' ? 'default-non-responsive' : 'neutral-non-responsive'} onClick={handleShipperClick}>
                     Become Shipper
                 </Button>
-                <Button variant={activeButton === 'carrier' ? 'default' : 'neutral'} onClick={handleCarrierClick}>
+                <Button variant={activeButton === 'carrier' ? 'default-non-responsive' : 'neutral-non-responsive'} onClick={handleCarrierClick}>
                     Become Carrier
                 </Button>
             </section>
@@ -98,7 +98,6 @@ const GetStartedSection = () => {
                             </Button>
                         </section>
                         <img src={carrierImage} alt="Carrier Image"/>
-
                     </div>
                 )}
             </div>

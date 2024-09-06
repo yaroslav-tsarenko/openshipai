@@ -3,8 +3,10 @@ import styles from "./FullPageSlider.module.scss";
 import { ReactComponent as ArrowLeft } from "../../../assets/nav-slider-arrow.svg";
 import { ReactComponent as ArrowRight } from "../../../assets/nav-slider-button-right.svg";
 
-const FullPageSlider = ({title, description, images }) => {
+const FullPageSlider = ({ title, description, images }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [touchStart, setTouchStart] = useState(0);
+    const [touchEnd, setTouchEnd] = useState(0);
 
     const handlePrev = () => {
         setCurrentIndex((prevIndex) => (prevIndex === 0 ? images.length - 1 : prevIndex - 1));
@@ -14,10 +16,28 @@ const FullPageSlider = ({title, description, images }) => {
         setCurrentIndex((prevIndex) => (prevIndex === images.length - 1 ? 0 : prevIndex + 1));
     };
 
+    const handleTouchStart = (e) => {
+        setTouchStart(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchMove = (e) => {
+        setTouchEnd(e.targetTouches[0].clientX);
+    };
+
+    const handleTouchEnd = () => {
+        if (touchStart - touchEnd > 50) {
+            handleNext();
+        }
+
+        if (touchStart - touchEnd < -50) {
+            handlePrev();
+        }
+    };
+
     useEffect(() => {
         const interval = setInterval(() => {
             handleNext();
-        }, 555000); // Change image every 3 seconds
+        }, 3000); // Change image every 3 seconds
         return () => clearInterval(interval);
     }, []);
 
@@ -25,7 +45,12 @@ const FullPageSlider = ({title, description, images }) => {
         <div className={styles.fullPageSliderWrapper}>
             <h1>{title}</h1>
             <p>{description}</p>
-            <div className={styles.sliderImages}>
+            <div
+                className={styles.sliderImages}
+                onTouchStart={handleTouchStart}
+                onTouchMove={handleTouchMove}
+                onTouchEnd={handleTouchEnd}
+            >
                 <div className={styles.sliderImageContainer} style={{ transform: `translateX(-${currentIndex * 50}%)` }}>
                     {images.map((image, index) => (
                         <img key={index} src={image} alt={`slider ${index}`} className={styles.sliderImage} />

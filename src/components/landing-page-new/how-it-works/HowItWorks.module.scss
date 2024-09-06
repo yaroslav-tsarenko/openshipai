@@ -41,7 +41,6 @@
 
 }
 
-/* Add this to your HowItWorks.module.scss */
 .video-transition {
   transition: opacity 1s ease-in-out;
   opacity: 0;
@@ -123,4 +122,32 @@
     visibility: visible;
     opacity: 1;
   }
+}
+
+@media screen and (max-width: 1024px) {
+
+  .howItWorksWrapper{
+    padding: 15px;
+  }
+
+}
+
+@media screen and (max-width: 768px) {
+
+  .howItWorksWrapper{
+    margin: 40px auto 40px auto;
+  }
+
+  .howItWorksContent{
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+
+    video{
+        width: 90%;
+        height: 100%;
+    }
+
+  }
+
 }
