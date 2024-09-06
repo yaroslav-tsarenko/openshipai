@@ -25,7 +25,6 @@ const AiPage = () => {
             </Fade>
             <Fade>
                 <LandingPageFooter/>
-
             </Fade>
         </>
     );

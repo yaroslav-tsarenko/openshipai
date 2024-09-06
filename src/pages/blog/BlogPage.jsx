@@ -1,20 +1,25 @@
 import React from 'react';
 import Header from "../../components/landing-page-new/header/Header";
 import LandingPageFooter from "../../components/landing-page/landing-footer/LandingPageFooter";
+
+import americanTruck from "../../assets/american-truck.jpg"
+import realTimeTracking from "../../assets/real-time-tracking.jpg"
+import logisticsOptimization from "../../assets/logistic-driver.jpg"
+import freight from "../../assets/truck-driver.jpg"
 import styles from "./BlogPage.module.scss";
+import Description from "../../components/landing-page-new/description/Description";
 
 const BlogPage = () => {
     return (
         <>
             <Header/>
             <div className={styles.blogContent}>
-                {/* Main Article Section */}
                 <div className={styles.mainArticle}>
-                    <h1 className={styles.articleTitle}>
-                        The Future of Freight Transportation with OpenShipAI
-                    </h1>
+                   <Description title="The Future of Freight Transportation" description=" OpenShipAI is transforming the freight transportation industry with cutting-edge AI technology. Our platform
+                        optimizes logistics processes, reduces operational costs, and ensures timely delivery with real-time tracking.
+                        Discover how we are revolutionizing the way freight is moved across America."/>
                     <img
-                        src="https://via.placeholder.com/800x400?text=American+Trucks"
+                        src={americanTruck}
                         alt="American Trucks on the Highway"
                     />
                     <p className={styles.articleDescription}>
@@ -28,7 +33,7 @@ const BlogPage = () => {
                 <div className={styles.subArticles}>
                     <div className={styles.subArticle}>
                         <img
-                            src="https://via.placeholder.com/400x200?text=Logistics+Optimization"
+                            src={realTimeTracking}
                             alt="Logistics Optimization with AI"
                         />
                         <h2 className={styles.subArticleTitle}>
@@ -41,7 +46,7 @@ const BlogPage = () => {
 
                     <div className={styles.subArticle}>
                         <img
-                            src="https://via.placeholder.com/400x200?text=Real-Time+Tracking"
+                            src={freight}
                             alt="Real-Time Freight Tracking"
                         />
                         <h2 className={styles.subArticleTitle}>
@@ -54,7 +59,7 @@ const BlogPage = () => {
 
                     <div className={styles.subArticle}>
                         <img
-                            src="https://via.placeholder.com/400x200?text=Sustainability+in+Transport"
+                            src={logisticsOptimization}
                             alt="Sustainability in Transportation"
                         />
                         <h2 className={styles.subArticleTitle}>
