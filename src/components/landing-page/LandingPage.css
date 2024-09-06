@@ -1520,6 +1520,24 @@ body {
         align-items: start;
         gap: 50px;
     }
+
+    .left-landing-introduction-container {
+        height: 850px;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-content: center;
+        text-align: center;
+        flex-direction: column-reverse;
+    }
+
+    .right-landing-introduction-container {
+        height: 850px;
+        width: 100%;
+        display: flex;
+        text-align: center;
+        flex-direction: column;
+    }
 }
 
 @media screen and (max-width: 585px) {
@@ -1590,7 +1608,7 @@ text-align: center;
 
     .footer-section-upper {
         flex-direction: column;
-        height: 90%;
+        height: fit-content;
     }
 
     .landing-page-footer-wrapper {
