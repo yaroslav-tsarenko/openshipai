@@ -1,6 +1,7 @@
 import React from 'react';
 import styles from './Header.module.scss';
 import {ReactComponent as Logo} from '../../../assets/openshipai.svg';
+import {ReactComponent as FaBars} from '../../../assets/fa-bars-icon.svg';
 import {Link} from "react-router-dom";
 
 const Header = () => {
@@ -22,6 +23,9 @@ const Header = () => {
                 <Link to={"/sign-in"} className={styles.loginButton}>Sign In</Link>
                 <Link to={"/sign-up"} className={styles.registerButton}>Sign Up</Link>
             </section>
+            <button className={styles.bars}>
+                <FaBars/>
+            </button>
         </header>
     );
 };

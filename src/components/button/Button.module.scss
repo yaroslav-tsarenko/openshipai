@@ -15,6 +15,23 @@
   }
 }
 
+.default-non-responsive {
+  background-color: #007bff;
+  border: none;
+  width: 100%;
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  color: var(--royal-white);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--royal-blue-hovered);
+  }
+}
+
 .attach-photo {
   display: flex;
   width: 100%;
@@ -153,6 +170,24 @@
 }
 
 .neutral {
+  background-color: transparent;
+  width: 100%;
+  border: 1px solid var(--light-grey);
+  border-radius: 50px;
+  height: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  color: var(--light-grey);
+  font-size: 16px;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    border: 1px solid var(--grey);
+    color: var(--grey);
+  }
+}
+
+.neutral-non-responsive {
   background-color: transparent;
   width: 100%;
   border: 1px solid var(--light-grey);

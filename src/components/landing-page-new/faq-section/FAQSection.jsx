@@ -8,9 +8,9 @@ const FAQSection = ({children}) => {
                 Frequently Asked Question
             </h1>
             <div className={styles.faqSectionContent}>
+                {children}
 
             </div>
-            {children}
         </div>
     );
 };

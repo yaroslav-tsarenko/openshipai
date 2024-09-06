@@ -25,6 +25,8 @@
   }
 
   .content {
+    display: flex;
+
     position: relative;
     height: 310px;
   }
@@ -72,4 +74,30 @@
     background: linear-gradient(45deg, #f0f0ff, #c2c2e6);
     background-size: cover;
   }
+}
+
+@media screen and (max-width: 1225px) {
+  .roleWrapper{
+    width: 100%;
+
+  }
+}
+
+@media screen and (max-width: 768px) {
+    .roleWrapper{
+
+      .content{
+        display: flex;
+        align-content: center;
+        justify-content: center;
+        align-items: center;
+        justify-items: center;
+        flex-direction: column;
+
+      }
+
+      img{
+        margin: 0 auto;
+      }
+    }
 }

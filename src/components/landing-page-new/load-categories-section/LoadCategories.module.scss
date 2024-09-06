@@ -7,3 +7,23 @@
   margin: 0 auto;
   width: 100%;
 }
+
+@media screen and (max-width: 1128px) {
+  .loadCategories{
+    grid-template-columns: repeat(3, 3fr);
+    padding: 15px;
+  }
+
+}
+
+@media screen and (max-width: 890px) {
+  .loadCategories{
+    grid-template-columns: repeat(2, 2fr);
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .loadCategories{
+    grid-template-columns: repeat(1, 1fr);
+  }
+}

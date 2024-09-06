@@ -6,8 +6,6 @@ import threeFriends from "../../../assets/animated-icons/three-friends.gif";
 import likeGif from "../../../assets/animated-icons/like.gif";
 import {ReactComponent as Truck} from "../../../assets/truck-animation.svg"
 import {Fade, Slide} from "react-awesome-reveal";
-import Role from "../role-container/Role";
-import vehicleLoadCategory from "../../../assets/vehicles-category-image.svg";
 
 const words = [
     {text: 'Choose', icon: clickGif, background: 'white'},

@@ -35,7 +35,7 @@
     border-radius: 50%;
     position: relative;
     animation: ripple 2.5s infinite;
-   background-size: cover;
+    background-size: cover;
   }
 
   @keyframes ripple {
@@ -73,6 +73,16 @@
       font-weight: lighter;
       text-transform: uppercase;
       color: var(--light-grey);
+    }
+  }
+}
+
+@media screen and (max-width: 525px) {
+  .clientItemReviewWrapper {
+
+
+    p{
+        font-size: 1.2rem;
     }
   }
 }
