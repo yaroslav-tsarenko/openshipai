@@ -39,6 +39,10 @@ import SafetyPage from "./pages/safety-page/SafetyPage";
 import PartnersPage from "./pages/partners-page/PartnersPage";
 import BlogPage from "./pages/blog/BlogPage";
 import AboutPage from "./pages/about/AboutPage";
+import VehicleLoad from "./pages/vehicle-load-page/VehicleLoad";
+import MovingLoad from "./pages/moving-load/MovingLoad";
+import FarmEquipmentLoad from "./pages/farm-equipment-load/FarmEquipmentLoad";
+import FreightLoad from "./pages/freight-load/FreightLoad";
 
 function App() {
     return (
@@ -83,6 +87,10 @@ function App() {
                 <Route path="/partners-page" element={<PartnersPage/>}/>
                 <Route path="/blog-page" element={<BlogPage/>}/>
                 <Route path="/about-page" element={<AboutPage/>}/>
+                <Route path="/vehicle-load" element={<VehicleLoad/>}/>
+                <Route path="/moving-load" element={<MovingLoad/>}/>
+                <Route path="/construction-load" element={<FarmEquipmentLoad/>}/>
+                <Route path="/freight-load" element={<FreightLoad/>}/>
 
 
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />

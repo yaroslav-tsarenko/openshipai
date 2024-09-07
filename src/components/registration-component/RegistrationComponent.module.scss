@@ -1,0 +1,41 @@
+.popupContent {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  h2 {
+    text-align: start;
+    font-size: 1.3rem;
+    font-weight: 500;
+    color: var(--grey);
+  }
+}
+
+.errorMessage {
+  color: red;
+  font-size: 1.2rem;
+  text-align: start;
+}
+
+.completionStatus {
+  gap: 10px;
+  margin: 10px 0 0 0;
+}
+
+.completed {
+  color: green;
+  display: flex;
+  margin: 3px 0 0 0;
+  align-items: center;
+}
+
+.uncompleted {
+  color: red;
+  display: flex;
+  margin: 3px 0 0 0;
+  align-items: center;
+}
+
+.completed svg, .uncompleted svg {
+  margin-right: 8px;
+}

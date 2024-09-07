@@ -1,0 +1,25 @@
+.createLoadFrame {
+  padding: 60px 15px 60px 15px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.createLoadFrameContent {
+  display: grid;
+  grid-template-columns: repeat(4, 4fr);
+  grid-gap: 20px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+}
+
+.loadFrameButtons {
+  display: flex;
+  padding: 15px;
+  width: 100%;
+  gap: 20px;
+}

@@ -31,7 +31,7 @@
   cursor: pointer;
 }
 
-.optionValueDisabled{
+.optionValueDisabled {
   font-size: 1.8rem;
   font-weight: normal;
   padding: 10px;
@@ -73,3 +73,45 @@
   font-size: 1.2rem;
   padding: 0 5px;
 }
+
+.phone-input-container {
+  width: 100%;
+}
+
+.google-style-input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.input-error {
+  border: 1px solid red;
+  box-shadow: 0 0 2px red;
+}
+
+.input-success {
+  border: 1px solid #11bf11;
+  box-shadow: 0 0 1px #11bf11;
+}
+
+.error-message {
+  color: red;
+  font-size: 1.2rem;
+  text-align: start;
+  display: flex;
+}
+
+.filled {
+  top: -11px;
+  color: var(--royal-blue);
+  background-color: white;
+  font-weight: bold;
+  font-size: 1.2rem;
+  padding: 0 5px;
+}
+
+
+
+

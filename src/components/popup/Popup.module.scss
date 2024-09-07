@@ -26,13 +26,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px;
+  padding: 25px 15px 25px 15px;
   border-bottom: 1px solid #ccc;
 
   h2 {
     margin: 0;
-    font-size: 1.5rem;
-    color: var(--grey);
+    font-size: 2rem;
+    color: var(--dark-grey);
   }
 
 }

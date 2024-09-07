@@ -116,6 +116,17 @@ async function sendEmailWithNode(driverEmail, driverPassword) {
     console.log("Message sent: %s", info.messageId);
 }
 
+app.post('/register-shipper', async (req, res) => {
+    const shipperData = req.body;
+    try {
+        const newShipper = new Shipper(shipperData);
+        await newShipper.save();
+        res.status(201).send('Shipper created successfully');
+    } catch (error) {
+        res.status(500).send('Error creating shipper: ' + error.message);
+    }
+});
+
 app.get('/get-selected-card/:shipperID', async (req, res) => {
     const { shipperID } = req.params;
     try {

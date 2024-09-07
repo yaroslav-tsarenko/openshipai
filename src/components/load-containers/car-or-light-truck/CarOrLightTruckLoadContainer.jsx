@@ -15,6 +15,8 @@ import Button from "../../button/Button";
 import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
 import FormSeparator from "../../form-separator/FormSeparator";
 import TextInput from "../../text-input/TextInput";
+import Popup from "../../popup/Popup";
+import RegistrationComponent from "../../registration-component/RegistrationComponent";
 
 const CarOrLightTruckLoadContainer = ({
                                           pickupLocation,
@@ -26,7 +28,8 @@ const CarOrLightTruckLoadContainer = ({
                                           loadDeliveryDate,
                                           loadPickupTime,
                                           loadDeliveryTime,
-                                          goBack
+                                          goBack,
+                                          requireRegistration
                                       }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -39,6 +42,17 @@ const CarOrLightTruckLoadContainer = ({
     const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
+    const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
+
+    const [registrationData, setRegistrationData] = useState({
+        userShipperName: '',
+        userShipperSecondName: '',
+        userShipperPhoneNumber: '',
+        userShipperEmail: '',
+        userShipperPassword: '',
+        userShipperPasswordConfirmation: ''
+    });
+
 
     const [formData, setFormData] = useState({
         loadType: loadType,
@@ -112,6 +126,12 @@ const CarOrLightTruckLoadContainer = ({
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
     const handleCreateLoad = async () => {
+
+        if (requireRegistration) {
+            setShowRegistrationPopup(true);
+            return;
+        }
+
         setIsLoading(true);
         setFormData({
             ...formData,
@@ -130,10 +150,14 @@ const CarOrLightTruckLoadContainer = ({
         setIsLoading(false);
     };
 
+
     return (
         <>
             {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
+            {showRegistrationPopup && (
+               <RegistrationComponent/>
+            )}
             <CreateLoadContainer title="Vehicle Load" step={4} subTitle="Fill all data">
                 <Grid columns="4, 4fr">
                     <TextInput
@@ -199,54 +223,54 @@ const CarOrLightTruckLoadContainer = ({
                 </Grid>
                 <FormSeparator title="Vehicle Load Specifications" subTitle={"Fill all necessary fields"}/>
                 <Grid columns="3, 3fr">
-                        <Switch
-                            handleToggle={() => {
-                                if (loadTypeOfTrailer !== 'Open Trailer') {
-                                    setLoadTypeOfTrailer('Open Trailer');
-                                    setFormData({...formData, loadTypeOfTrailer: 'Open Trailer'});
-                                } else {
-                                    setLoadTypeOfTrailer(null);
-                                    setFormData({...formData, loadTypeOfTrailer: null});
-                                }
-                                console.log(loadTypeOfTrailer); // Log the selected value
-                            }}
-                            label="Open Trailer (Cost loss)"
-                            tip="Vehicle is open to the trailer?"
-                            value="Open Trailer"
-                            isOn={loadTypeOfTrailer === 'Open Trailer'}
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                if (loadTypeOfTrailer !== 'Enclosed Trailer') {
-                                    setLoadTypeOfTrailer('Enclosed Trailer');
-                                    setFormData({...formData, loadTypeOfTrailer: 'Enclosed Trailer'});
-                                } else {
-                                    setLoadTypeOfTrailer(null);
-                                    setFormData({...formData, loadTypeOfTrailer: null});
-                                }
-                                console.log(loadTypeOfTrailer); // Log the selected value
-                            }}
-                            label="Enclosed Trailer (Costs More)"
-                            tip="Vehicle protected"
-                            value="Enclosed Trailer"
-                            isOn={loadTypeOfTrailer === 'Enclosed Trailer'}
-                        />
-                        <Switch
-                            handleToggle={() => {
-                                if (loadTypeOfTrailer !== 'Both') {
-                                    setLoadTypeOfTrailer('Both');
-                                    setFormData({...formData, loadTypeOfTrailer: 'Both'});
-                                } else {
-                                    setLoadTypeOfTrailer(null);
-                                    setFormData({...formData, loadTypeOfTrailer: null});
-                                }
-                                console.log(loadTypeOfTrailer);
-                            }}
-                            label="Both"
-                            tip="You can opt for open or enclosed trailer"
-                            value="Both"
-                            isOn={loadTypeOfTrailer === 'Both'}
-                        />
+                    <Switch
+                        handleToggle={() => {
+                            if (loadTypeOfTrailer !== 'Open Trailer') {
+                                setLoadTypeOfTrailer('Open Trailer');
+                                setFormData({...formData, loadTypeOfTrailer: 'Open Trailer'});
+                            } else {
+                                setLoadTypeOfTrailer(null);
+                                setFormData({...formData, loadTypeOfTrailer: null});
+                            }
+                            console.log(loadTypeOfTrailer); // Log the selected value
+                        }}
+                        label="Open Trailer (Cost loss)"
+                        tip="Vehicle is open to the trailer?"
+                        value="Open Trailer"
+                        isOn={loadTypeOfTrailer === 'Open Trailer'}
+                    />
+                    <Switch
+                        handleToggle={() => {
+                            if (loadTypeOfTrailer !== 'Enclosed Trailer') {
+                                setLoadTypeOfTrailer('Enclosed Trailer');
+                                setFormData({...formData, loadTypeOfTrailer: 'Enclosed Trailer'});
+                            } else {
+                                setLoadTypeOfTrailer(null);
+                                setFormData({...formData, loadTypeOfTrailer: null});
+                            }
+                            console.log(loadTypeOfTrailer); // Log the selected value
+                        }}
+                        label="Enclosed Trailer (Costs More)"
+                        tip="Vehicle protected"
+                        value="Enclosed Trailer"
+                        isOn={loadTypeOfTrailer === 'Enclosed Trailer'}
+                    />
+                    <Switch
+                        handleToggle={() => {
+                            if (loadTypeOfTrailer !== 'Both') {
+                                setLoadTypeOfTrailer('Both');
+                                setFormData({...formData, loadTypeOfTrailer: 'Both'});
+                            } else {
+                                setLoadTypeOfTrailer(null);
+                                setFormData({...formData, loadTypeOfTrailer: null});
+                            }
+                            console.log(loadTypeOfTrailer);
+                        }}
+                        label="Both"
+                        tip="You can opt for open or enclosed trailer"
+                        value="Both"
+                        isOn={loadTypeOfTrailer === 'Both'}
+                    />
                 </Grid>
                 <FormSeparator title="For better experience attach files"
                                subTitle="AI can better analyze your preference "/>
@@ -284,8 +308,6 @@ const CarOrLightTruckLoadContainer = ({
                         <img key={index} src={url} alt="Preview"/>
                     ))}
                 </Grid>
-
-
                 <FormSeparator title="You can add personal note to this load" subTitle="This is optional"/>
                 <TextInput
                     type="textarea"
@@ -298,7 +320,7 @@ const CarOrLightTruckLoadContainer = ({
 
                 <Grid columns="2, 2fr">
                     <Button variant="neutral" buttonText="Go Back" onClick={goBack}/>
-                    <Button variant="default" onClick={handleCreateLoad}>
+                    <Button variant="default-non-responsive" onClick={handleCreateLoad}>
                         {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
                     </Button>
                 </Grid>

@@ -4,8 +4,22 @@ import {ReactComponent as TrustedCompanies} from "../../../assets/trusted-compan
 import {ReactComponent as TrustedClients} from "../../../assets/client-trusted.svg";
 import styles from './MainHeading.module.scss';
 import Button from "../../button/Button";
+import {useNavigate} from "react-router-dom";
 
 const MainHeading = () => {
+
+
+    const navigate = useNavigate();
+
+    const handleNavigateShipper = () => {
+        navigate("/sign-up-shipper");
+    }
+
+    const handleNavigateCarrier = () => {
+        navigate("/sign-up-carrier");
+    }
+
+
     return (
         <div className={styles.mainHeadingWrapper}>
             <div className={styles.littleBenefits}>
@@ -22,10 +36,10 @@ const MainHeading = () => {
                 <TrustedClients className={styles.trustedClients}/>
             </div>
             <section>
-                <Button variant="apply">
+                <Button variant="apply" onClick={handleNavigateShipper}>
                     Become Shipper
                 </Button>
-                <Button variant="neutral-non-responsive">
+                <Button variant="neutral-non-responsive" onClick={handleNavigateCarrier}>
                     Become Carrier
                 </Button>
             </section>
