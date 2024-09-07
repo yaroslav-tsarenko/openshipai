@@ -44,6 +44,8 @@ import RoundedCheckbox from "../../rounded-checkbox/RoundedCheckbox";
 import CustomCheckBox from "../../custom-checkbox/CustomCheckBox";
 import HeavyEquipmentLoadContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
 import Button from "../../button/Button";
+import LoadFrameButton from "../../load-frame-button/LoadFrameButton";
+import TextInput from "../../text-input/TextInput";
 
 
 const ShipperLoadsPage = () => {
@@ -384,38 +386,30 @@ const ShipperLoadsPage = () => {
                                     title="Choose Load Type"
                                     subTitle="Use our modern shipment system">
                                     <div className="load-type-frame-wrapper-content">
-                                        <button className="load-frame-container"
-                                                onClick={() => handleLoadFrameClick("Vehicle Load")}>
-                                            <img src={VehicleLoadType}/>
-                                            <section>
-                                                <RoundedCheckbox isChecked={selectedLoadType === "Vehicle Load"}/>
-                                                <h2>Vehicle Load</h2>
-                                            </section>
-                                        </button>
-                                        <button className="load-frame-container"
-                                                onClick={() => handleLoadFrameClick("Moving")}>
-                                            <img src={MovingLoadType}/>
-                                            <section>
-                                                <RoundedCheckbox isChecked={selectedLoadType === "Moving"}/>
-                                                <h2>Moving</h2>
-                                            </section>
-                                        </button>
-                                        <button className="load-frame-container"
-                                                onClick={() => handleLoadFrameClick("Freight")}>
-                                            <img src={FreightLoadType}/>
-                                            <section>
-                                                <RoundedCheckbox isChecked={selectedLoadType === "Freight"}/>
-                                                <h2>Freight</h2>
-                                            </section>
-                                        </button>
-                                        <button className="load-frame-container"
-                                                onClick={() => handleLoadFrameClick("Heavy Equipment")}>
-                                            <img src={HeavyLoadType}/>
-                                            <section>
-                                                <RoundedCheckbox isChecked={selectedLoadType === "Heavy Equipment"}/>
-                                                <h2>Heavy Equipment</h2>
-                                            </section>
-                                        </button>
+                                        <LoadFrameButton
+                                            loadType="Vehicle Load"
+                                            imageSrc={VehicleLoadType}
+                                            isChecked={selectedLoadType === "Vehicle Load"}
+                                            onClick={() => handleLoadFrameClick("Vehicle Load")}
+                                        />
+                                        <LoadFrameButton
+                                            loadType="Moving"
+                                            imageSrc={MovingLoadType}
+                                            isChecked={selectedLoadType === "Moving"}
+                                            onClick={() => handleLoadFrameClick("Moving")}
+                                        />
+                                        <LoadFrameButton
+                                            loadType="Freight"
+                                            imageSrc={FreightLoadType}
+                                            isChecked={selectedLoadType === "Freight"}
+                                            onClick={() => handleLoadFrameClick("Freight")}
+                                        />
+                                        <LoadFrameButton
+                                            loadType="Heavy Equipment"
+                                            imageSrc={HeavyLoadType}
+                                            isChecked={selectedLoadType === "Heavy Equipment"}
+                                            onClick={() => handleLoadFrameClick("Heavy Equipment")}
+                                        />
                                     </div>
                                     <div className="create-load-buttons">
                                         <Button variant="neutral" buttonText="Go Back"
@@ -577,63 +571,49 @@ const ShipperLoadsPage = () => {
                                 >
                                     <div className="load-creation-input-fields">
                                         <div className="input-fields-with-date-time">
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="text"
-                                                    id="pickupLocation"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    onChange={handleLoadChange('pickupLocation')}
-                                                    value={formData.pickupLocation}
-                                                    required
-                                                />
-                                                <label htmlFor="pickupLocation"
-                                                       className="google-style-input-label">Pickup Location</label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="date"
-                                                    id="pickupLocationDate"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    onChange={handleLoadChange('pickupLocationDate')}
-                                                    value={formData.pickupLocationDate}
-                                                    required
-                                                />
-                                                <label htmlFor="pickupLocation"
-                                                       className="google-style-input-label">Pickup Date</label>
-                                            </div>
+                                            <TextInput
+                                                type="text"
+                                                id="pickupLocation"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                onChange={handleLoadChange('pickupLocation')}
+                                                value={formData.pickupLocation}
+                                                required
+                                                label="Pickup Location"
+                                            />
+                                            <TextInput
+                                                type="date"
+                                                id="pickupLocationDate"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                onChange={handleLoadChange('pickupLocationDate')}
+                                                value={formData.pickupLocationDate}
+                                                required
+                                                label="Pickup Date"
+                                            />
                                         </div>
                                         <Button variant="slim" buttonText="+ Add Stop"/>
                                         <div className="input-fields-with-date-time">
-
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="text"
-                                                    id="deliveryLocation"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    onChange={handleLoadChange('deliveryLocation')}
-                                                    value={formData.deliveryLocation}
-                                                    required
-                                                />
-                                                <label htmlFor="deliveryLocation"
-                                                       className="google-style-input-label">Delivery
-                                                    Location</label>
-                                            </div>
-                                            <div className="google-input-wrapper">
-                                                <input
-                                                    type="date"
-                                                    id="deliveryLocationDate"
-                                                    autoComplete="off"
-                                                    className="google-style-input"
-                                                    onChange={handleLoadChange('deliveryLocationDate')}
-                                                    value={formData.deliveryLocationDate}
-                                                    required
-                                                />
-                                                <label htmlFor="deliveryLocationDate"
-                                                       className="google-style-input-label">Delivery Date</label>
-                                            </div>
+                                            <TextInput
+                                                type="text"
+                                                id="deliveryLocation"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                onChange={handleLoadChange('deliveryLocation')}
+                                                value={formData.deliveryLocation}
+                                                required
+                                                label="Delivery Location"
+                                            />
+                                            <TextInput
+                                                type="date"
+                                                id="deliveryLocationDate"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                onChange={handleLoadChange('deliveryLocationDate')}
+                                                value={formData.deliveryLocationDate}
+                                                required
+                                                label="Delivery Date"
+                                            />
                                         </div>
                                         <div className="load-preference-checkboxes">
                                             <CustomCheckBox id="checkbox1" label="I'm flexible"/>

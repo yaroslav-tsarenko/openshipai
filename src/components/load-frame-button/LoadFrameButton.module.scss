@@ -1,0 +1,43 @@
+.loadFrameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border: 1px solid var(--light-grey-hovered);
+  border-radius: 15px;
+  padding: 10px;
+  margin: 10px;
+  width: 190px;
+  height: 190px;
+  cursor: pointer;
+
+  align-content: center;
+  text-align: center;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    border: 1px solid var(--royal-blue);
+  }
+
+  img {
+    width: auto;
+    height: 75px;
+    object-fit: cover;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column-reverse;
+    align-items: center;
+    margin-top: 10px;
+
+    h2 {
+      font-size: 1.8rem;
+        font-weight: lighter;
+      margin-top: 5px;
+    }
+  }
+}
+
+.selected {
+  border: 1px solid var(--royal-blue);
+}
