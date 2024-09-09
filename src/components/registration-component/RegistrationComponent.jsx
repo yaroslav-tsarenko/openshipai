@@ -1,18 +1,24 @@
-import React, {useState, useEffect} from 'react';
+import axios from 'axios';
+import React, { useState } from 'react';
 import Popup from "../popup/Popup";
 import styles from "./RegistrationComponent.module.scss";
 import Grid from "../grid-two-columns/Grid";
 import TextInput from "../text-input/TextInput";
 import Button from "../button/Button";
-import {ReactComponent as TimesIcon} from "../../assets/fa-times-icon-list.svg";
-import {ReactComponent as CheckIcon} from "../../assets/fa-check-icon-list.svg";
-import {BACKEND_URL} from "../../constants/constants";
+import { ReactComponent as TimesIcon } from "../../assets/fa-times-icon-list.svg";
+import { ReactComponent as CheckIcon } from "../../assets/fa-check-icon-list.svg";
+import { BACKEND_URL } from "../../constants/constants";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+import Alert from "../floating-window-success/Alert";
+import useShipperStore from "../../stores/landing-registration-shipper/store";
 
-const RegistrationComponent = () => {
+const RegistrationComponent = ({ onRegistrationSuccess })  => {
+    const { setUserShipperID, setRegistrationStatus } = useShipperStore();
+    const newShipperID = Math.random().toString(20).substring(2, 20) + Math.random().toString(20).substring(2, 20);
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(true);
     const [isFormValid, setIsFormValid] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [alert, setAlert] = useState({ visible: false, status: '', text: '', description: '' });
     const [completionStatus, setCompletionStatus] = useState({
         userShipperName: false,
         userShipperSecondName: false,
@@ -29,36 +35,53 @@ const RegistrationComponent = () => {
         userShipperEmail: '',
         userShipperPassword: '',
         userShipperPasswordConfirmation: '',
-        userShipperID: Math.random().toString(20).substring(2, 20) + Math.random().toString(20).substring(2, 20),
+        userShipperID: newShipperID,
     });
 
     const handleRegistrationSubmit = async () => {
         setIsLoading(true);
         try {
-            const response = await fetch(`${BACKEND_URL}/register-shipper`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(registrationData)
-            });
-
-            if (response.ok) {
+            const response = await axios.post(`${BACKEND_URL}/register-shipper`, registrationData);
+            console.log(response);
+            if (response.status === 201) {
+                setRegistrationStatus('success');
+                console.log(setRegistrationStatus('success'))
+                setAlert({
+                    visible: true,
+                    status: 'success',
+                    text: 'Registration Successful',
+                    description: 'You have successfully registered as a shipper.'
+                });
+                console.log(registrationData.userShipperID)
+                onRegistrationSuccess(registrationData.userShipperID);
+                setUserShipperID(registrationData.userShipperID);
                 setTimeout(() => {
-                    setShowRegistrationPopup(false);
-                }, 3000)
+                    setShowRegistrationPopup(false);  // Hide registration popup after success
+                }, 3000);
             } else {
-                console.error('Failed to create shipper');
+                // Trigger error alert
+                setAlert({
+                    visible: true,
+                    status: 'error',
+                    text: 'Registration Failed',
+                    description: 'There was an issue with your registration. Please try again.'
+                });
             }
         } catch (error) {
             console.error('Error:', error);
+            setAlert({
+                visible: true,
+                status: 'error',
+                text: 'Registration Failed',
+                description: 'There was an issue with your registration. Please try again.'
+            });
         } finally {
             setIsLoading(false);
         }
     };
 
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const phonePattern = /^[0-9]{10,15}$/; // Phone number with 10 to 15 digits
+    const phonePattern = /^[0-9]{10,15}$/;
 
     const checkFormValidity = (newData) => {
         const {
@@ -80,7 +103,7 @@ const RegistrationComponent = () => {
 
     const handleRegistrationChange = (input) => (e) => {
         const value = e.target.value;
-        const updatedData = {...registrationData, [input]: value};
+        const updatedData = { ...registrationData, [input]: value };
 
         setRegistrationData(updatedData);
 
@@ -96,7 +119,6 @@ const RegistrationComponent = () => {
 
         checkFormValidity(updatedData);
     };
-
 
     const getStatusMessage = (key) => {
         switch (key) {
@@ -119,6 +141,7 @@ const RegistrationComponent = () => {
 
     return (
         <>
+            {alert.visible && <Alert status={alert.status} text={alert.text} description={alert.description} />}
             {showRegistrationPopup && (
                 <Popup title="Almost Done!"
                        footerText="After successful registration you will be able to continue creating load. Do not try to reload page, your data will not be saved :)"

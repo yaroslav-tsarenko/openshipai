@@ -118,15 +118,31 @@ async function sendEmailWithNode(driverEmail, driverPassword) {
 
 app.post('/register-shipper', async (req, res) => {
     const shipperData = req.body;
+    const requiredFields = [
+        'userShipperName', 'userShipperSecondName', 'userShipperPhoneNumber',
+        'userShipperEmail', 'userShipperPassword', 'userShipperPasswordConfirmation',
+        'userShipperID'
+    ];
+
+    for (const field of requiredFields) {
+        if (!shipperData[field]) {
+            return res.status(400).send(`Missing required field: ${field}`);
+        }
+    }
+
+    if (shipperData.userShipperPassword !== shipperData.userShipperPasswordConfirmation) {
+        return res.status(400).send('Passwords do not match');
+    }
+
     try {
         const newShipper = new Shipper(shipperData);
         await newShipper.save();
         res.status(201).send('Shipper created successfully');
     } catch (error) {
+        console.error('Error creating shipper:', error);
         res.status(500).send('Error creating shipper: ' + error.message);
     }
 });
-
 app.get('/get-selected-card/:shipperID', async (req, res) => {
     const { shipperID } = req.params;
     try {
