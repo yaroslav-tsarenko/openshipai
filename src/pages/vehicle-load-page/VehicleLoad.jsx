@@ -1,32 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, {useState, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
 import axios from 'axios';
 import Header from '../../components/landing-page-new/header/Header';
 import LandingPageFooter from '../../components/landing-page/landing-footer/LandingPageFooter';
 import CreateLoadContainer from '../../components/create-load-container/CreateLoadContainer';
 import LoadFrameButton from '../../components/load-frame-button/LoadFrameButton';
-import HeavyLoadType from '../../assets/heavy-load-type.png';
-import VehicleLoadType from '../../assets/vehicle-load-type.png';
+import VehicleLoadType from '../../assets/car-load-type-2.svg';
+import MotoLoadType from '../../assets/moto-load-type-2.svg';
+import PowerboatLoadType from '../../assets/powerboats-load-type-2.svg';
+import SailboatLoadType from '../../assets/sailboat-load-type-2.svg';
+import PersonalwatercraftLoadType from '../../assets/personal-watercrafts-load-type-2.svg';
+import ATVLoadType from '../../assets/atv-load-type-2.svg';
+import CommercialTruckLoadType from '../../assets/commercial-truck-load-type-2.svg';
+import TrailerLoadType from '../../assets/trailer-load-type-2.svg';
+import RVLoadType from '../../assets/rv-load-type-2.svg';
+import PartsLoadType from '../../assets/parts-load-type-2.svg';
 import Button from '../../components/button/Button';
-import CarOrLightTruckLoadContainer from '../../components/load-containers/car-or-light-truck/CarOrLightTruckLoadContainer';
+import CarOrLightTruckLoadContainer
+    from '../../components/load-containers/car-or-light-truck/CarOrLightTruckLoadContainer';
 import MotoEquipmentLoadContainer from '../../components/load-containers/moto-equipment/MotoEquipmentLoadContainer';
 import SailboatLoadContainer from '../../components/load-containers/sailboat-load/SailboatLoadContainer';
 import TextInput from '../../components/text-input/TextInput';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 import styles from './VehicleLoad.module.scss';
 import Alert from '../../components/floating-window-success/Alert';
+import PersonalWatercraftsLoadContainer
+    from "../../components/load-containers/personal-watercrafts/PersonalWatercraftsLoadContainer";
+import ATVLoadContainer from "../../components/load-containers/atv-load-container/ATVLoadContainer";
+import CommercialTruckLoad from "../../components/load-containers/commercial-truck/CommercialTruckLoad";
+import PartsLoadContainer from "../../components/load-containers/parts-load-container/PartsLoadContainer";
+import TrailerAndOtherVehicles from "../../components/load-containers/trailer-other-vehicle/TrailerAndOtherVehicles";
+import RVLoadContainer from "../../components/load-containers/rv-load-container/RVLoadContainer";
+import BoatLoadContainer from "../../components/load-containers/boat-load/BoatLoadContainer";
 
 const loadTypes = [
-    { loadType: 'Car or Light Truck', title: 'Car or Light Truck', imageSrc: VehicleLoadType },
-    { loadType: 'Moto Equipment', title: 'Moto Equipment', imageSrc: VehicleLoadType },
-    { loadType: 'Powerboats', title: 'Powerboats', imageSrc: VehicleLoadType },
-    { loadType: 'Sailboats', title: 'Sailboats', imageSrc: VehicleLoadType },
-    { loadType: 'Personal watercrafts', title: 'Personal watercrafts', imageSrc: VehicleLoadType },
-    { loadType: 'ATVs & Power Sports', title: 'ATVs & Power Sports', imageSrc: VehicleLoadType },
-    { loadType: 'Commercial Truck', title: 'Commercial Truck', imageSrc: VehicleLoadType },
-    { loadType: 'Parts', title: 'Parts', imageSrc: VehicleLoadType },
-    { loadType: 'Trailer & Other Vehicles', title: 'Trailer & Other Vehicles', imageSrc: VehicleLoadType },
-    { loadType: 'RV (Recreational Vehicles)', title: 'RV (Recreational Vehicles)', imageSrc: VehicleLoadType },
+    {loadType: 'Car or Light Truck', title: 'Car or Light Truck', imageSrc: VehicleLoadType},
+    {loadType: 'Moto Equipment', title: 'Moto Equipment', imageSrc: MotoLoadType},
+    {loadType: 'Powerboats', title: 'Powerboats', imageSrc: PowerboatLoadType},
+    {loadType: 'Sailboats', title: 'Sailboats', imageSrc: SailboatLoadType},
+    {loadType: 'Personal watercrafts', title: 'Personal watercrafts', imageSrc: PersonalwatercraftLoadType},
+    {loadType: 'ATVs & Power Sports', title: 'ATVs & Power Sports', imageSrc: ATVLoadType},
+    {loadType: 'Commercial Truck', title: 'Commercial Truck', imageSrc: CommercialTruckLoadType},
+    {loadType: 'Parts', title: 'Parts', imageSrc: PartsLoadType},
+    {loadType: 'Trailer & Other Vehicles', title: 'Trailer & Other Vehicles', imageSrc: TrailerLoadType},
+    {loadType: 'RV (Recreational Vehicles)', title: 'RV (Recreational Vehicles)', imageSrc: RVLoadType},
 ];
 
 const VehicleLoad = () => {
@@ -44,18 +61,15 @@ const VehicleLoad = () => {
         loadMilesTrip: '',
     });
 
-    // Handle input changes in form fields
     const handleLoadChange = (input) => (e) => {
-        setFormData({ ...formData, [input]: e.target.value });
+        setFormData({...formData, [input]: e.target.value});
     };
 
-    // Handle the selection of the load category
     const handleLoadCategorySelect = (loadType) => {
         setSelectedLoadType(loadType); // Set the selected load type
         setShowAlert(false); // Hide alert on selection
     };
 
-    // Calculate the distance between pickup and delivery locations
     const calculateDistance = async (origin, destination) => {
         const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
         try {
@@ -116,12 +130,13 @@ const VehicleLoad = () => {
 
     return (
         <>
-            <Header />
+            <Header/>
             <div className={styles.createLoadFrame}>
                 {step === 1 && (
-                    <CreateLoadContainer step={2} title="Vehicle Category" subTitle="Select the category of the vehicle you need">
+                    <CreateLoadContainer step={2} title="Vehicle Category"
+                                         subTitle="Select the category of the vehicle you need">
                         <div className={styles.createLoadFrameContent}>
-                            {loadTypes.map(({ loadType, title, imageSrc }) => (
+                            {loadTypes.map(({loadType, title, imageSrc}) => (
                                 <LoadFrameButton
                                     key={loadType}
                                     loadType={loadType}
@@ -144,7 +159,8 @@ const VehicleLoad = () => {
                 )}
 
                 {step === 2 && (
-                    <CreateLoadContainer step={3} title="Specify origin and delivery locations" subTitle="We can better assist you if you provide us with the following information">
+                    <CreateLoadContainer step={3} title="Specify origin and delivery locations"
+                                         subTitle="We can better assist you if you provide us with the following information">
                         <div className="load-creation-input-fields">
                             <div className="input-fields-with-date-time">
                                 <TextInput
@@ -168,7 +184,7 @@ const VehicleLoad = () => {
                                     label="Pickup Date"
                                 />
                             </div>
-                            <Button variant="slim" buttonText="+ Add Stop" />
+                            <Button variant="slim" buttonText="+ Add Stop"/>
                             <div className="input-fields-with-date-time">
                                 <TextInput
                                     type="text"
@@ -192,14 +208,15 @@ const VehicleLoad = () => {
                                 />
                             </div>
                             <div className="load-preference-checkboxes">
-                                <CustomCheckBox id="checkbox1" label="I'm flexible" />
-                                <CustomCheckBox id="checkbox2" label="In the next few days" />
-                                <CustomCheckBox id="checkbox3" label="As soon as possible" />
+                                <CustomCheckBox id="checkbox1" label="I'm flexible"/>
+                                <CustomCheckBox id="checkbox2" label="In the next few days"/>
+                                <CustomCheckBox id="checkbox3" label="As soon as possible"/>
                             </div>
-                            {distance !== null && <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
+                            {distance !== null &&
+                                <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
                             <div className="create-load-buttons">
-                                <Button variant="neutral" buttonText="Go Back" onClick={() => setStep(1)} />
-                                <Button variant="default" buttonText="Next" onClick={() => setStep(3)} />
+                                <Button variant="neutral" buttonText="Go Back" onClick={() => setStep(1)}/>
+                                <Button variant="default" buttonText="Next" onClick={() => setStep(3)}/>
                             </div>
                         </div>
                     </CreateLoadContainer>
@@ -217,17 +234,110 @@ const VehicleLoad = () => {
                                 loadType={selectedLoadType}
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
-                                requireRegistration={true}
-                            />}
-                        {selectedLoadType === 'Moto Equipment' && <MotoEquipmentLoadContainer goBack={goBackToStepTwo} />}
-                        {selectedLoadType === 'Sailboats' && <SailboatLoadContainer goBack={goBackToStepTwo} />}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Moto Equipment' &&
+                            <MotoEquipmentLoadContainer
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Sailboats' &&
+                            <SailboatLoadContainer
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Personal watercrafts' &&
+                            <PersonalWatercraftsLoadContainer
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'ATVs & Power Sports' &&
+                            <ATVLoadContainer
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Commercial Truck' &&
+                            <CommercialTruckLoad
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Parts' &&
+                            <PartsLoadContainer deliveryLocation={formData.deliveryLocation}
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadType={selectedLoadType}
+                                                loadSubType={selectedLoadType}
+                                                goBack={goBackToStepTwo}
+                                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Trailer & Other Vehicles' &&
+                            <TrailerAndOtherVehicles deliveryLocation={formData.deliveryLocation}
+                                                     pickupLocation={formData.pickupLocation}
+                                                     loadPickupDate={formData.pickupLocationDate}
+                                                     loadDeliveryDate={formData.deliveryLocationDate}
+                                                     loadMilesTrip={formData.loadMilesTrip}
+                                                     loadType={selectedLoadType}
+                                                     loadSubType={selectedLoadType}
+                                                     goBack={goBackToStepTwo}
+                                                     requireRegistration={true}/>}
+                        {selectedLoadType === 'RV (Recreational Vehicles)' &&
+                            <RVLoadContainer deliveryLocation={formData.deliveryLocation}
+                                             pickupLocation={formData.pickupLocation}
+                                             loadPickupDate={formData.pickupLocationDate}
+                                             loadDeliveryDate={formData.deliveryLocationDate}
+                                             loadMilesTrip={formData.loadMilesTrip}
+                                             loadType={selectedLoadType}
+                                             loadSubType={selectedLoadType}
+                                             goBack={goBackToStepTwo}
+                                             requireRegistration={true}/>}
+                        {selectedLoadType === 'Powerboats' &&
+                            <BoatLoadContainer deliveryLocation={formData.deliveryLocation}
+                                             pickupLocation={formData.pickupLocation}
+                                             loadPickupDate={formData.pickupLocationDate}
+                                             loadDeliveryDate={formData.deliveryLocationDate}
+                                             loadMilesTrip={formData.loadMilesTrip}
+                                             loadType={selectedLoadType}
+                                             loadSubType={selectedLoadType}
+                                             goBack={goBackToStepTwo}
+                                             requireRegistration={true}/>}
                     </>
                 )}
             </div>
 
-            {showAlert && <Alert status="warning" text="Warning" description="Please select a load category before proceeding." />}
+            {showAlert &&
+                <Alert status="warning" text="Warning" description="Please select a load category before proceeding."/>}
 
-            <LandingPageFooter />
+            <LandingPageFooter/>
         </>
     );
 };
