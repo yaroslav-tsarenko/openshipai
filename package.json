@@ -114,7 +114,8 @@
     "use-sound": "^4.0.1",
     "util": "^0.12.5",
     "uuid": "^9.0.1",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zustand": "^4.5.5"
   },
   "scripts": {
     "start:frontend": "react-scripts start",

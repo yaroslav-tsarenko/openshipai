@@ -6,6 +6,7 @@ import LandingPageFooter from '../../components/landing-page/landing-footer/Land
 import CreateLoadContainer from '../../components/create-load-container/CreateLoadContainer';
 import LoadFrameButton from '../../components/load-frame-button/LoadFrameButton';
 import HeavyLoadType from '../../assets/heavy-load-type.png';
+import VehicleLoadType from '../../assets/vehicle-load-type.png';
 import Button from '../../components/button/Button';
 import CarOrLightTruckLoadContainer from '../../components/load-containers/car-or-light-truck/CarOrLightTruckLoadContainer';
 import MotoEquipmentLoadContainer from '../../components/load-containers/moto-equipment/MotoEquipmentLoadContainer';
@@ -14,6 +15,19 @@ import TextInput from '../../components/text-input/TextInput';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 import styles from './VehicleLoad.module.scss';
 import Alert from '../../components/floating-window-success/Alert';
+
+const loadTypes = [
+    { loadType: 'Car or Light Truck', title: 'Car or Light Truck', imageSrc: VehicleLoadType },
+    { loadType: 'Moto Equipment', title: 'Moto Equipment', imageSrc: VehicleLoadType },
+    { loadType: 'Powerboats', title: 'Powerboats', imageSrc: VehicleLoadType },
+    { loadType: 'Sailboats', title: 'Sailboats', imageSrc: VehicleLoadType },
+    { loadType: 'Personal watercrafts', title: 'Personal watercrafts', imageSrc: VehicleLoadType },
+    { loadType: 'ATVs & Power Sports', title: 'ATVs & Power Sports', imageSrc: VehicleLoadType },
+    { loadType: 'Commercial Truck', title: 'Commercial Truck', imageSrc: VehicleLoadType },
+    { loadType: 'Parts', title: 'Parts', imageSrc: VehicleLoadType },
+    { loadType: 'Trailer & Other Vehicles', title: 'Trailer & Other Vehicles', imageSrc: VehicleLoadType },
+    { loadType: 'RV (Recreational Vehicles)', title: 'RV (Recreational Vehicles)', imageSrc: VehicleLoadType },
+];
 
 const VehicleLoad = () => {
     const navigate = useNavigate();
@@ -107,22 +121,12 @@ const VehicleLoad = () => {
                 {step === 1 && (
                     <CreateLoadContainer step={2} title="Vehicle Category" subTitle="Select the category of the vehicle you need">
                         <div className={styles.createLoadFrameContent}>
-                            {[
-                                'Car or Light Truck',
-                                'Moto Equipment',
-                                'Powerboats',
-                                'Sailboats',
-                                'Personal watercrafts',
-                                'ATVs & Power Sports',
-                                'Commercial Truck',
-                                'Parts',
-                                'Trailer & Other Vehicles',
-                                'RV (Recreational Vehicles)',
-                            ].map((loadType) => (
+                            {loadTypes.map(({ loadType, title, imageSrc }) => (
                                 <LoadFrameButton
                                     key={loadType}
                                     loadType={loadType}
-                                    imageSrc={HeavyLoadType}
+                                    title={title}
+                                    imageSrc={imageSrc}
                                     isSelected={selectedLoadType === loadType}
                                     onClick={() => handleLoadCategorySelect(loadType)}
                                 />
