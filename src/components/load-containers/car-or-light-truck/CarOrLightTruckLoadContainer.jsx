@@ -37,10 +37,11 @@ const CarOrLightTruckLoadContainer = ({
     const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
+
+
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
     const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
-
-    const { shipperID: paramShipperID } = useParams();  // Get shipperID from URL if available
+    const { shipperID: paramShipperID } = useParams();
     const { userShipperID, registrationStatus } = useShipperStore();
     const [shipperID, setShipperID] = useState(paramShipperID || userShipperID);
     const [registeredShipperID, setRegisteredShipperID] = useState(null);
