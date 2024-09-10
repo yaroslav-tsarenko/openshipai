@@ -151,7 +151,7 @@ const VehicleLoad = () => {
                             <Button variant="neutral-non-responsive" onClick={handleReturnToTheMainPage}>
                                 Go Back
                             </Button>
-                            <Button variant="default" onClick={handleNextClick} disabled={!selectedLoadType}>
+                            <Button variant="default-non-responsive" onClick={handleNextClick} disabled={!selectedLoadType}>
                                 Next
                             </Button>
                         </section>
