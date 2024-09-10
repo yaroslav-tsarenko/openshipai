@@ -1,1 +1,47 @@
 
+.createLoadFrame {
+  padding: 60px 15px 60px 15px;
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.createLoadFrameContent {
+  display: grid;
+  grid-template-columns: repeat(4, 4fr);
+  grid-gap: 20px;
+  align-items: center;
+  justify-content: center;
+  justify-items: center;
+  align-content: center;
+}
+
+.loadFrameButtons {
+  display: flex;
+  padding: 15px;
+  width: 100%;
+  gap: 20px;
+}
+
+@media screen and (max-width: 1024px) {
+  .createLoadFrameContent{
+    grid-template-columns: repeat(3, 3fr);
+    grid-gap: 5px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .createLoadFrameContent{
+    grid-template-columns: repeat(2, 2fr);
+    grid-gap: 1px;
+  }
+}
+
+@media screen and (max-width: 476px) {
+  .createLoadFrameContent{
+    grid-template-columns: repeat(1, 1fr);
+    grid-gap: 1px;
+  }
+}

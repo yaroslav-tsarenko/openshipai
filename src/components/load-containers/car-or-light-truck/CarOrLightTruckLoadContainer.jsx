@@ -162,9 +162,6 @@ const CarOrLightTruckLoadContainer = ({
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
 
-
-
-
     return (
         <>
             {isLoadCreatedSuccess && <Alert status="success" text="Success!" description="Load Created Successfully!"/>}
