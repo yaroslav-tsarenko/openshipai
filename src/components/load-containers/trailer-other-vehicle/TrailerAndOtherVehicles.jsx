@@ -1,4 +1,4 @@
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import Alert from "../../floating-window-success/Alert";
@@ -10,19 +10,23 @@ import CreateLoadContainer from "../../create-load-container/CreateLoadContainer
 import FormSeparator from "../../form-separator/FormSeparator";
 import TextInput from "../../text-input/TextInput";
 import {ClipLoader} from "react-spinners";
+import useShipperStore from "../../../stores/landing-registration-shipper/store";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import RegistrationComponent from "../../registration-component/RegistrationComponent";
 
 const TrailerAndOtherVehicles = ({
-                                 pickupLocation,
-                                 loadMilesTrip,
-                                 deliveryLocation,
-                                 loadType,
-                                 loadSubType,
-                                 loadPickupDate,
-                                 loadDeliveryDate,
-                                 loadPickupTime,
-                                 loadDeliveryTime,
-                                 goBack
-                             }) => {
+                                     pickupLocation,
+                                     loadMilesTrip,
+                                     deliveryLocation,
+                                     loadType,
+                                     loadSubType,
+                                     loadPickupDate,
+                                     loadDeliveryDate,
+                                     loadPickupTime,
+                                     loadDeliveryTime,
+                                     requireRegistration,
+                                     goBack
+                                 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
@@ -30,10 +34,33 @@ const TrailerAndOtherVehicles = ({
     const [isOperable, setIsOperable] = useState(false);
     const [isConvertible, setIsConvertible] = useState(false);
     const [isModified, setIsModified] = useState(false);
-    const {shipperID} = useParams();
     const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
+
+    const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
+    const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
+    const { shipperID: paramShipperID } = useParams();
+    const { userShipperID, registrationStatus } = useShipperStore();
+    const [shipperID, setShipperID] = useState(paramShipperID || userShipperID);
+    const [registeredShipperID, setRegisteredShipperID] = useState(null);
+
+    useEffect(() => {
+        if (userShipperID) {
+            setShipperID(userShipperID);
+            setFormData((prev) => ({ ...prev, shipperID: userShipperID }));
+        }
+    }, [userShipperID]);
+
+    console.log("ShipperID:", shipperID);
+
+
+    const handleRegistrationSuccess = (newShipperID) => {
+        setRegisteredShipperID(newShipperID);
+        setShowRegistrationPopup(false);
+        setRequireRegistrationStatus(false);
+        console.log("New shipper ID:" + setShipperID(newShipperID));
+    };
 
     const [formData, setFormData] = useState({
         loadType: loadType,
@@ -71,9 +98,33 @@ const TrailerAndOtherVehicles = ({
         loadAssignedDriverID: "Not Assigned",
         loadDeliveredStatus: "Not Delivered",
         loadCredentialID: (() => `${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}-${Math.floor(Math.random() * 10000).toString().padStart(4, '0')}`)(),
-        shipperID: shipperID,
+        shipperID: shipperID
     });
 
+    const handleCreateLoad = async () => {
+        if (registrationStatus !== 'success') {
+            if (requireRegistration) {
+                setShowRegistrationPopup(true);
+                return;
+            }
+        }
+        setIsLoading(true);
+        setFormData({
+            ...formData,
+        });
+        try {
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
+            console.log(response.data);
+            setIsLoadCreatedSuccess(true);
+        } catch (error) {
+            console.error(error);
+            setIsLoadCreatedFailed(true);
+        }
+        setIsLoading(false);
+    };
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
@@ -106,29 +157,13 @@ const TrailerAndOtherVehicles = ({
         const fileUrls = files.map(file => URL.createObjectURL(file));
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
-    const handleCreateLoad = async () => {
-        setIsLoading(true);
-        setFormData({
-            ...formData,
-        });
-        try {
-            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
-            if (response.status === 200) {
-                window.location.reload();
-            }
-            console.log(response.data);
-            setIsLoadCreatedSuccess(true);
-        } catch (error) {
-            console.error(error);
-            setIsLoadCreatedFailed(true);
-        }
-        setIsLoading(false);
-    };
+
 
     return (
         <>
-            {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
-            {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
+            {isLoadCreatedSuccess && <Alert status="success" text="Success!" description="Load Created Successfully!"/>}
+            {isLoadCreatedFailed && <Alert status="error" text="Error!" description="Something went wrong. Try Again"/>}
+            {showRegistrationPopup && <RegistrationComponent onRegistrationSuccess={handleRegistrationSuccess}/>}
             <CreateLoadContainer title="Trailer and Other Vehicles" step={4} subTitle="Fill all data">
                 <Grid columns="2, 2fr">
                     <TextInput
@@ -227,8 +262,11 @@ const TrailerAndOtherVehicles = ({
 
                 <Grid columns="2, 2fr">
                     <Button variant="neutral" buttonText="Go Back" onClick={goBack}/>
-                    <Button variant="default" onClick={handleCreateLoad}>
-                        {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                    <Button variant="default-non-responsive" onClick={handleCreateLoad}>
+                        {isLoading ?
+                            <RotatingLinesLoader title="Processing..."/>
+                            :
+                            "Create Load"}
                     </Button>
                 </Grid>
 

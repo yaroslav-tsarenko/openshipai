@@ -13,6 +13,7 @@ import TextInput from "../../text-input/TextInput";
 import {useEffect} from "react";
 import useShipperStore from "../../../stores/landing-registration-shipper/store";
 import RegistrationComponent from "../../registration-component/RegistrationComponent";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const CarOrLightTruckLoadContainer = ({
                                           pickupLocation,
@@ -102,6 +103,31 @@ const CarOrLightTruckLoadContainer = ({
         shipperID: shipperID
     });
 
+    const handleCreateLoad = async () => {
+        if (registrationStatus !== 'success') {
+            if (requireRegistration) {
+                setShowRegistrationPopup(true);
+                return;
+            }
+        }
+        setIsLoading(true);
+        setFormData({
+            ...formData,
+        });
+        try {
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
+            if (response.status === 200) {
+                window.location.reload();
+            }
+            console.log(response.data);
+            setIsLoadCreatedSuccess(true);
+        } catch (error) {
+            console.error(error);
+            setIsLoadCreatedFailed(true);
+        }
+        setIsLoading(false);
+    };
+
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
@@ -136,30 +162,7 @@ const CarOrLightTruckLoadContainer = ({
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
 
-    const handleCreateLoad = async () => {
-        if (registrationStatus !== 'success') {
-            if (requireRegistration) {
-                setShowRegistrationPopup(true);
-                return;
-            }
-        }
-        setIsLoading(true);
-        setFormData({
-            ...formData,
-        });
-        try {
-            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
-            if (response.status === 200) {
-                window.location.reload();
-            }
-            console.log(response.data);
-            setIsLoadCreatedSuccess(true);
-        } catch (error) {
-            console.error(error);
-            setIsLoadCreatedFailed(true);
-        }
-        setIsLoading(false);
-    };
+
 
 
     return (
@@ -330,7 +333,10 @@ const CarOrLightTruckLoadContainer = ({
                 <Grid columns="2, 2fr">
                     <Button variant="neutral" buttonText="Go Back" onClick={goBack}/>
                     <Button variant="default-non-responsive" onClick={handleCreateLoad}>
-                        {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Create Load"}
+                        {isLoading ?
+                            <RotatingLinesLoader title="Processing..."/>
+                            :
+                            "Create Load"}
                     </Button>
                 </Grid>
 
