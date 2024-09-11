@@ -151,13 +151,13 @@ const VehicleLoad = () => {
                             <Button variant="neutral-non-responsive" onClick={handleReturnToTheMainPage}>
                                 Go Back
                             </Button>
-                            <Button variant="default-non-responsive" onClick={handleNextClick} disabled={!selectedLoadType}>
+                            <Button variant="default-non-responsive" onClick={handleNextClick}
+                                    disabled={!selectedLoadType}>
                                 Next
                             </Button>
                         </section>
                     </CreateLoadContainer>
                 )}
-
                 {step === 2 && (
                     <CreateLoadContainer step={3} title="Specify origin and delivery locations"
                                          subTitle="We can better assist you if you provide us with the following information">
@@ -322,14 +322,14 @@ const VehicleLoad = () => {
                                              requireRegistration={true}/>}
                         {selectedLoadType === 'Powerboats' &&
                             <BoatLoadContainer deliveryLocation={formData.deliveryLocation}
-                                             pickupLocation={formData.pickupLocation}
-                                             loadPickupDate={formData.pickupLocationDate}
-                                             loadDeliveryDate={formData.deliveryLocationDate}
-                                             loadMilesTrip={formData.loadMilesTrip}
-                                             loadType={selectedLoadType}
-                                             loadSubType={selectedLoadType}
-                                             goBack={goBackToStepTwo}
-                                             requireRegistration={true}/>}
+                                               pickupLocation={formData.pickupLocation}
+                                               loadPickupDate={formData.pickupLocationDate}
+                                               loadDeliveryDate={formData.deliveryLocationDate}
+                                               loadMilesTrip={formData.loadMilesTrip}
+                                               loadType={selectedLoadType}
+                                               loadSubType={selectedLoadType}
+                                               goBack={goBackToStepTwo}
+                                               requireRegistration={true}/>}
                     </>
                 )}
             </div>

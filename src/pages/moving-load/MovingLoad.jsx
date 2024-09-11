@@ -5,47 +5,45 @@ import Header from '../../components/landing-page-new/header/Header';
 import LandingPageFooter from '../../components/landing-page/landing-footer/LandingPageFooter';
 import CreateLoadContainer from '../../components/create-load-container/CreateLoadContainer';
 import LoadFrameButton from '../../components/load-frame-button/LoadFrameButton';
-import VehicleLoadType from '../../assets/car-load-type-2.svg';
-import MotoLoadType from '../../assets/moto-load-type-2.svg';
-import PowerboatLoadType from '../../assets/powerboats-load-type-2.svg';
-import SailboatLoadType from '../../assets/sailboat-load-type-2.svg';
-import PersonalwatercraftLoadType from '../../assets/personal-watercrafts-load-type-2.svg';
-import ATVLoadType from '../../assets/atv-load-type-2.svg';
-import CommercialTruckLoadType from '../../assets/commercial-truck-load-type-2.svg';
-import TrailerLoadType from '../../assets/trailer-load-type-2.svg';
-import RVLoadType from '../../assets/rv-load-type-2.svg';
-import PartsLoadType from '../../assets/parts-load-type-2.svg';
+import LocalMovingIcon from '../../assets/local-moving-load-type.svg';
+import LongDistanceMovingIcon from '../../assets/long-distance-moving-load-type.svg';
+import CommercialBusinessMovingIcon from '../../assets/business-moving-load-type.svg';
+import HeavyMovingIcon from '../../assets/heavy-moving-load-type.svg';
+import HouseholdMovingIcon from '../../assets/household-load-type.svg';
+import OfficeMovingIcon from '../../assets/office-moving-load-type.svg';
+import CorporateMovingIcon from '../../assets/corporate-moving-load-type.svg';
+import StudentMovingIcon from '../../assets/student-moving-load-type.svg';
+import MilitaryMovingIcon from '../../assets/military-moving-load-type.svg';
 import Button from '../../components/button/Button';
-import CarOrLightTruckLoadContainer
-    from '../../components/load-containers/car-or-light-truck/CarOrLightTruckLoadContainer';
-import MotoEquipmentLoadContainer from '../../components/load-containers/moto-equipment/MotoEquipmentLoadContainer';
-import SailboatLoadContainer from '../../components/load-containers/sailboat-load/SailboatLoadContainer';
 import TextInput from '../../components/text-input/TextInput';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 import styles from './MovingLoad.module.scss';
 import Alert from '../../components/floating-window-success/Alert';
-import PersonalWatercraftsLoadContainer
-    from "../../components/load-containers/personal-watercrafts/PersonalWatercraftsLoadContainer";
-import ATVLoadContainer from "../../components/load-containers/atv-load-container/ATVLoadContainer";
-import CommercialTruckLoad from "../../components/load-containers/commercial-truck/CommercialTruckLoad";
-import PartsLoadContainer from "../../components/load-containers/parts-load-container/PartsLoadContainer";
-import TrailerAndOtherVehicles from "../../components/load-containers/trailer-other-vehicle/TrailerAndOtherVehicles";
-import RVLoadContainer from "../../components/load-containers/rv-load-container/RVLoadContainer";
-import BoatLoadContainer from "../../components/load-containers/boat-load/BoatLoadContainer";
+import LocalMovingLoadContainer from "../../components/load-containers/local-moving/LocalMovingLoadContainer";
+import LongDistanceMoving from "../../components/load-containers/long-distance-moving/LongDistanceMoving";
+import HeavyLiftingAndMovingOnly
+    from "../../components/load-containers/heavy-liftin-moving-only/HeavyLiftingMovingOnly";
+import CommercialBusinessMoving from "../../components/load-containers/commercial-load-moving/CommercialBusinessMoving";
+import HouseHoldItem from "../../components/load-containers/household-item/HouseHoldItem";
+import MilitaryMoving from "../../components/load-containers/military-moving/MilitaryMoving";
+import StudentMoving from "../../components/load-containers/student-moving/StudentMoving";
+import CorporateMoving from "../../components/load-containers/corporate-moving/CorporateMoving";
+import OfficeMoving from "../../components/load-containers/office-moving/OfficeMoving";
 
 const loadTypes = [
-    {loadType: 'Local Moving (less than 50 miles)', title: 'Local Moving (less than 50 miles)', imageSrc: VehicleLoadType},
-    {loadType: 'Long Distance Moving', title: 'Long Distance Moving', imageSrc: MotoLoadType},
-    {loadType: 'Commercial / Business Moving', title: 'Commercial / Business Moving', imageSrc: PowerboatLoadType},
-    {loadType: 'Heavy Lifting and Moving Only', title: 'Heavy Lifting and Moving Only', imageSrc: SailboatLoadType},
-    {loadType: 'Household item', title: 'Household item', imageSrc: PersonalwatercraftLoadType},
-    {loadType: 'Office Moving', title: 'Office Moving', imageSrc: CommercialTruckLoadType},
-    {loadType: 'Corporate Moving', title: 'Corporate Moving', imageSrc: PartsLoadType},
-    {loadType: 'Student Moving', title: 'Student Moving', imageSrc: TrailerLoadType},
-    {loadType: 'Military Moving', title: 'Military Moving', imageSrc: RVLoadType},
+    {loadType: 'Local Moving (less than 50 miles)', title: 'Local Moving (less than 50 miles)', imageSrc: LocalMovingIcon},
+    {loadType: 'Long Distance Moving', title: 'Long Distance Moving', imageSrc: LongDistanceMovingIcon},
+    {loadType: 'Commercial / Business Moving', title: 'Commercial / Business Moving', imageSrc: CommercialBusinessMovingIcon},
+    {loadType: 'Heavy Lifting and Moving Only', title: 'Heavy Lifting and Moving Only', imageSrc: HeavyMovingIcon},
+    {loadType: 'Household item', title: 'Household item', imageSrc: HouseholdMovingIcon},
+    {loadType: 'Office Moving', title: 'Office Moving', imageSrc: OfficeMovingIcon},
+    {loadType: 'Corporate Moving', title: 'Corporate Moving', imageSrc: CorporateMovingIcon},
+    {loadType: 'Student Moving', title: 'Student Moving', imageSrc: StudentMovingIcon},
+    {loadType: 'Military Moving', title: 'Military Moving', imageSrc: MilitaryMovingIcon},
 ];
 
 const MovingLoad = () => {
+
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [distance, setDistance] = useState(null);
@@ -65,8 +63,8 @@ const MovingLoad = () => {
     };
 
     const handleLoadCategorySelect = (loadType) => {
-        setSelectedLoadType(loadType); // Set the selected load type
-        setShowAlert(false); // Hide alert on selection
+        setSelectedLoadType(loadType);
+        setShowAlert(false);
     };
 
     const calculateDistance = async (origin, destination) => {
@@ -150,7 +148,8 @@ const MovingLoad = () => {
                             <Button variant="neutral-non-responsive" onClick={handleReturnToTheMainPage}>
                                 Go Back
                             </Button>
-                            <Button variant="default-non-responsive" onClick={handleNextClick} disabled={!selectedLoadType}>
+                            <Button variant="default-non-responsive" onClick={handleNextClick}
+                                    disabled={!selectedLoadType}>
                                 Next
                             </Button>
                         </section>
@@ -223,8 +222,8 @@ const MovingLoad = () => {
 
                 {step === 3 && (
                     <>
-                        {selectedLoadType === 'Car or Light Truck' &&
-                            <CarOrLightTruckLoadContainer
+                        {selectedLoadType === 'Local Moving (less than 50 miles)' &&
+                            <LocalMovingLoadContainer
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -234,8 +233,8 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'Moto Equipment' &&
-                            <MotoEquipmentLoadContainer
+                        {selectedLoadType === 'Long Distance Moving' &&
+                            <LongDistanceMoving
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -245,8 +244,8 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'Sailboats' &&
-                            <SailboatLoadContainer
+                        {selectedLoadType === 'Commercial / Business Moving' &&
+                            <CommercialBusinessMoving
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -256,8 +255,8 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'Personal watercrafts' &&
-                            <PersonalWatercraftsLoadContainer
+                        {selectedLoadType === 'Heavy Lifting and Moving Only' &&
+                            <HeavyLiftingAndMovingOnly
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -267,8 +266,8 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'ATVs & Power Sports' &&
-                            <ATVLoadContainer
+                        {selectedLoadType === 'Household item' &&
+                            <HouseHoldItem
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -278,8 +277,8 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'Commercial Truck' &&
-                            <CommercialTruckLoad
+                        {selectedLoadType === 'Office Moving' &&
+                            <OfficeMoving
                                 deliveryLocation={formData.deliveryLocation}
                                 pickupLocation={formData.pickupLocation}
                                 loadPickupDate={formData.pickupLocationDate}
@@ -289,46 +288,38 @@ const MovingLoad = () => {
                                 loadSubType={selectedLoadType}
                                 goBack={goBackToStepTwo}
                                 requireRegistration={true}/>}
-                        {selectedLoadType === 'Parts' &&
-                            <PartsLoadContainer deliveryLocation={formData.deliveryLocation}
-                                                pickupLocation={formData.pickupLocation}
-                                                loadPickupDate={formData.pickupLocationDate}
-                                                loadDeliveryDate={formData.deliveryLocationDate}
-                                                loadMilesTrip={formData.loadMilesTrip}
-                                                loadType={selectedLoadType}
-                                                loadSubType={selectedLoadType}
-                                                goBack={goBackToStepTwo}
-                                                requireRegistration={true}/>}
-                        {selectedLoadType === 'Trailer & Other Vehicles' &&
-                            <TrailerAndOtherVehicles deliveryLocation={formData.deliveryLocation}
-                                                     pickupLocation={formData.pickupLocation}
-                                                     loadPickupDate={formData.pickupLocationDate}
-                                                     loadDeliveryDate={formData.deliveryLocationDate}
-                                                     loadMilesTrip={formData.loadMilesTrip}
-                                                     loadType={selectedLoadType}
-                                                     loadSubType={selectedLoadType}
-                                                     goBack={goBackToStepTwo}
-                                                     requireRegistration={true}/>}
-                        {selectedLoadType === 'RV (Recreational Vehicles)' &&
-                            <RVLoadContainer deliveryLocation={formData.deliveryLocation}
-                                             pickupLocation={formData.pickupLocation}
-                                             loadPickupDate={formData.pickupLocationDate}
-                                             loadDeliveryDate={formData.deliveryLocationDate}
-                                             loadMilesTrip={formData.loadMilesTrip}
-                                             loadType={selectedLoadType}
-                                             loadSubType={selectedLoadType}
-                                             goBack={goBackToStepTwo}
-                                             requireRegistration={true}/>}
-                        {selectedLoadType === 'Powerboats' &&
-                            <BoatLoadContainer deliveryLocation={formData.deliveryLocation}
-                                               pickupLocation={formData.pickupLocation}
-                                               loadPickupDate={formData.pickupLocationDate}
-                                               loadDeliveryDate={formData.deliveryLocationDate}
-                                               loadMilesTrip={formData.loadMilesTrip}
-                                               loadType={selectedLoadType}
-                                               loadSubType={selectedLoadType}
-                                               goBack={goBackToStepTwo}
-                                               requireRegistration={true}/>}
+                        {selectedLoadType === 'Corporate Moving' &&
+                            <CorporateMoving
+                                deliveryLocation={formData.deliveryLocation}
+                                pickupLocation={formData.pickupLocation}
+                                loadPickupDate={formData.pickupLocationDate}
+                                loadDeliveryDate={formData.deliveryLocationDate}
+                                loadMilesTrip={formData.loadMilesTrip}
+                                loadType={selectedLoadType}
+                                loadSubType={selectedLoadType}
+                                goBack={goBackToStepTwo}
+                                requireRegistration={true}/>}
+                        {selectedLoadType === 'Student Moving' &&
+                            <StudentMoving deliveryLocation={formData.deliveryLocation}
+                                           pickupLocation={formData.pickupLocation}
+                                           loadPickupDate={formData.pickupLocationDate}
+                                           loadDeliveryDate={formData.deliveryLocationDate}
+                                           loadMilesTrip={formData.loadMilesTrip}
+                                           loadType={selectedLoadType}
+                                           loadSubType={selectedLoadType}
+                                           goBack={goBackToStepTwo}
+                                           requireRegistration={true}/>}
+                        {selectedLoadType === 'Military Moving' &&
+                            <MilitaryMoving deliveryLocation={formData.deliveryLocation}
+                                            pickupLocation={formData.pickupLocation}
+                                            loadPickupDate={formData.pickupLocationDate}
+                                            loadDeliveryDate={formData.deliveryLocationDate}
+                                            loadMilesTrip={formData.loadMilesTrip}
+                                            loadType={selectedLoadType}
+                                            loadSubType={selectedLoadType}
+                                            goBack={goBackToStepTwo}
+                                            requireRegistration={true}/>}
+
                     </>
                 )}
             </div>
