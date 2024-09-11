@@ -3,7 +3,6 @@ import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import Alert from "../../floating-window-success/Alert";
-import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
 import Grid from "../../grid-two-columns/Grid";
 import Button from "../../button/Button";

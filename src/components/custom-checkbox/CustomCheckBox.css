@@ -1,6 +1,9 @@
 .custom-checkbox-content{
+    cursor: pointer;
     display: flex;
 }
+
+
 
 .custom-checkbox-content p{
     font-size: 16px;

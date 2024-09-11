@@ -7,10 +7,10 @@ import CreateLoadContainer from '../../components/create-load-container/CreateLo
 import Button from '../../components/button/Button';
 import TextInput from '../../components/text-input/TextInput';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
-import styles from './FreightLoad.module.scss';
-import FreightLoadContainer from "../../components/load-containers/expedite-load-container/FreightLoadContainer";
+import styles from './HeavyEquipmentLoad.module.scss';
+import HeavyEquipmentLoadContainer from "../../components/load-containers/heavy-equipment/HeavyEquipmentContainer";
 
-const FreightLoad = () => {
+const HeavyEquipmentLoad = () => {
 
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
@@ -149,7 +149,7 @@ const FreightLoad = () => {
 
                 {step === 3 && (
                     <>
-                        <FreightLoadContainer
+                        <HeavyEquipmentLoadContainer
                             deliveryLocation={formData.deliveryLocation}
                             pickupLocation={formData.pickupLocation}
                             loadPickupDate={formData.pickupLocationDate}
@@ -167,4 +167,4 @@ const FreightLoad = () => {
     );
 };
 
-export default FreightLoad;
+export default HeavyEquipmentLoad;

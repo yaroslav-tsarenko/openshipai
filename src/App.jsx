@@ -41,7 +41,7 @@ import BlogPage from "./pages/blog/BlogPage";
 import AboutPage from "./pages/about/AboutPage";
 import VehicleLoad from "./pages/vehicle-load-page/VehicleLoad";
 import MovingLoad from "./pages/moving-load/MovingLoad";
-import FarmEquipmentLoad from "./pages/farm-equipment-load/FarmEquipmentLoad";
+import HeavyEquipmentLoad from "./pages/heavy-equipment-load/HeavyEquipmentLoad";
 import FreightLoad from "./pages/freight-load/FreightLoad";
 
 function App() {
@@ -89,7 +89,7 @@ function App() {
                 <Route path="/about-page" element={<AboutPage/>}/>
                 <Route path="/vehicle-load" element={<VehicleLoad/>}/>
                 <Route path="/moving-load" element={<MovingLoad/>}/>
-                <Route path="/construction-load" element={<FarmEquipmentLoad/>}/>
+                <Route path="/construction-load" element={<HeavyEquipmentLoad/>}/>
                 <Route path="/freight-load" element={<FreightLoad/>}/>
 
 
