@@ -1253,14 +1253,18 @@ app.post('/save-load-data', async (req, res) => {
     console.log('Received request to /save-load-data');
     const loadData = req.body;
     console.log('Request body:', loadData);
+    if (!loadData.loadMilesTrip || isNaN(loadData.loadMilesTrip)) {
+        console.error('Invalid loadMilesTrip value:', loadData.loadMilesTrip);
+        return res.status(400).json({ status: 'Error', message: 'Invalid loadMilesTrip value' });
+    }
     const newLoad = new Load(loadData);
     try {
         const savedLoad = await newLoad.save();
         console.log('Saved load:', savedLoad);
-        res.json({status: 'Success', load: savedLoad});
+        res.json({ status: 'Success', load: savedLoad });
     } catch (error) {
         console.error('Error saving load:', error);
-        res.status(500).json({status: 'Error', message: error.message});
+        res.status(500).json({ status: 'Error', message: error.message });
     }
 });
 
