@@ -2,9 +2,7 @@ import React, {useEffect, useRef, useState} from 'react';
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import Alert from "../../floating-window-success/Alert";
-import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import "./FreightLoadContainer.module.scss";
-import {ThemeProvider, createTheme, TextField} from "@mui/material";
 import {BACKEND_URL} from "../../../constants/constants";
 import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
 import TextInput from "../../text-input/TextInput";
@@ -30,7 +28,6 @@ const FreightLoadContainer = ({
                               }) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
-
     const [checkedOptionsLoadRequirements, setCheckedOptionsLoadRequirements] = useState({
         LiftgatePickup: false,
         PalletJackAssist: false,
