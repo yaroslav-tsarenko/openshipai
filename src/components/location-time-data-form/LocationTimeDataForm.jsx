@@ -5,7 +5,7 @@ import TextInput from '../../components/text-input/TextInput';
 import Button from '../../components/button/Button';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 
-const LocationTimeDataForm = ({formData, setFormData, handleLoadChange, handleReturnToTheMainPage, setStep}) => {
+const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadChange, handleReturnToTheMainPage, setStep}) => {
     const [distance, setDistance] = useState(null);
     const [selectedPreferences, setSelectedPreferences] = useState(formData.loadOriginDeliveryPreference);
 
@@ -83,7 +83,7 @@ const LocationTimeDataForm = ({formData, setFormData, handleLoadChange, handleRe
     }, [formData.pickupLocation, formData.deliveryLocation]);
 
     return (
-        <CreateLoadContainer step={3} title="Specify origin and delivery locations"
+        <CreateLoadContainer step={currentStep} title="Specify origin and delivery locations"
                              subTitle="We can better assist you if you provide us with the following information">
             <div className="load-creation-input-fields">
                 <div className="input-fields-with-date-time">

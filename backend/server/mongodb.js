@@ -52,7 +52,7 @@ const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
 const Load = require('./models/Load');
 const LoadBid = require('./models/LoadBid');
-const stripe = require('stripe')('sk_test_51O5Q6UEOdY1hERYnOo1J3Zep6yPIGV4Mxo8dSPjkQElYi7enLOmu3sD7YfxEzWOe1dYO98nsmHNaBu83gpBI7ekT004LeMr38x');
+const stripe = require('stripe')('pk_live_51OpgSNJyJQMrMLmUKYcZUuTAZjBS34yI30KVPevbM974WZd25lNOskkoTqMzt1ZjASYA1NKgcN02ONX469pOjWlR00yn6CSBN3');
 require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
@@ -63,20 +63,36 @@ app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
-app.use('/uploads', express.static('uploads'));
+// Define the directory path
+const uploadDir = path.join(__dirname, 'uploads/chat-files');
+
+// Ensure the directory exists
+if (!fs.existsSync(uploadDir)) {
+    fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/');
+        cb(null, uploadDir);
     },
     filename: (req, file, cb) => {
         cb(null, `${Date.now()}-${file.originalname}`);
     }
 });
 
+
+app.use('/uploads', express.static('uploads'));
+
+
 const upload = multer({
     storage: storage,
     limits: {fileSize: 10 * 1024 * 1024} // Set file size limit to 10MB
 });
+
+const chatFilesDir = path.join(__dirname, 'uploads/chat-files');
+if (!fs.existsSync(chatFilesDir)) {
+    fs.mkdirSync(chatFilesDir, { recursive: true });
+}
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
@@ -92,6 +108,41 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
     console.log('Connected to MongoDB');
 }).catch(err => {
     console.error('Failed to connect to MongoDB:', err);
+});
+
+
+
+const chatStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/chat-files/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, `${Date.now()}-${file.originalname}`);
+    }
+});
+
+const uploadChatFiles = multer({
+    storage: chatStorage,
+    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+});
+
+app.post('/upload-chat-files', uploadChatFiles.array('files', 10), async (req, res) => {
+    try {
+        const files = req.files;
+        if (!files || files.length === 0) {
+            throw new Error('No files uploaded');
+        }
+        files.forEach(file => {
+            console.log(`Uploaded file path: ${file.path}`);
+        });
+        const fileUrls = files.map(file => {
+            return `${req.protocol}://${req.get('host')}/uploads/chat-files/${file.filename}`;
+        });
+        res.status(200).json({ fileUrls });
+    } catch (error) {
+        console.error('Error uploading chat files:', error);
+        res.status(500).json({ message: error.message });
+    }
 });
 
 
@@ -1142,16 +1193,18 @@ app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
+
 app.post('/save-chat-message', async (req, res) => {
-    const {chatID, receiver, sender, text, date} = req.body;
-    const message = new DealConversationChatHistoryMessage({chatID, receiver, sender, text, date});
+    const { chatID, receiver, sender, text, date, files } = req.body;
+    const message = new DealConversationChatHistoryMessage({ chatID, receiver, sender, text, date, files });
     try {
         await message.save();
-        res.status(200).json({message: 'Chat message saved successfully.'});
+        res.status(200).json({ message: 'Chat message saved successfully.' });
     } catch (error) {
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 });
+
 
 // Create the endpoint to fetch chat history by chatID
 app.get('/get-chat-history/:chatID', async (req, res) => {

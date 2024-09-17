@@ -44,6 +44,7 @@ const HeavyEquipmentLoad = () => {
                         handleLoadChange={handleLoadChange}
                         handleReturnToTheMainPage={handleReturnToTheMainPage}
                         setStep={setStep}
+                        currentStep={3}
                     />
                 )}
                 {step === 3 && (

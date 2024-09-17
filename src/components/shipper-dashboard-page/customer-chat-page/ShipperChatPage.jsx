@@ -2,7 +2,6 @@ import React, {useEffect, useState, useRef} from "react";
 import "../ShipperDashboard.css";
 import io from 'socket.io-client';
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
-import {LiaTimesSolid} from "react-icons/lia";
 import {ReactComponent as SearchBarIcon} from "../../../assets/search-bar-icon.svg";
 import {ReactComponent as UserChatAvatar} from "../../../assets/userAvatar.svg";
 import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
@@ -17,6 +16,7 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader, FadeLoader} from "react-spinners";
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
+import {SOCKET_URL} from "../../../constants/constants";
 import Button from "../../button/Button";
 import {Skeleton} from "@mui/material";
 
@@ -56,7 +56,10 @@ const ShipperChatPage = () => {
     const [showBOLContainer, setShowBOLContainer] = useState(false);
     const [showSuccessWindow, setShowSuccessWindow] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
-    const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
+    const stripePromise = loadStripe('pk_live_51OpgSNJyJQMrMLmUKYcZUuTAZjBS34yI30KVPevbM974WZd25lNOskkoTqMzt1ZjASYA1NKgcN02ONX469pOjWlR00yn6CSBN3');
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [filePreviews, setFilePreviews] = useState([]);
+    const fileInputRef = useRef(null); // Reference to the hidden file input
 
 
     const [shipperInfo, setShipperInfo] = useState(null);
@@ -123,6 +126,25 @@ const ShipperChatPage = () => {
 
     }, [chatID]);
 
+    const uploadFiles = async () => {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await axios.post(`${BACKEND_URL}/upload-chat-files`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data.fileUrls; // Get the uploaded file URLs
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            return [];
+        }
+    };
+
 
     useEffect(() => {
         const fetchCarrier = async () => {
@@ -141,10 +163,11 @@ const ShipperChatPage = () => {
 
         fetchCarrier();
     }, [chatID]);
+
     useEffect(() => {
     }, [chatID]);
     useEffect(() => {
-        socketRef.current = io.connect('https://socket-chat-server-xly7.onrender.com');
+        socketRef.current = io.connect(`${SOCKET_URL}`);
         socketRef.current.on('carrier message', (data) => {
             if (data.chatID === selectedChatID) {
                 setChatMessages((oldMessages) => [...oldMessages, data.message]);
@@ -175,30 +198,48 @@ const ShipperChatPage = () => {
             });
     }, [selectedChatID]);
 
-    const sendMessage = (message) => {
+    const sendMessage = async (message) => {
+        let fileUrls = [];
+
+        if (selectedFiles.length > 0) {
+            fileUrls = await uploadFiles(); // Upload files and get URLs
+        }
+
         const newMessage = {
             text: message,
             date: new Date(),
             sender: 'shipperID',
+            files: fileUrls, // Include file URLs
         };
+
+        // Clear the input message and attached files
+        setInputMessage('');
+        setSelectedFiles([]);
+        setFilePreviews([]);
+
+        // Send the message via Socket.IO
         socketRef.current.emit('customer message', {
             message: newMessage,
             chatID: selectedChatID,
             customer: 'shipperID'
         });
-        setInputMessage('');
+
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
+
+        // Save the message to the backend
         axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'carrierID',
             sender: 'shipperID',
             text: message,
-            date: new Date()
+            date: new Date(),
+            files: fileUrls, // Include file URLs
         })
             .catch(error => {
                 console.error('Error saving chat message:', error);
             });
     };
+
 
     useEffect(() => {
         axios.get(`${BACKEND_URL}/get-chat-history/${chatID}`)
@@ -265,6 +306,17 @@ const ShipperChatPage = () => {
                 });
         }
     }, [selectedBid]);
+
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        setSelectedFiles(files);
+
+        const previews = files.map(file => {
+            return URL.createObjectURL(file);
+        });
+        setFilePreviews(previews);
+    };
+
 
     useEffect(() => {
         const fetchChatMessages = async () => {
@@ -629,6 +681,9 @@ const ShipperChatPage = () => {
                                                                 </div>}
                                                         </div>
                                                         {message.text}
+                                                        {message.files && message.files.map((fileUrl, idx) => (
+                                                            <img key={idx} src={fileUrl} alt="Attachment" style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />
+                                                        ))}
                                                         <div style={{
                                                             color: message.sender === 'shipperID' ? 'white' : 'darkgrey',
                                                             alignItems: 'end',
@@ -646,15 +701,19 @@ const ShipperChatPage = () => {
                                         </div>
                                         <div className="chat-input-area-wrapper">
                                             <div className="images-preview-wrapper">
-
+                                                {filePreviews.map((url, index) => (
+                                                    <img key={index} className="file-image-preview" src={url} alt="Preview" style={{width: '120px', height: '80px', borderRadius: '10px'}}/>
+                                                ))}
                                             </div>
+
                                             <div className="chat-input-area">
                                                 <Button
                                                     variant="attachMaterial"
-
+                                                    onClick={() => fileInputRef.current.click()} // Trigger file input click
                                                 >
                                                     <AttachFile/>
                                                 </Button>
+
                                                 <input
                                                     type="text"
                                                     className="chat-input"
@@ -668,6 +727,13 @@ const ShipperChatPage = () => {
                                                 <AttachImage className="chat-input-icons"/>
 
                                                 */}
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    style={{ display: 'none' }}
+                                                    onChange={handleFileChange}
+                                                    multiple
+                                                />
                                                 <Button
                                                     variant="attachMaterial"
                                                 >

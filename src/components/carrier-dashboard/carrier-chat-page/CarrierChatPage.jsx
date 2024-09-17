@@ -16,6 +16,7 @@ import useSound from 'use-sound';
 import notificationSound from '../../../assets/sound-effects/message-sent.mp3'; // replace with the path to your sound file
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
+import {SOCKET_URL} from "../../../constants/constants";
 import DriverEntity from "../driver-entity/DriverEntity";
 import Button from "../../button/Button";
 
@@ -173,7 +174,7 @@ const CarrierChatPage = () => {
 
     useEffect(() => {
 
-        socketRef.current = io.connect('https://socket-chat-server-xly7.onrender.com');
+        socketRef.current = io.connect(`${SOCKET_URL}`);
 
         socketRef.current.on('customer message', (data) => {
             if (data.chatID === selectedChatID) {
@@ -374,7 +375,7 @@ const CarrierChatPage = () => {
     };
 
     useEffect(() => {
-        socketRef.current = io.connect('https://socket-chat-server-xly7.onrender.com');
+        socketRef.current = io.connect(`${SOCKET_URL}`);
 
         socketRef.current.on('payment updated', (data) => {
             if (data.chatID === chatID) {
@@ -419,7 +420,7 @@ const CarrierChatPage = () => {
                 <>
                     {play()}
                     <Alert
-                        text="Shipper approved your agreement. Approve shipper's agreement too, to continue next steps"/>
+                         text="Success!" status="success" description="Shipper approved your agreement. Approve shipper's agreement too, to continue next steps"/>
                 </>
             )}
             {showAssignDriverPopup &&
