@@ -19,6 +19,7 @@ import {BACKEND_URL} from "../../../constants/constants";
 import {SOCKET_URL} from "../../../constants/constants";
 import DriverEntity from "../driver-entity/DriverEntity";
 import Button from "../../button/Button";
+import styles from "./CarrierChatPage.module.scss";
 
 const CarrierChatPage = () => {
 
@@ -69,6 +70,11 @@ const CarrierChatPage = () => {
     const [isApprovalSent, setIsApprovalSent] = useState(false);
     const [showAssignDriverPopup, setShowAssignDriverPopup] = useState(false);
     const [drivers, setDrivers] = useState([]);
+
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [filePreviews, setFilePreviews] = useState([]);
+    const fileInputRefChatFile = useRef(null); // Reference to the hidden file input
+
 
     const toggleAssignDriverPopup = () => {
         setShowAssignDriverPopup(!showAssignDriverPopup);
@@ -214,24 +220,39 @@ const CarrierChatPage = () => {
     }, [carrierID]);
 
 
-    const sendMessage = (message) => {
+    const sendMessage = async (message) => {
+        let fileUrls = [];
+
+        if (selectedFiles.length > 0) {
+            fileUrls = await uploadFiles(); // Upload files and get URLs
+        }
+
         const newMessage = {
             text: message,
             date: new Date(),
             sender: 'carrierID',
-            file: fileData,
+            files: fileUrls, // Include file URLs
         };
-        setImagePreviewUrl([]);
-        setFilePreviewUrl([]);
-        socketRef.current.emit('carrier message', {message: newMessage, chatID: selectedChatID, carrier: 'carrierID'});
+
         setInputMessage('');
+        setSelectedFiles([]);
+        setFilePreviews([]);
+
+        socketRef.current.emit('carrier message', {
+            message: newMessage,
+            chatID: selectedChatID,
+            carrier: 'carrierID'
+        });
+
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
+
         axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'shipperID',
             sender: 'carrierID',
             text: message,
-            date: new Date()
+            date: new Date(),
+            files: fileUrls, // Include file URLs
         })
             .catch(error => {
                 console.error('Error saving chat message:', error);
@@ -398,6 +419,36 @@ const CarrierChatPage = () => {
         };
     }, []);
 
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        setSelectedFiles(files);
+
+        const previews = files.map(file => {
+            return URL.createObjectURL(file);
+        });
+        setFilePreviews(previews);
+    };
+
+    const uploadFiles = async () => {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+            formData.append('files', file);
+        });
+
+        try {
+            const response = await axios.post(`${BACKEND_URL}/upload-chat-files`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data.fileUrls; // Get the uploaded file URLs
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            return [];
+        }
+    };
+
+
     const handleAssignLoad = async (driver, loadID) => {
         setIsAssignLoading(true);
         try {
@@ -512,8 +563,8 @@ const CarrierChatPage = () => {
                                             }}>
                                                 {message.sender !== 'carrierID' && <UserAvatarComponent/>}
                                                 <div style={{
-                                                    backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#F3F3F3',
-                                                    color: message.sender === 'carrierID' ? '#f3f3f3' : '#606060',
+                                                    backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#dfdfdf',
+                                                    color: message.sender === 'carrierID' ? '#7d7d7d' : '#606060',
                                                     alignItems: 'start',
                                                     textAlign: 'left',
                                                     fontSize: '1.3rem',
@@ -549,8 +600,17 @@ const CarrierChatPage = () => {
                                                                 Carrier
                                                             </div>}
                                                     </div>
-                                                    {message.text}
-                                                    {message.file && <img src={message.file} alt="File"/>}
+                                                    <div className={styles.messagesContent}>
+                                                        {message.text}
+                                                        {message.files && message.files.map((fileUrl, idx) => (
+                                                            <img key={idx} src={fileUrl} alt="Attachment" style={{
+                                                                width: '120px',
+                                                                height: '80px',
+                                                                objectFit: 'cover',
+                                                                borderRadius: '10px'
+                                                            }}/>
+                                                        ))}
+                                                    </div>
                                                     <div style={{
                                                         color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
                                                         alignItems: 'end',
@@ -568,13 +628,9 @@ const CarrierChatPage = () => {
                                     </div>
                                     <div className="chat-input-area-wrapper">
                                         <div className="images-preview-wrapper">
-                                            {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
-                                                <img key={index} className="file-image-preview" src={url}
-                                                     alt="Preview"/>
-                                            ))}
-                                            {filePreviewUrl.map((url, index) => (
-                                                <img key={index} className="file-image-preview" src={url}
-                                                     alt="Preview"/>
+                                            {filePreviews.map((url, index) => (
+                                                <img key={index} className="file-image-preview" src={url} alt="Preview"
+                                                     style={{width: '120px', height: '80px', borderRadius: '10px'}}/>
                                             ))}
                                         </div>
                                         <div className="chat-input-area">
@@ -585,15 +641,25 @@ const CarrierChatPage = () => {
                                                 onChange={handleFileChangeForButton}
                                                 multiple
                                             />
-                                                <button className="send-bol-button"
-                                                        onClick={() => fileInputRef.current.click()}>Send BOL
-                                                </button>
+                                            <button className="send-bol-button"
+                                                    onClick={() => fileInputRef.current.click()}>Send BOL
+                                            </button>
 
                                             <Button
                                                 variant="attachMaterial"
+                                                onClick={() => fileInputRefChatFile.current.click()} // Trigger file input click
                                             >
                                                 <AttachFile/>
                                             </Button>
+
+                                            <input
+                                                type="file"
+                                                ref={fileInputRefChatFile}
+                                                style={{display: 'none'}}
+                                                onChange={handleFileChange}
+                                                multiple
+                                            />
+
                                             <input
                                                 type="text"
                                                 className="chat-input"

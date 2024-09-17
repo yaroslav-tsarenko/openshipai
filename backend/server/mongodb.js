@@ -52,7 +52,7 @@ const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
 const Load = require('./models/Load');
 const LoadBid = require('./models/LoadBid');
-const stripe = require('stripe')('pk_live_51OpgSNJyJQMrMLmUKYcZUuTAZjBS34yI30KVPevbM974WZd25lNOskkoTqMzt1ZjASYA1NKgcN02ONX469pOjWlR00yn6CSBN3');
+const stripe = require('stripe')('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');
 require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
@@ -643,8 +643,8 @@ app.put('/update-driver-notifications/:driverID', async (req, res) => {
     const { driverNotificationFromDriver, driverNotificationFromCarrier, driverNotificationFromAI, driverNotificationOfUpdates } = req.body;
 
     try {
-        const carrier = await Driver.findOne({ driverID });
-        if (!carrier) {
+        const driver = await Driver.findOne({ driverID });
+        if (!driver) {
             return res.status(404).json({ message: 'Carrier not found' });
         }
 
@@ -653,7 +653,7 @@ app.put('/update-driver-notifications/:driverID', async (req, res) => {
         driver.driverNotificationFromAI = driverNotificationFromAI;
         driver.driverNotificationOfUpdates = driverNotificationOfUpdates;
 
-        await carrier.save();
+        await driver.save();
         res.status(200).json({ message: 'Notification settings updated successfully' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -2155,7 +2155,7 @@ app.get('/get-all-transactions/:userID', async (req, res) => {
 });
 
 app.post('/create-checkout-session-2', async (req, res) => {
-    const {amount, loadType, description, shipperID, chatID} = req.body;
+    const { amount, loadType, description, shipperID, chatID } = req.body;
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -2163,9 +2163,9 @@ app.post('/create-checkout-session-2', async (req, res) => {
                 price_data: {
                     currency: 'usd',
                     product_data: {
-                        name: (loadType + (description))
+                        name: `${loadType} ${description}`
                     },
-                    unit_amount: amount * 100,
+                    unit_amount: Math.round(amount * 100), // Round to the nearest integer
                 },
                 quantity: 1,
             }],
@@ -2184,10 +2184,10 @@ app.post('/create-checkout-session-2', async (req, res) => {
 
         await newTransaction.save();
         console.log("Transaction Saved");
-        res.json({sessionId: session.id});
+        res.json({ sessionId: session.id });
     } catch (error) {
         console.error('Error creating checkout session:', error);
-        res.status(500).json({error: 'An error occurred while creating the checkout session.'});
+        res.status(500).json({ error: 'An error occurred while creating the checkout session.' });
     }
 });
 

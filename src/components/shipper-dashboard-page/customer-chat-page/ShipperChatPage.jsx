@@ -11,6 +11,7 @@ import useSound from 'use-sound';
 import notificationSound from '../../../assets/sound-effects/message-sent.mp3';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
+import styles from "./ShipperChatPage.module.scss";
 import {loadStripe} from '@stripe/stripe-js';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader, FadeLoader} from "react-spinners";
@@ -212,12 +213,10 @@ const ShipperChatPage = () => {
             files: fileUrls, // Include file URLs
         };
 
-        // Clear the input message and attached files
         setInputMessage('');
         setSelectedFiles([]);
         setFilePreviews([]);
 
-        // Send the message via Socket.IO
         socketRef.current.emit('customer message', {
             message: newMessage,
             chatID: selectedChatID,
@@ -226,7 +225,6 @@ const ShipperChatPage = () => {
 
         setChatMessages((oldMessages) => [...oldMessages, newMessage]);
 
-        // Save the message to the backend
         axios.post(`${BACKEND_URL}/save-chat-message`, {
             chatID: selectedChatID,
             receiver: 'carrierID',
@@ -494,31 +492,19 @@ const ShipperChatPage = () => {
     const handlePayClick = async () => {
         setIsProcessingPayment(true);
         try {
-            // Fetch the current shipper's selected card details
-            const shipperResponse = await axios.get(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
-            const userShipperSelectedCard = shipperResponse.data.userShipperSelectedCard;
-            console.log(userShipperSelectedCard);
-
-            const cardResponse = await axios.get(`${BACKEND_URL}/get-card-details/${userShipperSelectedCard}`);
-            const {cardNumber, expirationDate, cvv} = cardResponse.data;
-            console.log(cardNumber, expirationDate, cvv);
-
-            // Create a Stripe checkout session with the card details
+            // Create a Stripe checkout session with the necessary data
             const response = await axios.post(`${BACKEND_URL}/create-checkout-session-2`, {
                 amount: load.loadPrice * 1.03,
                 loadType: load.loadType,
                 description: " (Including taxes and fee)",
                 shipperID: shipperID,
                 chatID: chatID,
-                cardNumber: cardNumber,
-                expirationDate: expirationDate,
-                cvv: cvv
             });
             const sessionId = response.data.sessionId;
 
             // Redirect to the Stripe checkout page
             const stripe = await stripePromise;
-            const {error} = await stripe.redirectToCheckout({sessionId});
+            const { error } = await stripe.redirectToCheckout({ sessionId });
 
             if (error) {
                 console.log(error);
@@ -562,22 +548,16 @@ const ShipperChatPage = () => {
                             />
                         </div>
                         <div className="chat-id-containers-wrapper">
-                            {conversations.length === 0 ? (
-                                <p className="chat-message-alert">Currently you don't have any active chats</p>
-                            ) : (
-                                conversations
-                                    .filter(conversation => conversation.shipperID === shipperID)
-                                    .map((conversation, index) => (
-                                        <div key={index} className="chat-id-container"
-                                             onClick={() => handleChatSelection(conversation.chatID)}>
-                                            <UserChatAvatar className="user-avatar-chat"/>
-                                            <div className="chat-details">
-                                                <h3>{/*{conversation.carrierID}*/} FedEx - Vehicle Load</h3>
-                                                <h4>{/*{conversation.chatID}*/} Typing...</h4>
-                                            </div>
-                                        </div>
-                                    ))
-                            )}
+                            {conversations.map((conversation, index) => (
+                                <div key={index} className="chat-id-container"
+                                     onClick={() => handleChatSelection(conversation.chatID)}>
+                                    <UserChatAvatar className="user-avatar-chat"/>
+                                    <div className="chat-details">
+                                        <h3>Shipper Name</h3>
+                                        <h4>{conversation.chatID}</h4>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                     <div className="chat-messages-content">
@@ -680,10 +660,13 @@ const ShipperChatPage = () => {
                                                                             style={{color: "#bfbfbf"}}>Shipper</div>}
                                                                 </div>}
                                                         </div>
-                                                        {message.text}
-                                                        {message.files && message.files.map((fileUrl, idx) => (
-                                                            <img key={idx} src={fileUrl} alt="Attachment" style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />
-                                                        ))}
+                                                        <div className={styles.messagesContent}>
+                                                            {message.text}
+                                                            {message.files && message.files.map((fileUrl, idx) => (
+                                                                <img key={idx} src={fileUrl} alt="Attachment" style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: '10px' }} />
+                                                            ))}
+                                                        </div>
+
                                                         <div style={{
                                                             color: message.sender === 'shipperID' ? 'white' : 'darkgrey',
                                                             alignItems: 'end',
