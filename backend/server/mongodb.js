@@ -59,6 +59,7 @@ const nodemailer = require('nodemailer');
 const multer = require('multer');
 const {Card} = require("@mui/material");
 const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
+
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
@@ -2154,6 +2155,26 @@ app.get('/get-all-transactions/:userID', async (req, res) => {
     }
 });
 
+
+app.post('/sign-up-shipper-account', async (req, res) => {
+    const { firstName, lastName, email, phone, password } = req.body;
+    const newShipper = new Shipper({
+        userShipperName: firstName,
+        userShipperSecondName: lastName,
+        userShipperPhoneNumber: phone,
+        userShipperEmail: email,
+        userShipperPassword: password,
+        userShipperID: new mongoose.Types.ObjectId().toString() // Generate a unique ID
+    });
+
+    try {
+        await newShipper.save();
+        res.status(201).json({ status: 'Success', message: 'Shipper account created successfully' });
+    } catch (error) {
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
+
 app.post('/create-checkout-session-2', async (req, res) => {
     const { amount, loadType, description, shipperID, chatID } = req.body;
     try {
@@ -2170,8 +2191,8 @@ app.post('/create-checkout-session-2', async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `http://localhost:3000/payment-success/${shipperID}/${chatID}`,
-            cancel_url: 'http://localhost:3000/payment-failed',
+            success_url: `${FRONTEND_URL}/payment-success/${shipperID}/${chatID}`,
+            cancel_url: `${FRONTEND_URL}/payment-failed`,
         });
 
         const newTransaction = new Transaction({
