@@ -46,6 +46,7 @@ import HeavyEquipmentLoadContainer from "../../load-containers/heavy-equipment/H
 import Button from "../../button/Button";
 import LoadFrameButton from "../../load-frame-button/LoadFrameButton";
 import TextInput from "../../text-input/TextInput";
+import LocationTimeDataForm from "../../location-time-data-form/LocationTimeDataForm";
 
 
 const ShipperLoadsPage = () => {
@@ -65,6 +66,10 @@ const ShipperLoadsPage = () => {
     const [distance, setDistance] = useState(null);
     const [selectedLoadType, setSelectedLoadType] = useState('');
     const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const [formData, setFormData] = useState({
         pickupLocation: '',
         pickupLocationDate: '',
@@ -74,7 +79,10 @@ const ShipperLoadsPage = () => {
         deliveryLocationTime: '',
         loadType: '',
         loadSubType: '',
-        loadMilesTrip: ''
+        loadMilesTrip: '',
+        loadLocationStops: [],
+        stops: [],
+        loadOriginDeliveryPreference: []
     });
 
     const selectStyles = {
@@ -95,54 +103,6 @@ const ShipperLoadsPage = () => {
         fontWeight: 'normal',
         cursor: "pointer",
     };
-
-    console.log("Selected loadSubType:", formData.loadSubType);
-
-    const goToStepThree = () => {
-        setStep(3);
-    };
-
-    const calculateDistance = async (origin, destination) => {
-        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
-        try {
-            const originResponse = await axios.get(
-                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
-            );
-            const destinationResponse = await axios.get(
-                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${destination}`
-            );
-            const originCoords = originResponse.data.features[0].geometry.coordinates;
-            const destinationCoords = destinationResponse.data.features[0].geometry.coordinates;
-            const routeResponse = await axios.post(
-                `https://api.openrouteservice.org/v2/directions/driving-car`,
-                {
-                    coordinates: [originCoords, destinationCoords]
-                },
-                {
-                    headers: {
-                        Authorization: apiKey,
-                        'Content-Type': 'application/json'
-                    }
-                }
-            );
-            const distanceInMeters = routeResponse.data.routes[0].summary.distance;
-            const distanceInMiles = distanceInMeters / 1609.34;
-            setDistance(distanceInMiles.toFixed(2));
-            setFormData((prevData) => ({
-                ...prevData,
-                loadMilesTrip: distanceInMiles.toFixed(2)
-            }));
-        } catch (error) {
-            console.error('Error calculating distance:', error);
-            setDistance(null);
-        }
-    };
-
-    useEffect(() => {
-        if (formData.pickupLocation && formData.deliveryLocation) {
-            calculateDistance(formData.pickupLocation, formData.deliveryLocation);
-        }
-    }, [formData.pickupLocation, formData.deliveryLocation]);
 
     useEffect(() => {
         const filtered = getFilteredLoads(); // Assuming this function applies the selectedFilter to loads
@@ -197,6 +157,14 @@ const ShipperLoadsPage = () => {
         fetchAvatar();
         fetchLoads();
     }, [shipperInfo, shipperID]);
+
+    const handleGoToLoadType = () => {
+        setStep(4);
+    }
+
+    const handleGoStepBack = () => {
+        setStep(2);
+    }
 
 
     const handleNextClick = () => {
@@ -271,6 +239,7 @@ const ShipperLoadsPage = () => {
                 Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
                 ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                 MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
@@ -284,6 +253,7 @@ const ShipperLoadsPage = () => {
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleMobileSidebar}
                 />
                 {createLoadSection ? (
                     <div className="dashboard-content-body">
@@ -389,32 +359,32 @@ const ShipperLoadsPage = () => {
                                         <LoadFrameButton
                                             loadType="Vehicle Load"
                                             imageSrc={VehicleLoadType}
-                                            isChecked={selectedLoadType === "Vehicle Load"}
+                                            isSelected={selectedLoadType === "Vehicle Load"}
                                             onClick={() => handleLoadFrameClick("Vehicle Load")}
                                         />
                                         <LoadFrameButton
                                             loadType="Moving"
                                             imageSrc={MovingLoadType}
-                                            isChecked={selectedLoadType === "Moving"}
+                                            isSelected={selectedLoadType === "Moving"}
                                             onClick={() => handleLoadFrameClick("Moving")}
                                         />
                                         <LoadFrameButton
                                             loadType="Freight"
                                             imageSrc={FreightLoadType}
-                                            isChecked={selectedLoadType === "Freight"}
+                                            isSelected={selectedLoadType === "Freight"}
                                             onClick={() => handleLoadFrameClick("Freight")}
                                         />
                                         <LoadFrameButton
                                             loadType="Heavy Equipment"
                                             imageSrc={HeavyLoadType}
-                                            isChecked={selectedLoadType === "Heavy Equipment"}
+                                            isSelected={selectedLoadType === "Heavy Equipment"}
                                             onClick={() => handleLoadFrameClick("Heavy Equipment")}
                                         />
                                     </div>
                                     <div className="create-load-buttons">
-                                        <Button variant="neutral" buttonText="Go Back"
+                                        <Button variant="neutral-non-responsive" buttonText="Go Back"
                                                 onClick={() => setCreateLoadSection(true)}/>
-                                        <Button variant="default" buttonText="Next" onClick={handleNextClick}/>
+                                        <Button variant="default-non-responsive" buttonText="Next" onClick={handleNextClick}/>
                                     </div>
                                 </CreateLoadContainer>
                             )}
@@ -456,15 +426,13 @@ const ShipperLoadsPage = () => {
                                             </Form.Select>
                                             <div className="create-load-buttons">
                                                 {step > 1 &&
-                                                    <Button variant="neutral"
+                                                    <Button variant="neutral-non-responsive"
                                                             buttonText="Go Back"
                                                             onClick={() => setStep(step - 1)}
                                                     />
                                                 }
-                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                <Button variant="default-non-responsive" buttonText="Next" onClick={handleSubmit}/>
                                             </div>
-
-
                                         </CreateLoadContainer>
                                     )}
                                     {formData.loadType === "Moving" && (
@@ -564,73 +532,14 @@ const ShipperLoadsPage = () => {
                                 </>
                             )}
                             {step === 3 && (
-                                <CreateLoadContainer
-                                    step={3}
-                                    title="Specify origin and delivery locations"
-                                    subTitle="We can better assist you if you provide us with the following information"
-                                >
-                                    <div className="load-creation-input-fields">
-                                        <div className="input-fields-with-date-time">
-                                            <TextInput
-                                                type="text"
-                                                id="pickupLocation"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                onChange={handleLoadChange('pickupLocation')}
-                                                value={formData.pickupLocation}
-                                                required
-                                                label="Pickup Location"
-                                            />
-                                            <TextInput
-                                                type="date"
-                                                id="pickupLocationDate"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                onChange={handleLoadChange('pickupLocationDate')}
-                                                value={formData.pickupLocationDate}
-                                                required
-                                                label="Pickup Date"
-                                            />
-                                        </div>
-                                        <Button variant="slim" buttonText="+ Add Stop"/>
-                                        <div className="input-fields-with-date-time">
-                                            <TextInput
-                                                type="text"
-                                                id="deliveryLocation"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                onChange={handleLoadChange('deliveryLocation')}
-                                                value={formData.deliveryLocation}
-                                                required
-                                                label="Delivery Location"
-                                            />
-                                            <TextInput
-                                                type="date"
-                                                id="deliveryLocationDate"
-                                                autoComplete="off"
-                                                className="google-style-input"
-                                                onChange={handleLoadChange('deliveryLocationDate')}
-                                                value={formData.deliveryLocationDate}
-                                                required
-                                                label="Delivery Date"
-                                            />
-                                        </div>
-                                        <div className="load-preference-checkboxes">
-                                            <CustomCheckBox id="checkbox1" label="I'm flexible"/>
-                                            <CustomCheckBox id="checkbox2" label="In the next few days"/>
-                                            <CustomCheckBox id="checkbox3" label="As soon as possible"/>
-                                        </div>
-                                        {distance !== null && (
-                                            <p className="distance-in-miles">Estimated distance: {distance} miles</p>
-                                        )}
-                                        <div className="create-load-buttons">
-                                            <Button variant="neutral" buttonText="Go Back"
-                                                    onClick={() => setStep(2)}/>
-                                            <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
-                                        </div>
-
-                                    </div>
-                                </CreateLoadContainer>
+                                <LocationTimeDataForm
+                                    formData={formData}
+                                    setFormData={setFormData}
+                                    handleLoadChange={handleLoadChange}
+                                    handleBack={handleGoStepBack}
+                                    handleNext={handleGoToLoadType}
+                                    currentStep={3}
+                                />
                             )}
                             {step === 4 && (
                                 <div className="create-load-wrapper">

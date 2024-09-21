@@ -1,0 +1,24 @@
+.contactUsFormWrapper {
+  margin: 60px auto 60px auto;
+  max-width: 800px;
+  height: fit-content;
+  padding: 30px;
+  border-radius: 30px;
+  border: 1px solid var(--light-grey-hovered);
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+
+  h1{
+    margin: 20px 0 40px 0;
+    font-weight: bold;
+    font-size: 3.5rem;
+
+  }
+}
+
+.contactUsFormContent{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

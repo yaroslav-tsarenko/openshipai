@@ -30,6 +30,8 @@ const CarrierPaymentPage = () => {
     const [cards, setCards] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [loadingCards, setLoadingCards] = useState(true);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {setIsMobileSidebarOpen(!isMobileSidebarOpen);};
     const [formData, setFormData] = useState({
         cardLastNameFirstName: '',
         userID: shipperID,
@@ -302,6 +304,7 @@ const CarrierPaymentPage = () => {
                     Payments={{ visible: true, route: `/carrier-payments/${carrierID}` }}
                     ChatWithShipper={{ visible: true, route: `/carrier-chat-conversation/${carrierID}` }}
                     Settings={{ visible: true, route: `/carrier-settings/${carrierID}` }}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className={styles.shipperDashboardContent}>
                     <HeaderDashboard
@@ -314,6 +317,7 @@ const CarrierPaymentPage = () => {
                         bellLink={`/carrier-settings/${carrierID}`}
                         settingsLink={`/carrier-profile/${carrierID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className={styles.paymentsMethodSelector}>
                         <button>Credit Card</button>

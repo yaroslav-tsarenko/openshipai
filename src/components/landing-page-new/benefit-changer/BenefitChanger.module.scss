@@ -33,8 +33,13 @@
     font-size: 1.8rem;
     color: var(--royal-white);
   }
+}
 
-
+.benefitChangerImage {
+  width: 550px;
+  height: 335px;
+  border-radius: 20px;
+  object-fit: contain;
 }
 
 .content {
@@ -97,6 +102,27 @@
   &:hover {
     transform: rotate(45deg);
     background-color: var(--light-grey);
+  }
+}
+
+.clickToAction {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: fit-content;
+  height: fit-content;
+  display: flex;
+  font-weight: lighter;
+  color: var(--royal-white);
+  padding: 15px 25px 15px 25px;
+  font-size: 2rem;
+  border: none;
+  border-radius: 50px;
+  background: var(--royal-green);
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--royal-green-hovered);
   }
 }
 
@@ -177,13 +203,13 @@
 }
 
 @media screen and (max-width: 1230px) {
-  .benefitChanger{
+  .benefitChanger {
     width: fit-content;
     height: fit-content;
 
-    .content{
+    .content {
 
-      img{
+      img {
         width: 100%;
         height: 100%;
       }

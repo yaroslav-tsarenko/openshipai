@@ -230,3 +230,17 @@
     }
   }
 }
+
+@media screen and (max-width: 768px) {
+  .cardContentWrapper{
+    flex-direction: column;
+  }
+
+  .cardSettingsWrapper{
+    width: 100%;
+  }
+
+  .transactionHistoryWrapper{
+    width: 100%;
+  }
+}

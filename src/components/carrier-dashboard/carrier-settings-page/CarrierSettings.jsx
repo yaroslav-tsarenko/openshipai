@@ -31,6 +31,7 @@ const CarrierSettings = () => {
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const {carrierID} = useParams();
+
     const settingsRef = useRef();
     const fileInputRef = useRef();
     const [isOnAI, setIsOnAI] = useState(false);
@@ -59,7 +60,13 @@ const CarrierSettings = () => {
     const [carrierAvatar, setCarrierAvatar] = useState(null);
     const [problemDescription, setProblemDescription] = useState('');
     const [description, setDescription] = useState('');
-
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+    const handleButtonClick = (setting) => {
+        setActiveSetting(setting);
+    };
     const handleSubmitSupportQoutes = async () => {
         setIsLoading(true);
         try {
@@ -372,6 +379,7 @@ const CarrierSettings = () => {
                     Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                     ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                     Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
@@ -385,8 +393,19 @@ const CarrierSettings = () => {
                         bellLink={`/carrier-settings/${carrierID}`}
                         settingsLink={`/carrier-profile/${carrierID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="settings-container">
+                        <section className="settings-nav-mobile">
+                            <Button variant={activeSetting === 'Account' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Account')}>Account</Button>
+                            <Button variant={activeSetting === 'Password' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Password')}>Password</Button>
+                            <Button variant={activeSetting === 'Notifications' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Notifications')}>Notifications</Button>
+                            <Button variant={activeSetting === 'Help' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Help')}>Help</Button>
+                        </section>
                         <section className="settings-nav">
                             <button
                                 onClick={() => setActiveSetting('Account')}
@@ -512,50 +531,56 @@ const CarrierSettings = () => {
                                             </section>
                                         </div>
                                         <div className="account-info-settings">
-                                               <Grid columns="2, 2fr">
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierFirstName"
-                                                       value={carrierFirstName}
-                                                       onChange={(e) => setCarrierFirstName(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierAccountName : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierLastName"
-                                                       value={carrierLastName}
-                                                       onChange={(e) => setCarrierLastName(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierAccountLastName : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierCompanyName"
-                                                       value={carrierCompanyName}
-                                                       onChange={(e) => setCarrierCompanyName(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierContactCompanyName : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierPhoneNumber"
-                                                       value={carrierPhoneNumber}
-                                                       onChange={(e) => setCarrierPhoneNumber(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierCorporatePhoneNumber : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierEmail"
-                                                       value={carrierEmail}
-                                                       onChange={(e) => setCarrierEmail(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierAccountAccountEmail : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                                   <TextInput
-                                                       type="text"
-                                                       id="carrierDotNumber"
-                                                       value={carrierDotNumber}
-                                                       onChange={(e) => setCarrierDotNumber(e.target.value)}
-                                                       label={carrierInfo ? carrierInfo.carrierDotNumber : <Skeleton variant="text" width={50}/>}
-                                                   />
-                                               </Grid>
+                                            <Grid columns="2, 2fr">
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierFirstName"
+                                                    value={carrierFirstName}
+                                                    onChange={(e) => setCarrierFirstName(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierAccountName :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierLastName"
+                                                    value={carrierLastName}
+                                                    onChange={(e) => setCarrierLastName(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierAccountLastName :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierCompanyName"
+                                                    value={carrierCompanyName}
+                                                    onChange={(e) => setCarrierCompanyName(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierContactCompanyName :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierPhoneNumber"
+                                                    value={carrierPhoneNumber}
+                                                    onChange={(e) => setCarrierPhoneNumber(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierCorporatePhoneNumber :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierEmail"
+                                                    value={carrierEmail}
+                                                    onChange={(e) => setCarrierEmail(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierAccountAccountEmail :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                                <TextInput
+                                                    type="text"
+                                                    id="carrierDotNumber"
+                                                    value={carrierDotNumber}
+                                                    onChange={(e) => setCarrierDotNumber(e.target.value)}
+                                                    label={carrierInfo ? carrierInfo.carrierDotNumber :
+                                                        <Skeleton variant="text" width={50}/>}
+                                                />
+                                            </Grid>
                                         </div>
                                         <Button onClick={handleApplySettings} variant="apply">
                                             {isLoading ?
@@ -578,32 +603,32 @@ const CarrierSettings = () => {
                             )}
                             {activeSetting === 'Password' && (
                                 <>
-                                <h2>Password Settings</h2>
-                                <h5 className="changing-password-text">To change your password, you need to enter
-                                    your old password, then after this you
-                                    need to enter your new password</h5>
-                                <div className="password-fields">
-                                    <Grid columns="1, 1fr">
-                                        <TextInput
-                                            type="password"
-                                            id="oldPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            label="Old Password"
-                                            value={oldPassword}
-                                            onChange={(e) => setOldPassword(e.target.value)}
-                                        />
-                                        <TextInput
-                                            type="password"
-                                            id="newPassword"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            label="New Password"
-                                            value={newPassword}
-                                            onChange={(e) => setNewPassword(e.target.value)}
-                                        />
-                                    </Grid>
-                                </div>
+                                    <h2>Password Settings</h2>
+                                    <h5 className="changing-password-text">To change your password, you need to enter
+                                        your old password, then after this you
+                                        need to enter your new password</h5>
+                                    <div className="password-fields">
+                                        <Grid columns="1, 1fr">
+                                            <TextInput
+                                                type="password"
+                                                id="oldPassword"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                label="Old Password"
+                                                value={oldPassword}
+                                                onChange={(e) => setOldPassword(e.target.value)}
+                                            />
+                                            <TextInput
+                                                type="password"
+                                                id="newPassword"
+                                                autoComplete="off"
+                                                className="google-style-input"
+                                                label="New Password"
+                                                value={newPassword}
+                                                onChange={(e) => setNewPassword(e.target.value)}
+                                            />
+                                        </Grid>
+                                    </div>
                                     <section className="warning-message-section">
                                         <h3>If you change your password, you will be able to change it again after 7
                                             days</h3>
@@ -612,7 +637,7 @@ const CarrierSettings = () => {
                                                 <>
                                                     <RotatingLinesLoader title="Processing..."/>
                                                 </> :
-                                               "Apply"
+                                                "Apply"
                                             }
                                         </Button>
                                     </section>

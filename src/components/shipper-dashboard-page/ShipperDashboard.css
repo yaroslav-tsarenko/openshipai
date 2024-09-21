@@ -27,7 +27,7 @@
 .chat-content {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: 91dvh;
     justify-content: space-between;
     gap: 15px;
     padding: 15px;
@@ -181,6 +181,26 @@
     overflow-x: hidden;
     background: var(--royal-white);
     border-radius: 15px;
+}
+
+.go-to-chats-button{
+    position: absolute;
+    display: flex;
+    font-weight: bold;
+    color: var(--royal-blue);
+    font-size: 1.8rem;
+    border-radius: 30px;
+    text-align: center;
+    top: 60px;
+    align-content: center;
+    align-items: center;
+    justify-content: flex-start;
+    transition: 0.2s ease-in-out;
+    border: none;
+}
+
+.go-to-chats-button:hover{
+    background: var(--light-grey);
 }
 
 .payments-wrapper {
@@ -1347,6 +1367,7 @@
     display: flex;
     justify-content: space-between;
     width: 100%;
+    gap: 10px;
     align-content: center;
 }
 
@@ -1779,7 +1800,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 76dvh;
+    height: 65dvh;
     overflow: scroll;
     overflow-x: hidden;
     padding: 20px;
@@ -2550,6 +2571,10 @@
     transition: 0.2s ease-in-out;
 }
 
+.messages-label{
+    display: none;
+}
+
 .custom-button:hover {
     background: var(--royal-green-hovered);
 }
@@ -2643,7 +2668,28 @@
     }
 }
 
+@media screen and (max-width: 1024px) {
+    .chat-messages-content {
+        display: none;
+    }
+
+    .chat-messages-content.active {
+        display: block;
+    }
+
+    .shipper-deal-conversations-sidebar.hidden {
+        display: none;
+    }
+}
+
 @media screen and (max-width: 768px) {
+
+    .messages-label{
+        display: flex;
+        font-size: 2.3rem;
+        font-weight: bold;
+        color: var(--royal-blue);
+    }
 
     .settings-content{
         padding: 15px;
@@ -2654,6 +2700,10 @@
     }
 
     .shipper-nav-buttons{
+        display: none;
+    }
+
+    .chat-conversation-search-bar{
         display: none;
     }
 
@@ -2669,6 +2719,10 @@
     }
 
     .account-info-details-container{
+        width: 100%;
+    }
+
+    .shipper-deal-conversations-sidebar{
         width: 100%;
     }
 

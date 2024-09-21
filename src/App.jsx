@@ -43,6 +43,16 @@ import VehicleLoad from "./pages/vehicle-load-page/VehicleLoad";
 import MovingLoad from "./pages/moving-load/MovingLoad";
 import HeavyEquipmentLoad from "./pages/heavy-equipment-load/HeavyEquipmentLoad";
 import FreightLoad from "./pages/freight-load/FreightLoad";
+import UserAgreement from "./pages/user-agreement/UserAgreement";
+import LeadGenerate from "./pages/lead-generate/LeadGenerate";
+import TimeSchedule from "./pages/time-schedule/TimeSchedule";
+import TermsAndConditions from "./pages/terms-and-conditions/TermsAndConditions";
+import WhyChooseUs from "./pages/why-choose-us/WhyChooseUsPage";
+import PricingDirects from "./pages/pricing-directs/PricingDirects";
+import ProjectManagement from "./pages/project-management/ProjectManagement";
+import CookiePolicy from "./pages/cookie-policy/CookiePolicy";
+import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy";
+import ContactUs from "./pages/contanct-us/ContactUs";
 
 function App() {
     return (
@@ -82,6 +92,7 @@ function App() {
 
                 <Route path="/open-page" element={<OpenPage/>}/>
                 <Route path="/ship-page" element={<ShipPage/>}/>
+                <Route path="/user-agreement" element={<UserAgreement/>}/>
                 <Route path="/ai-page" element={<AIPage/>}/>
                 <Route path="/safety-page" element={<SafetyPage/>}/>
                 <Route path="/partners-page" element={<PartnersPage/>}/>
@@ -91,6 +102,15 @@ function App() {
                 <Route path="/moving-load" element={<MovingLoad/>}/>
                 <Route path="/construction-load" element={<HeavyEquipmentLoad/>}/>
                 <Route path="/freight-load" element={<FreightLoad/>}/>
+                <Route path="/lead-generate" element={<LeadGenerate/>}/>
+                <Route path="/time-schedule" element={<TimeSchedule/>}/>
+                <Route path="/terms-and-conditions" element={<TermsAndConditions/>}/>
+                <Route path="/why-choose-us" element={<WhyChooseUs/>}/>
+                <Route path="/pricing-directs" element={<PricingDirects/>}/>
+                <Route path="/project-management" element={<ProjectManagement/>}/>
+                <Route path="/cookie-policy" element={<CookiePolicy/>}/>
+                <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
+                <Route path="/contact-us" element={<ContactUs/>}/>
 
 
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />

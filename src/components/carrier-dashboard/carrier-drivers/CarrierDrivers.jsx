@@ -37,7 +37,10 @@ const CarrierDrivers = () => {
     const [sortOrder, setSortOrder] = useState('');
     const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
-
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         const imageUrl = URL.createObjectURL(file);
@@ -346,6 +349,7 @@ const CarrierDrivers = () => {
                     Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                     ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                     Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
@@ -359,6 +363,7 @@ const CarrierDrivers = () => {
                         bellLink={`/carrier-settings/${carrierID}`}
                         settingsLink={`/carrier-profile/${carrierID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="shipper-dashboard-load-buttons">
                         <div className="nav-items-wrapper">

@@ -57,6 +57,10 @@ const ShipperSettings = () => {
     const [alert, setAlert] = useState(false);
     const [alertData, setAlertData] = useState({status: '', text: '', description: ''});
     const [problemDescription, setProblemDescription] = useState('');
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
 
     const handleSubmitSupportQoutes = async () => {
         setIsLoading(true);
@@ -74,6 +78,12 @@ const ShipperSettings = () => {
             setIsLoading(false);
         }
     };
+
+
+    const handleButtonClick = (setting) => {
+        setActiveSetting(setting);
+    };
+
 
     const handleSubmitFeedback = async () => {
         setIsLoadingFeedback(true);
@@ -351,6 +361,7 @@ const ShipperSettings = () => {
                     Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
                     ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                     MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content-settings">
                     <HeaderDashboard
@@ -364,8 +375,19 @@ const ShipperSettings = () => {
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="settings-container">
+                        <section className="settings-nav-mobile">
+                            <Button variant={activeSetting === 'Account' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Account')}>Account</Button>
+                            <Button variant={activeSetting === 'Password' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Password')}>Password</Button>
+                            <Button variant={activeSetting === 'Notifications' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Notifications')}>Notifications</Button>
+                            <Button variant={activeSetting === 'Help' ? 'default' : 'neutral'}
+                                    onClick={() => handleButtonClick('Help')}>Help</Button>
+                        </section>
                         <section className="settings-nav">
                             <button
                                 onClick={() => setActiveSetting('Account')}

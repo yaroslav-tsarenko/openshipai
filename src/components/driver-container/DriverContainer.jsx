@@ -78,7 +78,10 @@ const DriverContainer = ({
                     Get Driver's Location
                 </button>
             </div>
-            <GoogleMapShowLocation lat={driverLat} lng={driverLng} />
+            <div className="driver-location-map">
+                <GoogleMapShowLocation lat={driverLat} lng={driverLng} />
+
+            </div>
         </div>
     );
 };
