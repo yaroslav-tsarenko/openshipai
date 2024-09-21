@@ -33,6 +33,10 @@ const HeavyEquipmentLoad = () => {
         navigate('/');
     };
 
+    const handleNext = () => {
+        setStep(3);
+    };
+
     return (
         <>
             <Header/>
@@ -42,8 +46,8 @@ const HeavyEquipmentLoad = () => {
                         formData={formData}
                         setFormData={setFormData}
                         handleLoadChange={handleLoadChange}
-                        handleReturnToTheMainPage={handleReturnToTheMainPage}
-                        setStep={setStep}
+                        handleBack={handleReturnToTheMainPage}
+                        handleNext={handleNext}
                         currentStep={3}
                     />
                 )}

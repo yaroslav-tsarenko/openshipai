@@ -6,12 +6,10 @@ const CarrierSchema = new Schema({
     carrierUSDotNumber: {
         type: String,
         unique: true,
-        required: true
     },
     carrierDotNumber: {
         type: String,
         unique: true,
-        required: true
     },
     intrastateCarrier: {
         type: String

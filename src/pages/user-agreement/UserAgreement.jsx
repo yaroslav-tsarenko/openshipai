@@ -1,0 +1,103 @@
+import React from 'react';
+import Header from "../../components/landing-page-new/header/Header";
+import Description from "../../components/landing-page-new/description/Description";
+import LandingPageFooter from "../../components/landing-page/landing-footer/LandingPageFooter";
+
+const UserAgreement = () => {
+    return (
+        <>
+            <Header/>
+
+            <Description
+                title="User Agreement"
+                description="Please read this User Agreement carefully before using our website and services. By using the Open Ship AI platform, you agree to the following terms in their entirety. This User Agreement, combined with the Open Ship AI Privacy Policy and other policies posted on our website and services, outlines the terms and conditions for accessing and using our shipping marketplace services. We reserve the right to modify this agreement at any time. You will be notified of changes through email or updates to our website. Continued use of our services signifies your acceptance of the revised terms."
+                subDescriptions={[
+                    {
+                        title: "1. License and Acceptable Use",
+                        content: "You are granted a non-exclusive, non-transferable license to use Open Ship AI services. You may not reproduce, modify, or distribute our content or intellectual property for public or commercial use without permission."
+                    },
+                    {
+                        title: "2. Definitions",
+                        content: "Shipper: A person or company arranging the shipment of goods. Transportation Service Provider (TSP): Carriers, brokers, and third-party logistics providers offering freight services. Carrier: A party that provides goods transportation for compensation."
+                    },
+                    {
+                        title: "3. Neutral Venue",
+                        content: "Open Ship AI acts as a venue for Shippers and TSPs to interact but is not a party to any shipping agreements made through our platform."
+                    },
+                    {
+                        title: "4. Access to Site and Services",
+                        content: "Our services are only available to users who can legally form binding contracts. By using the platform, you acknowledge that you are of legal age and agree to follow all laws related to shipping and transportation."
+                    },
+                    {
+                        title: "5. Shippers",
+                        content: "You must agree to all terms and conditions set forth by TSPs when booking shipments. Be aware that pickup and delivery dates are estimates and are not guaranteed."
+                    },
+                    {
+                        title: "6. Transportation Service Providers (TSPs)",
+                        content: "TSPs must comply with all applicable laws and are responsible for the services, pricing, and terms they offer on our platform."
+                    },
+                    {
+                        title: "7. Payments",
+                        content: "Open Ship AI offers multiple payment options, including full pre-funded payments and deposits. Payments are processed through Stripe. If disputes arise regarding payments, you must resolve them directly with the other party."
+                    },
+                    {
+                        title: "8. Pricing and Price Changes",
+                        content: "Prices are set by TSPs. Quotes must be all-inclusive, but adjustments may be made based on actual shipment details (weight, dimensions, etc.)."
+                    },
+                    {
+                        title: "9. Fees",
+                        content: "No registration fees are required for basic accounts. However, certain services on the platform may incur fees, such as listing fees, service charges, and transaction fees."
+                    },
+                    {
+                        title: "10. Authorization to Credit/Debit Accounts",
+                        content: "You authorize Open Ship AI to credit or debit your account for any transaction-related fees, penalties, or other charges."
+                    },
+                    {
+                        title: "11. Match Cancellations and Account Credits",
+                        content: "Cancellations are allowed under specific conditions, and both parties must agree to the cancellation for it to be processed."
+                    },
+                    {
+                        title: "12. Mobile Application Usage",
+                        content: "When using the Open Ship AI mobile app, users must comply with all relevant laws and ensure safe use while driving."
+                    },
+                    {
+                        title: "13. Bills of Lading",
+                        content: "For certain shipments, a bill of lading is generated by Open Ship AI. It must be accurate, and any changes must be reflected in the documentation."
+                    },
+                    {
+                        title: "14. In-Home Delivery Program",
+                        content: "Users who participate in our In-Home Delivery program must adhere to the specific terms set out in our Network Service Agreement."
+                    },
+                    {
+                        title: "15. Book It Now Program",
+                        content: "The Book It Now program allows for instant booking of shipments at set prices, bypassing the quote process."
+                    },
+                    {
+                        title: "16. Carrier Cargo Claims",
+                        content: "TSPs are responsible for addressing cargo loss or damage claims. Open Ship AI does not handle claims directly."
+                    },
+                    {
+                        title: "17. Open Ship AI Protection Plan",
+                        content: "Users can opt into the Open Ship AI Protection Plan to safeguard against certain types of shipment losses or damages."
+                    },
+                    {
+                        title: "18. Information Submission",
+                        content: "You are responsible for providing accurate and legal information while using the platform."
+                    },
+                    {
+                        title: "19. Prohibited Activities",
+                        content: "Prohibited activities include attempting to manipulate feedback, circumvent transaction fees, or provide false information."
+                    },
+                    {
+                        title: "20. Right to Suspend or Remove Users",
+                        content: "Open Ship AI reserves the right to suspend or terminate user accounts for violations of the User Agreement."
+                    }
+                ]}
+            />
+
+            <LandingPageFooter/>
+        </>
+    );
+};
+
+export default UserAgreement;

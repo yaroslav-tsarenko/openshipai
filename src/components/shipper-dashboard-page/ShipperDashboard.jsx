@@ -11,6 +11,7 @@ import axios from "axios";
 import {BACKEND_URL} from "../../constants/constants";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import Grid from "../grid-two-columns/Grid";
+import Button from "../button/Button";
 
 const ShipperDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -20,9 +21,19 @@ const ShipperDashboard = () => {
     localStorage.setItem('shipperID',
         shipperID);
     let item = localStorage.getItem('shipperID');
+    const [activeTab, setActiveTab] = useState("Statistics");
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+
+    const handleTabChange = (tab) => {
+        setActiveTab(tab);
+    };
+
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
 
     const [loading, setLoading] = useState(false);
@@ -67,6 +78,7 @@ const ShipperDashboard = () => {
                 Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
                 ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                 MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
@@ -80,7 +92,46 @@ const ShipperDashboard = () => {
                     bellLink={`/shipper-settings/${shipperID}`}
                     settingsLink={`/shipper-profile/${shipperID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleMobileSidebar}
                 />
+                <div className="dashboard-content-mobile">
+                    <div className="dashboard-buttons-mobile">
+                        <Button variant={activeTab === "Statistics" ? "default" : "neutral"}
+                                onClick={() => handleTabChange("Statistics")}>Statistics</Button>
+                        <Button variant={activeTab === "Chat" ? "default" : "neutral"}
+                                onClick={() => handleTabChange("Chat")}>Chat</Button>
+                        <Button variant={activeTab === "Loads" ? "default" : "neutral"}
+                                onClick={() => handleTabChange("Loads")}>Loads</Button>
+                    </div>
+                    <div className="dashboard-content-mobile-body">
+                        {activeTab === "Statistics" && (
+                            <div>
+                                <Grid columns="1, 1fr">
+                                    <MetricCompoent text="Service Rating"
+                                                    description="It’s yours global reputation on service"
+                                                    percent={75}
+                                                    color="#FFC107"/>
+                                    <MetricCompoent text="Success agreement "
+                                                    description="Average percent of  cooperate with carrier"
+                                                    percent={55}
+                                                    color="#0061ff"/>
+                                    <MetricCompoent text="Service Activity"
+                                                    description="Monitoring, service usability, connections"
+                                                    percent={86}
+                                                    color="#009f52"/>
+                                </Grid>
+                            </div>
+                        )}
+                        {activeTab === "Chat" && (
+                            <div>
+                                <OpenShipAIChat userID={shipperID} userRole="shipper"/>
+                            </div>
+                        )}
+                        {activeTab === "Loads" && (
+                            <ActiveLoadsPanel user="driver" userID={shipperID}/>
+                        )}
+                    </div>
+                </div>
                 <div className="shipper-dashboard-content-body">
                     <div className="dashboard-content">
                         <div className="chat-metric-content">

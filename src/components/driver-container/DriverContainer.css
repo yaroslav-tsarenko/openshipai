@@ -91,3 +91,22 @@
 .more-driver-info:hover{
     background: var(--light-grey-hovered);
 }
+
+@media screen and (max-width: 1024px) {
+
+    .driver-container-card{
+        padding: 0 0 0 20px;
+    }
+    .driver-photo-example{
+        display: none;
+    }
+
+    .driver-location-map{
+        display: none;
+    }
+
+    .driver-info-action-container button{
+        font-size: 0.9rem;
+        width: 100%;
+    }
+}

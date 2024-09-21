@@ -1,7 +1,7 @@
 * {
     color: var(--grey);
     font-family: "Google Sans", "sans-serif";
-
+  /*  outline: 1px solid #6a6e41 !important;*/
 }
 
 html {

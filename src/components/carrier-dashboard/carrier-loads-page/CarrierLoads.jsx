@@ -39,6 +39,10 @@ const CarrierLoads = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const {carrierID} = useParams();
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
@@ -80,6 +84,7 @@ const CarrierLoads = () => {
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
@@ -92,6 +97,7 @@ const CarrierLoads = () => {
                     bellLink={`/carrier-settings/${carrierID}`}
                     settingsLink={`/carrier-profile/${carrierID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleMobileSidebar}
                 />
                 <div className="carrier-dashboard-content-body">
                     <div className="taken-loads-container">

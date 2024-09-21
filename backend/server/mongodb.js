@@ -4,7 +4,7 @@ const port = 8080;
 const axios = require('axios');
 const mongoose = require('mongoose');
 const path = require('path');
-const shortid = require('shortid'); // Import the 'shortid' package
+const shortid = require('shortid');
 const cors = require('cors');
 const {OAuth2Client} = require('google-auth-library');
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -15,6 +15,7 @@ const SubscribedCarriers = require('./models/SubscribedCarriers');
 const Feedback = require('./models/Feedback');
 const SupportQoutes = require('./models/SupportQoutes');
 const SubscribedShippers = require('./models/SubscribedShippers');
+const SubscribedUsersForNewsletter = require('./models/SubcribedUsersForNewsletter');
 const Shipper = require('./models/Shipper');
 const ConfirmedLoad = require('./models/ConfirmedLoad');
 const TakenLoad = require('./models/TakenLoad');
@@ -24,6 +25,7 @@ const Carrier = require('./models/Carrier');
 const CommercialTruckLoad = require('./models/CommercialTruckLoad');
 const CarOrLightTruckLoad = require('./models/CarOrLightTruckLoad');
 const Transaction = require('./models/Transaction');
+const ContactRequestUser = require('./models/ContactRequestUser');
 const ConstructionEquipmentLoad = require('./models/ConstructionEquipmentLoad');
 const MotoEquipmentLoad = require('./models/MotoEquipmentLoad');
 const VehicleLoad = require('./models/VehicleLoad');
@@ -81,6 +83,36 @@ const storage = multer.diskStorage({
     }
 });
 
+app.post('/sign-up-carrier-account', async (req, res) => {
+    const {
+        firstName,
+        lastName,
+        email,
+        phone,
+        companyName,
+        datNumber,
+        password,
+        carrierUSDotNumber,
+    } = req.body;
+
+    try {
+        const newCarrier = new Carrier({
+            carrierCorporateNameLastName: `${firstName} ${lastName}`,
+            carrierCorporatePhoneNumber: phone,
+            carrierContactCompanyName: companyName,
+            carrierDotNumber: datNumber,
+            carrierAccountAccountEmail: email,
+            carrierAccountPassword: password,
+            carrierUSDotNumber: carrierUSDotNumber,
+        });
+
+        await newCarrier.save();
+        res.status(201).json({ status: 'Success', message: 'Carrier account created successfully' });
+    } catch (error) {
+        console.error('Error creating carrier:', error);
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
 
 app.use('/uploads', express.static('uploads'));
 
@@ -531,6 +563,37 @@ app.get('/get-carrier-avatar/:carrierID', async (req, res) => {
         res.json({ carrierAvatar: carrier.carrierAvatar });
     } catch (err) {
         res.status(500).json({ message: err.message });
+    }
+});-
+
+app.post('/subscribe-to-newsletter', async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        const newSubscriber = new SubscribedUsersForNewsletter({ email });
+        await newSubscriber.save();
+        res.status(200).json({ message: 'Subscription successful' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.post('/submit-contact-request', async (req, res) => {
+    const { name, lastName, email, phoneNumber, description } = req.body;
+
+    const newContactRequest = new ContactRequestUser({
+        name,
+        lastName,
+        email,
+        phoneNumber,
+        description
+    });
+
+    try {
+        const savedContactRequest = await newContactRequest.save();
+        res.status(201).json({ status: 'Success', contactRequest: savedContactRequest });
+    } catch (error) {
+        res.status(500).json({ status: 'Error', message: error.message });
     }
 });
 
@@ -2191,8 +2254,8 @@ app.post('/create-checkout-session-2', async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${FRONTEND_URL}/payment-success/${shipperID}/${chatID}`,
-            cancel_url: `${FRONTEND_URL}/payment-failed`,
+            success_url: `https://openshipai.onrender.com/payment-success/${shipperID}/${chatID}`,
+            cancel_url: `https://openshipai.onrender.com/payment-failed`,
         });
 
         const newTransaction = new Transaction({

@@ -22,32 +22,11 @@ const DriverDashboard = () => {
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
-    const [touchStartX, setTouchStartX] = useState(0);
-    const [touchEndX, setTouchEndX] = useState(0);
     const [activeTab, setActiveTab] = useState("Statistics");
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
-
-    const handleTouchStart = (e) => {
-        setTouchStartX(e.targetTouches[0].clientX);
-    };
-
-    const handleTouchMove = (e) => {
-        setTouchEndX(e.targetTouches[0].clientX);
-    };
-
-    const handleTouchEnd = () => {
-        if (touchStartX - touchEndX > 50) {
-            setIsMobileSidebarOpen(false);
-        }
-
-        if (touchEndX - touchStartX > 50) {
-            setIsMobileSidebarOpen(true);
-        }
-    };
-
 
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({

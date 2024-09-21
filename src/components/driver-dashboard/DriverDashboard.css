@@ -822,6 +822,10 @@
     justify-content: space-between;
 }
 
+.pickup-delivery-location-wrapper h3{
+    color: var(--royal-white);
+}
+
 .pickup-delivery-location-input {
     display: flex;
     width: 100%;
@@ -1929,7 +1933,6 @@
     }
 
     .instant-book-load {
-        width: 90px;
     }
 
     .load-driver-direction section h3 {

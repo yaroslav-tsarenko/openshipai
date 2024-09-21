@@ -37,7 +37,7 @@ const FullPageSlider = ({ title, description, images }) => {
     useEffect(() => {
         const interval = setInterval(() => {
             handleNext();
-        }, 3000); // Change image every 3 seconds
+        }, 3000);
         return () => clearInterval(interval);
     }, []);
 

@@ -5,7 +5,7 @@ import TextInput from '../../components/text-input/TextInput';
 import Button from '../../components/button/Button';
 import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 
-const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadChange, handleReturnToTheMainPage, setStep}) => {
+const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadChange, handleBack, handleNext}) => {
     const [distance, setDistance] = useState(null);
     const [selectedPreferences, setSelectedPreferences] = useState(formData.loadOriginDeliveryPreference);
 
@@ -179,8 +179,8 @@ const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadCha
                 {distance !== null &&
                     <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
                 <div className="create-load-buttons">
-                    <Button variant="neutral" buttonText="Go Back" onClick={handleReturnToTheMainPage}/>
-                    <Button variant="default-non-responsive" buttonText="Next" onClick={() => setStep(3)}/>
+                    <Button variant="neutral" buttonText="Go Back" onClick={handleBack}/>
+                    <Button variant="default-non-responsive" buttonText="Next" onClick={handleNext}/>
                 </div>
             </div>
         </CreateLoadContainer>

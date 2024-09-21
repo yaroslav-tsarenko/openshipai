@@ -5,6 +5,7 @@ import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.s
 import {ReactComponent as SendVoiceMessage} from "../../../assets/mic-chat-icon.svg";
 import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
 import "../CarrierDashboard.css";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {ReactComponent as AttachFile} from "../../../assets/skrepka-icon.svg";
@@ -20,6 +21,9 @@ import {SOCKET_URL} from "../../../constants/constants";
 import DriverEntity from "../driver-entity/DriverEntity";
 import Button from "../../button/Button";
 import styles from "./CarrierChatPage.module.scss";
+import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import {Skeleton} from "@mui/material";
+import {FaArrowLeft} from "react-icons/fa6";
 
 const CarrierChatPage = () => {
 
@@ -43,6 +47,7 @@ const CarrierChatPage = () => {
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
     const [isOpen, setIsOpen] = useState(false);
     const [selectedLoad, setSelectedLoad] = useState(null);
+    const [carrierInfo, setCarrierInfo] = useState(null);
     const [load, setLoad] = useState(null);
     const [formData, setFormData] = useState(null);
     const [showEditForm, setShowEditForm] = useState(false);
@@ -61,6 +66,7 @@ const CarrierChatPage = () => {
     const {carrierID} = useParams();
     const {chatID} = useParams();
     const [shipper, setShipper] = useState(null);
+    const [isChatVisible, setIsChatVisible] = useState(false);
     const socketRef = useRef();
     const [inputMessage, setInputMessage] = useState("");
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -70,15 +76,54 @@ const CarrierChatPage = () => {
     const [isApprovalSent, setIsApprovalSent] = useState(false);
     const [showAssignDriverPopup, setShowAssignDriverPopup] = useState(false);
     const [drivers, setDrivers] = useState([]);
+    const [previewSavedImage, setPreviewSavedImage] = useState(null);
+    const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
     const [selectedFiles, setSelectedFiles] = useState([]);
     const [filePreviews, setFilePreviews] = useState([]);
     const fileInputRefChatFile = useRef(null); // Reference to the hidden file input
-
+    const handleBackToConversations = () => {
+        setIsChatVisible(false);
+    };
 
     const toggleAssignDriverPopup = () => {
         setShowAssignDriverPopup(!showAssignDriverPopup);
     };
+
+    useEffect(() => {
+        const fetchDrivers = async () => {
+            const response = await fetch(`${BACKEND_URL}/get-drivers/${carrierID}`);
+            const data = await response.json();
+            setDrivers(data);
+        };
+
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+        getUser();
+        getAvatar();
+        fetchDrivers();
+
+    }, [carrierID]);
 
     const handleFileChangeForButton = (event) => {
         const files = Array.from(event.target.files);
@@ -193,6 +238,7 @@ const CarrierChatPage = () => {
         };
     }, [selectedChatID]);
     const handleChatSelection = async (chatID) => {
+        setIsChatVisible(true);
         setSelectedChatID(chatID);
         try {
             const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
@@ -503,198 +549,222 @@ const CarrierChatPage = () => {
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
-
-            <div className="chat-content">
-                <div className="shipper-deal-conversations-sidebar">
-                    <div className="chat-conversation-search-bar">
-                        <SearchBarIcon width="15"/>
-                        <input type="text" placeholder="Search chat by load ID..."/>
-                    </div>
-                    <div className="chat-id-containers-wrapper">
-                        {conversations.map((conversation, index) => (
-                            <div key={index} className="chat-id-container"
-                                 onClick={() => handleChatSelection(conversation.chatID)}>
-                                <UserChatAvatar className="user-avatar-chat"/>
-                                <div className="chat-details">
-                                    <h3>Shipper Name</h3>
-                                    <h4>{conversation.chatID}</h4>
-                                </div>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-                <div className="chat-messages-content">
-                    <div className="shipper-chat-header">
-                        <div className="shipper-carrier-chat-header">
-                            <span className="status-circle"></span>
-                            <h1 className="chat-user-name">{shipper ? shipper.userShipperName :
-                                <ClipLoader color="#024ecc" loading={true} size={25}/>}</h1>
+            <div className="shipper-dashboard-content">
+                <HeaderDashboard
+                    contentTitle={carrierInfo ?
+                        <>Welcome back, {carrierInfo.carrierAccountName}!</> :
+                        <Skeleton variant="text" width={250}/>}
+                    contentSubtitle="Monitor payments, loads, revenues"
+                    accountName={carrierInfo ? carrierInfo.carrierAccountName : <Skeleton variant="text" width={60}/>}
+                    accountRole={carrierInfo ? carrierInfo.carrierAccountAccountEmail : <Skeleton variant="text" width={40}/>}
+                    profileLink={`/shipper-profile/${carrierID}`}
+                    bellLink={`/shipper-settings/${carrierID}`}
+                    settingsLink={`/shipper-profile/${carrierID}`}
+                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    onBurgerClick={toggleMobileSidebar}
+                />
+                <div className="chat-content">
+                    <div className={`shipper-deal-conversations-sidebar ${isChatVisible ? 'hidden' : ''}`}>
+                        <div className="chat-conversation-search-bar">
+                            <SearchBarIcon width="15"/>
+                            <input type="text" placeholder="Search chat by load ID..."/>
                         </div>
-                        {load && load.loadCarrierConfirmation === 'Confirmed' ? (
-                            load.loadPaymentStatus === 'Paid' ? (
-                                <button className="send-bol-button" onClick={toggleAssignDriverPopup}>
-                                    Assign Driver
-                                </button>
-                            ) : (
-                                <button className="waiting-for-approval-button" disabled>
-                                    <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
-                                    Waiting for Shipper's payment
-                                </button>
-                            )
-                        ) : (
-                            <button className="send-bol-button" onClick={handleCarrierApprove}>
-                                Approve Agreement
-                            </button>
-                        )}
-                    </div>
-
-                    {chatID ? (
-                        <>
-                            {isLoading ? (
-                                <ClipLoader color="#024ecc" loading={true} size={40} className="clip-loader-style"/>
-                            ) : (
-                                <div className="messaging-chat-wrapper">
-                                    <div className="chat-messages">
-                                        {chatMessages.map((message, index) => (
-                                            <div key={index} style={{
-                                                display: 'flex',
-                                                justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
-                                            }}>
-                                                {message.sender !== 'carrierID' && <UserAvatarComponent/>}
-                                                <div style={{
-                                                    backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#dfdfdf',
-                                                    color: message.sender === 'carrierID' ? '#7d7d7d' : '#606060',
-                                                    alignItems: 'start',
-                                                    textAlign: 'left',
-                                                    fontSize: '1.3rem',
-                                                    padding: '10px',
-                                                    maxWidth: '200px',
-                                                    width: '100%',
-                                                    borderRadius: '10px',
-                                                    margin: '10px'
-                                                }}>
-                                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                        {message.sender === 'shipperID' &&
-                                                            <div>
-                                                                {shipper ?
-                                                                    <p style={{color: '#a9a9a9'}}>{shipper.userShipperName}</p> :
-                                                                    <ClipLoader color="#024ecc" loading={true}
-                                                                                size={25}/>
-                                                                }
-                                                            </div>}
-                                                        {message.sender !== 'carrierID' &&
-                                                            <div style={{color: '#a9a9a9'}}>Customer</div>}
-                                                    </div>
-                                                    <div style={{display: 'flex', justifyContent: 'space-between'}}>
-                                                        {message.sender === 'carrierID' &&
-                                                            <div
-                                                                style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
-                                                                {carrier ? carrier.carrierContactCompanyName :
-                                                                    <ClipLoader color="#024ecc" loading={true}
-                                                                                size={25}/>}
-                                                            </div>}
-                                                        {message.sender === 'carrierID' &&
-                                                            <div
-                                                                style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
-                                                                Carrier
-                                                            </div>}
-                                                    </div>
-                                                    <div className={styles.messagesContent}>
-                                                        {message.text}
-                                                        {message.files && message.files.map((fileUrl, idx) => (
-                                                            <img key={idx} src={fileUrl} alt="Attachment" style={{
-                                                                width: '120px',
-                                                                height: '80px',
-                                                                objectFit: 'cover',
-                                                                borderRadius: '10px'
-                                                            }}/>
-                                                        ))}
-                                                    </div>
-                                                    <div style={{
-                                                        color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
-                                                        alignItems: 'end',
-                                                        textAlign: 'right',
-                                                    }}
-                                                    >{new Date(message.date).toLocaleTimeString([], {
-                                                        hour: '2-digit',
-                                                        minute: '2-digit',
-                                                        hour12: false
-                                                    })}</div>
-                                                </div>
-                                                {message.sender === 'carrierID' && <UserAvatarComponent/>}
-                                            </div>
-                                        ))}
+                        <div className="chat-id-containers-wrapper">
+                            {conversations.map((conversation, index) => (
+                                <div key={index} className="chat-id-container"
+                                     onClick={() => handleChatSelection(conversation.chatID)}>
+                                    <UserChatAvatar className="user-avatar-chat"/>
+                                    <div className="chat-details">
+                                        <h3>Shipper Name</h3>
+                                        <h4>{conversation.chatID}</h4>
                                     </div>
-                                    <div className="chat-input-area-wrapper">
-                                        <div className="images-preview-wrapper">
-                                            {filePreviews.map((url, index) => (
-                                                <img key={index} className="file-image-preview" src={url} alt="Preview"
-                                                     style={{width: '120px', height: '80px', borderRadius: '10px'}}/>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                    <div className={`chat-messages-content ${isChatVisible ? 'active' : ''}`}>
+                        <button className="go-to-chats-button" onClick={handleBackToConversations}>
+                            <FaArrowLeft/>
+                        </button>
+                        <div className="shipper-chat-header">
+                            <div className="shipper-carrier-chat-header">
+                                <span className="status-circle"></span>
+                                <h1 className="chat-user-name">{shipper ? shipper.userShipperName :
+                                    <ClipLoader color="#024ecc" loading={true} size={25}/>}</h1>
+                            </div>
+                            {load && load.loadCarrierConfirmation === 'Confirmed' ? (
+                                load.loadPaymentStatus === 'Paid' ? (
+                                    <button className="send-bol-button" onClick={toggleAssignDriverPopup}>
+                                        Assign Driver
+                                    </button>
+                                ) : (
+                                    <button className="waiting-for-approval-button" disabled>
+                                        <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
+                                        Waiting for Shipper's payment
+                                    </button>
+                                )
+                            ) : (
+                                <button className="send-bol-button" onClick={handleCarrierApprove}>
+                                    Approve Agreement
+                                </button>
+                            )}
+                        </div>
+
+                        {chatID ? (
+                            <>
+                                {isLoading ? (
+                                    <ClipLoader color="#024ecc" loading={true} size={40} className="clip-loader-style"/>
+                                ) : (
+                                    <div className="messaging-chat-wrapper">
+                                        <div className="chat-messages">
+                                            {chatMessages.map((message, index) => (
+                                                <div key={index} style={{
+                                                    display: 'flex',
+                                                    justifyContent: message.sender === 'carrierID' ? 'flex-end' : 'flex-start'
+                                                }}>
+                                                    {message.sender !== 'carrierID' && <UserAvatarComponent/>}
+                                                    <div style={{
+                                                        backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#dfdfdf',
+                                                        color: message.sender === 'carrierID' ? '#7d7d7d' : '#606060',
+                                                        alignItems: 'start',
+                                                        textAlign: 'left',
+                                                        fontSize: '1.3rem',
+                                                        padding: '10px',
+                                                        maxWidth: '200px',
+                                                        width: '100%',
+                                                        borderRadius: '10px',
+                                                        margin: '10px'
+                                                    }}>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            {message.sender === 'shipperID' &&
+                                                                <div>
+                                                                    {shipper ?
+                                                                        <p style={{color: '#a9a9a9'}}>{shipper.userShipperName}</p> :
+                                                                        <ClipLoader color="#024ecc" loading={true}
+                                                                                    size={25}/>
+                                                                    }
+                                                                </div>}
+                                                            {message.sender !== 'carrierID' &&
+                                                                <div style={{color: '#a9a9a9'}}>Customer</div>}
+                                                        </div>
+                                                        <div style={{display: 'flex', justifyContent: 'space-between'}}>
+                                                            {message.sender === 'carrierID' &&
+                                                                <div
+                                                                    style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
+                                                                    {carrier ? carrier.carrierContactCompanyName :
+                                                                        <ClipLoader color="#024ecc" loading={true}
+                                                                                    size={25}/>}
+                                                                </div>}
+                                                            {message.sender === 'carrierID' &&
+                                                                <div
+                                                                    style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
+                                                                    Carrier
+                                                                </div>}
+                                                        </div>
+                                                        <div className={styles.messagesContent}>
+                                                            {message.text}
+                                                            {message.files && message.files.map((fileUrl, idx) => (
+                                                                <img key={idx} src={fileUrl} alt="Attachment" style={{
+                                                                    width: '120px',
+                                                                    height: '80px',
+                                                                    objectFit: 'cover',
+                                                                    borderRadius: '10px'
+                                                                }}/>
+                                                            ))}
+                                                        </div>
+                                                        <div style={{
+                                                            color: message.sender === 'carrierID' ? 'white' : 'darkgrey',
+                                                            alignItems: 'end',
+                                                            textAlign: 'right',
+                                                        }}
+                                                        >{new Date(message.date).toLocaleTimeString([], {
+                                                            hour: '2-digit',
+                                                            minute: '2-digit',
+                                                            hour12: false
+                                                        })}</div>
+                                                    </div>
+                                                    {message.sender === 'carrierID' && <UserAvatarComponent/>}
+                                                </div>
                                             ))}
                                         </div>
-                                        <div className="chat-input-area">
-                                            <input
-                                                type="file"
-                                                ref={fileInputRef}
-                                                style={{display: 'none'}}
-                                                onChange={handleFileChangeForButton}
-                                                multiple
-                                            />
-                                            <button className="send-bol-button"
-                                                    onClick={() => fileInputRef.current.click()}>Send BOL
-                                            </button>
+                                        <div className="chat-input-area-wrapper">
+                                            <div className="images-preview-wrapper">
+                                                {filePreviews.map((url, index) => (
+                                                    <img key={index} className="file-image-preview" src={url}
+                                                         alt="Preview"
+                                                         style={{
+                                                             width: '120px',
+                                                             height: '80px',
+                                                             borderRadius: '10px'
+                                                         }}/>
+                                                ))}
+                                            </div>
+                                            <div className="chat-input-area">
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRef}
+                                                    style={{display: 'none'}}
+                                                    onChange={handleFileChangeForButton}
+                                                    multiple
+                                                />
+                                                <button className="send-bol-button"
+                                                        onClick={() => fileInputRef.current.click()}>Send BOL
+                                                </button>
 
-                                            <Button
-                                                variant="attachMaterial"
-                                                onClick={() => fileInputRefChatFile.current.click()} // Trigger file input click
-                                            >
-                                                <AttachFile/>
-                                            </Button>
+                                                <Button
+                                                    variant="attachMaterial"
+                                                    onClick={() => fileInputRefChatFile.current.click()} // Trigger file input click
+                                                >
+                                                    <AttachFile/>
+                                                </Button>
 
-                                            <input
-                                                type="file"
-                                                ref={fileInputRefChatFile}
-                                                style={{display: 'none'}}
-                                                onChange={handleFileChange}
-                                                multiple
-                                            />
+                                                <input
+                                                    type="file"
+                                                    ref={fileInputRefChatFile}
+                                                    style={{display: 'none'}}
+                                                    onChange={handleFileChange}
+                                                    multiple
+                                                />
 
-                                            <input
-                                                type="text"
-                                                className="chat-input"
-                                                placeholder="Type your message here..."
-                                                value={inputMessage}
-                                                onChange={e => setInputMessage(e.target.value)}
-                                                onKeyDown={handleKeyDown}
-                                            />
-                                            <Button
-                                                variant="attachMaterial"
-                                            >
-                                                <SendVoiceMessage/>
-                                            </Button>
-                                            <Button
-                                                variant="sendButton"
-                                                onClick={() => {
-                                                    sendMessage(inputMessage);
-                                                    setInputMessage("");
-                                                }}
-                                            >
-                                                <SendButtonIcon/>
-                                            </Button>
+                                                <input
+                                                    type="text"
+                                                    className="chat-input"
+                                                    placeholder="Type your message here..."
+                                                    value={inputMessage}
+                                                    onChange={e => setInputMessage(e.target.value)}
+                                                    onKeyDown={handleKeyDown}
+                                                />
+                                                <Button
+                                                    variant="attachMaterial"
+                                                >
+                                                    <SendVoiceMessage/>
+                                                </Button>
+                                                <Button
+                                                    variant="sendButton"
+                                                    onClick={() => {
+                                                        sendMessage(inputMessage);
+                                                        setInputMessage("");
+                                                    }}
+                                                >
+                                                    <SendButtonIcon/>
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            )
-                            }
-                        </>
+                                )
+                                }
+                            </>
 
-                    ) : (
-                        <div className="choose-chat-conversation">
-                            <p>Choose chat to start speaking with customer!</p>
-                        </div>
-                    )}
+                        ) : (
+                            <div className="choose-chat-conversation">
+                                <p>Choose chat to start speaking with customer!</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
+
             </div>
 
         </div>
