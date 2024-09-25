@@ -19,7 +19,7 @@ import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avata
 import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
 import Button from "../../button/Button";
-import Grid from "../../grid-two-columns/Grid";
+
 
 const CarrierTakeLoad = () => {
     const [sortOrder, setSortOrder] = useState(null);
@@ -122,7 +122,7 @@ const CarrierTakeLoad = () => {
                 return response.json();
             })
             .then(data => {
-                setLoads(data); // Assuming the API returns an array of loads
+                setLoads(data);
             })
             .catch(error => {
                 console.error('Error fetching loads:', error);
