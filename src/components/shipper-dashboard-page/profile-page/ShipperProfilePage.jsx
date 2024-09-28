@@ -44,7 +44,7 @@ import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg
 import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
 import {ReactComponent as CreateLoadIcon} from "../../../assets/create-load-icon-plus.svg";
 import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
-import {ReactComponent as CarrierLogo} from "../../../assets/images/trane-logo-carrier.svg";
+import {ReactComponent as CarrierLogo} from "../../../assets/trane-logo-carrier.svg";
 import Switch from '../../switcher-component/Switch';
 import {useParams} from 'react-router-dom';
 import {BACKEND_URL} from "../../../constants/constants";
