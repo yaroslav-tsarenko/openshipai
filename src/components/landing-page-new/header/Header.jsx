@@ -19,7 +19,7 @@ const Header = () => {
                 <Logo />
             </Link>
             <nav className={styles.navContent}>
-                <Link to={"/open-page"} className={styles.navLink}>Openn</Link>
+                <Link to={"/open-page"} className={styles.navLink}>Open</Link>
                 <Link to={"/ship-page"} className={styles.navLink}>Ship</Link>
                 <Link to={"/ai-page"} className={styles.navLink}>AI</Link>
                 <Link to={"/safety-page"} className={styles.navLink}>Safety</Link>
