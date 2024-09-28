@@ -1,8 +1,8 @@
 import React, {useEffect, useRef, useState} from 'react';
 import SpeechRecognition, {useSpeechRecognition} from 'react-speech-recognition';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
-import {Link, useNavigate} from "react-router-dom";
-import {faBars, faTimes, faTrash} from "@fortawesome/free-solid-svg-icons";
+import { useNavigate} from "react-router-dom";
+import { faTimes} from "@fortawesome/free-solid-svg-icons";
 import {ReactComponent as FaTimesCustomIcon} from "../../assets/customFaTimes.svg";
 import {ReactComponent as FaTimes} from "../../assets/fa-times-icon.svg";
 import {ReactComponent as FaBars} from "../../assets/fa-bars-icon.svg";
@@ -10,18 +10,15 @@ import {ReactComponent as FaMic} from "../../assets/mic-icon.svg";
 import {ReactComponent as FaSend} from "../../assets/send-icon.svg";
 import {ReactComponent as FaPicture} from "../../assets/image-icon.svg";
 import {ReactComponent as FaStars} from "../../assets/stars-svg.svg";
-import {ReactComponent as ChatLogoAI} from "../../assets/ai-logo-chat.svg";
 import {ReactComponent as FaPlus} from "../../assets/plus-blue-icon.svg";
 import {faArrowLeft} from "@fortawesome/free-solid-svg-icons";
-import {faMicrophone, faPaperPlane} from '@fortawesome/free-solid-svg-icons';
+import {faMicrophone} from '@fortawesome/free-solid-svg-icons';
 import {BACKEND_URL} from "../../constants/constants";
-
 import {useParams} from "react-router-dom";
 import {faCamera} from '@fortawesome/free-solid-svg-icons';
 import "./JarvisChatComponent.css";
 import axios from 'axios';
-import {AudioRecorder, useAudioRecorder} from 'react-audio-voice-recorder';
-import Typewriter from "typewriter-effect";
+import {useAudioRecorder} from 'react-audio-voice-recorder';
 
 const JarvisChatComponent = () => {
 
@@ -89,12 +86,7 @@ const JarvisChatComponent = () => {
     const handleCameraClick = () => {
         fileInputRef.current.click();
     };
-    const closePopup = () => {
-        setShowCategoryPopup(false);
-    };
-    const deleteAudio = () => {
-        setAudioUrl('');
-    };
+
     const categoryOptions = ["My Details", "I want to deliver a vehicle", "Freight", "Heavy Equipment", "Residential Commercial Moving", "I need free consultation", "Other"];
     const handleCategorySelect = (category) => {
         const lowerCaseCategory = category.toLowerCase();
@@ -123,11 +115,7 @@ const JarvisChatComponent = () => {
             }
         }
     };
-    const handlePhotoUpload = async (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
 
-    };
     useEffect(() => {
         const values = [
             "car or light truck",
@@ -187,99 +175,83 @@ const JarvisChatComponent = () => {
     };
     const isUserMakeStudentMovingForm = (message) => {
         if (!message) return false;
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["student move"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeAutoMotoBoatEquipmentForm = (message) => {
         if (!message) return false;
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["auto moto boat equipment"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeMilitaryMovingForm = (message) => {
         if (!message) return false;
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["military moving"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeHeavyLiftingAndMovingOnlyForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["heavy lifting and moving only"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeOfficeMovingForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["office moving"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
 
     const isUserMakeMovingAndStorageServiceForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["moving storage service"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserNeedFreeConsulationForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["i need free consultation"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeOtherForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["other"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeExpediteLoadForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["expedite"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
 
     const isUserMakeCommercialBusinessMovingForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["commercial/business moving"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeLongDistanceMoving = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["long distance moving"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeLocalMoving = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["local moving (less than 50 miles)"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeFTLLoadForm = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["full truckload (ftl)"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeCarOrLightTruckLoad = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["car or light truck"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeLTLLoad = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["less than truckload (ltl)"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
     const isUserMakeMotoLoad = (message) => {
         if (!message) return false; // Return false if message is null or undefined
-        const lowerCaseMessage = message.toLowerCase();
         const keywords = ["moto equipment"];
         return keywords.some(keyword => message.toLowerCase().includes(keyword.toLowerCase())) ? "showForm" : false;
     };
@@ -352,10 +324,7 @@ const JarvisChatComponent = () => {
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
-    const addAudioElement = (blob) => {
-        const url = URL.createObjectURL(blob);
-        setAudioUrl(url);
-    };
+
     useEffect(() => {
         const handleSwipe = (e) => {
             const touchStartX = e.changedTouches[0].clientX;
@@ -414,30 +383,7 @@ const JarvisChatComponent = () => {
         }
     };
 
-    const handleMouseDown = () => {
-        if (!listening) {
-            SpeechRecognition.startListening();
-            setIsMicActive(true);
-        }
-    };
 
-    const handleMouseUp = () => {
-        if (listening) {
-            SpeechRecognition.stopListening();
-            setIsMicActive(false);
-        }
-        console.log("Transcript: " + transcript);
-        resetTranscript();
-    };
-
-    const isJson = (str) => {
-        try {
-            JSON.parse(str);
-        } catch (e) {
-            return false;
-        }
-        return true;
-    };
 
     const saveChatMessage = (content, role) => {
         axios.post('${BACKEND_URL}/chat-message', {
@@ -453,33 +399,7 @@ const JarvisChatComponent = () => {
         });
     };
 
-    const jsonToTable = (jsonContent) => {
-        try {
-            const userInfo = JSON.parse(jsonContent);
-            return (
-                <table className="beautiful-table">
-                    <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Second Name</th>
-                        <th>Email</th>
-                        <th>Phone Number</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td>{userInfo.name}</td>
-                        <td>{userInfo.secondName}</td>
-                        <td>{userInfo.email}</td>
-                        <td>{userInfo.phoneNumber}</td>
-                    </tr>
-                    </tbody>
-                </table>
-            );
-        } catch (e) {
-            return <p>{jsonContent}</p>;
-        }
-    };
+
     const LocalMovingDeliveryInfoTable = ({deliveryInfo}) => {
         return (
             <table className="beautiful-table">
@@ -543,48 +463,6 @@ const JarvisChatComponent = () => {
                     <td>{deliveryInfo.additionalNotes}</td>
                     <td>{deliveryInfo.customerSignature}</td>
                     <td>{deliveryInfo.date}</td>
-                </tr>
-                </tbody>
-            </table>
-        );
-    };
-    const OfficeInfoTable = ({officeInfo}) => {
-        return (
-            <table className="beautiful-table">
-                <thead>
-                <tr>
-                    <th>Company Name</th>
-                    <th>Primary Contact Name</th>
-                    <th>Primary Contact Phone</th>
-                    <th>Primary Contact Email</th>
-                    <th>Current Office Address</th>
-                    <th>New Office Address</th>
-                    <th>Preferred Moving Date</th>
-                    <th>Preferred Moving Time</th>
-                    <th>Size of Office</th>
-                    <th>Number of Employees</th>
-                    <th>Detailed Inventory List</th>
-                    <th>Special Handling Items</th>
-                    <th>Packing Services Required</th>
-                    <th>Insurance Required</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr>
-                    <td>{officeInfo.companyName}</td>
-                    <td>{officeInfo.primaryContactName}</td>
-                    <td>{officeInfo.primaryContactPhone}</td>
-                    <td>{officeInfo.primaryContactEmail}</td>
-                    <td>{officeInfo.currentOfficeAddress}</td>
-                    <td>{officeInfo.newOfficeAddress}</td>
-                    <td>{officeInfo.preferredMovingDate}</td>
-                    <td>{officeInfo.preferredMovingTime}</td>
-                    <td>{officeInfo.sizeOfOffice}</td>
-                    <td>{officeInfo.numberOfEmployees}</td>
-                    <td>{officeInfo.detailedInventoryList}</td>
-                    <td>{officeInfo.specialHandlingItems}</td>
-                    <td>{officeInfo.packingServicesRequired ? 'Yes' : 'No'}</td>
-                    <td>{officeInfo.insuranceRequired ? 'Yes' : 'No'}</td>
                 </tr>
                 </tbody>
             </table>
