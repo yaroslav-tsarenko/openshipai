@@ -1260,14 +1260,14 @@ body {
 
 .shipper-role-container {
     width: 170px;
-    background: url("../../assets/shipper-image.jpg") no-repeat center;
+    background: url("../../assets/images/shipper-image.jpg") no-repeat center;
     object-fit: cover;
     transition: width 0.3s ease-in-out;
 }
 
 .broker-role-container {
     cursor: pointer;
-    background: url("../../assets/broker-image.jpg") no-repeat center;
+    background: url("../../assets/images/broker-image.jpg") no-repeat center;
     object-fit: cover;
     transition: width 0.3s ease-in-out;
 }
@@ -1289,12 +1289,12 @@ body {
 
 
 .carrier-role-container {
-    background: url("../../assets/carrier-image.jpg") no-repeat center;
+    background: url("../../assets/images/carrier-image.jpg") no-repeat center;
     object-fit: cover;
 }
 
 .dispatch-role-container {
-    background: url("../../assets/dispatch-image.jpg") no-repeat center;
+    background: url("../../assets/images/dispatch-image.jpg") no-repeat center;
     object-fit: cover;
 }
 
@@ -1454,11 +1454,11 @@ body {
 }
 
 .slide-item {
-    background: url("../../assets/shipper-image.jpg") no-repeat center;
+    background: url("../../assets/images/shipper-image.jpg") no-repeat center;
 }
 
 .slider-button {
-    background: url("../../assets/custom-arrow-left.svg") no-repeat center;
+    background: url("../../assets/images/custom-arrow-left.svg") no-repeat center;
 }
 
 .slider-wrapper {
