@@ -564,7 +564,7 @@ app.get('/get-carrier-avatar/:carrierID', async (req, res) => {
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
-});-
+});
 
 app.post('/subscribe-to-newsletter', async (req, res) => {
     const { email } = req.body;
