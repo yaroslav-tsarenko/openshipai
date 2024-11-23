@@ -89,7 +89,6 @@ function App() {
                 <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
                 <Route path="/lat-lang-converter" element={<LatAndLangConverter/>}/>
 
-
                 <Route path="/open-page" element={<OpenPage/>}/>
                 <Route path="/ship-page" element={<ShipPage/>}/>
                 <Route path="/user-agreement" element={<UserAgreement/>}/>

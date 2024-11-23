@@ -9,11 +9,17 @@ import Typewriter from "typewriter-effect";
 import Alert from "../floating-window-success/Alert";
 import {CircularProgress} from "@mui/material";
 import {BACKEND_URL} from "../../constants/constants";
+import Button from "../button/Button";
+import TextInput from "../text-input/TextInput";
+import Grid from "../grid-two-columns/Grid";
+import {ReactComponent as LogoBlue} from "../../assets/logo-blue.svg"
+import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 function SignUpForm() {
     const [captchaValue, setCaptchaValue] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);
+    const animationRef = useGsapAnimation('fadeIn');
     const navigate = useNavigate()
     const [formData, setFormData] = useState({
         userShipperName: '',
@@ -51,140 +57,90 @@ function SignUpForm() {
                 setIsLoading(false);
             });
     };
-    const handleGoogleLoginSignUpSuccess = (credentialResponse) => {
-        const credential = credentialResponse.credential;
 
-        axios.post(`${BACKEND_URL}/google-login`, {token: credential})
-            .then(response => {
-                if (response.data.status === "Success") {
-                    const personalEndpoint = response.data.user.personalEndpoint;
-                    axios.post(`${BACKEND_URL}/create-chat-session`, { userEndpoint: personalEndpoint })
-                        .then(response => {
-                            if (response.data.status === "Success") {
-                                navigate(`/jarvis-chat/${personalEndpoint}/${response.data.chatEndpoint}`);
-                            } else {
-                                console.error('Error creating chat session:', response.data.message);
-                            }
-                        })
-                        .catch(err => {
-                            console.error('Error during chat session creation:', err);
-                        });
-                } else {
-                    console.error('Login failed:', response.data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error during login:', error);
-            });
+    const handleGoogleLoginSignUpSuccess = (credentialResponse) => {
+
     };
+
     return (
         <div className="sign-in-wrapper">
             {message && <Alert text={message}/>}
-
             <div className="left-side">
                 <form onSubmit={handleSubmit} className="sign-up-custom-form">
-                    <h2 className="h2-title-sign-up">Create your account as shipper</h2>
-                    <h3 className="h3-title-sign-up">You won't regret it</h3>
-                    <div className="registration-block-wrapper">
-                        <div className="registration-block">
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="userShipperName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleChange('userShipperName')} value={formData.userShipperName}
-                                    required={true}
-                                />
-                                <label htmlFor="userName" className="google-style-input-label">Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="userShipperSecondName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleChange('userShipperSecondName')}
-                                    value={formData.userShipperSecondName}
-                                    required={true}
-                                />
-                                <label htmlFor="userSecondName" className="google-style-input-label">Last Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="userShipperPhoneNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleChange('userShipperPhoneNumber')}
-                                    value={formData.userShipperPhoneNumber}
-                                    required={true}
-                                />
-                                <label htmlFor="userPhoneNumber" className="google-style-input-label">Phone
-                                    Number</label>
-                            </div>
-                        </div>
-                        <div className="registration-block">
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="userShipperEmail"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleChange('userShipperEmail')} value={formData.userShipperEmail}
-                                    required={true}
-                                />
-                                <label htmlFor="userEmail" className="google-style-input-label">Email</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="password"
-                                    id="userShipperPassword"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleChange('userShipperPassword')} value={formData.userShipperPassword}
-                                    required={true}
-                                />
-                                <label htmlFor="userPassword" className="google-style-input-label">Password</label>
-                            </div>
-                        </div>
-                    </div>
+                    <LogoBlue className="logo-blue"/>
+                    <h2 className="h2-title-login-form">Welcome Back!</h2>
+                    <h3 className="h3-title-login-form">We hope you will be satisfied using our service</h3>
+                    <Grid columns="1, 1fr">
+                        <TextInput
+                            type="text"
+                            id="userShipperName"
+                            value={formData.userShipperName}
+                            onChange={handleChange('userShipperName')}
+                            label="Name"
+                        />
+                        <TextInput
+                            type="text"
+                            id="userShipperSecondName"
+                            value={formData.userShipperSecondName}
+                            onChange={handleChange('userShipperSecondName')}
+                            label="Last Name"
+                        />
+                        <TextInput
+                            type="text"
+                            id="userShipperPhoneNumber"
+                            value={formData.userShipperPhoneNumber}
+                            onChange={handleChange('userShipperPhoneNumber')}
+                            label="Phone Number"
+                        />
+                        <TextInput
+                            type="text"
+                            id="userShipperEmail"
+                            value={formData.userShipperEmail}
+                            onChange={handleChange('userShipperEmail')}
+                            label="Email"
+                        />
+                        <TextInput
+                            type="password"
+                            id="userShipperPassword"
+                            value={formData.userShipperPassword}
+                            onChange={handleChange('userShipperPassword')}
+                            label="Password"
+                        />
+                    </Grid>
                     <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0"
                                onChange={handleCaptchaChange}/>
-                    <button className="sign-up-button" type="submit">
+                    <Button variant="default-non-responsive" className="sign-up-button" type="submit">
                         {isLoading ? <CircularProgress size={30}/>
                             : 'Create Account'}
-                    </button>
-                    <div className="login-with-google-button">
-                        <GoogleLogin
-                            onSuccess={handleGoogleLoginSignUpSuccess}
-                            onError={() => {
-                                console.log("Login Failed");
-                            }}
-                        />
-                    </div>
-                    <div className="question-div">
-                        <p className="question-p">Already have an account?</p>
-                        <Link to="/sign-in" className="sign-in-link-sign-up">Sign in now</Link>
-                    </div>
+                    </Button>
+                        <div className="divider">
+                            <span className="line"></span>
+                            <span className="text">Or Continue with</span>
+                            <span className="line"></span>
+                        </div>
+                        <div className="login-with-google-button">
+                            <GoogleLogin
+                                onSuccess={handleGoogleLoginSignUpSuccess}
+                                onError={() => {
+                                    console.log("Login Failed");
+                                }}
+                            />
+                        </div>
+                        <div className="question-div">
+                            <p className="question-p">Already have an account?</p>
+                            <Link to="/sign-in" className="sign-in-link">Sign in now</Link>
+                        </div>
                 </form>
             </div>
-            <div className="sign-up-right-side">
-                <section className="choosing-role-section">
-                    <h1 className="choosing-role-right-side-title">
-                        <Typewriter
-                            options={{
-                                strings: ["Welcome Shipper"],
-                                autoStart: true,
-                                loop: true,
-                                pauseFor: 4500,
-                            }}
-                        />
+            <div className="right-side-login" ref={animationRef}>
+                <section className="right-side-login-section">
+                    <h1 className="right-side-login-side-title">
+                       WELCOME SHIPPER
                     </h1>
-                    <p className="choosing-role-right-side-description">
+                    <p className="right-side-login-side-description">
                         <Typewriter
                             options={{
-                                strings: ["Discover the best way to ship your goods", "We will help you to find the best carrier"],
+                                strings: ["We appreciate see you", "Hope you will be satisfied"],
                                 autoStart: true,
                                 loop: true,
                             }}

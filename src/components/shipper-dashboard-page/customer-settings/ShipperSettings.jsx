@@ -23,6 +23,7 @@ import TextInput from "../../text-input/TextInput";
 import Popup from "../../popup/Popup";
 import Button from "../../button/Button";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
 const ShipperSettings = () => {
     const [activeSetting, setActiveSetting] = useState('Account');
@@ -58,6 +59,8 @@ const ShipperSettings = () => {
     const [alertData, setAlertData] = useState({status: '', text: '', description: ''});
     const [problemDescription, setProblemDescription] = useState('');
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const settingsNavAnimation = useGsapAnimation("slideDown");
+    const settingsContentAnimation = useGsapAnimation("slideLeft");
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
@@ -388,7 +391,7 @@ const ShipperSettings = () => {
                             <Button variant={activeSetting === 'Help' ? 'default' : 'neutral'}
                                     onClick={() => handleButtonClick('Help')}>Help</Button>
                         </section>
-                        <section className="settings-nav">
+                        <section className="settings-nav" ref={settingsNavAnimation}>
                             <button
                                 onClick={() => setActiveSetting('Account')}
                             >
@@ -414,7 +417,7 @@ const ShipperSettings = () => {
                                 Help
                             </button>
                         </section>
-                        <section className="settings-content">
+                        <section className="settings-content" ref={settingsContentAnimation}>
                             {activeSetting === 'Account' && (
                                 <>
                                     <h2>Profile</h2>

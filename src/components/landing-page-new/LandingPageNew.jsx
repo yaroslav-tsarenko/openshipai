@@ -7,7 +7,7 @@ import vehicleLoadCategory from "../../assets/vehicles-category-image.svg"
 import movingLoadCategory from "../../assets/moving-category-image.svg"
 import heavyLoadCategory from "../../assets/heavy-construction-category.svg"
 import freightLoadCategory from "../../assets/freight-category-image.svg"
-import helpMoneyAI from "../../assets/help-money-ai.svg"
+import { gsap } from 'gsap';
 import shipper from "../../assets/shipper.svg"
 import carrier from "../../assets/carrier.svg"
 import broker from "../../assets/broker.svg"
@@ -39,6 +39,8 @@ import LandingPageFooter from "../landing-page/landing-footer/LandingPageFooter"
 import FAQSection from "./faq-section/FAQSection";
 import FAQItem from "./faq-item/FAQItem";
 import GetStartedSection from "./get-started-section/GetStartedSection";
+import useGsapAnimation from "../../hooks/useGsapAnimation";
+import SEO from "../seo/SEO";
 
 const images = [
     sliderPhoto1,
@@ -56,10 +58,26 @@ const images = [
 ];
 
 const LandingPageNew = () => {
+
+    const headerRef = useGsapAnimation((el) => {
+        gsap.fromTo(el, { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
+    });
+
+    const mainHeadingRef = useGsapAnimation((el) => {
+        gsap.fromTo(el, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1 });
+    });
+
     return (
         <>
-            <Header/>
-            <MainHeading/>
+            <SEO
+                title="OpenShipAI - AI-Powered Shipping & Logistics Platform"
+                description="Learn more about OpenShipAI, our mission, and our team."
+                keywords="about, OpenShipAI, mission, team"
+            />
+                <Header/>
+            <div ref={mainHeadingRef}>
+                <MainHeading/>
+            </div>
             <LoadCategories>
                 <LoadCategory loadLabel="Vehicles & Boats"
                               loadTitle="Cars, Boats, Motorcycles, Rvs, Trailers, Parts"
@@ -195,13 +213,20 @@ const LandingPageNew = () => {
                 title="Full Control Over Your Shipments"
                 description="Take complete command of your logistics with OpenShipAI. From real-time tracking to seamless communication with carriers, our platform gives you full visibility and control over every stage of your shipment process. Monitor your cargo’s location, manage schedules, and handle any changes with ease, ensuring that your shipments are always on track and on time."/>
             <FAQSection>
-                <FAQItem title={"What is OpenShipAI?"} description={"OpenShipAI is an advanced, AI-powered platform that revolutionizes the shipping and logistics industry. It streamlines the process of finding carriers, managing shipments, and optimizing routes, making shipping more efficient and cost-effective for businesses of all sizes."}/>
-                <FAQItem title={"How does OpenShipAI benefit my business?"} description={"OpenShipAI leverages artificial intelligence to automate and enhance your shipping operations. Benefits include reduced shipping costs, faster delivery times, improved route optimization, real-time tracking, and seamless communication between shippers and carriers."}/>
-                <FAQItem title={"Is OpenShipAI suitable for small businesses?"} description={"Absolutely! OpenShipAI is designed to cater to businesses of all sizes. Small businesses can particularly benefit from our platform by accessing competitive shipping rates, optimizing their logistics processes, and expanding their reach without significant overhead costs."}/>
-                <FAQItem title={"What kind of customer support does OpenShipAI provide?"} description={"We offer 24/7 customer support through multiple channels, including live chat, email, and phone. Our dedicated support team is always ready to assist you with any questions or issues you may encounter."}/>
-                <FAQItem title={"Is my data secure with OpenShipAI?"} description={"Data security is a top priority for us. OpenShipAI employs advanced encryption and security protocols to protect your sensitive information. We comply with industry standards and regulations to ensure your data is safe."}/>
-                <FAQItem title={"How does OpenShipAI's AI optimize shipping routes?"} description={"Our AI algorithms analyze various factors such as distance, traffic patterns, weather conditions, and carrier availability to determine the most efficient shipping routes. This optimization reduces transit times and costs."}/>
-                <FAQItem title={"Can I schedule pickups and deliveries through OpenShipAI?"} description={"Yes, you can schedule pickups and deliveries through OpenShipAI. Our platform offers comprehensive logistics management tools that enable you to arrange, track, and manage your shipments seamlessly."}/>
+                <FAQItem title={"What is OpenShipAI?"}
+                         description={"OpenShipAI is an advanced, AI-powered platform that revolutionizes the shipping and logistics industry. It streamlines the process of finding carriers, managing shipments, and optimizing routes, making shipping more efficient and cost-effective for businesses of all sizes."}/>
+                <FAQItem title={"How does OpenShipAI benefit my business?"}
+                         description={"OpenShipAI leverages artificial intelligence to automate and enhance your shipping operations. Benefits include reduced shipping costs, faster delivery times, improved route optimization, real-time tracking, and seamless communication between shippers and carriers."}/>
+                <FAQItem title={"Is OpenShipAI suitable for small businesses?"}
+                         description={"Absolutely! OpenShipAI is designed to cater to businesses of all sizes. Small businesses can particularly benefit from our platform by accessing competitive shipping rates, optimizing their logistics processes, and expanding their reach without significant overhead costs."}/>
+                <FAQItem title={"What kind of customer support does OpenShipAI provide?"}
+                         description={"We offer 24/7 customer support through multiple channels, including live chat, email, and phone. Our dedicated support team is always ready to assist you with any questions or issues you may encounter."}/>
+                <FAQItem title={"Is my data secure with OpenShipAI?"}
+                         description={"Data security is a top priority for us. OpenShipAI employs advanced encryption and security protocols to protect your sensitive information. We comply with industry standards and regulations to ensure your data is safe."}/>
+                <FAQItem title={"How does OpenShipAI's AI optimize shipping routes?"}
+                         description={"Our AI algorithms analyze various factors such as distance, traffic patterns, weather conditions, and carrier availability to determine the most efficient shipping routes. This optimization reduces transit times and costs."}/>
+                <FAQItem title={"Can I schedule pickups and deliveries through OpenShipAI?"}
+                         description={"Yes, you can schedule pickups and deliveries through OpenShipAI. Our platform offers comprehensive logistics management tools that enable you to arrange, track, and manage your shipments seamlessly."}/>
             </FAQSection>
             <GetStartedSection/>
             <LandingPageFooter/>

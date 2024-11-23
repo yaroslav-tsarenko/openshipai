@@ -18,18 +18,23 @@ import Popup from "../../popup/Popup";
 import Card from "../../card/Card";
 import styles from "./ShipperPayments.module.scss"
 import TransactionItem from "../../transaction-item/TransactionItem";
+import Button from "../../button/Button";
+import TextInput from "../../text-input/TextInput";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
 const ShipperPaymentsPage = () => {
     const [selectedCard, setSelectedCard] = useState(null);
     const {shipperID} = useParams();
     const [shipperInfo, setShipperInfo] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [cards, setCards] = useState([]);
     const [transactions, setTransactions] = useState([]);
     const [loadingCards, setLoadingCards] = useState(true);
-
+    const cardsAnimation = useGsapAnimation("slideLeft")
+    const cardContentAnimation = useGsapAnimation("slideUp")
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -126,6 +131,7 @@ const ShipperPaymentsPage = () => {
     };
 
     const handleAddCard = async () => {
+        setLoading(true);
         try {
             const response = await axios.post(`${BACKEND_URL}/save-card`, formData);
             if (response.data.status === 'Success') {
@@ -138,6 +144,7 @@ const ShipperPaymentsPage = () => {
             console.error('Error adding card:', error);
             alert('Error adding card');
         }
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -214,74 +221,58 @@ const ShipperPaymentsPage = () => {
         <>
             {isPopupOpen && (
                 <Popup onClose={togglePopup} title="Add Card" footerText="You need to enter full data of your card">
-                    <div className="google-input-wrapper">
-                        <input
+                    <TextInput
+                        type="text"
+                        id="cardLastNameFirstName"
+                        value={formData.cardLastNameFirstName}
+                        onChange={handleChange('cardLastNameFirstName')}
+                        label="Card Last Name & First Name"
+                        style={{placeholder: 'JOHN DOE'}}
+                    />
+                    <TextInput
+                        type="text"
+                        id="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleCardNumberChange}
+                        label="Card Number"
+                        style={{placeholder: '1234 5678..'}}
+                    />
+                    <div className="card-data-section">
+                        <TextInput
                             type="text"
-                            id="cardLastNameFirstName"
-                            autoComplete="off"
-                            className="google-style-input"
-                            placeholder="JOHN DOE"
-                            required
-                            onChange={handleChange('cardLastNameFirstName')}
-                            value={formData.cardLastNameFirstName}
+                            id="expirationDate"
+                            value={formData.expirationDate}
+                            onChange={handleExpirationDateChange}
+                            label="Expiration Date"
+                            style={{placeholder: 'MM/YY'}}
                         />
-                        <label htmlFor="cardLastNameFirstName" className="google-style-input-label">Card Last Name &
-                            First Name</label>
-                    </div>
-                    <div className="google-input-wrapper">
-                        <input
+                        <TextInput
                             type="text"
-                            id="cardNumber"
-                            autoComplete="off"
-                            className="google-style-input"
-                            placeholder="1234 5678.."
-                            required
-                            onChange={handleCardNumberChange}
-                            value={formData.cardNumber}
+                            id="cvv"
+                            value={formData.cvv}
+                            onChange={handleCVVChange}
+                            label="CVV"
+                            style={{placeholder: 'CVV'}}
                         />
-                        <label htmlFor="cardNumber" className="google-style-input-label">Card Number</label>
                     </div>
-                    <section className="card-data-section">
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="expirationDate"
-                                autoComplete="off"
-                                className="google-style-input"
-                                placeholder="MM/YY"
-                                required
-                                onChange={handleExpirationDateChange}
-                                value={formData.expirationDate}
-                            />
-                            <label htmlFor="expirationDate" className="google-style-input-label">Expiration Date</label>
-                        </div>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="cvv"
-                                autoComplete="off"
-                                className="google-style-input"
-                                placeholder="CVV"
-                                required
-                                onChange={handleCVVChange}
-                                value={formData.cvv}
-                            />
-                            <label htmlFor="cvv" className="google-style-input-label">CVV</label>
-                        </div>
-                    </section>
-                    <div className="custom-select-wrapper">
-                        <select
-                            className="custom-select"
-                            onChange={handleChange('cardPaymentSystem')}
-                            value={formData.cardPaymentSystem}
-                        >
-                            <option value="Visa">Visa</option>
-                            <option value="Master Card">Master Card</option>
-                        </select>
-                    </div>
-                    <button className="custom-button" onClick={handleAddCard}>
-                        Add Card
-                    </button>
+                    <TextInput
+                        type="select"
+                        id="cardPaymentSystem"
+                        value={formData.cardPaymentSystem}
+                        onChange={handleChange('cardPaymentSystem')}
+                        options={[
+                            {value: 'Visa', label: 'Visa'},
+                            {value: 'Master Card', label: 'Master Card'}
+                        ]}
+                    />
+                    <Button variant="apply-non-responsive" onClick={handleAddCard}>
+                        {isLoading ?
+                            <>
+                                <RotatingLinesLoader title="Processing..."/>
+                            </>
+                            :
+                            "Add Card"}
+                    </Button>
                 </Popup>
             )}
             <div className={styles.shipperDashboardContentWrapper}>
@@ -309,10 +300,10 @@ const ShipperPaymentsPage = () => {
                         avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                         onBurgerClick={toggleMobileSidebar}
                     />
-                    <div className={styles.paymentsMethodSelector}>
+                    {/*  <div className={styles.paymentsMethodSelector}>
                         <button>Credit Card</button>
-                    </div>
-                    <div className={styles.allCardsSection}>
+                    </div>*/}
+                    <div ref={cardsAnimation} className={styles.allCardsSection}>
                         <h4>All cards</h4>
                         <section>
                             {loadingCards ? (
@@ -340,7 +331,7 @@ const ShipperPaymentsPage = () => {
                         </section>
 
                     </div>
-                    <div className={styles.cardContentWrapper}>
+                    <div ref={cardContentAnimation} className={styles.cardContentWrapper}>
                         <div className={styles.transactionHistoryWrapper}>
                             <div className={styles.transactionHistoryWrapperHeader}>
                                 <h4>Transaction History</h4>

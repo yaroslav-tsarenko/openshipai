@@ -21,6 +21,7 @@ import {ThemeProvider, createTheme, TextField} from "@mui/material";
 import Switch from "../../switcher-component/Switch";
 import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
+import SEO from "../../seo/SEO";
 
 const FTLLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -212,6 +213,11 @@ const FTLLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubTy
 
     return (
         <div className="ltl-load-container-wrapper">
+            <SEO
+                title="Farm Equipment Load - Reliable and Safe Transport"
+                description="Transport your farm equipment safely and reliably with our specialized services. Contact us for a quote!"
+                keywords="farm equipment transport, reliable farm equipment transport, safe farm equipment transport"
+            />
             {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
             <div className="ltl-load-container-content">

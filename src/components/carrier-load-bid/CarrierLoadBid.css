@@ -141,8 +141,12 @@
 
 .carrier-bid-popup-content {
     display: flex;
+    width: 600px;
     flex-direction: column;
-    padding: 20px;
+}
+
+.carrier-bid-popup-content section{
+    margin: 20px auto;
 }
 
 .carrier-bid-description {

@@ -5,6 +5,7 @@ import {useParams} from "react-router-dom";
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
 import Grid from "../../grid-two-columns/Grid";
+import { FaTimes } from 'react-icons/fa';
 import Button from "../../button/Button";
 import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
 import FormSeparator from "../../form-separator/FormSeparator";
@@ -13,6 +14,9 @@ import {useEffect} from "react";
 import useShipperStore from "../../../stores/landing-registration-shipper/store";
 import RegistrationComponent from "../../registration-component/RegistrationComponent";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import FlexContainer from "../../flex-container/FlexContainer";
+import "./CarOrLightTruckLoadContainer.css";
+import SEO from "../../seo/SEO";
 
 const CarOrLightTruckLoadContainer = ({
                                           pickupLocation,
@@ -31,38 +35,31 @@ const CarOrLightTruckLoadContainer = ({
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
+    const imageInputRef = useRef();
     const [isOperable, setIsOperable] = useState(false);
     const [isConvertible, setIsConvertible] = useState(false);
     const [isModified, setIsModified] = useState(false);
     const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
-
-
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
     const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
-    const { shipperID: paramShipperID } = useParams();
-    const { userShipperID, registrationStatus } = useShipperStore();
+    const {shipperID: paramShipperID} = useParams();
+    const {userShipperID, registrationStatus} = useShipperStore();
     const [shipperID, setShipperID] = useState(paramShipperID || userShipperID);
     const [registeredShipperID, setRegisteredShipperID] = useState(null);
-
     useEffect(() => {
         if (userShipperID) {
             setShipperID(userShipperID);
-            setFormData((prev) => ({ ...prev, shipperID: userShipperID }));
+            setFormData((prev) => ({...prev, shipperID: userShipperID}));
         }
     }, [userShipperID]);
-
-    console.log("ShipperID:", shipperID);
-
-
     const handleRegistrationSuccess = (newShipperID) => {
         setRegisteredShipperID(newShipperID);
         setShowRegistrationPopup(false);
         setRequireRegistrationStatus(false);
         console.log("New shipper ID:" + setShipperID(newShipperID));
     };
-
     const [formData, setFormData] = useState({
         loadType: loadType,
         loadSubType: loadSubType,
@@ -91,6 +88,7 @@ const CarOrLightTruckLoadContainer = ({
         loadHeight: '',
         loadQuantity: '',
         loadOperable: false,
+        loadImages: [],
         loadConvertible: false,
         loadModified: false,
         loadStatus: 'Published',
@@ -109,12 +107,22 @@ const CarOrLightTruckLoadContainer = ({
                 return;
             }
         }
+
         setIsLoading(true);
-        setFormData({
-            ...formData,
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (key === 'loadImages') {
+                value.forEach(image => data.append('loadImages', image));
+            } else {
+                data.append(key, value);
+            }
         });
+
         try {
-            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
             if (response.status === 200) {
                 window.location.reload();
             }
@@ -124,45 +132,73 @@ const CarOrLightTruckLoadContainer = ({
             console.error(error);
             setIsLoadCreatedFailed(true);
         }
+
         setIsLoading(false);
     };
 
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
-
-
-    const handleButtonClick = () => {
-        fileInputRef.current.click();
+    const handleFileButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
     };
-
-    const handleFileChange = (event) => {
+    const handleImageButtonClick = () => {
+        if (imageInputRef.current) {
+            imageInputRef.current.click();
+        }
+    };
+    const handleAddImage = (event) => {
         const files = Array.from(event.target.files);
         if (files.length + imagePreviewUrl.length > 5) {
-            alert('You can only select up to 5 files.');
+            alert('You can only select up to 5 photos.');
             return;
         }
+
         const imageUrls = files.map(file => {
-            if (file.type.startsWith('image/')) {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (['png', 'jpg', 'jpeg', 'svg', 'webp'].includes(fileExtension)) {
                 return URL.createObjectURL(file);
             }
             return null;
         }).filter(url => url !== null);
+
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            loadImages: [...prevFormData.loadImages, ...files]
+        }));
         setImagePreviewUrl(prevImageUrls => [...prevImageUrls, ...imageUrls]);
     };
-
-    const handleFileChangeForButton = (event) => {
+    const handleAddFile = (event) => {
         const files = Array.from(event.target.files);
-        if (files.length > 5) {
+        if (files.length + filePreviewUrl.length > 5) {
             alert('You can only select up to 5 files.');
             return;
         }
-        const fileUrls = files.map(file => URL.createObjectURL(file));
+        const fileUrls = files.map(file => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (['pdf', 'doc', 'docx', 'txt'].includes(fileExtension)) {
+                return URL.createObjectURL(file);
+            }
+            return null;
+        }).filter(url => url !== null);
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
+    };
+    const handleDeleteImage = (index) => {
+        setImagePreviewUrl(prevImageUrls => prevImageUrls.filter((_, i) => i !== index));
+    };
+    const handleDeleteFile = (index) => {
+        setFilePreviewUrl(prevFileUrls => prevFileUrls.filter((_, i) => i !== index));
     };
 
     return (
         <>
+            <SEO
+                title="Car or Light Truck Load Container - Reliable Vehicle Transport"
+                description="Transport your car or light truck with confidence using our reliable load container services. Get a quote now!"
+                keywords="car transport, light truck transport, vehicle load container, reliable vehicle shipping"
+            />
             {isLoadCreatedSuccess && <Alert status="success" text="Success!" description="Load Created Successfully!"/>}
             {isLoadCreatedFailed && <Alert status="error" text="Error!" description="Something went wrong. Try Again"/>}
             {showRegistrationPopup && <RegistrationComponent onRegistrationSuccess={handleRegistrationSuccess}/>}
@@ -240,7 +276,7 @@ const CarOrLightTruckLoadContainer = ({
                                 setLoadTypeOfTrailer(null);
                                 setFormData({...formData, loadTypeOfTrailer: null});
                             }
-                            console.log(loadTypeOfTrailer); // Log the selected value
+                            console.log(loadTypeOfTrailer);
                         }}
                         label="Open Trailer (Cost loss)"
                         tip="Vehicle is open to the trailer?"
@@ -283,38 +319,60 @@ const CarOrLightTruckLoadContainer = ({
                 <FormSeparator title="For better experience attach files"
                                subTitle="AI can better analyze your preference "/>
                 <Grid columns="2, 2fr">
-                    <Button variant="attach-file"
-                            onClick={() => fileInputRef.current.click()}>
+                    <Button variant="attach-file" onClick={handleFileButtonClick}>
                         Attach Files
                     </Button>
                     <input
                         type="file"
                         ref={fileInputRef}
-                        style={{display: 'none'}}
-                        onChange={handleFileChangeForButton}
+                        style={{ display: 'none' }}
+                        onChange={handleAddFile}
                         multiple
                     />
-                    <Button variant="attach-photo" onClick={handleButtonClick}>
+                    <Button variant="attach-photo" onClick={handleImageButtonClick}>
                         Make a Photo
                     </Button>
                     <input
                         type="file"
                         accept="image/*"
+                        ref={imageInputRef}
                         capture="environment"
-                        ref={fileInputRef}
-                        style={{display: 'none'}}
-                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                        onChange={handleAddImage}
                         multiple
                     />
-
                 </Grid>
-                <Grid columns="1, 2fr">
-                    {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
-                        <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
-                    ))}
-                    {filePreviewUrl.map((url, index) => (
-                        <img key={index} src={url} alt="Preview"/>
-                    ))}
+                <Grid columns="1, 1fr">
+                    {imagePreviewUrl.length > 0 ? (
+                        <FlexContainer title="Attached Photos">
+                            {imagePreviewUrl.map((url, index) => (
+                                <div key={index} className="image-preview-container">
+                                    <img width="80" height="60" className="preview-image-for-load" src={url} alt="Preview"/>
+                                    <button className="delete-button-icon" onClick={() => handleDeleteImage(index)}>
+                                        <FaTimes />
+                                    </button>
+                                </div>
+                            ))}
+                        </FlexContainer>
+                    ) : (<></>)}
+                    {filePreviewUrl.length > 0 ? (
+                        <FlexContainer title="Attached Files">
+                            {filePreviewUrl.map((url, index) => {
+                                const fileName = url.split('/').pop().split('.')[0];
+                                const shortFileName = fileName.length > 7 ? `${fileName.substring(0, 7)}...` : fileName;
+                                return (
+                                    <span key={index} className="file-preview-container">
+                                        <button className="delete-button-icon" onClick={() => handleDeleteFile(index)}>
+                                            <FaTimes/>
+                                        </button>
+                                        <p className="file-name">
+                                            File {shortFileName}
+                                        </p>
+                                    </span>
+                                );
+                            })}
+                        </FlexContainer>
+                    ) : (<></>)}
                 </Grid>
                 <FormSeparator title="You can add personal note to this load" subTitle="This is optional"/>
                 <TextInput

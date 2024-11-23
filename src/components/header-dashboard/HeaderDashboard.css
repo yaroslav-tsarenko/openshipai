@@ -43,12 +43,12 @@
 }
 
 .dashboard-searchbar {
-    background: var(--search-bar-background);
+    background: none;
     display: flex;
     width: 300px;
     height: fit-content;
-    padding: 0 15px 0 17px;
-    border-radius: 35px;
+    padding: 7px 15px 7px 15px;
+    border-radius: 15px;
     justify-content: center;
     justify-items: center;
     align-items: center;
@@ -130,12 +130,22 @@
     width: 220px;
     transition: 0.2s ease-in-out;
     cursor: pointer;
+
+    &:hover {
+        background: var(--light-grey-hovered);
+        transition: 0.2s ease-in-out;
+    }
 }
 
 .dashboard-account-info-text {
     text-decoration: none;
-    margin: 10px 0 0 10px;
     height: 50px;
+    display: flex;
+    margin: 0 0 0 5px;
+    align-content: center;
+    flex-direction: column;
+    justify-content: center;
+    justify-items: center;
 }
 
 .account-info-buttons {
@@ -150,6 +160,11 @@
     transition: 0.2s ease-in-out;
 }
 
+.account-info-buttons:hover {
+    background: var(--light-grey-hovered);
+    transition: 0.2s ease-in-out;
+}
+
 .header-dashboard-account-info-name {
     font-size: 1.6rem;
     font-weight: 500;
@@ -160,14 +175,18 @@
 .user-header-avatar {
     border-radius: 50%;
     object-fit: cover;
-    width: 60px;
-    height: 60px;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
 }
 
 .header-dashboard-account-info-role {
     font-size: 1.3rem;
     margin: 0;
-    font-weight: 500;
+    font-weight: 400;
     color: var(--light-grey);
 }
 
@@ -307,10 +326,6 @@
         width: fit-content;
     }
 
-    .dashboard-searchbar{
-        padding: 7px 15px 7px 17px;
-    }
-
     .dashboard-account-info-text {
         display: none;
     }
@@ -319,7 +334,6 @@
 @media screen and (max-width: 768px) {
     .dashboard-content-header{
         padding: 5px;
-
     }
 
     .dashboard-searchbar-expanded{

@@ -12,6 +12,7 @@ import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import Grid from "../grid-two-columns/Grid";
 import Button from "../button/Button";
+import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const CarrierDashboard = () => {
 
@@ -24,6 +25,8 @@ const CarrierDashboard = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
+
+    const animation = useGsapAnimation('slideRight');
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -49,13 +52,10 @@ const CarrierDashboard = () => {
                 console.error('Error:', error);
             }
         };
+
         getUser();
         getAvatar();
     }, [carrierID]);
-
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
 
     return (
         <div className="shipper-dashboard-wrapper">
@@ -69,6 +69,7 @@ const CarrierDashboard = () => {
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
                 isSidebarOpen={isSidebarOpen}
                 isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
+
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard
@@ -121,28 +122,28 @@ const CarrierDashboard = () => {
                             <ActiveLoadsPanel user="carrier" userID={carrierID}/>
                         )}
                     </div>
-                    <div className="shipper-dashboard-content-body">
-                        <div className="dashboard-content">
-                            <div className="chat-metric-content">
-                                <Grid columns="3, 3fr">
-                                    <MetricCompoent text="Service Rating"
-                                                    description="It’s yours global reputation on service"
-                                                    percent={75}
-                                                    color="#FFC107"/>
-                                    <MetricCompoent text="Success agreement "
-                                                    description="Average percent of  cooperate with carrier"
-                                                    percent={55}
-                                                    color="#0061ff"/>
-                                    <MetricCompoent text="Service Activity"
-                                                    description="Monitoring, service usability, connections"
-                                                    percent={86}
-                                                    color="#009f52"/>
-                                </Grid>
-                                <OpenShipAIChat userID={carrierID} userRole="shipper"/>
-                            </div>
-                            <div className="map-content">
-                                <ActiveLoadsPanel shipperID={carrierID}/>
-                            </div>
+                </div>
+                <div className="shipper-dashboard-content-body">
+                    <div className="dashboard-content">
+                        <div className="chat-metric-content">
+                            <Grid columns="3, 3fr">
+                                <MetricCompoent text="Service Rating"
+                                                description="It’s yours global reputation on service"
+                                                percent={75}
+                                                color="#FFC107"/>
+                                <MetricCompoent text="Success agreement "
+                                                description="Average percent of  cooperate with shipper"
+                                                percent={55}
+                                                color="#0061ff"/>
+                                <MetricCompoent text="Service Activity"
+                                                description="Monitoring, service usability, connections"
+                                                percent={86}
+                                                color="#009f52"/>
+                            </Grid>
+                            <OpenShipAIChat userID={carrierID} userRole="shipper"/>
+                        </div>
+                        <div className="map-content">
+                            <ActiveLoadsPanel userID={carrierID} user="carrier"/>
                         </div>
                     </div>
                 </div>

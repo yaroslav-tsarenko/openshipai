@@ -5,6 +5,7 @@ import "./LoadContainer.css"
 import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
 import {Link} from "react-router-dom";
 
+
 const LoadContainer = ({
                            loadStatus,
                            loadPrice,
@@ -25,6 +26,8 @@ const LoadContainer = ({
                            loadTypeOfPackaging,
                            shipperID,
                        }) => {
+
+
     return (
         <>
             <Link to={`/shipper-load/${shipperID}/${loadCredentialID}`} className="loadboard-load-container-wrapper">
@@ -72,7 +75,8 @@ const LoadContainer = ({
                     <GoogleMapShowDirection origin={loadPickupLocation} destination={loadDeliveryLocation}/>
                 </div>
             </Link>
-            <Link to={`/shipper-load/${shipperID}/${loadCredentialID}`} className="loadboard-load-container-wrapper-mobile">
+            <Link to={`/shipper-load/${shipperID}/${loadCredentialID}`}
+                  className="loadboard-load-container-wrapper-mobile">
                 <div>
                     {loadQoutes > 0 && <div className="load-quotes-circle">{loadQoutes}</div>}
                 </div>

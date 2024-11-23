@@ -822,7 +822,7 @@
     justify-content: space-between;
 }
 
-.pickup-delivery-location-wrapper h3{
+.pickup-delivery-location-wrapper h3 {
     color: var(--royal-white);
 }
 
@@ -1144,21 +1144,18 @@
 
 .active-load-container {
     display: flex;
-    width: 97%;
+    width: 100%;
     justify-content: space-between;
-    height: 150px;
-    margin: 20px auto 0 auto;
-    border-bottom: 2px solid var(--light-grey-hovered);
+    height: fit-content;
     transition: 0.2s ease-in-out;
     cursor: pointer;
+    border-radius: 20px;
     padding: 10px;
-
 }
 
 .active-load-container:hover {
-    background: var(--light-grey-hovered);
-    transition: 0.2s ease-in-out;
-    border-radius: 20px;
+    background: var(--light-grey-hovered-2);
+    transition: 0.1s ease-in-out;
 }
 
 
@@ -1167,6 +1164,9 @@
 }
 
 .load-container-status {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 
@@ -1177,6 +1177,7 @@
 .load-container-info {
     height: 100%;
     display: flex;
+    gap: 20px;
     justify-content: space-between;
     align-items: start;
     flex-direction: column;
@@ -1202,7 +1203,7 @@
     color: var(--grey);
     background: var(--light-grey);
     border-radius: 10px;
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     font-weight: 700;
     display: inline-block;
     width: auto;
@@ -1871,7 +1872,6 @@
     grid-template-columns: repeat(3, 3fr);
     width: 100%;
     gap: 10px;
-    margin: 0 0 10px 0;
 }
 
 .active-loads-panel {
@@ -1882,13 +1882,6 @@
 }
 
 @media screen and (max-width: 1380px) {
-    .dashboard-content {
-        display: none;
-    }
-
-    .shipper-dashboard-content-body {
-        display: none;
-    }
 
     .dashboard-content-mobile {
         display: flex;
@@ -1939,7 +1932,7 @@
         font-size: 12px;
     }
 
-    .driver-map-direction-nav{
+    .driver-map-direction-nav {
         border-radius: 0;
     }
 

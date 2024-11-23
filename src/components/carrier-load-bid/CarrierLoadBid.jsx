@@ -8,13 +8,17 @@ import Alert from "../floating-window-success/Alert";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../constants/constants";
 import Button from "../button/Button";
+import Popup from "../popup/Popup";
+import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+
 const CarrierLoadBid = ({
                             loadCarrierID,
                             loadBidPrice,
                             loadID,
                             loadBidCoverLetter,
                             shipperID,
-                            loadEstimatedDeliveryTime
+                            loadEstimatedDeliveryTime,
+                            loadCarrierName
                         }) => {
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const date = new Date(loadEstimatedDeliveryTime);
@@ -78,7 +82,7 @@ const CarrierLoadBid = ({
                 <div className="carrier-load-bid-container-header">
                     <section>
                         <CarrierAvatar/>
-                        <h2>TRANE</h2>
+                        <h2>{loadCarrierName}</h2>
                     </section>
                     <section>
                         <h4>Estimated delivery: {formattedDate}</h4>
@@ -96,41 +100,38 @@ const CarrierLoadBid = ({
                 </div>
             </div>
             {isPopupOpen && (
-                <div className="carrier-bid-popup-overlay">
-                    <div className="carrier-bid-popup">
-                        <div className="carrier-bid-popup-header">
-                            <h2>Applying bid for load: {loadID}</h2>
-                            <button className="close-button" onClick={handleClosePopup}>Close</button>
-                        </div>
-                        <div className="carrier-bid-popup-content">
-                            <div className="carrier-bid-description">
-                                <h3>Before accepting</h3>
-                                <p>Before accepting the bid, you agree to <a href="#">the terms of usage</a> and enter
-                                    into a
-                                    joint venture with the carrier, you will coordinate all further steps with him
-                                    through the service chat and all further steps will be decided in the chat</p>
-                            </div>
-                            <div className="carrier-bid-description">
-                                <h3>After continuing</h3>
-                                <p>After the renewal takes effect and you cannot re-select the carrier, a chat will be
-                                    automatically created between you and the carrier, to which you will be
-                                    automatically
-                                    redirected in a few seconds.d</p>
-                            </div>
-                            <div className="carrier-bid-description">
-                                <h3>Note</h3>
-                                <p>Do not follow the carrier's instructions to conduct business in
-                                    other messengers to prevent scam actions.</p>
-                            </div>
-                            <section style={{width: "250px"}}>
-                                <Button variant="apply" onClick={handleSubmit}>
-                                    {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Continue"}
-                                </Button>
-                            </section>
+                <Popup title={`Applying bid for load: ${loadID}`} onClose={handleClosePopup} footerText="Do not follow the carrier's instructions to conduct business in
+                                        other messengers to prevent scam actions.">
 
+                    <div className="carrier-bid-popup-content">
+                        <div className="carrier-bid-description">
+                            <h3>Before accepting</h3>
+                            <p>Before accepting the bid, you agree to <a href="#">the terms of usage</a> and
+                                enter
+                                into a
+                                joint venture with the carrier, you will coordinate all further steps with him
+                                through the service chat and all further steps will be decided in the chat</p>
                         </div>
+                        <div className="carrier-bid-description">
+                            <h3>After continuing</h3>
+                            <p>After the renewal takes effect and you cannot re-select the carrier, a chat will
+                                be
+                                automatically created between you and the carrier, to which you will be
+                                automatically
+                                redirected in a few seconds.d</p>
+                        </div>
+                        <div className="carrier-bid-description">
+                            <h3>Note</h3>
+                            <p>Do not follow the carrier's instructions to conduct business in
+                                other messengers to prevent scam actions.</p>
+                        </div>
+                        <section style={{width: "250px"}}>
+                            <Button variant="apply" onClick={handleSubmit}>
+                                {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Continue"}
+                            </Button>
+                        </section>
                     </div>
-                </div>
+                </Popup>
             )}
         </>
     );

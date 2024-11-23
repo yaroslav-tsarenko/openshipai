@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ImageSlider.css';
-import {ReactComponent as ArrowLeft} from "../../assets/arrow-left.svg";
-import {ReactComponent as ArrowRight} from "../../assets/arrow-right.svg";
+import { ReactComponent as ArrowLeft } from "../../assets/arrow-left.svg";
+import { ReactComponent as ArrowRight } from "../../assets/arrow-right.svg";
 
 const ImageSlider = ({ images }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -20,22 +20,20 @@ const ImageSlider = ({ images }) => {
 
     return (
         <div className="slider-content-wrapper">
-            <img className="main-image" src={images[currentImageIndex]} alt="main-image"/>
+            <img className="main-image" src={images[currentImageIndex]} alt="main-image" />
             <div className="slider-navigation">
-                <button className="slider-nav-button"  onClick={prevImage}><ArrowLeft/></button>
-                {Array.from({length: 4}).map((_, index) => {
-                    const imageIndex = (currentImageIndex + index) % images.length;
-                    return (
-                        <img
-                            className="thumbnail"
-                            key={imageIndex}
-                            src={images[imageIndex]}
-                            alt="thumbnail"
-                            onClick={() => selectImage(imageIndex)}
-                        />
-                    );
-                })}
-                <button className="slider-nav-button" onClick={nextImage}><ArrowRight/></button>
+                <button className="slider-nav-button" onClick={prevImage}><ArrowLeft /></button>
+                {images.map((image, index) => (
+                    <img
+                        className="thumbnail"
+                        width={55}
+                        key={index}
+                        src={image}
+                        alt="thumbnail"
+                        onClick={() => selectImage(index)}
+                    />
+                ))}
+                <button className="slider-nav-button" onClick={nextImage}><ArrowRight /></button>
             </div>
         </div>
     );

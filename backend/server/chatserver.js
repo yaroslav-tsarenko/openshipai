@@ -22,7 +22,7 @@ mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTop
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Failed to connect to MongoDB:', err));
 
-const openaiApiKey = "sk-None-1fCLhOLKgo2wRlLfBK0ST3BlbkFJ24vjQNEhwuECJK5H6kpN";
+const openaiApiKey = "sk-svcacct-fWEMdzRLnTw8iTX58fzfAj3mxJEg8QhEcGg4N6Nc4mBkFoXMoSFH-tI3KMCjRT3BlbkFJmWzDy7rH5eShMsFM9iV-9MCqmA1Jt7dko1Or1x05xbsZKFHG68nHx7TCRt9DQA";
 
 app.post('/api/chat', async (req, res) => {
     const { message, imageUrl, audioUrl, aiChatID } = req.body;

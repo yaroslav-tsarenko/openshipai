@@ -14,6 +14,7 @@ const Popup = ({ title, onClose, children, footerText, abilityToClose }) => {
                 <div className={styles.content}>
                     {children}
                 </div>
+                <hr/>
                 <div className={styles.footer}>
                     <p>{footerText}</p>
                 </div>

@@ -40,13 +40,12 @@ import {Skeleton} from "@mui/material";
 import {BACKEND_URL} from "../../../constants/constants";//
 import Form from 'react-bootstrap/Form';
 import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
-import RoundedCheckbox from "../../rounded-checkbox/RoundedCheckbox";
-import CustomCheckBox from "../../custom-checkbox/CustomCheckBox";
 import HeavyEquipmentLoadContainer from "../../load-containers/heavy-equipment/HeavyEquipmentContainer";
 import Button from "../../button/Button";
 import LoadFrameButton from "../../load-frame-button/LoadFrameButton";
-import TextInput from "../../text-input/TextInput";
 import LocationTimeDataForm from "../../location-time-data-form/LocationTimeDataForm";
+import SEO from "../../seo/SEO";
+import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
 
 const ShipperLoadsPage = () => {
@@ -57,16 +56,17 @@ const ShipperLoadsPage = () => {
     const [step, setStep] = useState(1);
     const [sortedLoads, setSortedLoads] = useState([]);
     const [shipperInfo, setShipperInfo] = useState(null);
-    const dropdownRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('');
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const [sortOrder, setSortOrder] = useState('');
-    const [distance, setDistance] = useState(null);
     const [selectedLoadType, setSelectedLoadType] = useState('');
     const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const animation = useGsapAnimation('slideUp');
+    const animationButtons = useGsapAnimation('pop');
+
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
@@ -232,595 +232,636 @@ const ShipperLoadsPage = () => {
     };
 
     return (
-        <div className="shipper-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
-                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
-                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
+        <>
+            <SEO
+                title="My Loads - Manage Your Shipments"
+                description="View and manage all your loads and shipments in one place. Keep track of your shipping details and statuses."
+                keywords="shipper loads, manage shipments, shipping details, load management"
             />
-            <div className="shipper-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={shipperInfo ?
-                        <>Your Loads</> :
-                        <Skeleton variant="text" width={250}/>}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
-                    profileLink={`/shipper-profile/${shipperID}`}
-                    bellLink={`/shipper-settings/${shipperID}`}
-                    settingsLink={`/shipper-profile/${shipperID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                    onBurgerClick={toggleMobileSidebar}
+            <div className="shipper-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
-                {createLoadSection ? (
-                    <div className="dashboard-content-body">
-                        <div className="shipper-dashboard-load-buttons">
-                            <section className="shipper-filter-buttons">
-                                <Button variant="filter" onClick={toggleSortPopup}>
-                                    <SortIcon className="button-nav-load-icon"/>
-                                    Sort
-                                </Button>
-                                <Button variant="filter" onClick={toggleFilterPopup}>
-                                    <FilterIcon className="button-nav-load-icon"/>
-                                    Filter
-                                </Button>
-                                {showSortPopup && (
-                                    <div className="overlay-popup-select" onClick={toggleSortPopup}>
-                                        <div className="select-popup" onClick={e => e.stopPropagation()}>
-                                            <div className="select-popup-header">
-                                                <h2>Sort Options</h2>
-                                                <button onClick={toggleSortPopup} className="close-popup-button">Close
-                                                </button>
-                                            </div>
-                                            <div className="select-popup-content">
-                                                <p onClick={handleSortAscending}>In ascending order</p>
-                                                <p onClick={handleSortDescending}>In descending order</p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                )}
-                                {showFilterPopup && (
-                                    <div className="overlay-popup-select" onClick={toggleFilterPopup}>
-                                        <div className="select-popup" onClick={e => e.stopPropagation()}>
-                                            <div className="select-popup-header">
-                                                <h2>Filter Options</h2>
-                                                <button onClick={toggleFilterPopup}
-                                                        className="close-popup-button">Close
-                                                </button>
-                                            </div>
-                                            <div className="select-popup-content">
-                                                <p onClick={() => handleFilterSelection('')}>Show All</p>
-                                                <p onClick={() => handleFilterSelection('Vehicle Load')}>Only Vehicle
-                                                    Load</p>
-                                                <p onClick={() => handleFilterSelection('Moving')}>Only Moving</p>
-                                                <p onClick={() => handleFilterSelection('Freight')}>Only Freight</p>
-                                                <p onClick={() => handleFilterSelection('Heavy Equipment')}>Only Heavy
-                                                    Equipment</p>
+                <div className="shipper-dashboard-content">
+                    <HeaderDashboard
+                        contentTitle={shipperInfo ?
+                            <>Your Loads</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                        accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
+                        profileLink={`/shipper-profile/${shipperID}`}
+                        bellLink={`/shipper-settings/${shipperID}`}
+                        settingsLink={`/shipper-profile/${shipperID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
+                    />
+                    {createLoadSection ? (
+                        <div className="dashboard-content-body">
+                            <div className="shipper-dashboard-load-buttons">
+                                <section className="shipper-filter-buttons" >
+                                    <Button variant="filter" onClick={toggleSortPopup}>
+                                        <SortIcon className="button-nav-load-icon"/>
+                                        Sort
+                                    </Button>
+                                    <Button variant="filter" onClick={toggleFilterPopup}>
+                                        <FilterIcon className="button-nav-load-icon"/>
+                                        Filter
+                                    </Button>
+                                    {showSortPopup && (
+                                        <div className="overlay-popup-select" onClick={toggleSortPopup}>
+                                            <div className="select-popup" onClick={e => e.stopPropagation()}>
+                                                <div className="select-popup-header">
+                                                    <h2>Sort Options</h2>
+                                                    <button onClick={toggleSortPopup}
+                                                            className="close-popup-button">Close
+                                                    </button>
+                                                </div>
+                                                <div className="select-popup-content">
+                                                    <p onClick={handleSortAscending}>In ascending order</p>
+                                                    <p onClick={handleSortDescending}>In descending order</p>
+                                                </div>
                                             </div>
                                         </div>
-                                    </div>
-                                )}
-                            </section>
-                            <section className="shipper-filter-buttons">
-                                <Button variant="apply" onClick={() => setCreateLoadSection(false)}>
-                                    <AddLoadIcon className="add-load-icon"/>
-                                    Create New Load
-                                </Button>
-                            </section>
+                                    )}
+                                    {showFilterPopup && (
+                                        <div className="overlay-popup-select" onClick={toggleFilterPopup}>
+                                            <div className="select-popup" onClick={e => e.stopPropagation()}>
+                                                <div className="select-popup-header">
+                                                    <h2>Filter Options</h2>
+                                                    <button onClick={toggleFilterPopup}
+                                                            className="close-popup-button">Close
+                                                    </button>
+                                                </div>
+                                                <div className="select-popup-content">
+                                                    <p onClick={() => handleFilterSelection('')}>Show All</p>
+                                                    <p onClick={() => handleFilterSelection('Vehicle Load')}>Only
+                                                        Vehicle
+                                                        Load</p>
+                                                    <p onClick={() => handleFilterSelection('Moving')}>Only Moving</p>
+                                                    <p onClick={() => handleFilterSelection('Freight')}>Only Freight</p>
+                                                    <p onClick={() => handleFilterSelection('Heavy Equipment')}>Only
+                                                        Heavy
+                                                        Equipment</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+                                </section>
+                                <section className="shipper-filter-buttons" ref={animationButtons}>
+                                    <Button variant="apply" onClick={() => setCreateLoadSection(false)}>
+                                        <AddLoadIcon className="add-load-icon"/>
+                                        Create New Load
+                                    </Button>
+                                </section>
+                            </div>
+                            <div className="load-containers-wrapper" ref={animation}>
+                                {
+                                    loads.length === 0 ? (
+                                        <p className="load-empty-message">You haven't created any load</p>
+                                    ) : sortedAndFilteredLoads.length > 0 ? (
+                                        sortedAndFilteredLoads.map((load, index) => (
+                                            <div key={index} >
+                                                <LoadContainer
+                                                    loadStatus={load.loadStatus}
+                                                    loadPrice={load.loadPrice}
+                                                    loadTitle={load.loadTitle}
+                                                    loadTrailerType={load.loadTypeOfTrailer}
+                                                    loadCredentialID={load.loadCredentialID}
+                                                    loadWeight={load.loadWeight}
+                                                    loadPickupTime={load.loadPickupDate}
+                                                    loadDeliveryTime={load.loadPickupDate}
+                                                    loadType={load.loadType}
+                                                    shipperID={shipperID}
+                                                    loadPickupLocation={load.loadPickupLocation}
+                                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                                    loadVehicleModel={load.loadVehicleModel}
+                                                    loadVehicleYear={load.loadVehicleYear}
+                                                    loadMilesTrip={load.loadMilesTrip}
+                                                    loadQoutes={load.loadQoutes}
+                                                    loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                                    loadDescription={load.loadDescription}
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="load-empty-message">No loads match the selected filter</p>
+                                    )
+                                }
+                            </div>
                         </div>
-                        <div className="load-containers-wrapper">
-                            {
-                                loads.length === 0 ? (
-                                    <p className="load-empty-message">You haven't created any load</p>
-                                ) : sortedAndFilteredLoads.length > 0 ? (
-                                    sortedAndFilteredLoads.map((load, index) => (
-                                        <div key={index}>
-                                            <LoadContainer
-                                                loadStatus={load.loadStatus}
-                                                loadPrice={load.loadPrice}
-                                                loadTitle={load.loadTitle}
-                                                loadTrailerType={load.loadTypeOfTrailer}
-                                                loadCredentialID={load.loadCredentialID}
-                                                loadWeight={load.loadWeight}
-                                                loadPickupTime={load.loadPickupDate}
-                                                loadDeliveryTime={load.loadPickupDate}
-                                                loadType={load.loadType}
-                                                shipperID={shipperID}
-                                                loadPickupLocation={load.loadPickupLocation}
-                                                loadDeliveryLocation={load.loadDeliveryLocation}
-                                                loadVehicleModel={load.loadVehicleModel}
-                                                loadVehicleYear={load.loadVehicleYear}
-                                                loadMilesTrip={load.loadMilesTrip}
-                                                loadQoutes={load.loadQoutes}
-                                                loadTypeOfPackaging={load.loadTypeOfPackaging}
-                                                loadDescription={load.loadDescription}
+                    ) : (
+                        <div className="shipper-loads-dashboard-content-body">
+                            <div className="create-load-container-content">
+                                {step === 1 && (
+
+                                    <CreateLoadContainer
+                                        step={1}
+                                        title="Choose Load Type"
+                                        subTitle="Use our modern shipment system">
+                                        <div className="load-type-frame-wrapper-content">
+                                            <LoadFrameButton
+                                                loadType="Vehicle Load"
+                                                imageSrc={VehicleLoadType}
+                                                isSelected={selectedLoadType === "Vehicle Load"}
+                                                onClick={() => handleLoadFrameClick("Vehicle Load")}
+                                            />
+                                            <LoadFrameButton
+                                                loadType="Moving"
+                                                imageSrc={MovingLoadType}
+                                                isSelected={selectedLoadType === "Moving"}
+                                                onClick={() => handleLoadFrameClick("Moving")}
+                                            />
+                                            <LoadFrameButton
+                                                loadType="Freight"
+                                                imageSrc={FreightLoadType}
+                                                isSelected={selectedLoadType === "Freight"}
+                                                onClick={() => handleLoadFrameClick("Freight")}
+                                            />
+                                            <LoadFrameButton
+                                                loadType="Heavy Equipment"
+                                                imageSrc={HeavyLoadType}
+                                                isSelected={selectedLoadType === "Heavy Equipment"}
+                                                onClick={() => handleLoadFrameClick("Heavy Equipment")}
                                             />
                                         </div>
-                                    ))
-                                ) : (
-                                    <p className="load-empty-message">No loads match the selected filter</p>
-                                )
-                            }
-                        </div>
-                    </div>
-                ) : (
-                    <div className="shipper-loads-dashboard-content-body">
-                        <div className="create-load-container-content">
-                            {step === 1 && (
+                                        <div className="create-load-buttons">
+                                            <Button variant="neutral-non-responsive" buttonText="Go Back"
+                                                    onClick={() => setCreateLoadSection(true)}/>
+                                            <Button variant="default-non-responsive" buttonText="Next"
+                                                    onClick={handleNextClick}/>
+                                        </div>
+                                    </CreateLoadContainer>
+                                )}
+                                {step === 2 && (
+                                    <>
+                                        {formData.loadType === "Vehicle Load" && (
+                                            <CreateLoadContainer
+                                                step={2}
+                                                title="Specify Vehicle"
+                                                subTitle="By choosing load type, you will redirecting to the current form">
 
-                                <CreateLoadContainer
-                                    step={1}
-                                    title="Choose Load Type"
-                                    subTitle="Use our modern shipment system">
-                                    <div className="load-type-frame-wrapper-content">
-                                        <LoadFrameButton
-                                            loadType="Vehicle Load"
-                                            imageSrc={VehicleLoadType}
-                                            isSelected={selectedLoadType === "Vehicle Load"}
-                                            onClick={() => handleLoadFrameClick("Vehicle Load")}
-                                        />
-                                        <LoadFrameButton
-                                            loadType="Moving"
-                                            imageSrc={MovingLoadType}
-                                            isSelected={selectedLoadType === "Moving"}
-                                            onClick={() => handleLoadFrameClick("Moving")}
-                                        />
-                                        <LoadFrameButton
-                                            loadType="Freight"
-                                            imageSrc={FreightLoadType}
-                                            isSelected={selectedLoadType === "Freight"}
-                                            onClick={() => handleLoadFrameClick("Freight")}
-                                        />
-                                        <LoadFrameButton
-                                            loadType="Heavy Equipment"
-                                            imageSrc={HeavyLoadType}
-                                            isSelected={selectedLoadType === "Heavy Equipment"}
-                                            onClick={() => handleLoadFrameClick("Heavy Equipment")}
-                                        />
+                                                <Form.Select
+                                                    name="loadSubType"
+                                                    value={formData.loadSubType}
+                                                    onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                    style={selectStyles}
+                                                >
+                                                    <option value="CarOrLightTruck" style={optionStyles}>Car or Light
+                                                        Truck
+                                                    </option>
+                                                    <option value="MotoEquipment" style={optionStyles}>Moto Equipment
+                                                    </option>
+                                                    <option value="Powerboats" style={optionStyles}>Powerboats</option>
+                                                    <option value="Sailboats" style={optionStyles}>Sailboats</option>
+                                                    <option value="PersonalWatercrafts" style={optionStyles}>Personal
+                                                        watercrafts
+                                                    </option>
+                                                    <option value="ATVs&PowerSports" style={optionStyles}>ATVs & Power
+                                                        Sports
+                                                    </option>
+                                                    <option value="CommercialTruck" style={optionStyles}>Commercial
+                                                        Truck
+                                                    </option>
+                                                    <option value="Parts" style={optionStyles}>Parts</option>
+                                                    <option value="TrailerAndOtherVehicles" style={optionStyles}>Trailer
+                                                        &
+                                                        Other Vehicles
+                                                    </option>
+                                                    <option value="RV" style={optionStyles}>RV (Recreational Vehicles)
+                                                    </option>
+                                                </Form.Select>
+                                                <div className="create-load-buttons">
+                                                    {step > 1 &&
+                                                        <Button variant="neutral-non-responsive"
+                                                                buttonText="Go Back"
+                                                                onClick={() => setStep(step - 1)}
+                                                        />
+                                                    }
+                                                    <Button variant="default-non-responsive" buttonText="Next"
+                                                            onClick={handleSubmit}/>
+                                                </div>
+                                            </CreateLoadContainer>
+                                        )}
+                                        {formData.loadType === "Moving" && (
+                                            <CreateLoadContainer
+                                                step={2}
+                                                title="Specify Moving Load Type"
+                                                subTitle="By choosing load type, you will redirecting to the current form">
+                                                <Form.Select
+                                                    name="loadType"
+                                                    value={formData.loadSubType}
+                                                    onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                    style={selectStyles}
+                                                >
+                                                    <option value="LocalMoving" style={optionStyles}>Local Moving (less
+                                                        than
+                                                        50 miles)
+                                                    </option>
+                                                    <option value="LongDistanceMoving" style={optionStyles}>Long
+                                                        Distance
+                                                        Moving
+                                                    </option>
+                                                    <option value="CommercialBusinessMoving"
+                                                            style={optionStyles}>Commercial
+                                                        / Business Moving
+                                                    </option>
+                                                    <option value="HeavyLiftingAndMovingOnly" style={optionStyles}>Heavy
+                                                        Lifting and Moving Only
+                                                    </option>
+                                                    <option value="HouseholdItem" style={optionStyles}>Household item
+                                                    </option>
+                                                    <option value="OfficeMoving" style={optionStyles}>Office Moving
+                                                    </option>
+                                                    <option value="CorporateMoving" style={optionStyles}>Corporate
+                                                        Moving
+                                                    </option>
+                                                    <option value="StudentMoving" style={optionStyles}>Student Moving
+                                                    </option>
+                                                    <option value="MilitaryMoving" style={optionStyles}>Military Moving
+                                                    </option>
+                                                </Form.Select>
+                                                <div className="create-load-buttons">
+                                                    {step > 1 && (
+                                                        <Button variant="neutral" buttonText="Go Back"
+                                                                onClick={() => setStep(step - 1)}/>
+                                                    )}
+                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                </div>
+                                            </CreateLoadContainer>
+                                        )}
+
+                                        {formData.loadType === "Freight" && (
+                                            <CreateLoadContainer
+                                                step={2}
+                                                title="Specify Freight Load Type"
+                                                subTitle="By choosing load type, you will redirecting to the current form">
+                                                <Form.Select
+                                                    name="loadType"
+                                                    value={formData.loadSubType}
+                                                    onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                    style={selectStyles}
+                                                >
+                                                    <option value="Expedite" style={optionStyles}>Expedite</option>
+                                                    <option value="LTL" style={optionStyles}>LTL</option>
+                                                    <option value="FTL" style={optionStyles}>FTL</option>
+                                                </Form.Select>
+                                                <div className="create-load-buttons">
+                                                    {step > 1 && (
+                                                        <Button variant="neutral" buttonText="Go Back"
+                                                                onClick={() => setStep(step - 1)}/>
+                                                    )}
+                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                </div>
+                                            </CreateLoadContainer>
+                                        )}
+
+                                        {formData.loadType === "Heavy Equipment" && (
+                                            <CreateLoadContainer
+                                                step={2}
+                                                title="Specify Heavy Load Type"
+                                                subTitle="By choosing load type, you will redirecting to the current form">
+                                                <Form.Select
+                                                    name="loadType"
+                                                    value={formData.loadSubType}
+                                                    onChange={(event) => handleLoadChange("loadSubType")(event)}
+                                                    style={selectStyles}
+                                                >
+                                                    <option value="Farm Equipment" style={optionStyles}>Farm Equipment
+                                                    </option>
+                                                    <option value="Construction Equipment"
+                                                            style={optionStyles}>Construction
+                                                        Equipment
+                                                    </option>
+                                                </Form.Select>
+                                                <div className="create-load-buttons">
+                                                    {step > 1 && (
+                                                        <Button variant="neutral" buttonText="Go Back"
+                                                                onClick={() => setStep(step - 1)}/>
+                                                    )}
+                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                </div>
+                                            </CreateLoadContainer>
+                                        )}
+                                    </>
+                                )}
+                                {step === 3 && (
+                                    <LocationTimeDataForm
+                                        formData={formData}
+                                        setFormData={setFormData}
+                                        handleLoadChange={handleLoadChange}
+                                        handleBack={handleGoStepBack}
+                                        handleNext={handleGoToLoadType}
+                                        currentStep={3}
+                                    />
+                                )}
+                                {step === 4 && (
+                                    <div className="create-load-wrapper">
+                                        {formData.loadSubType === 'RV' &&
+                                            <RVLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'CarOrLightTruck' && (
+                                            <CarOrLightTruckLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                loadDeliveryTime={formData.deliveryLocationTime}
+                                                goBack={goBackToStepThree}
+                                            />
+                                        )}
+                                        {formData.loadSubType === 'Powerboats' &&
+                                            <BoatLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'MotoEquipment' &&
+                                            <MotoEquipmentLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}/>}
+                                        {formData.loadSubType === 'Sailboats' &&
+                                            <SailboatLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'PersonalWatercrafts' &&
+                                            <PersonalWatercraftsLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'ATVs&PowerSports' &&
+                                            <ATVLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'CommercialTruck' &&
+                                            <CommercialTruckLoad
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'Parts' &&
+                                            <PartsLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'TrailerAndOtherVehicles' &&
+                                            <TrailerAndOtherVehicles
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'LocalMoving' &&
+                                            <LocalMovingLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}/>}
+                                        {formData.loadSubType === 'LongDistanceMoving' &&
+                                            <LongDistanceMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}/>}
+                                        {formData.loadSubType === 'CommercialBusinessMoving' &&
+                                            <CommercialBusinessMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'HeavyLiftingAndMovingOnly' &&
+                                            <HeavyLiftingMovingOnly
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'HouseholdItem' &&
+                                            <HouseHoldItem
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'OfficeMoving' &&
+                                            <OfficeMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'CorporateMoving' &&
+                                            <CorporateMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'StudentMoving' &&
+                                            <StudentMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'MilitaryMoving' &&
+                                            <MilitaryMoving
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadType === 'Freight' &&
+                                            <FreightLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}
+                                            />}
+                                        {formData.loadSubType === 'FTL' &&
+                                            <FTLLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}/>}
+                                        {formData.loadSubType === 'LTL' &&
+                                            <LTLLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}/>}
+                                        {formData.loadType === "Heavy Equipment" &&
+                                            <HeavyEquipmentLoadContainer
+                                                pickupLocation={formData.pickupLocation}
+                                                loadPickupDate={formData.pickupLocationDate}
+                                                loadMilesTrip={formData.loadMilesTrip}
+                                                loadPickupTime={formData.pickupLocationTime}
+                                                deliveryLocation={formData.deliveryLocation}
+                                                loadDeliveryDate={formData.deliveryLocationDate}
+                                                deliveryLocationTime={formData.deliveryLocationTime}
+                                                loadType={formData.loadType}
+                                                loadSubType={formData.loadSubType}
+                                                goBack={goBackToStepThree}/>}
                                     </div>
-                                    <div className="create-load-buttons">
-                                        <Button variant="neutral-non-responsive" buttonText="Go Back"
-                                                onClick={() => setCreateLoadSection(true)}/>
-                                        <Button variant="default-non-responsive" buttonText="Next" onClick={handleNextClick}/>
-                                    </div>
-                                </CreateLoadContainer>
-                            )}
-                            {step === 2 && (
-                                <>
-                                    {formData.loadType === "Vehicle Load" && (
-                                        <CreateLoadContainer
-                                            step={2}
-                                            title="Specify Vehicle"
-                                            subTitle="By choosing load type, you will redirecting to the current form">
-
-                                            <Form.Select
-                                                name="loadSubType"
-                                                value={formData.loadSubType}
-                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
-                                                style={selectStyles}
-                                            >
-                                                <option value="CarOrLightTruck" style={optionStyles}>Car or Light
-                                                    Truck
-                                                </option>
-                                                <option value="MotoEquipment" style={optionStyles}>Moto Equipment
-                                                </option>
-                                                <option value="Powerboats" style={optionStyles}>Powerboats</option>
-                                                <option value="Sailboats" style={optionStyles}>Sailboats</option>
-                                                <option value="PersonalWatercrafts" style={optionStyles}>Personal
-                                                    watercrafts
-                                                </option>
-                                                <option value="ATVs&PowerSports" style={optionStyles}>ATVs & Power
-                                                    Sports
-                                                </option>
-                                                <option value="CommercialTruck" style={optionStyles}>Commercial Truck
-                                                </option>
-                                                <option value="Parts" style={optionStyles}>Parts</option>
-                                                <option value="TrailerAndOtherVehicles" style={optionStyles}>Trailer &
-                                                    Other Vehicles
-                                                </option>
-                                                <option value="RV" style={optionStyles}>RV (Recreational Vehicles)
-                                                </option>
-                                            </Form.Select>
-                                            <div className="create-load-buttons">
-                                                {step > 1 &&
-                                                    <Button variant="neutral-non-responsive"
-                                                            buttonText="Go Back"
-                                                            onClick={() => setStep(step - 1)}
-                                                    />
-                                                }
-                                                <Button variant="default-non-responsive" buttonText="Next" onClick={handleSubmit}/>
-                                            </div>
-                                        </CreateLoadContainer>
-                                    )}
-                                    {formData.loadType === "Moving" && (
-                                        <CreateLoadContainer
-                                            step={2}
-                                            title="Specify Moving Load Type"
-                                            subTitle="By choosing load type, you will redirecting to the current form">
-                                            <Form.Select
-                                                name="loadType"
-                                                value={formData.loadSubType}
-                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
-                                                style={selectStyles}
-                                            >
-                                                <option value="LocalMoving" style={optionStyles}>Local Moving (less than
-                                                    50 miles)
-                                                </option>
-                                                <option value="LongDistanceMoving" style={optionStyles}>Long Distance
-                                                    Moving
-                                                </option>
-                                                <option value="CommercialBusinessMoving" style={optionStyles}>Commercial
-                                                    / Business Moving
-                                                </option>
-                                                <option value="HeavyLiftingAndMovingOnly" style={optionStyles}>Heavy
-                                                    Lifting and Moving Only
-                                                </option>
-                                                <option value="HouseholdItem" style={optionStyles}>Household item
-                                                </option>
-                                                <option value="OfficeMoving" style={optionStyles}>Office Moving</option>
-                                                <option value="CorporateMoving" style={optionStyles}>Corporate Moving
-                                                </option>
-                                                <option value="StudentMoving" style={optionStyles}>Student Moving
-                                                </option>
-                                                <option value="MilitaryMoving" style={optionStyles}>Military Moving
-                                                </option>
-                                            </Form.Select>
-                                            <div className="create-load-buttons">
-                                                {step > 1 && (
-                                                    <Button variant="neutral" buttonText="Go Back"
-                                                            onClick={() => setStep(step - 1)}/>
-                                                )}
-                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
-                                            </div>
-                                        </CreateLoadContainer>
-                                    )}
-
-                                    {formData.loadType === "Freight" && (
-                                        <CreateLoadContainer
-                                            step={2}
-                                            title="Specify Freight Load Type"
-                                            subTitle="By choosing load type, you will redirecting to the current form">
-                                            <Form.Select
-                                                name="loadType"
-                                                value={formData.loadSubType}
-                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
-                                                style={selectStyles}
-                                            >
-                                                <option value="Expedite" style={optionStyles}>Expedite</option>
-                                                <option value="LTL" style={optionStyles}>LTL</option>
-                                                <option value="FTL" style={optionStyles}>FTL</option>
-                                            </Form.Select>
-                                            <div className="create-load-buttons">
-                                                {step > 1 && (
-                                                    <Button variant="neutral" buttonText="Go Back"
-                                                            onClick={() => setStep(step - 1)}/>
-                                                )}
-                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
-                                            </div>
-                                        </CreateLoadContainer>
-                                    )}
-
-                                    {formData.loadType === "Heavy Equipment" && (
-                                        <CreateLoadContainer
-                                            step={2}
-                                            title="Specify Heavy Load Type"
-                                            subTitle="By choosing load type, you will redirecting to the current form">
-                                            <Form.Select
-                                                name="loadType"
-                                                value={formData.loadSubType}
-                                                onChange={(event) => handleLoadChange("loadSubType")(event)}
-                                                style={selectStyles}
-                                            >
-                                                <option value="Farm Equipment" style={optionStyles}>Farm Equipment
-                                                </option>
-                                                <option value="Construction Equipment" style={optionStyles}>Construction
-                                                    Equipment
-                                                </option>
-                                            </Form.Select>
-                                            <div className="create-load-buttons">
-                                                {step > 1 && (
-                                                    <Button variant="neutral" buttonText="Go Back"
-                                                            onClick={() => setStep(step - 1)}/>
-                                                )}
-                                                <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
-                                            </div>
-                                        </CreateLoadContainer>
-                                    )}
-                                </>
-                            )}
-                            {step === 3 && (
-                                <LocationTimeDataForm
-                                    formData={formData}
-                                    setFormData={setFormData}
-                                    handleLoadChange={handleLoadChange}
-                                    handleBack={handleGoStepBack}
-                                    handleNext={handleGoToLoadType}
-                                    currentStep={3}
-                                />
-                            )}
-                            {step === 4 && (
-                                <div className="create-load-wrapper">
-                                    {formData.loadSubType === 'RV' &&
-                                        <RVLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'CarOrLightTruck' && (
-                                        <CarOrLightTruckLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadMilesTrip={formData.loadMilesTrip}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            loadDeliveryTime={formData.deliveryLocationTime}
-                                            goBack={goBackToStepThree}
-                                        />
-                                    )}
-                                    {formData.loadSubType === 'Powerboats' &&
-                                        <BoatLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'MotoEquipment' &&
-                                        <MotoEquipmentLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}/>}
-
-                                    {formData.loadSubType === 'Sailboats' &&
-                                        <SailboatLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'PersonalWatercrafts' &&
-                                        <PersonalWatercraftsLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'ATVs&PowerSports' &&
-                                        <ATVLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'CommercialTruck' &&
-                                        <CommercialTruckLoad
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'Parts' &&
-                                        <PartsLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'TrailerAndOtherVehicles' &&
-                                        <TrailerAndOtherVehicles
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'LocalMoving' &&
-                                        <LocalMovingLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}/>}
-                                    {formData.loadSubType === 'LongDistanceMoving' &&
-                                        <LongDistanceMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}/>}
-                                    {formData.loadSubType === 'CommercialBusinessMoving' &&
-                                        <CommercialBusinessMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'HeavyLiftingAndMovingOnly' &&
-                                        <HeavyLiftingMovingOnly
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'HouseholdItem' &&
-                                        <HouseHoldItem
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'OfficeMoving' &&
-                                        <OfficeMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'CorporateMoving' &&
-                                        <CorporateMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'StudentMoving' &&
-                                        <StudentMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'MilitaryMoving' &&
-                                        <MilitaryMoving
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadType === 'Freight' &&
-                                        <FreightLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}
-                                        />}
-                                    {formData.loadSubType === 'FTL' &&
-                                        <FTLLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
-                                    {formData.loadSubType === 'LTL' &&
-                                        <LTLLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}/>}
-                                    {formData.loadType === "Heavy Equipment" &&
-                                        <HeavyEquipmentLoadContainer
-                                            pickupLocation={formData.pickupLocation}
-                                            loadPickupDate={formData.pickupLocationDate}
-                                            loadPickupTime={formData.pickupLocationTime}
-                                            deliveryLocation={formData.deliveryLocation}
-                                            loadDeliveryDate={formData.deliveryLocationDate}
-                                            deliveryLocationTime={formData.deliveryLocationTime}
-                                            loadType={formData.loadType}
-                                            loadSubType={formData.loadSubType}
-                                            goBack={goBackToStepThree}/>}
-                                </div>
-                            )}
+                                )}
+                            </div>
                         </div>
-                    </div>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+        </>
     );
 };
 

@@ -10,6 +10,9 @@ import Alert from "../floating-window-success/Alert";
 import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../constants/constants";
 import {Fade} from "react-awesome-reveal";
+import Popup from "../popup/Popup";
+import Button from "../button/Button";
+import TextInput from "../text-input/TextInput";
 
 
 const LoadContainerBid = ({
@@ -98,8 +101,6 @@ const LoadContainerBid = ({
             setIsLoading(false);
         }
     };
-
-
 
     const handleQuickBidClick = () => {
         setIsPopupOpen(true);
@@ -218,12 +219,8 @@ const LoadContainerBid = ({
                     )}
                 </div>
                 {isPopupOpen && (
-                    <div className="bid-popup-overlay">
-                        <div className="bid-popup">
-                            <div className="bid-popup-header">
-                                <h2>Bid: {loadID}</h2>
-                                <button className="close-button" onClick={handleClosePopup}>Close</button>
-                            </div>
+                    <Popup onClose={handleClosePopup} title={`Bid: ${loadID}` } footerText={`Attention! According to the terms of use, you agree to a 10% commission
+                                        when using our service, the bet you make will be equal to - ${calculatedPrice} $.`}>
                             <div className="bid-popup-content">
                                 <div className="bid-description">
                                     <h3>Before bid</h3>
@@ -231,73 +228,44 @@ const LoadContainerBid = ({
                                         customer
                                         and offer relevant price it will helps customer to choose the best carrier</p>
                                 </div>
-                                <div className="google-input-wrapper">
-                                <textarea
-                                    type="text"
+                                <TextInput
+                                    type="textarea"
                                     id="loadBidCoverLetter"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    style={{height: '130px'}}
-                                    onChange={handleChange('loadBidCoverLetter')}
                                     value={formData.loadBidCoverLetter}
+                                    onChange={handleChange('loadBidCoverLetter')}
+                                    label="Type message here"
+                                    style={{ height: '130px' }}
                                 />
-                                    <label htmlFor="loadBidCoverLetter" className="google-style-input-label">Type
-                                        message
-                                        here</label>
-                                </div>
                                 <div className="bid-popup-value-inputs">
-                                    <div className="google-input-wrapper" style={{width: '425px'}}>
-                                        <input
-                                            type="datetime-local"
-                                            id="loadBidDeliveryDate"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required
-                                            onChange={handleChange('loadBidDeliveryDate')}
-                                            value={formData.loadBidDeliveryDate}
-                                        />
-                                        <label htmlFor="loadBidDeliveryDate" className="google-style-input-label">Delivery
-                                            Date</label>
-                                    </div>
-                                    <div className="google-input-wrapper" style={{width: '425px'}}>
-                                        <input
-                                            type="text"
-                                            id="loadBidPrice"
-                                            autoComplete="off"
-                                            className="google-style-input"
-                                            required
-                                            value={bidPrice}
-                                            onChange={(e) => {
-                                                if (e.target.value === '') {
-                                                    setBidPrice('');
-                                                    console.log(setBidPrice(''));
-                                                } else if (Number(e.target.value) >= 0) {
-                                                    setBidPrice(Number(e.target.value));
-
-                                                }
-                                            }}
-                                        />
-                                        <label htmlFor="loadBidPrice" className="google-style-input-label">$ Bid
-                                            Price</label>
-                                    </div>
+                                    <TextInput
+                                        type="datetime-local"
+                                        id="loadBidDeliveryDate"
+                                        value={formData.loadBidDeliveryDate}
+                                        onChange={handleChange('loadBidDeliveryDate')}
+                                        label="Delivery Date"
+                                    />
+                                    <TextInput
+                                        type="text"
+                                        id="loadBidPrice"
+                                        value={bidPrice}
+                                        onChange={(e) => {
+                                            if (e.target.value === '') {
+                                                setBidPrice('');
+                                                console.log(setBidPrice(''));
+                                            } else if (Number(e.target.value) >= 0) {
+                                                setBidPrice(Number(e.target.value));
+                                            }
+                                        }}
+                                        label="$ Bid Price"
+                                    />
                                 </div>
-                                <div className="bid-description">
-                                    <h3>Attention</h3>
-                                    <p>According to the terms of use, you agree to a 10% commission
-                                        when using our service, the bet you make will be equal to - {calculatedPrice} $.
-                                    </p>
-                                </div>
-                                <button className="submit-bid-button" onClick={handleSubmit}>
+                                <Button variant="apply-non-responsive" className="submit-bid-button" onClick={handleSubmit}>
                                     {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Submit Bid"}
-                                </button>
+                                </Button>
                             </div>
-                        </div>
-                    </div>
+                    </Popup>
                 )}
-
         </>
-
     );
 };
 

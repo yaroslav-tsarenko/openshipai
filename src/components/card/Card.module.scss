@@ -1,5 +1,5 @@
 .card {
-  width: 390px;
+  min-width: 390px;
   height: 234px;
   display: flex;
   flex-direction: column;
@@ -7,9 +7,11 @@
   justify-content: space-between;
   cursor: pointer;
   transition: 0.2s ease-in-out;
+  border: 2px solid transparent;
+  border-radius: 18px;
 
   &:hover {
-    transform: scale(1.05);
+    border: 2px solid var(--royal-blue);
   }
 }
 
@@ -64,6 +66,9 @@
       font-weight: lighter;
     }
   }
+}
+
+@media screen and (max-width: 786px) {
 
 }
 

@@ -5,46 +5,39 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {ReactComponent as DirectionIcon} from "../../../assets/load-container-directions-smaller.svg";
 import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
-import {ReactComponent as ProgressBarStepFirst} from "../../../assets/progress-bar-1-step.svg";
 import axios from 'axios';
 import GoogleMapCurrentLoadDirections
     from "../../google-map-show-current-load-direction/GoogleMapCurrentLoadDirections";
-import BmwImage1 from "../../../assets/bmw-1.png";
-import BmwImage2 from "../../../assets/bmw-2.png";
-import BmwImage3 from "../../../assets/bmw-3.png";
-import BmwImage4 from "../../../assets/bmw-4.png";
-import BmwImage5 from "../../../assets/bmw-5.png";
-import BmwImage6 from "../../../assets/bmw-6.png";
 import ImageSlider from "../../image-slider/ImageSlider";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import DefaultUserAvatar from "../../../assets/default-avatar.svg";
 import CarrierLoadBid from "../../carrier-load-bid/CarrierLoadBid";
 import {Skeleton} from "@mui/material";
 import {BACKEND_URL} from "../../../constants/constants";
+import LoadStatus from "../../load-status-bar/LoadStatus";
+import SEO from "../../seo/SEO";
+import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
 const ShipperLoadPage = () => {
-    const address = process.env.REACT_APP_API_BASE_URL;
-    const images = [BmwImage1, BmwImage2, BmwImage3, BmwImage4, BmwImage5, BmwImage6];
+
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [loadImages, setLoadImages] = useState([]);
     const {loadCredentialID} = useParams();
     const {shipperID} = useParams();
     const [load, setLoad] = useState(null);
     const [loadBids, setLoadBids] = useState([]);
-
     const [shipperInfo, setShipperInfo] = useState(null);
+    const animation = useGsapAnimation("slideUp")
 
     useEffect(() => {
         const getUser = async () => {
             try {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
-
                 setShipperInfo(data);
             } catch (error) {
                 console.error('Error:', error);
             }
         };
-
         getUser();
     }, [shipperInfo, shipperID]);
 
@@ -53,9 +46,22 @@ const ShipperLoadPage = () => {
             try {
                 const response = await axios.get(`${BACKEND_URL}/load/${loadCredentialID}`);
                 setLoad(response.data);
-                console.log(response.data);
+                setLoadImages(response.data.loadImages.map(image => `${BACKEND_URL}/${image}`));
             } catch (error) {
                 console.error('Error fetching load:', error);
+            }
+        };
+
+        const fetchAvatar = async () => {
+            if (shipperInfo && shipperInfo.userShipperAvatar) {
+                const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
+                try {
+                    await axios.get(avatarUrl);
+                    setPreviewSavedImage(avatarUrl);
+                } catch (error) {
+                    console.error('Image does not exist');
+                } finally {
+                }
             }
         };
 
@@ -75,6 +81,7 @@ const ShipperLoadPage = () => {
             }
         };
 
+        fetchAvatar();
         fetchAllLoadBids();
         fetchLoad();
     }, [loadCredentialID]);
@@ -83,137 +90,159 @@ const ShipperLoadPage = () => {
         return <div>Loading...</div>;
     }
 
-    return (
-        <div className="shipper-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
-                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
-            />
-            <div className="shipper-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={shipperInfo ?
-                        <>Welcome back, {shipperInfo.userShipperName}!</> :
-                        <Skeleton variant="text" width={250} />}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60} />}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40} />}
-                    profileLink={`/shipper-profile/${shipperID}`}
-                    bellLink={`/shipper-settings/${shipperID}`}
-                    settingsLink={`/shipper-profile/${shipperID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                />
-                <div className="load-page-header">
-                    <Link to={`/shipper-loads/${shipperID}`} className="go-back-link">
-                        <ArrowNav className="arrow-nav-close-open-side-bar"/>
-                    </Link>
-                    <section>
-                        <h1>{load.loadTitle}</h1>
-                        <p>{load.loadCredentialID}</p>
-                    </section>
-                </div>
-                <div className="load-details-content-wrapper">
-                    <ProgressBarStepFirst style={{margin: '20px auto'}}/>
-                    <div className="load-details-content">
-                        <div className="load-details-container">
-                            <section>
-                                <h4>Shipment Title</h4>
-                                <h2>{load.loadTitle}</h2>
-                            </section>
-                            <section>
-                                <h4>Load ID</h4>
-                                <h2>{load.loadCredentialID}</h2>
-                            </section>
-                            <section>
-                                <h4>Load Type</h4>
-                                <h2>{load.loadType}</h2>
-                            </section>
+    function splitPascalCase(text) {
+        return text.replace(/([a-z])([A-Z])/g, '$1 $2');
+    }
 
+    const formattedLoadSubType = splitPascalCase(load.loadSubType);
+
+    return (
+        <>
+            <SEO
+                title={`${load.loadTitle} - ${formattedLoadSubType}`}
+                description="Ensure the safe and efficient transport of your load with our specialized load container services. Contact us for a quote!"
+                keywords="load, create load, add load, update load, load operations, load management"
+            />
+            <div className="shipper-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                />
+                <div className="shipper-dashboard-content">
+                    <HeaderDashboard
+                        contentTitle={shipperInfo ?
+                            <>Welcome back, {shipperInfo.userShipperName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                        accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
+                        profileLink={`/shipper-profile/${shipperID}`}
+                        bellLink={`/shipper-settings/${shipperID}`}
+                        settingsLink={`/shipper-profile/${shipperID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                    />
+                    <div className="load-page-content-page-section" ref={animation}>
+                        <div className="load-page-header">
+                            <Link to={`/shipper-loads/${shipperID}`} className="go-back-link">
+                                <ArrowNav className="arrow-nav-close-open-side-bar"/>
+                            </Link>
                             <section>
-                                <h4>Load Weight</h4>
-                                <h2>{load.loadWeight}</h2>
+                                <h1>{load.loadTitle} - {formattedLoadSubType}</h1>
+                                <p>{load.loadCredentialID}</p>
                             </section>
-                            <div className="loadboard-load-direction-wrapper">
-                                <DirectionIcon style={{marginRight: '10px'}}/>
-                                <div className="loadboard-load-direction">
+                        </div>
+                        <div className="load-details-content-wrapper">
+                            <LoadStatus status={load.loadStatus}/>
+                            <div className="load-details-content">
+                                <div className="load-details-container">
+                                    <section>
+                                        <h4>Shipment Title</h4>
+                                        <h2>{load.loadTitle}</h2>
+                                    </section>
+                                    <section>
+                                        <h4>Load ID</h4>
+                                        <h2>{load.loadCredentialID}</h2>
+                                    </section>
+                                    <section>
+                                        <h4>Load Subtype</h4>
+                                        <h2>{formattedLoadSubType}</h2>
+                                    </section>
+                                    <section>
+                                        <h4>Load Type</h4>
+                                        <h2>{load.loadType}</h2>
+                                    </section>
+                                    <section>
+                                        <h4>Load Weight</h4>
+                                        <h2>{load.loadWeight}</h2>
+                                    </section>
+                                    <div className="loadboard-load-direction-wrapper">
+                                        <DirectionIcon style={{marginRight: '10px'}}/>
+                                        <div className="loadboard-load-direction">
                             <span className="loadboard-load-direction-origin">
                                 <h3>{load.loadPickupLocation}</h3>
                                 <p>{load.loadPickupDate}</p>
                             </span>
-                                    <span className="loadboard-load-direction-destination">
+                                            <span className="loadboard-load-direction-destination">
                                 <h3>{load.loadDeliveryLocation}</h3>
                                 <p>{load.loadDeliveryDate}</p>
                             </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="load-details-container">
+                                    {load.loadWidth && (
+                                        <section>
+                                            <h4>Load Width</h4>
+                                            <h2>{load.loadWidth}</h2>
+                                        </section>
+                                    )}
+                                    {load.loadHeight && (
+                                        <section>
+                                            <h4>Load Height</h4>
+                                            <h2>{load.loadHeight}</h2>
+                                        </section>
+                                    )}
+                                    {load.loadQuantity && (
+                                        <section>
+                                            <h4>Load Quantity</h4>
+                                            <h2>{load.loadQuantity}</h2>
+                                        </section>
+                                    )}
+                                    {load.loadConvertible && (
+                                        <section>
+                                            <h4>Convertible</h4>
+                                            <h2>{load.loadConvertible}</h2>
+                                        </section>
+                                    )}
+                                    {load.loadOperable && (
+                                        <section>
+                                            <h4>Operable</h4>
+                                            <h2>{load.loadOperable}</h2>
+                                        </section>
+                                    )}
+                                    {load.loadMilesTrip && (
+                                        <section>
+                                            <h4>Load Miles Trip</h4>
+                                            <h2>{load.loadMilesTrip}</h2>
+                                        </section>
+                                    )}
+                                </div>
+                                <ImageSlider images={loadImages}/>
+                                <div className="map-directions-load-details">
+                                    <GoogleMapCurrentLoadDirections origin={load.loadPickupLocation}
+                                                                    destination={load.loadDeliveryLocation}/>
                                 </div>
                             </div>
-                        </div>
-                        <div className="load-details-container">
-                            {load.loadWidth && (
-                                <section>
-                                    <h4>Load Width</h4>
-                                    <h2>{load.loadWidth}</h2>
-                                </section>
-                            )}
-                            {load.loadHeight && (
-                                <section>
-                                    <h4>Load Height</h4>
-                                    <h2>{load.loadHeight}</h2>
-                                </section>
-                            )}
-                            {load.loadQuantity && (
-                                <section>
-                                <h4>Load Quantity</h4>
-                                    <h2>{load.loadQuantity}</h2>
-                                </section>
-                            )}
-                            {load.loadConvertible && (
-                                <section>
-                                    <h4>Convertible</h4>
-                                    <h2>{load.loadConvertible}</h2>
-                                </section>
-                            )}
-                            {load.loadOperable && (
-                                <section>
-                                    <h4>Operable</h4>
-                                    <h2>{load.loadOperable}</h2>
-                                </section>
-                            )}
-                            {load.loadMilesTrip && (
-                                <section>
-                                    <h4>Load Miles Trip</h4>
-                                    <h2>{load.loadMilesTrip}</h2>
-                                </section>
-                            )}
+                            <div className="load-carrier-bids-listing-content">
+                                <div className="load-carrier-bids-listing-header">
+                                    <h1>Listing From Carriers</h1>
+                                    <p>Choose the best matching carrier for your load</p>
+                                </div>
 
-                        </div>
-                        <ImageSlider images={images}/>
-                        <div className="map-directions-load-details">
-                            <GoogleMapCurrentLoadDirections origin={load.loadPickupLocation}
-                                                            destination={load.loadDeliveryLocation}/>
-                        </div>
+                                {loadBids.length !== 0 ? (
+                                    loadBids.map(loadBid => (
+                                        <CarrierLoadBid
+                                            key={loadBid._id}
+                                            loadBidPrice={loadBid.loadBidPrice}
+                                            loadID={loadBid.loadCredentialID}
+                                            shipperID={shipperID}
+                                            loadCarrierID={loadBid.loadCarrierID}
+                                            loadBidCoverLetter={loadBid.loadBidCoverLetter}
+                                            loadEstimatedDeliveryTime={loadBid.loadBidDeliveryDate}
+                                        />
+                                    ))
+                                ) : (
+                                    <div className="carriers-bids-empty">
+                                        <p>Current listing from carriers is empty...</p>
+                                    </div>
+                                )}
 
-                    </div>
-                   <div className="load-carrier-bids-listing-content">
-                       <div className="load-carrier-bids-listing-header">
-                           <h1>Listing From Carriers</h1>
-                           <p>Choose the best matching carrier for your load</p>
-                       </div>
-                       {loadBids.map(loadBid => (
-                           <CarrierLoadBid
-                           key={loadBid._id}
-                           loadBidPrice={loadBid.loadBidPrice}
-                           loadID={loadBid.loadCredentialID}
-                           shipperID={shipperID}
-                           loadCarrierID={loadBid.loadBidCarrierID}
-                           loadBidCoverLetter={loadBid.loadBidCoverLetter}
-                           loadEstimatedDeliveryTime={loadBid.loadBidDeliveryDate}
-                           />
-                       ))}
-                   </div>
-                </div>
-                {/*<div style={{background: "grey"}}>
+                            </div>
+                        </div>
+                        {/*<div style={{background: "grey"}}>
                     <h2>{load.loadTitle}</h2>
                     <p>Type: {load.loadType}</p>
                     <p>Sub Type: {load.loadSubType}</p>
@@ -272,8 +301,12 @@ const ShipperLoadPage = () => {
                     <p>Credential ID: {load.loadCredentialID}</p>
                     <p>Shipper ID: {load.shipperID}</p>
                 </div>*/}
+                    </div>
+
+                </div>
             </div>
-        </div>
+
+        </>
     );
 };
 

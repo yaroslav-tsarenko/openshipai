@@ -9,6 +9,7 @@
   flex-direction: column;
   width: 100%;
   height: 100vh;
+  overflow-x: scroll;
   gap: 20px;
   background: var(--royal-white-dark);
   justify-content: space-between;
@@ -57,12 +58,14 @@
   section {
     display: flex;
     gap: 20px;
+    overflow-x: scroll;
+    overflow-y: hidden;
     width: 100%;
   }
 }
 
 .addNewCard {
-  width: 390px;
+  min-width: 390px;
   height: 234px;
   display: flex;
   flex-direction: column;
