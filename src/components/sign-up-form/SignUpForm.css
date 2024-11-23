@@ -38,18 +38,37 @@
     font-size: 1.2rem;
 }
 
-.question-p {
-    font-size: 1.5rem;
-    margin: 20px 0 20px 0;
-    font-weight: 500;
-    color: #707070;
-}
-
 .question-div {
     height: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.divider {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 20px 0;
+}
+
+.divider .line {
+    flex: 1;
+    height: 1px;
+    background-color: #707070; /* Adjust the color as needed */
+}
+
+.divider .text {
+    padding: 0 10px;
+    font-size: 16px;
+    color: var(--dark-grey);
+}
+
+.form-divider {
+    width: 100%;
+    height: auto;
+    display: flex;
+
 }
 
 .is-carrier {
@@ -66,7 +85,7 @@
     border-radius: 10px;
 }
 
-.is-customer{
+.is-customer {
     display: flex;
     margin: 0 10px 0 10px;
     justify-content: center;
@@ -109,6 +128,8 @@
 }
 
 .sign-up-custom-form {
+    display: flex;
+    flex-direction: column;
     position: relative;
     max-width: 500px;
     width: 100%;
@@ -116,13 +137,13 @@
     padding: 0 15px 0 15px;
 }
 
-.registration-block-wrapper{
+.registration-block-wrapper {
     width: 100%;
     display: flex;
     justify-content: space-between;
 }
 
-.registration-block{
+.registration-block {
     position: relative;
     width: 48%;
 }
@@ -173,14 +194,14 @@
     color: var(--royal-blue);
 }
 
-.h2-title-sign-up{
+.h2-title-sign-up {
     font-size: 3rem;
     margin: 0 0 5px 0;
     font-weight: 600;
     color: var(--royal-blue);
 }
 
-.h3-title-sign-up{
+.h3-title-sign-up {
     font-size: 1.5rem;
     margin: 0 0 20px 0;
     font-weight: 500;
@@ -191,7 +212,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-transform: scale(0.7);
+    margin: 15px 0 15px 0;
+    transform: scale(1);
     position: relative;
     border-radius: 55px;
 }

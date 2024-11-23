@@ -12,19 +12,16 @@ import {BACKEND_URL} from "../../constants/constants";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import Grid from "../grid-two-columns/Grid";
 import Button from "../button/Button";
+import SEO from "../seo/SEO";
 
 const ShipperDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [hoveredButton, setHoveredButton] = useState('');
     const [shipperInfo, setShipperInfo] = useState(null);
     const {shipperID} = useParams();
     localStorage.setItem('shipperID',
         shipperID);
-    let item = localStorage.getItem('shipperID');
+    let shipperIDLocalStorage = localStorage.getItem('shipperID');
     const [activeTab, setActiveTab] = useState("Statistics");
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
@@ -42,7 +39,7 @@ const ShipperDashboard = () => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
             const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
+            console.log(avatarUrl)
             axios.get(avatarUrl)
                 .then(() => {
                     setPreviewSavedImage(avatarUrl);
@@ -54,7 +51,6 @@ const ShipperDashboard = () => {
                 });
         }
     }, [shipperInfo]);
-
 
     useEffect(() => {
         const getUser = async () => {
@@ -71,42 +67,77 @@ const ShipperDashboard = () => {
     }, [shipperInfo, shipperID]);
 
     return (
-        <div className="shipper-dashboard-wrapper">
-            <DashboardSidebar
-                DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
-                Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
-                Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
-                ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
-                MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
-                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
+        <>
+            <SEO
+                title="Dashboard - Your account"
+                description="Manage and track all your loads efficiently from the Shipper Dashboard. View active loads, update load details, and more."
+                keywords="shipper dashboard, my loads, manage loads, track loads, active loads"
             />
-            <div className="shipper-dashboard-content">
-                <HeaderDashboard
-                    contentTitle={shipperInfo ?
-                        <>Welcome back, {shipperInfo.userShipperName}!</> :
-                        <Skeleton variant="text" width={250}/>}
-                    contentSubtitle="Monitor payments, loads, revenues"
-                    accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
-                    accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
-                    profileLink={`/shipper-profile/${shipperID}`}
-                    bellLink={`/shipper-settings/${shipperID}`}
-                    settingsLink={`/shipper-profile/${shipperID}`}
-                    avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
-                    onBurgerClick={toggleMobileSidebar}
+            <div className="shipper-dashboard-wrapper">
+                <DashboardSidebar
+                    DashboardAI={{visible: true, route: `/shipper-dashboard/${shipperID}`}}
+                    Settings={{visible: true, route: `/shipper-settings/${shipperID}`}}
+                    Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
+                    ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
+                    MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                    isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
-                <div className="dashboard-content-mobile">
-                    <div className="dashboard-buttons-mobile">
-                        <Button variant={activeTab === "Statistics" ? "default" : "neutral"}
-                                onClick={() => handleTabChange("Statistics")}>Statistics</Button>
-                        <Button variant={activeTab === "Chat" ? "default" : "neutral"}
-                                onClick={() => handleTabChange("Chat")}>Chat</Button>
-                        <Button variant={activeTab === "Loads" ? "default" : "neutral"}
-                                onClick={() => handleTabChange("Loads")}>Loads</Button>
+                <div className="shipper-dashboard-content">
+                    <HeaderDashboard
+                        contentTitle={shipperInfo ?
+                            <>Welcome back, {shipperInfo.userShipperName}!</> :
+                            <Skeleton variant="text" width={250}/>}
+                        contentSubtitle="Monitor payments, loads, revenues"
+                        accountName={shipperInfo ? shipperInfo.userShipperName : <Skeleton variant="text" width={60}/>}
+                        accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
+                        profileLink={`/shipper-profile/${shipperID}`}
+                        bellLink={`/shipper-settings/${shipperID}`}
+                        settingsLink={`/shipper-profile/${shipperID}`}
+                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        onBurgerClick={toggleMobileSidebar}
+                    />
+                    <div className="dashboard-content-mobile">
+                        <div className="dashboard-buttons-mobile">
+                            <Button variant={activeTab === "Statistics" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Statistics")}>Statistics</Button>
+                            <Button variant={activeTab === "Chat" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Chat")}>Chat</Button>
+                            <Button variant={activeTab === "Loads" ? "default" : "neutral"}
+                                    onClick={() => handleTabChange("Loads")}>Loads</Button>
+                        </div>
+                        <div className="dashboard-content-mobile-body">
+                            {activeTab === "Statistics" && (
+                                <div>
+                                    <Grid columns="1, 1fr">
+                                        <MetricCompoent text="Service Rating"
+                                                        description="It’s yours global reputation on service"
+                                                        percent={75}
+                                                        color="#FFC107"/>
+                                        <MetricCompoent text="Success agreement "
+                                                        description="Average percent of  cooperate with carrier"
+                                                        percent={55}
+                                                        color="#0061ff"/>
+                                        <MetricCompoent text="Service Activity"
+                                                        description="Monitoring, service usability, connections"
+                                                        percent={86}
+                                                        color="#009f52"/>
+                                    </Grid>
+                                </div>
+                            )}
+                            {activeTab === "Chat" && (
+                                <div>
+                                    <OpenShipAIChat userID={shipperID} userRole="shipper"/>
+                                </div>
+                            )}
+                            {activeTab === "Loads" && (
+                                <ActiveLoadsPanel user="shipper" userID={shipperID}/>
+                            )}
+                        </div>
                     </div>
-                    <div className="dashboard-content-mobile-body">
-                        {activeTab === "Statistics" && (
-                            <div>
-                                <Grid columns="1, 1fr">
+                    <div className="shipper-dashboard-content-body">
+                        <div className="dashboard-content">
+                            <div className="chat-metric-content">
+                                <Grid columns="3, 3fr" >
                                     <MetricCompoent text="Service Rating"
                                                     description="It’s yours global reputation on service"
                                                     percent={75}
@@ -120,44 +151,17 @@ const ShipperDashboard = () => {
                                                     percent={86}
                                                     color="#009f52"/>
                                 </Grid>
-                            </div>
-                        )}
-                        {activeTab === "Chat" && (
-                            <div>
                                 <OpenShipAIChat userID={shipperID} userRole="shipper"/>
                             </div>
-                        )}
-                        {activeTab === "Loads" && (
-                            <ActiveLoadsPanel user="driver" userID={shipperID}/>
-                        )}
-                    </div>
-                </div>
-                <div className="shipper-dashboard-content-body">
-                    <div className="dashboard-content">
-                        <div className="chat-metric-content">
-                            <Grid columns="3, 3fr">
-                                <MetricCompoent text="Service Rating"
-                                                description="It’s yours global reputation on service"
-                                                percent={75}
-                                                color="#FFC107"/>
-                                <MetricCompoent text="Success agreement "
-                                                description="Average percent of  cooperate with carrier"
-                                                percent={55}
-                                                color="#0061ff"/>
-                                <MetricCompoent text="Service Activity"
-                                                description="Monitoring, service usability, connections"
-                                                percent={86}
-                                                color="#009f52"/>
-                            </Grid>
-                            <OpenShipAIChat userID={shipperID} userRole="shipper"/>
-                        </div>
-                        <div className="map-content">
-                            <ActiveLoadsPanel shipperID={shipperID}/>
+                            <div className="map-content">
+                                <ActiveLoadsPanel userID={shipperID} userRole="shipper"/>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
+
+        </>
     );
 };
 

@@ -194,13 +194,12 @@
 
 .bid-popup-content {
     display: flex;
+    width: 600px;
     flex-direction: column;
-    padding: 20px;
 }
 
 .bid-description {
     width: 90%;
-    margin: 10px 0 0 0;
 }
 
 .bid-description h3 {
@@ -216,6 +215,7 @@
 .bid-popup-value-inputs {
     justify-content: space-between;
     display: flex;
+    gap: 10px;
 }
 
 .submit-bid-button{

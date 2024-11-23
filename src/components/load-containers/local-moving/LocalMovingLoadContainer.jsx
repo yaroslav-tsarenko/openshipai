@@ -15,6 +15,9 @@ import FormSeparator from "../../form-separator/FormSeparator";
 import useShipperStore from "../../../stores/landing-registration-shipper/store";
 import RegistrationComponent from "../../registration-component/RegistrationComponent";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import FlexContainer from "../../flex-container/FlexContainer";
+import {FaTimes} from "react-icons/fa";
+import SEO from "../../seo/SEO";
 
 const LocalMovingLoadContainer = ({
                                       pickupLocation,
@@ -32,11 +35,11 @@ const LocalMovingLoadContainer = ({
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
+    const imageInputRef = useRef();
     const [isLoading, setIsLoading] = useState(false);
     const [selectedOptions, setSelectedOptions] = useState([]);
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
-
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
     const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
     const { shipperID: paramShipperID } = useParams();
@@ -89,6 +92,7 @@ const LocalMovingLoadContainer = ({
         loadHeight: '',
         loadQuantity: '',
         loadOperable: false,
+        loadImages: [],
         loadConvertible: false,
         loadModified: false,
         loadStatus: 'Published',
@@ -100,30 +104,7 @@ const LocalMovingLoadContainer = ({
         shipperID: shipperID
     });
 
-    const handleCreateLoad = async () => {
-        if (registrationStatus !== 'success') {
-            if (requireRegistration) {
-                setShowRegistrationPopup(true);
-                return;
-            }
-        }
-        setIsLoading(true);
-        setFormData({
-            ...formData,
-        });
-        try {
-            const response = await axios.post(`${BACKEND_URL}/save-load-data`, formData);
-            if (response.status === 200) {
-                window.location.reload();
-            }
-            console.log(response.data);
-            setIsLoadCreatedSuccess(true);
-        } catch (error) {
-            console.error(error);
-            setIsLoadCreatedFailed(true);
-        }
-        setIsLoading(false);
-    };
+
 
 
     const ITEM_HEIGHT = 48;
@@ -178,46 +159,111 @@ const LocalMovingLoadContainer = ({
         }));
     };
 
-    const handleChange = (input) => (e) => {
-        setFormData({...formData, [input]: e.target.value});
+    const handleCreateLoad = async () => {
+        if (registrationStatus !== 'success') {
+            if (requireRegistration) {
+                setShowRegistrationPopup(true);
+                return;
+            }
+        }
+
+        setIsLoading(true);
+        const data = new FormData();
+        Object.entries(formData).forEach(([key, value]) => {
+            if (key === 'loadImages') {
+                value.forEach(image => data.append('loadImages', image));
+            } else {
+                data.append(key, value);
+            }
+        });
+
+        try {
+            const response = await axios.post(`${BACKEND_URL}/save-load-data`, data, {
+                headers: { 'Content-Type': 'multipart/form-data' }
+            });
+
+            if (response.status === 200) {
+                window.location.reload();
+            }
+            console.log(response.data);
+            setIsLoadCreatedSuccess(true);
+        } catch (error) {
+            console.error(error);
+            setIsLoadCreatedFailed(true);
+        }
+
+        setIsLoading(false);
     };
 
-    const handleButtonClick = () => {
-        fileInputRef.current.click();
+    const handleFileButtonClick = () => {
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+    const handleImageButtonClick = () => {
+        if (imageInputRef.current) {
+            imageInputRef.current.click();
+        }
+    };
+    const handleAddImage = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length + imagePreviewUrl.length > 5) {
+            alert('You can only select up to 5 photos.');
+            return;
+        }
+
+        const imageUrls = files.map(file => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (['png', 'jpg', 'jpeg', 'svg', 'webp'].includes(fileExtension)) {
+                return URL.createObjectURL(file);
+            }
+            return null;
+        }).filter(url => url !== null);
+
+        setFormData(prevFormData => ({
+            ...prevFormData,
+            loadImages: [...prevFormData.loadImages, ...files]
+        }));
+        setImagePreviewUrl(prevImageUrls => [...prevImageUrls, ...imageUrls]);
+    };
+
+    const handleAddFile = (event) => {
+        const files = Array.from(event.target.files);
+        if (files.length + filePreviewUrl.length > 5) {
+            alert('You can only select up to 5 files.');
+            return;
+        }
+        const fileUrls = files.map(file => {
+            const fileExtension = file.name.split('.').pop().toLowerCase();
+            if (['pdf', 'doc', 'docx', 'txt'].includes(fileExtension)) {
+                return URL.createObjectURL(file);
+            }
+            return null;
+        }).filter(url => url !== null);
+        setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
+    };
+    const handleDeleteImage = (index) => {
+        setImagePreviewUrl(prevImageUrls => prevImageUrls.filter((_, i) => i !== index));
+    };
+    const handleDeleteFile = (index) => {
+        setFilePreviewUrl(prevFileUrls => prevFileUrls.filter((_, i) => i !== index));
     };
 
     const handleLoadChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
 
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files);
-        if (files.length + imagePreviewUrl.length > 5) {
-            alert('You can only select up to 5 files.');
-            return;
-        }
-        const imageUrls = files.map(file => {
-            if (file.type.startsWith('image/')) {
-                return URL.createObjectURL(file);
-            }
-            return null;
-        }).filter(url => url !== null);
-        setImagePreviewUrl(prevImageUrls => [...prevImageUrls, ...imageUrls]);
+    const handleChange = (input) => (e) => {
+        setFormData({ ...formData, [input]: e.target.value });
     };
-
-    const handleFileChangeForButton = (event) => {
-        const files = Array.from(event.target.files);
-        if (files.length > 5) {
-            alert('You can only select up to 5 files.');
-            return;
-        }
-        const fileUrls = files.map(file => URL.createObjectURL(file));
-        setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
-    };
-
 
     return (
         <>
+            <SEO
+                title="Local Moving - Reliable and Efficient Moving Services"
+                description="Experience reliable and efficient local moving services. Contact us for a quote and ensure a smooth move within your area."
+                keywords="local moving, reliable moving services, efficient moving, local relocation"
+            />
             {isLoadCreatedSuccess && <Alert status="success" text="Success!" description="Load Created Successfully!"/>}
             {isLoadCreatedFailed && <Alert status="error" text="Error!" description="Something went wrong. Try Again"/>}
             {showRegistrationPopup && <RegistrationComponent onRegistrationSuccess={handleRegistrationSuccess}/>}
@@ -312,9 +358,9 @@ const LocalMovingLoadContainer = ({
                         }}
                     />
                 </Grid>
-                <Button variant="slim">
+               {/* <Button variant="slim">
                     + Add another load
-                </Button>
+                </Button>*/}
                 <FormSeparator title="Does the area have shopping, entertainment, or restaurants?"
                                subTitle="Choose option"/>
                 <TextInput
@@ -385,35 +431,60 @@ const LocalMovingLoadContainer = ({
                 />
                 <FormSeparator title="Load Specifications" subTitle="Fill all necessary fields"/>
                 <Grid columns="2, 2fr">
-                    <Button variant="attach-file"
-                            onClick={() => fileInputRef.current.click()}>
+                    <Button variant="attach-file" onClick={handleFileButtonClick}>
                         Attach Files
                     </Button>
                     <input
                         type="file"
                         ref={fileInputRef}
-                        style={{display: 'none'}}
-                        onChange={handleFileChangeForButton}
+                        style={{ display: 'none' }}
+                        onChange={handleAddFile}
                         multiple
                     />
-                    <Button variant="attach-photo" onClick={handleButtonClick}>
+                    <Button variant="attach-photo" onClick={handleImageButtonClick}>
                         Make a Photo
                     </Button>
                     <input
                         type="file"
                         accept="image/*"
+                        ref={imageInputRef}
                         capture="environment"
-                        ref={fileInputRef}
-                        style={{display: 'none'}}
-                        onChange={handleFileChange}
+                        style={{ display: 'none' }}
+                        onChange={handleAddImage}
                         multiple
                     />
-                    {imagePreviewUrl && imagePreviewUrl.map((url, index) => (
-                        <img key={index} className="preview-image-for-load" src={url} alt="Preview"/>
-                    ))}
-                    {filePreviewUrl.map((url, index) => (
-                        <img key={index} src={url} alt="Preview"/>
-                    ))}
+                </Grid>
+                <Grid columns="1, 1fr">
+                    {imagePreviewUrl.length > 0 ? (
+                        <FlexContainer title="Attached Photos">
+                            {imagePreviewUrl.map((url, index) => (
+                                <div key={index} className="image-preview-container">
+                                    <img width="80" height="60" className="preview-image-for-load" src={url} alt="Preview"/>
+                                    <button className="delete-button-icon" onClick={() => handleDeleteImage(index)}>
+                                        <FaTimes />
+                                    </button>
+                                </div>
+                            ))}
+                        </FlexContainer>
+                    ) : (<></>)}
+                    {filePreviewUrl.length > 0 ? (
+                        <FlexContainer title="Attached Files">
+                            {filePreviewUrl.map((url, index) => {
+                                const fileName = url.split('/').pop().split('.')[0];
+                                const shortFileName = fileName.length > 7 ? `${fileName.substring(0, 7)}...` : fileName;
+                                return (
+                                    <span key={index} className="file-preview-container">
+                                        <button className="delete-button-icon" onClick={() => handleDeleteFile(index)}>
+                                            <FaTimes/>
+                                        </button>
+                                        <p className="file-name">
+                                            File {shortFileName}
+                                        </p>
+                                    </span>
+                                );
+                            })}
+                        </FlexContainer>
+                    ) : (<></>)}
                 </Grid>
                 <FormSeparator title="Add Note" subTitle="Fill all necessary fields"/>
                 <TextInput

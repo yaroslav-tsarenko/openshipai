@@ -14,18 +14,17 @@
 
 .right-side-login {
     width: 100vw;
-    height: 100vh;
-    background: url("../../../src/assets/background-image.svg") no-repeat center;
+    height: 98vh;
+    background: url("../../../src/assets/images/sunset-truck.svg") no-repeat center;
     background-size: cover;
+    backdrop-filter: blur(5px);
     align-content: center;
+    margin: 10px;
+    border-radius: 20px;
     justify-content: center;
     text-align: center;
     display: flex;
     align-items: center;
-}
-
-.right-side-login-section {
-
 }
 
 .right-side-login-side-title {
@@ -39,21 +38,21 @@
 
 .right-side-login-side-description {
     font-size: 2.5rem;
-    font-weight: 600;
-    color: var(--light-grey);
+    font-weight: 300;
+    color: white;
 }
 
 .h2-title-login-form {
-    font-size: 3.5rem;
+    font-size: 4.5rem;
     font-weight: 600;
-    margin: 20px 0 20px 0;
+    margin: 20px 0 0 0;
     color: var(--royal-blue);
 }
 
 .h3-title-login-form {
     font-size: 2rem;
     margin: 0 0 20px 0;
-    font-weight: 500;
+    font-weight: 300;
     color: var(--grey);
 }
 
@@ -66,17 +65,10 @@
 .question-p {
     font-size: 1.5rem;
     margin: 20px 0 20px 0;
-    font-weight: 500;
+    font-weight: 400;
     color: #707070;
 }
 
-.sign-in-link {
-    color: var(--royal-blue);
-    font-weight: 600;
-    font-size: 1.5rem;
-    margin-left: 5px;
-    text-decoration: none;
-}
 
 .input-field {
     margin: 10px 0 10px 0;
@@ -90,11 +82,19 @@
     border: 1px solid #d7d7d7;
 }
 
+.logo-blue{
+    height: auto;
+    width: 150px;
+    display: flex;
+    margin: 0 auto;
+}
+
 .login-custom-form {
     position: relative;
     display: flex;
     flex-direction: column;
     text-align: left;
+    gap: 10px;
     max-width: 500px;
     width: 100%;
     margin: 0 15px 0 15px;

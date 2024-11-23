@@ -12,17 +12,17 @@ import useSound from 'use-sound';
 import notificationSound from '../../../assets/sound-effects/message-sent.mp3';
 import {Link, useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
-import { FaArrowLeft } from "react-icons/fa6";
 import styles from "./ShipperChatPage.module.scss";
 import {loadStripe} from '@stripe/stripe-js';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
-import {ClipLoader, FadeLoader} from "react-spinners";
+import {ClipLoader} from "react-spinners";
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
 import {SOCKET_URL} from "../../../constants/constants";
 import Button from "../../button/Button";
 import {Skeleton} from "@mui/material";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const ShipperChatPage = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -69,7 +69,6 @@ const ShipperChatPage = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
-
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [shipperInfo, setShipperInfo] = useState(null);
 
@@ -91,6 +90,34 @@ const ShipperChatPage = () => {
 
         getUser();
     }, [shipperInfo, shipperID]);
+
+    useEffect(() => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                });
+        }
+    }, [shipperInfo]);
+
+    useEffect(() => {
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-shipper-avatar/${shipperID}`);
+                if (response.data.userShipperAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.userShipperAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        getAvatar();
+    }, [shipperID]);
 
     useEffect(() => {
         setShowSuccessContainer(true);
@@ -584,16 +611,16 @@ const ShipperChatPage = () => {
                                         <UserChatAvatar className="user-avatar-chat"/>
                                         <div className="chat-details">
                                             <h3>Shipper Name</h3>
-                                            <h4>{conversation.chatID}</h4>
+                                            <p>{conversation.chatID}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <div className={`chat-messages-content ${isChatVisible ? 'active' : ''}`}>
-                            <button className="go-to-chats-button" onClick={handleBackToConversations}>
+                         {/*   <button className="go-to-chats-button" onClick={handleBackToConversations}>
                                 <FaArrowLeft/>
-                            </button>
+                            </button>*/}
                             <div className="shipper-chat-header">
                             <div className="shipper-carrier-chat-header">
                                     <span className="status-circle"></span>
@@ -607,18 +634,14 @@ const ShipperChatPage = () => {
                                             <h4 className="load-status-delivering">Load Delivered successfully</h4>
                                         ) : (
                                             <button className="waiting-for-approval-button" disabled>
-                                                <ClipLoader className="fade-loader" color="#cacaca" loading={true}
-                                                            size={15}/>
-                                                Carrier assigning driver for load
+                                                <RotatingLinesLoader title="Carrier assigning driver for load..."/>
                                             </button>
                                         )
                                     ) : (
                                         <button className="pay-button" onClick={handlePayClick}>
                                             {isProcessingPayment ?
                                                 <>
-                                                    <ClipLoader color="#fffff" loading={true} size={17}
-                                                                className="payment-loader"/>
-                                                    Pay
+                                                    <RotatingLinesLoader title="Processing..."/>
                                                 </>
                                                 : "Pay"
                                             }
@@ -671,13 +694,9 @@ const ShipperChatPage = () => {
                                                                     }}>
                                                                         {carrier ?
                                                                             <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
-                                                                                <ClipLoader color="#024ec9"
-                                                                                            loading={true}
-                                                                                            size={25}/>}</p> :
+                                                                                <Skeleton width={55} height={25} />}</p> :
                                                                             <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
-                                                                                <ClipLoader color="#024ec9"
-                                                                                            loading={true}
-                                                                                            size={25}/>}</p>}
+                                                                                <Skeleton width={55} height={25}/>}</p>}
                                                                         {message.sender !== 'shipperID' &&
                                                                             <div
                                                                                 style={{color: "darkgrey"}}>Carrier</div>}
@@ -697,7 +716,10 @@ const ShipperChatPage = () => {
                                                                     </div>}
                                                             </div>
                                                             <div className={styles.messagesContent}>
-                                                                {message.text}
+                                                                <div
+                                                                    style={{color: message.sender === 'carrierID' ? '#616161' : 'inherit'}}>
+                                                                    {message.text}
+                                                                </div>
                                                                 {message.files && message.files.map((fileUrl, idx) => (
                                                                     <img key={idx} src={fileUrl} alt="Attachment"
                                                                          style={{

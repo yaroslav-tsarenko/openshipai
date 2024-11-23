@@ -205,16 +205,6 @@
     margin: 0 10px 0 0;
 }
 
-.preview-image-for-load{
-    display: inline-block;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    height: 60px;
-    width: auto;
-    border: 1px solid var(--light-grey);
-    margin: 15px 10px 0 0;
-}
 
 .creating-load-button {
     width: fit-content;

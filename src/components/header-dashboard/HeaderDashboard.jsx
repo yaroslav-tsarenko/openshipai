@@ -3,17 +3,18 @@ import { Link } from 'react-router-dom';
 import './HeaderDashboard.css';
 import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../assets/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../assets/settings-icon.svg";
+import { MdNotificationsNone } from "react-icons/md";
+import { LuSettings } from "react-icons/lu";
 import {ReactComponent as SearchbarIcon } from '../../assets/settings-ios-icon.svg';
 import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
+import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
 
     const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
-
+    const animation = useGsapAnimation('smoothTransition');
     const suggestions = [
         { text: "Drivers & Equipment", url: "/link", icon: SearchbarIcon },
         { text: "Take Load", url: "/link", icon: SearchbarIcon },
@@ -24,6 +25,8 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
         { text: "Settings", url: "/link", icon: SearchbarIcon },
         { text: "Dashboard", url: "/link", icon: SearchbarIcon },
     ];
+
+    const animationRef = useGsapAnimation('pop');
 
     const handleInputChange = (event) => {
         const value = event.target.value;
@@ -36,9 +39,9 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
         <>
             {isSearchPopupOpen && (
                 <>
-                    <div className="search-popup-overlay" onClick={() => setIsSearchPopupOpen(false)}></div>
-                    <div className="search-popup">
-                        <div className="dashboard-searchbar-expanded">
+                    <div className="search-popup-overlay"  onClick={() => setIsSearchPopupOpen(false)}></div>
+                    <div className="search-popup" ref={animationRef}>
+                        <div className="dashboard-searchbar-expanded" >
                             <SearchIcon className="search-icon-searchbar"/>
                             <input
                                 type="text"
@@ -60,7 +63,7 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
                     </div>
                 </>
             )}
-            <div className="dashboard-content-header">
+            <div className="dashboard-content-header" ref={animation}>
                 <div>
                     <h2 className="dashboard-content-title">{contentTitle}</h2>
                     <button className="bars-button" onClick={onBurgerClick}>
@@ -88,8 +91,8 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
                                 <p className="header-dashboard-account-info-role">{accountRole}</p>
                             </Link>
                         </section>
-                        <Link to={bellLink} className="account-info-buttons"><BellIcon/></Link>
-                        <Link to={settingsLink} className="account-info-buttons"><SettingsAccountIcon/></Link>
+                        <Link to={bellLink} className="account-info-buttons"><MdNotificationsNone size={25}/></Link>
+                        <Link to={settingsLink} className="account-info-buttons"><LuSettings size={25}/></Link>
                     </div>
                 </div>
             </div>

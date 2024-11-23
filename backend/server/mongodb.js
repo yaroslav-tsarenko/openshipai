@@ -60,20 +60,17 @@ const fs = require('fs');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
 const {Card} = require("@mui/material");
+const sendEmail = require('./utils/sendEmail');
 const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
 
 app.use(cors());
 app.use(express.static(path.join(__dirname, 'build')));
 app.use(express.json());
 
-// Define the directory path
-const uploadDir = path.join(__dirname, 'uploads/chat-files');
-
-// Ensure the directory exists
+const uploadDir = path.join(__dirname, '..', '..', 'uploads');
 if (!fs.existsSync(uploadDir)) {
-    fs.mkdirSync(uploadDir, { recursive: true });
+    fs.mkdirSync(uploadDir, {recursive: true});
 }
-
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, uploadDir);
@@ -107,10 +104,10 @@ app.post('/sign-up-carrier-account', async (req, res) => {
         });
 
         await newCarrier.save();
-        res.status(201).json({ status: 'Success', message: 'Carrier account created successfully' });
+        res.status(201).json({status: 'Success', message: 'Carrier account created successfully'});
     } catch (error) {
         console.error('Error creating carrier:', error);
-        res.status(500).json({ status: 'Error', message: error.message });
+        res.status(500).json({status: 'Error', message: error.message});
     }
 });
 
@@ -124,7 +121,7 @@ const upload = multer({
 
 const chatFilesDir = path.join(__dirname, 'uploads/chat-files');
 if (!fs.existsSync(chatFilesDir)) {
-    fs.mkdirSync(chatFilesDir, { recursive: true });
+    fs.mkdirSync(chatFilesDir, {recursive: true});
 }
 
 app.use(express.json());
@@ -144,7 +141,6 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
 });
 
 
-
 const chatStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, 'uploads/chat-files/');
@@ -156,7 +152,7 @@ const chatStorage = multer.diskStorage({
 
 const uploadChatFiles = multer({
     storage: chatStorage,
-    limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+    limits: {fileSize: 10 * 1024 * 1024}, // 10MB limit
 });
 
 app.post('/upload-chat-files', uploadChatFiles.array('files', 10), async (req, res) => {
@@ -171,10 +167,10 @@ app.post('/upload-chat-files', uploadChatFiles.array('files', 10), async (req, r
         const fileUrls = files.map(file => {
             return `${req.protocol}://${req.get('host')}/uploads/chat-files/${file.filename}`;
         });
-        res.status(200).json({ fileUrls });
+        res.status(200).json({fileUrls});
     } catch (error) {
         console.error('Error uploading chat files:', error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
@@ -228,70 +224,66 @@ app.post('/register-shipper', async (req, res) => {
     }
 });
 app.get('/get-selected-card/:shipperID', async (req, res) => {
-    const { shipperID } = req.params;
+    const {shipperID} = req.params;
     try {
-        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        const shipper = await Shipper.findOne({userShipperID: shipperID});
         if (!shipper) {
-            return res.status(404).json({ message: 'Shipper not found' });
+            return res.status(404).json({message: 'Shipper not found'});
         }
-        const selectedCard = await CardModel.findOne({ cardNumber: shipper.userShipperSelectedCard });
+        const selectedCard = await CardModel.findOne({cardNumber: shipper.userShipperSelectedCard});
         if (!selectedCard) {
-            return res.status(404).json({ message: 'Selected card not found' });
+            return res.status(404).json({message: 'Selected card not found'});
         }
-        res.status(200).json({ status: 'Success', card: selectedCard });
+        res.status(200).json({status: 'Success', card: selectedCard});
     } catch (error) {
         console.error('Error fetching selected card:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
-
 app.put('/update-selected-card/:shipperID', async (req, res) => {
-    const { shipperID } = req.params;
-    const { cardNumber } = req.body;
+    const {shipperID} = req.params;
+    const {cardNumber} = req.body;
 
     try {
         const shipper = await Shipper.findOneAndUpdate(
-            { userShipperID: shipperID },
-            { userShipperSelectedCard: cardNumber },
-            { new: true }
+            {userShipperID: shipperID},
+            {userShipperSelectedCard: cardNumber},
+            {new: true}
         );
 
         if (!shipper) {
-            return res.status(404).json({ status: 'Error', message: 'Shipper not found' });
+            return res.status(404).json({status: 'Error', message: 'Shipper not found'});
         }
 
-        res.status(200).json({ status: 'Success', shipper });
+        res.status(200).json({status: 'Success', shipper});
     } catch (error) {
         console.error('Error updating selected card:', error);
-        res.status(500).json({ status: 'Error', message: 'Server error' });
+        res.status(500).json({status: 'Error', message: 'Server error'});
     }
 });
-
 app.get('/get-cards/:shipperID', async (req, res) => {
-    const { shipperID } = req.params;
+    const {shipperID} = req.params;
     try {
-        const cards = await CardModel.find({ userID: shipperID });
+        const cards = await CardModel.find({userID: shipperID});
         if (cards.length > 0) {
-            res.status(200).json({ status: 'Success', cards: cards });
+            res.status(200).json({status: 'Success', cards: cards});
         } else {
-            res.status(404).json({ status: 'Error', message: 'No cards found for this shipper' });
+            res.status(404).json({status: 'Error', message: 'No cards found for this shipper'});
         }
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: error.message });
+        res.status(500).json({status: 'Error', message: error.message});
     }
 });
-
 app.post('/save-card', async (req, res) => {
     try {
         const cardData = req.body;
         const newCard = new CardModel(cardData);
         await newCard.save();
-        res.status(200).json({ status: 'Success', card: newCard });
+        res.status(200).json({status: 'Success', card: newCard});
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: error.message });
+        res.status(500).json({status: 'Error', message: error.message});
     }
 });
-
 app.post('/send-driver-credentials', async (req, res) => {
     const {driverEmail, driverPassword} = req.body;
     try {
@@ -302,7 +294,6 @@ app.post('/send-driver-credentials', async (req, res) => {
         res.status(500).send({message: 'Failed to send email'});
     }
 });
-
 app.post('/create-bid', async (req, res) => {
     try {
         const newLoadBid = new LoadBid(req.body);
@@ -326,9 +317,8 @@ app.post('/create-bid', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 app.get('/api/distance', async (req, res) => {
-    const { origin, destination } = req.query;
+    const {origin, destination} = req.query;
     const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca'; // Replace with your OpenRouteService API key
 
     try {
@@ -360,18 +350,16 @@ app.get('/api/distance', async (req, res) => {
         const distanceInMeters = distanceResponse.data.routes[0].summary.distance;
         const distanceInMiles = (distanceInMeters / 1609.34).toFixed(2);
 
-        res.json({ distance: distanceInMiles });
+        res.json({distance: distanceInMiles});
     } catch (err) {
-        res.status(500).json({ error: 'Error calculating distance' });
+        res.status(500).json({error: 'Error calculating distance'});
     }
 });
-
-
 app.get('/calculate-distance', async (req, res) => {
-    const { origin, destination } = req.query;
+    const {origin, destination} = req.query;
 
     if (!origin || !destination) {
-        return res.status(400).json({ error: 'Missing origin or destination' });
+        return res.status(400).json({error: 'Missing origin or destination'});
     }
 
     const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${encodeURIComponent(origin)}&destinations=${encodeURIComponent(destination)}&key=${apiKey}`;
@@ -382,26 +370,24 @@ app.get('/calculate-distance', async (req, res) => {
 
         if (data.status === 'OK' && data.rows[0].elements[0].status === 'OK') {
             const distance = data.rows[0].elements[0].distance.text;
-            res.json({ distance });
+            res.json({distance});
         } else {
-            res.status(400).json({ error: 'Error fetching distance', details: data.error_message });
+            res.status(400).json({error: 'Error fetching distance', details: data.error_message});
         }
     } catch (error) {
-        res.status(500).json({ error: 'Internal server error', details: error.message });
+        res.status(500).json({error: 'Internal server error', details: error.message});
     }
 });
-
 app.get('/get-drivers/:carrierID', async (req, res) => {
-    const { carrierID } = req.params;
+    const {carrierID} = req.params;
     try {
-        const drivers = await Driver.find({ driverCreatedByCarrierID: carrierID });
+        const drivers = await Driver.find({driverCreatedByCarrierID: carrierID});
         res.json(drivers);
     } catch (error) {
         console.error('Error fetching drivers:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
-
 app.get('/load/:loadCredentialID', async (req, res) => {
     const {loadCredentialID} = req.params;
     try {
@@ -414,7 +400,6 @@ app.get('/load/:loadCredentialID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 app.get('/get-all-load-bids', async (req, res) => {
     try {
         const loadBids = await LoadBid.find({});
@@ -423,7 +408,6 @@ app.get('/get-all-load-bids', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 app.delete('/delete-all-load-bids', async (req, res) => {
     try {
         await LoadBid.deleteMany({});
@@ -432,7 +416,6 @@ app.delete('/delete-all-load-bids', async (req, res) => {
         res.status(500).send({status: 'Error', message: 'Failed to delete all LoadBids'});
     }
 });
-
 app.post('/upload-shipper-avatar/:shipperID', upload.single('avatar'), async (req, res) => {
     const {shipperID} = req.params;
 
@@ -457,7 +440,6 @@ app.post('/upload-shipper-avatar/:shipperID', upload.single('avatar'), async (re
         res.status(500).json({message: error.message});
     }
 });
-
 app.post('/upload-driver-avatar/:driverID', upload.single('avatar'), async (req, res) => {
     const {driverID} = req.params;
 
@@ -483,7 +465,6 @@ app.post('/upload-driver-avatar/:driverID', upload.single('avatar'), async (req,
         res.status(500).json({message: error.message});
     }
 });
-
 app.put('/update-driver/:driverID', async (req, res) => {
     const {driverID} = req.params;
     const {driverFirstAndLastName, driverEmail, driverPhoneNumber} = req.body;
@@ -503,7 +484,6 @@ app.put('/update-driver/:driverID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 app.put('/update-carrier/:carrierID', async (req, res) => {
     const {carrierID} = req.params;
     const {name, secondName, phoneNumber, email, companyName, dotNumber} = req.body;
@@ -528,7 +508,6 @@ app.put('/update-carrier/:carrierID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-
 app.post('/upload-carrier-avatar/:carrierID', upload.single('avatar'), async (req, res) => {
     const {carrierID} = req.params;
 
@@ -553,33 +532,32 @@ app.post('/upload-carrier-avatar/:carrierID', upload.single('avatar'), async (re
         res.status(500).json({message: error.message});
     }
 });
-
 app.get('/get-carrier-avatar/:carrierID', async (req, res) => {
     try {
-        const carrier = await Carrier.findOne({ carrierID: req.params.carrierID });
+        const carrier = await Carrier.findOne({carrierID: req.params.carrierID});
         if (!carrier) {
-            return res.status(404).json({ message: 'Carrier not found' });
+            return res.status(404).json({message: 'Carrier not found'});
         }
-        res.json({ carrierAvatar: carrier.carrierAvatar });
+        res.json({carrierAvatar: carrier.carrierAvatar});
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({message: err.message});
     }
 });
 
 app.post('/subscribe-to-newsletter', async (req, res) => {
-    const { email } = req.body;
+    const {email} = req.body;
 
     try {
-        const newSubscriber = new SubscribedUsersForNewsletter({ email });
+        const newSubscriber = new SubscribedUsersForNewsletter({email});
         await newSubscriber.save();
-        res.status(200).json({ message: 'Subscription successful' });
+        res.status(200).json({message: 'Subscription successful'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.post('/submit-contact-request', async (req, res) => {
-    const { name, lastName, email, phoneNumber, description } = req.body;
+    const {name, lastName, email, phoneNumber, description} = req.body;
 
     const newContactRequest = new ContactRequestUser({
         name,
@@ -591,9 +569,9 @@ app.post('/submit-contact-request', async (req, res) => {
 
     try {
         const savedContactRequest = await newContactRequest.save();
-        res.status(201).json({ status: 'Success', contactRequest: savedContactRequest });
+        res.status(201).json({status: 'Success', contactRequest: savedContactRequest});
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: error.message });
+        res.status(500).json({status: 'Error', message: error.message});
     }
 });
 
@@ -654,40 +632,45 @@ app.put('/update-shipper/:shipperID', async (req, res) => {
 });
 
 app.post('/submit-help-quote/:userID', async (req, res) => {
-    const { email, description, shipperID, timestamp } = req.body;
-    const { userID } = req.params;
-    const newSupportQuote = new SupportQoutes({ email, description, shipperID, userID, timestamp });
+    const {email, description, shipperID, timestamp} = req.body;
+    const {userID} = req.params;
+    const newSupportQuote = new SupportQoutes({email, description, shipperID, userID, timestamp});
     try {
         await newSupportQuote.save();
-        res.status(200).json({ message: 'Help quote submitted successfully' });
+        res.status(200).json({message: 'Help quote submitted successfully'});
     } catch (error) {
         console.error('Error submitting feedback:', error);
-        res.status(500).json({ message: 'Error submitting Help quote' });
+        res.status(500).json({message: 'Error submitting Help quote'});
     }
 });
 
 
 app.post('/submit-feedback/:userID', async (req, res) => {
-    const { email, description, shipperID, timestamp } = req.body;
-    const { userID } = req.params; // Extract userID from URL parameters
-    const newFeedback = new Feedback({ email, description, shipperID, userID, timestamp });
+    const {email, description, shipperID, timestamp} = req.body;
+    const {userID} = req.params; // Extract userID from URL parameters
+    const newFeedback = new Feedback({email, description, shipperID, userID, timestamp});
     try {
         await newFeedback.save();
-        res.status(200).json({ message: 'Feedback submitted successfully' });
+        res.status(200).json({message: 'Feedback submitted successfully'});
     } catch (error) {
         console.error('Error submitting feedback:', error);
-        res.status(500).json({ message: 'Error submitting feedback' });
+        res.status(500).json({message: 'Error submitting feedback'});
     }
 });
 
 app.put('/update-shipper-notifications/:shipperID', async (req, res) => {
-    const { shipperID } = req.params;
-    const { userShipperNotificationFromDriver, userShipperNotificationFromCarrier, userShipperNotificationFromAI, userShipperNotificationOfUpdates } = req.body;
+    const {shipperID} = req.params;
+    const {
+        userShipperNotificationFromDriver,
+        userShipperNotificationFromCarrier,
+        userShipperNotificationFromAI,
+        userShipperNotificationOfUpdates
+    } = req.body;
 
     try {
-        const shipper = await Shipper.findOne({ userShipperID: shipperID });
+        const shipper = await Shipper.findOne({userShipperID: shipperID});
         if (!shipper) {
-            return res.status(404).json({ message: 'Shipper not found' });
+            return res.status(404).json({message: 'Shipper not found'});
         }
 
         shipper.userShipperNotificationFromDriver = userShipperNotificationFromDriver;
@@ -696,20 +679,25 @@ app.put('/update-shipper-notifications/:shipperID', async (req, res) => {
         shipper.userShipperNotificationOfUpdates = userShipperNotificationOfUpdates;
 
         await shipper.save();
-        res.status(200).json({ message: 'Notification settings updated successfully' });
+        res.status(200).json({message: 'Notification settings updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.put('/update-driver-notifications/:driverID', async (req, res) => {
-    const { driverID } = req.params;
-    const { driverNotificationFromDriver, driverNotificationFromCarrier, driverNotificationFromAI, driverNotificationOfUpdates } = req.body;
+    const {driverID} = req.params;
+    const {
+        driverNotificationFromDriver,
+        driverNotificationFromCarrier,
+        driverNotificationFromAI,
+        driverNotificationOfUpdates
+    } = req.body;
 
     try {
-        const driver = await Driver.findOne({ driverID });
+        const driver = await Driver.findOne({driverID});
         if (!driver) {
-            return res.status(404).json({ message: 'Carrier not found' });
+            return res.status(404).json({message: 'Carrier not found'});
         }
 
         driver.driverNotificationFromDriver = driverNotificationFromDriver;
@@ -718,20 +706,25 @@ app.put('/update-driver-notifications/:driverID', async (req, res) => {
         driver.driverNotificationOfUpdates = driverNotificationOfUpdates;
 
         await driver.save();
-        res.status(200).json({ message: 'Notification settings updated successfully' });
+        res.status(200).json({message: 'Notification settings updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.put('/update-carrier-notifications/:carrierID', async (req, res) => {
-    const { carrierID } = req.params;
-    const { carrierNotificationFromDriver, carrierNotificationFromCarrier, carrierNotificationFromAI, carrierNotificationOfUpdates } = req.body;
+    const {carrierID} = req.params;
+    const {
+        carrierNotificationFromDriver,
+        carrierNotificationFromCarrier,
+        carrierNotificationFromAI,
+        carrierNotificationOfUpdates
+    } = req.body;
 
     try {
-        const carrier = await Carrier.findOne({ carrierID });
+        const carrier = await Carrier.findOne({carrierID});
         if (!carrier) {
-            return res.status(404).json({ message: 'Carrier not found' });
+            return res.status(404).json({message: 'Carrier not found'});
         }
 
         carrier.carrierNotificationFromDriver = carrierNotificationFromDriver;
@@ -740,28 +733,29 @@ app.put('/update-carrier-notifications/:carrierID', async (req, res) => {
         carrier.carrierNotificationOfUpdates = carrierNotificationOfUpdates;
 
         await carrier.save();
-        res.status(200).json({ message: 'Notification settings updated successfully' });
+        res.status(200).json({message: 'Notification settings updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.put('/update-user-password/:role/:id', async (req, res) => {
-    const { role, id } = req.params;
-    const { newPassword } = req.body;
+    const {role, id} = req.params;
+    const {newPassword} = req.body;
 
     try {
         let user;
         if (role === 'shipper') {
-            user = await Shipper.findOne({ userShipperID: id });
+            user = await Shipper.findOne({userShipperID: id});
         } else if (role === 'carrier') {
-            user = await Carrier.findOne({ carrierID: id });
+            user = await Carrier.findOne({carrierID: id});
         } else if (role === 'driver') {
-            user = await Driver.findOne({ driverID: id });
-        } return res.status(400).json({ message: 'Invalid role specified' });
+            user = await Driver.findOne({driverID: id});
+        }
+        return res.status(400).json({message: 'Invalid role specified'});
 
         if (!user) {
-            return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
+            return res.status(404).json({message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found`});
         }
 
         if (role === 'shipper') {
@@ -771,46 +765,46 @@ app.put('/update-user-password/:role/:id', async (req, res) => {
         }
 
         await user.save();
-        res.status(200).json({ message: 'Password updated successfully' });
+        res.status(200).json({message: 'Password updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
+
 app.get('/get-all-loads', async (req, res) => {
     try {
         const loads = await Load.find({});
         res.status(200).json(loads);
     } catch (error) {
         console.error('Error fetching loads:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
 
 app.get('/get-assigned-driver-loads/:userID', async (req, res) => {
-    const { userID } = req.params;
+    const {userID} = req.params;
     try {
-        const driver = await Driver.findOne({ driverID: userID });
+        const driver = await Driver.findOne({driverID: userID});
         if (!driver) {
-            return res.status(404).json({ message: 'Driver not found' });
+            return res.status(404).json({message: 'Driver not found'});
         }
-        const { driverAssignedLoadsID } = driver;
-        const loads = await Load.find({ loadCredentialID: { $in: driverAssignedLoadsID } });
-        res.status(200).json({ status: 'Success', loads });
+        const {driverAssignedLoadsID} = driver;
+        const loads = await Load.find({loadCredentialID: {$in: driverAssignedLoadsID}});
+        res.status(200).json({status: 'Success', loads});
     } catch (error) {
         console.error('Error fetching assigned loads:', error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
-
 app.get('/get-all-loads/:shipperID', async (req, res) => {
-    const { shipperID } = req.params;
+    const {shipperID} = req.params;
     try {
-        const loads = await Load.find({ shipperID });
+        const loads = await Load.find({shipperID});
         res.status(200).json(loads);
     } catch (error) {
         console.error('Error fetching loads:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
 
@@ -876,6 +870,7 @@ app.post('/subscribe-shipper', async (req, res) => {
         res.status(500).json({message: 'Error subscribing shipper', error: error.message});
     }
 });
+
 app.post('/subscribe-user', async (req, res) => {
     const {email, phoneNumber, name} = req.body;
 
@@ -1065,45 +1060,45 @@ app.post('/create-deal-chat-conversation', async (req, res) => {
 });
 
 app.delete('/delete-account/:role/:id', async (req, res) => {
-    const { role, id } = req.params;
+    const {role, id} = req.params;
     try {
         let result;
         if (role === 'shipper') {
-            result = await Shipper.findOneAndDelete({ userShipperID: id });
+            result = await Shipper.findOneAndDelete({userShipperID: id});
         } else if (role === 'carrier') {
-            result = await Carrier.findOneAndDelete({ carrierID: id });
+            result = await Carrier.findOneAndDelete({carrierID: id});
         } else if (role === 'driver') {
-            result = await Driver.findOneAndDelete({ driverID: id });
+            result = await Driver.findOneAndDelete({driverID: id});
         } else {
-            return res.status(400).json({ message: 'Invalid role specified' });
+            return res.status(400).json({message: 'Invalid role specified'});
         }
 
         if (!result) {
-            return res.status(404).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found` });
+            return res.status(404).json({message: `${role.charAt(0).toUpperCase() + role.slice(1)} not found`});
         }
 
-        res.status(200).json({ message: `${role.charAt(0).toUpperCase() + role.slice(1)} account deleted successfully` });
+        res.status(200).json({message: `${role.charAt(0).toUpperCase() + role.slice(1)} account deleted successfully`});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.get('/get-all-deal-chat-conversations/:carrierID', async (req, res) => {
-    const { carrierID } = req.params;
+    const {carrierID} = req.params;
     try {
-        const conversations = await DealChatConversation.find({ carrierID: carrierID });
+        const conversations = await DealChatConversation.find({carrierID: carrierID});
         res.json(conversations);
     } catch (error) {
-        res.json({ message: error.message });
+        res.json({message: error.message});
     }
 });
 
 app.get('/get-all-deal-chat-conversations', async (req, res) => {
     try {
-        const conversations = await DealChatConversation.find({  });
+        const conversations = await DealChatConversation.find({});
         res.json(conversations);
     } catch (error) {
-        res.json({ message: error.message });
+        res.json({message: error.message});
     }
 });
 
@@ -1259,18 +1254,17 @@ app.get('/get-deal-chat-conversation/:chatID', async (req, res) => {
 });
 
 app.post('/save-chat-message', async (req, res) => {
-    const { chatID, receiver, sender, text, date, files } = req.body;
-    const message = new DealConversationChatHistoryMessage({ chatID, receiver, sender, text, date, files });
+    const {chatID, receiver, sender, text, date, files} = req.body;
+    const message = new DealConversationChatHistoryMessage({chatID, receiver, sender, text, date, files});
     try {
         await message.save();
-        res.status(200).json({ message: 'Chat message saved successfully.' });
+        res.status(200).json({message: 'Chat message saved successfully.'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 
-// Create the endpoint to fetch chat history by chatID
 app.get('/get-chat-history/:chatID', async (req, res) => {
     const {chatID} = req.params;
     try {
@@ -1280,6 +1274,7 @@ app.get('/get-chat-history/:chatID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
+
 app.get('/get-carrier-by-id/:carrierID', async (req, res) => {
     const {carrierID} = req.params;
     try {
@@ -1366,22 +1361,61 @@ app.post('/save-shipper-data', async (req, res) => {
     }
 });
 
-app.post('/save-load-data', async (req, res) => {
-    console.log('Received request to /save-load-data');
+function splitPascalCase(text) {
+    return text.replace(/([a-z])([A-Z])/g, '$1 $2');
+}
+
+app.post("/save-load-data", upload.array("loadImages", 5), async (req, res) => {
+
+
+
+    console.log("Received request to /save-load-data");
     const loadData = req.body;
-    console.log('Request body:', loadData);
+    console.log("Request body:", loadData);
+
     if (!loadData.loadMilesTrip || isNaN(loadData.loadMilesTrip)) {
-        console.error('Invalid loadMilesTrip value:', loadData.loadMilesTrip);
-        return res.status(400).json({ status: 'Error', message: 'Invalid loadMilesTrip value' });
+        console.error("Invalid loadMilesTrip value:", loadData.loadMilesTrip);
+        return res.status(400).json({status: "Error", message: "Invalid loadMilesTrip value"});
     }
-    const newLoad = new Load(loadData);
+
+    const imageUrls = req.files.map(file => `uploads/${file.filename}`);
+
+    const newLoad = new Load({
+        ...loadData,
+        loadImages: imageUrls
+    });
+
+    const formattedLoadSubType = splitPascalCase(loadData.loadSubType);
+
     try {
         const savedLoad = await newLoad.save();
-        console.log('Saved load:', savedLoad);
-        res.json({ status: 'Success', load: savedLoad });
+        console.log("Saved load:", savedLoad);
+
+        const shipper = await Shipper.findOne({userShipperID: savedLoad.shipperID});
+        if (shipper) {
+            const email = shipper.userShipperEmail;
+            const subject = `✅Congratulations! Your ${formattedLoadSubType} Created Successfully!`;
+            const text = `Your ${formattedLoadSubType} has been created successfully! Now, AI need to review your load to make it active for carriers board, load credentials is ${loadData.loadCredentialID}`;
+            await sendEmail(email, subject, text);
+        }
+
+        setTimeout(async () => {
+            const shipperEmail = shipper.userShipperEmail;
+            const shipperSubject = `✅Success! AI reviewed your ${formattedLoadSubType}!`;
+            const shipperText = 'AI reviewed your load and decided to make it active for carriers board. You can check it now! And start your journey in AI experience';
+            try {
+                await Load.findByIdAndUpdate(savedLoad._id, {loadStatus: "Active"});
+                console.log(`Load status updated to "Publication" for load ID: ${savedLoad._id}`);
+                sendEmail(shipperEmail, shipperSubject, shipperText)
+            } catch (error) {
+                console.error(`Error updating load status for load ID: ${savedLoad._id}`, error);
+            }
+        }, 3 * 60 * 1000);
+
+        res.status(200).json({status: "Success", load: savedLoad});
     } catch (error) {
-        console.error('Error saving load:', error);
-        res.status(500).json({ status: 'Error', message: error.message });
+        console.error("Error saving load:", error);
+        res.status(500).json({status: "Error", message: "Error saving load"});
     }
 });
 
@@ -1742,58 +1776,58 @@ app.get('/get-construction-equipment-loads', async (req, res) => {
 });
 
 app.put('/update-driver-location/:driverID', async (req, res) => {
-    const { driverID } = req.params;
-    const { driverLat, driverLng } = req.body;
+    const {driverID} = req.params;
+    const {driverLat, driverLng} = req.body;
 
     try {
-        const driver = await Driver.findOne({ driverID });
+        const driver = await Driver.findOne({driverID});
         if (!driver) {
-            return res.status(404).json({ message: 'Driver not found' });
+            return res.status(404).json({message: 'Driver not found'});
         }
         driver.driverLat = driverLat;
         driver.driverLng = driverLng;
         await driver.save();
-        res.status(200).json({ message: 'Driver location updated successfully' });
+        res.status(200).json({message: 'Driver location updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.put('/update-load-picked-up/:loadCredentialID', async (req, res) => {
-    const { loadCredentialID } = req.params;
+    const {loadCredentialID} = req.params;
 
     try {
-        const load = await Load.findOne({ loadCredentialID });
+        const load = await Load.findOne({loadCredentialID});
         if (!load) {
-            return res.status(404).json({ message: 'Load not found' });
+            return res.status(404).json({message: 'Load not found'});
         }
 
         load.loadDeliveredStatus = 'Picked Up';
         await load.save();
 
-        res.status(200).json({ message: 'Load status updated to Picked Up successfully', load });
+        res.status(200).json({message: 'Load status updated to Picked Up successfully', load});
     } catch (error) {
         console.error('Error updating load status:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
 
 app.put('/start-trip/:loadCredentialID', async (req, res) => {
-    const { loadCredentialID } = req.params;
+    const {loadCredentialID} = req.params;
 
     try {
-        const load = await Load.findOne({ loadCredentialID });
+        const load = await Load.findOne({loadCredentialID});
         if (!load) {
-            return res.status(404).json({ message: 'Load not found' });
+            return res.status(404).json({message: 'Load not found'});
         }
 
         load.loadTripStarted = 'Started';
         await load.save();
 
-        res.status(200).json({ message: 'Trip started successfully', load });
+        res.status(200).json({message: 'Trip started successfully', load});
     } catch (error) {
         console.error('Error starting trip:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
 
@@ -1856,20 +1890,20 @@ app.get('/get-driver/:driverID', async (req, res) => {
 });
 
 app.put('/update-driver-info/:driverID', async (req, res) => {
-    const { driverID } = req.params;
-    const { driverLicenceClass, driverTruck, driverInsurance } = req.body;
+    const {driverID} = req.params;
+    const {driverLicenceClass, driverTruck, driverInsurance} = req.body;
     try {
-        const driver = await Driver.findOne({ driverID });
+        const driver = await Driver.findOne({driverID});
         if (!driver) {
-            return res.status(404).json({ message: 'Driver not found' });
+            return res.status(404).json({message: 'Driver not found'});
         }
         driver.driverLicenceClass = driverLicenceClass;
         driver.driverTruck = driverTruck;
         driver.driverInsurance = driverInsurance;
         await driver.save();
-        res.json({ message: 'Driver information updated successfully' });
+        res.json({message: 'Driver information updated successfully'});
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
@@ -2188,39 +2222,39 @@ app.put('/update-load-payment-status/:chatID', async (req, res) => {
 
 app.get('/get-card-details/:cardID', async (req, res) => {
     try {
-        const card = await CardModel.findOne({ cardNumber: req.params.cardID });
+        const card = await CardModel.findOne({cardNumber: req.params.cardID});
         if (!card) {
-            return res.status(404).json({ message: 'Card not found' });
+            return res.status(404).json({message: 'Card not found'});
         }
         res.status(200).json(card);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 const formatDate = (date) => {
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    const options = {month: 'short', day: 'numeric', year: 'numeric'};
     return date.toLocaleDateString('en-US', options);
 };
 
 const formatTime = (date) => {
-    const options = { hour: 'numeric', minute: 'numeric', hour12: true };
+    const options = {hour: 'numeric', minute: 'numeric', hour12: true};
     return date.toLocaleTimeString('en-US', options).toLowerCase();
 };
 
 app.get('/get-all-transactions/:userID', async (req, res) => {
-    const { userID } = req.params;
+    const {userID} = req.params;
     try {
-        const transactions = await Transaction.find({ userID: userID });
+        const transactions = await Transaction.find({userID: userID});
         res.status(200).json(transactions);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 
 app.post('/sign-up-shipper-account', async (req, res) => {
-    const { firstName, lastName, email, phone, password } = req.body;
+    const {firstName, lastName, email, phone, password} = req.body;
     const newShipper = new Shipper({
         userShipperName: firstName,
         userShipperSecondName: lastName,
@@ -2232,14 +2266,14 @@ app.post('/sign-up-shipper-account', async (req, res) => {
 
     try {
         await newShipper.save();
-        res.status(201).json({ status: 'Success', message: 'Shipper account created successfully' });
+        res.status(201).json({status: 'Success', message: 'Shipper account created successfully'});
     } catch (error) {
-        res.status(500).json({ status: 'Error', message: error.message });
+        res.status(500).json({status: 'Error', message: error.message});
     }
 });
 
 app.post('/create-checkout-session-2', async (req, res) => {
-    const { amount, loadType, description, shipperID, chatID } = req.body;
+    const {amount, loadType, description, shipperID, chatID} = req.body;
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -2268,10 +2302,10 @@ app.post('/create-checkout-session-2', async (req, res) => {
 
         await newTransaction.save();
         console.log("Transaction Saved");
-        res.json({ sessionId: session.id });
+        res.json({sessionId: session.id});
     } catch (error) {
         console.error('Error creating checkout session:', error);
-        res.status(500).json({ error: 'An error occurred while creating the checkout session.' });
+        res.status(500).json({error: 'An error occurred while creating the checkout session.'});
     }
 });
 
@@ -2626,8 +2660,6 @@ app.get('/get-current-user/:userRole/:userID', async (req, res) => {
         res.status(500).json({message: 'Server error'});
     }
 });
-
-//
 
 app.post('/sign-in', async (req, res) => {
     const {email, password} = req.body;

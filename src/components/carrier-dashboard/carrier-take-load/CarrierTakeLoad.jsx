@@ -297,13 +297,11 @@ const CarrierTakeLoad = () => {
             {showLoadTypePopup && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
-
                         <div className="select-popup-header">
                             <h2>Load Type</h2>
                             <button className="close-popup-button" onClick={toggleLoadTypePopup}>Close
                             </button>
                         </div>
-
                         <div className="select-popup-content">
                             <p onClick={() => handleSelectLoadTypeOption('Freight')}>Freight</p>
                             <p onClick={() => handleSelectLoadTypeOption('Automotive')}>Automotive</p>
@@ -311,7 +309,6 @@ const CarrierTakeLoad = () => {
                             <p onClick={() => handleSelectLoadTypeOption('Heavy Equipment')}>Heavy Equipment</p>
                             <p onClick={() => handleSelectLoadTypeOption('All')}>All</p>
                         </div>
-
                     </div>
                 </div>
             )}
@@ -379,13 +376,10 @@ const CarrierTakeLoad = () => {
             {showWeightPopup && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
-
                         <div className="select-popup-header">
                             <h2>Weight</h2>
-                            <button className="close-popup-button" onClick={toggleWeightPopup}>Close
-                            </button>
+                            <button className="close-popup-button" onClick={toggleWeightPopup}>Close</button>
                         </div>
-
                         <div className="select-popup-content">
                             <p onClick={() => handleSelectWeightOption('Light')}>Light</p>
                             <p onClick={() => handleSelectWeightOption('Medium')}>Medium</p>
@@ -399,7 +393,6 @@ const CarrierTakeLoad = () => {
             {showPricingTypePopup && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
-
                         <div className="select-popup-header">
                             <h2>Pricing Type</h2>
                             <button className="close-popup-button"

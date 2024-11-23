@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import './MetricComponent.css';
+import useGsapAnimation from "../../hooks/useGsapAnimation";
+
 
 const MetricComponent = ({ text, description, percent, color }) => {
     const radius = 50;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (percent / 100) * circumference;
     const [strokeWidth, setStrokeWidth] = useState(10);
+    const animationMetric = useGsapAnimation('slideLeft');
 
     useEffect(() => {
         const handleResize = () => {
@@ -25,7 +28,7 @@ const MetricComponent = ({ text, description, percent, color }) => {
     }, []);
 
     return (
-        <div className="metric-container">
+        <div className="metric-container" ref={animationMetric}>
             <div className="metric-container-text">
                 <h2 className="metric-container-title">{text}</h2>
                 <p className="metric-container-description">{description}</p>

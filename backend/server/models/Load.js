@@ -59,6 +59,7 @@ const LoadSchema = new mongoose.Schema({
     loadTripStarted: String,
     loadAdditionalSelectedLoadOptions: [String],
     loadIsBox: String,
+    loadImages: [String],
     isOnTrailer: Boolean,
     hasTrailerPreference: Boolean,
     loadTypeOfTrailer: String,

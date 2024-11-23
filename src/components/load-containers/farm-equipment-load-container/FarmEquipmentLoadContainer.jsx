@@ -10,6 +10,7 @@ import {ReactComponent as AttachFile} from "../../../assets/files-icon.svg";
 import {ReactComponent as CameraIcon} from "../../../assets/camera-icon.svg";
 import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
+import SEO from "../../seo/SEO";
 
 const HeavyEquipmentLoadContainer = ({pickupLocation, deliveryLocation, loadType, loadSubType, loadPickupDate, loadDeliveryDate, loadPickupTime, loadDeliveryTime,}) => {
     const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
@@ -113,6 +114,11 @@ const HeavyEquipmentLoadContainer = ({pickupLocation, deliveryLocation, loadType
 
     return (
         <div className="farm-equipment-container-wrapper">
+            <SEO
+                title="Farm Equipment Load - Reliable and Safe Transport"
+                description="Transport your farm equipment safely and reliably with our specialized services. Contact us for a quote!"
+                keywords="farm equipment transport, reliable farm equipment transport, safe farm equipment transport"
+            />
             {isLoadCreatedSuccess && <Alert text="Load Created Successfully"/>}
             {isLoadCreatedFailed && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
             <div className="farm-equipment-container-content">

@@ -17,8 +17,9 @@
   flex-direction: column;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  max-width: 450px;
+  max-width: fit-content;
   height: fit-content;
+  margin: 0 20px 0 20px;
   width: 100%;
 }
 
@@ -60,11 +61,15 @@
 .footer {
   display: flex;
   padding: 12px;
-  border-top: 1px solid #ccc;
 
   p {
     margin: 0;
+    position: inherit;
+    display: flex;
     font-size: 1.3rem;
     color: var(--grey);
+    flex-wrap: wrap;
+    max-width: 450px;
+    width: 100%;
   }
 }

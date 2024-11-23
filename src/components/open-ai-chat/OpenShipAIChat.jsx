@@ -14,6 +14,7 @@ import { ReactComponent as AIStar } from "../../assets/stars-svg.svg";
 import Typewriter from "typewriter-effect";
 import Recorder from 'recorder-js';
 import {Bars} from "react-loader-spinner";
+import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const OpenShipAIChat = ({ userID, userRole }) => {
     const { shipperID, aiChatID } = useParams();
@@ -37,7 +38,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     const [volumeBars, setVolumeBars] = useState([]);
     const [touchStartX, setTouchStartX] = useState(0);
     const [touchEndX, setTouchEndX] = useState(0);
-
+    const animation = useGsapAnimation('slideUp');
     function generateChatID() {
         const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
         let result = '';
@@ -350,7 +351,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
     };
 
     return (
-        <div className="chat-container-wrapper">
+        <div className="chat-container-wrapper" ref={animation}>
             <div className={`chat-sidebar ${isSidebarOpen ? 'open' : ''}`}>
                 <div className="chat-sidebar-header">
                     <h3>OpenShipAI</h3>

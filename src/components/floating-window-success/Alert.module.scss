@@ -150,3 +150,11 @@
     opacity: 0;
   }
 }
+
+@media screen and (max-width: 768px) {
+  .floatingWindowComponent{
+    max-width: 370px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}

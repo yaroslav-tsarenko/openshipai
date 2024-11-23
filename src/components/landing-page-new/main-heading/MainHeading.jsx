@@ -6,7 +6,7 @@ import styles from './MainHeading.module.scss';
 import Button from "../../button/Button";
 import {useNavigate} from "react-router-dom";
 
-const MainHeading = () => {
+const MainHeading = ({ref}) => {
 
 
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ const MainHeading = () => {
 
 
     return (
-        <div className={styles.mainHeadingWrapper}>
+        <div className={styles.mainHeadingWrapper} ref={ref}>
             <div className={styles.littleBenefits}>
                 <section><GreenCheckmark className={styles.checkmark}/><span>Residential & Business</span></section>
                 <section><GreenCheckmark className={styles.checkmark}/><span>Ship Anything to Anywhere</span></section>
@@ -36,7 +36,7 @@ const MainHeading = () => {
                 <TrustedClients className={styles.trustedClients}/>
             </div>
             <section>
-                <Button variant="apply" onClick={handleNavigateShipper}>
+                <Button variant="apply-non-responsive" onClick={handleNavigateShipper}>
                     Become Shipper
                 </Button>
                 <Button variant="neutral-non-responsive" onClick={handleNavigateCarrier}>

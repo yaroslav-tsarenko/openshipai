@@ -4,6 +4,25 @@
     box-sizing: border-box;
 }
 
+.load-page-content-page-section{
+    display: flex;
+    flex-direction: column;
+    background: var(--royal-white);
+    padding: 10px;
+    margin: 15px;
+    gap: 15px;
+    border-radius: 15px;
+}
+
+.carriers-bids-empty{
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    font-weight: lighter;
+}
+
 .shipper-dashboard-wrapper {
     height: 100dvh;
     width: 100%;
@@ -165,14 +184,14 @@
     border-radius: 15px;
 }
 
-.shipper-dashboard-content-settings{
+.shipper-dashboard-content-settings {
     display: flex;
     width: 100%;
     flex-direction: column;
     gap: 10px;
 }
 
-.chat-messages-content{
+.chat-messages-content {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -183,7 +202,7 @@
     border-radius: 15px;
 }
 
-.go-to-chats-button{
+.go-to-chats-button {
     position: absolute;
     display: flex;
     font-weight: bold;
@@ -199,7 +218,7 @@
     border: none;
 }
 
-.go-to-chats-button:hover{
+.go-to-chats-button:hover {
     background: var(--light-grey);
 }
 
@@ -824,7 +843,6 @@
 }
 
 
-
 .account-info-name {
     font-size: 2rem;
     font-weight: bold;
@@ -1262,6 +1280,8 @@
     flex-direction: column;
     width: 100%;
     height: 75dvh;
+    padding: 1rem;
+    gap: 20px;
     border-radius: 30px;
     overflow: scroll;
     border: 1px solid var(--light-grey);
@@ -1274,9 +1294,6 @@
 
 .load-directions {
     display: flex;
-}
-
-.load-container-status {
 }
 
 
@@ -1300,14 +1317,13 @@
     justify-content: space-between;
     width: 155px;
     height: 100%;
+    gap: 20px;
 }
 
 .carrier-icon {
     background: none;
     z-index: 999;
 }
-
-
 
 .origin-destination-container {
     display: flex;
@@ -1317,15 +1333,12 @@
     height: 85px;
 }
 
-
 .load-directions-description {
     font-size: 1.2rem;
     font-weight: 700;
     margin: 0;
     color: var(--light-grey);
-
 }
-
 
 .shipper-info-google-map-container {
     border-radius: 15px;
@@ -1737,6 +1750,8 @@
     flex-direction: column;
     width: 100%;
     height: 95dvh;
+    gap: 10px;
+    padding: 10px;
     overflow: scroll;
     overflow-x: hidden;
 }
@@ -1766,7 +1781,7 @@
     padding: 5px;
 }
 
-.chat-input-area-wrapper:hover{
+.chat-input-area-wrapper:hover {
     border: 1px solid var(--royal-blue);
 }
 
@@ -1781,7 +1796,7 @@
     justify-items: center;
 }
 
-.chat-input-area section{
+.chat-input-area section {
     width: 250px;
 }
 
@@ -1823,12 +1838,14 @@
 
 .chat-id-container {
     display: flex;
-    margin: 20px 0 0 0;
     cursor: pointer;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
     font-weight: bold;
     padding: 10px;
     color: black;
-    border-radius: 50px;
+    border-radius: 10px;
     transition: 0.2s ease-in-out;
     font-size: 2rem;
 }
@@ -1846,21 +1863,22 @@
 }
 
 .user-avatar-chat {
-    height: 65px;
-    width: 65px;
+    height: 55px;
+    width: 55px;
     border-radius: 50px;
 }
 
 .chat-details h3 {
-    font-size: 2rem;
+    font-size: 1.5rem;
     font-weight: bold;
     color: var(--dark-grey);
 }
 
-.chat-details h4 {
-    font-size: 1.7rem;
-    font-weight: normal;
+.chat-details p {
+    font-size: 1.4rem;
     color: var(--grey);
+    font-weight: 400;
+    margin: 0;
 }
 
 .chat-input-area input {
@@ -1893,7 +1911,6 @@
 .chat-conversation-search-bar {
     display: flex;
     width: 350px;
-    margin: 10px 10px auto 10px;
     height: 55px;
     padding: 0 15px 0 17px;
     border-radius: 40px;
@@ -1964,12 +1981,12 @@
 .settings-content {
     display: flex;
     flex-direction: column;
-    width: 80%;
+    width: 86%;
     height: 100%;
     background: var(--royal-white);
     overflow: scroll;
     overflow-x: hidden;
-    padding: 0 35px 0 35px;
+    padding: 0 35px 35px 35px;
     border-radius: 20px;
     border: 1px solid var(--light-grey);
 }
@@ -2043,14 +2060,14 @@
     height: 450px;
 }
 
-.changing-password-text{
+.changing-password-text {
     margin: 20px 0 30px 0;
     font-weight: lighter;
     font-size: 1.5rem;
     color: var(--light-grey);
 }
 
-.password-fields{
+.password-fields {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -2091,20 +2108,20 @@
     margin: 0 0 20px 0;
 }
 
-.delete-popup-text{
+.delete-popup-text {
     font-size: 1.5rem;
     font-weight: lighter;
     color: var(--grey);
 }
 
-.delete-account-popup-title{
+.delete-account-popup-title {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--grey);
     margin: 25px 0 25px 0;
 }
 
-.chat-message-alert{
+.chat-message-alert {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--light-grey);
@@ -2112,7 +2129,7 @@
     text-align: center;
 }
 
-.delete-account-popup-title span{
+.delete-account-popup-title span {
     color: var(--royal-red);
 }
 
@@ -2262,12 +2279,12 @@
     transition: 0.2s ease-in-out;
 }
 
-.settings-nav button:first-child{
+.settings-nav button:first-child {
     border-top-left-radius: 20px;
     border-top-right-radius: 20px;
 }
 
-.settings-nav button:first-child:hover{
+.settings-nav button:first-child:hover {
     background: var(--royal-blue-light-transparent);
     border-right: 5px solid var(--royal-blue-hovered);
     transition: 0.2s ease-in-out;
@@ -2276,12 +2293,12 @@
 }
 
 
-.settings-nav button:last-child{
+.settings-nav button:last-child {
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
 }
 
-.settings-nav button:last-child:hover{
+.settings-nav button:last-child:hover {
     background: var(--royal-blue-light-transparent);
     border-right: 5px solid var(--royal-blue-hovered);
     transition: 0.2s ease-in-out;
@@ -2360,6 +2377,10 @@
 
 .load-page-header {
     display: flex;
+    padding: 15px;
+    align-items: center;
+    justify-content: start;
+    align-content: center;
     border-bottom: 1px solid var(--light-grey);
 }
 
@@ -2369,12 +2390,14 @@
 }
 
 .load-page-header section h1 {
-    color: var(--royal-blue)
+    color: var(--royal-blue);
+    margin: 0;
 }
 
 .load-page-header section p {
     color: var(--grey);
     font-size: 1.5rem;
+    margin: 0;
 }
 
 .load-details-content-wrapper {
@@ -2408,13 +2431,13 @@
 
 .load-details-container section h4 {
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: lighter;
     color: var(--light-grey);
 }
 
 .load-details-container section h2 {
-    font-size: 2rem;
-    font-weight: bold;
+    font-size: 1.6rem;
+    font-weight: 500;
     color: var(--royal-blue);
 }
 
@@ -2571,7 +2594,7 @@
     transition: 0.2s ease-in-out;
 }
 
-.messages-label{
+.messages-label {
     display: none;
 }
 
@@ -2618,7 +2641,7 @@
     border-color: var(--royal-blue);
 }
 
-.settings-nav-mobile{
+.settings-nav-mobile {
     display: none;
 }
 
@@ -2635,34 +2658,34 @@
 
 @media screen and (max-width: 1380px) {
 
-    .settings-content{
+    .settings-content {
         width: 100%;
     }
 
-    .shipper-profile-status{
+    .shipper-profile-status {
         display: none;
     }
 
-    .settings-nav{
+    .settings-nav {
         display: none;
     }
 
-    .password-fields{
+    .password-fields {
         width: 100%;
     }
 
-    .settings-nav-mobile{
+    .settings-nav-mobile {
         display: flex;
         justify-content: space-between;
         width: 100%;
         gap: 15px;
     }
 
-    .settings-container{
+    .settings-container {
         flex-direction: column;
     }
 
-    .shipper-dashboard-side-panel-wrapper{
+    .shipper-dashboard-side-panel-wrapper {
         margin: 0;
         height: 85dvh;
     }
@@ -2684,30 +2707,30 @@
 
 @media screen and (max-width: 768px) {
 
-    .messages-label{
+    .messages-label {
         display: flex;
         font-size: 2.3rem;
         font-weight: bold;
         color: var(--royal-blue);
     }
 
-    .settings-content{
+    .settings-content {
         padding: 15px;
     }
 
-    .account-info-settings{
+    .account-info-settings {
         width: 100%;
     }
 
-    .shipper-nav-buttons{
+    .shipper-nav-buttons {
         display: none;
     }
 
-    .chat-conversation-search-bar{
+    .chat-conversation-search-bar {
         display: none;
     }
 
-    .shipper-profile-content{
+    .shipper-profile-content {
         flex-direction: column;
         height: fit-content;
         align-content: center;
@@ -2718,15 +2741,15 @@
         width: 100%;
     }
 
-    .account-info-details-container{
+    .account-info-details-container {
         width: 100%;
     }
 
-    .shipper-deal-conversations-sidebar{
+    .shipper-deal-conversations-sidebar {
         width: 100%;
     }
 
-    .shipper-info{
+    .shipper-info {
         flex-direction: column;
         display: flex;
         align-content: center;
@@ -2737,15 +2760,21 @@
         text-align: center;
     }
 
-    .settings-nav-mobile{
+    .settings-nav-mobile {
         width: 100%;
         overflow: scroll;
         overflow-y: hidden;
     }
 
 
-    .shipper-map-container{
+    .shipper-map-container {
         height: 45%;
     }
 
+}
+
+@media screen and (max-width: 768px) {
+    .shipper-dashboard-content-body{
+        display: none;
+    }
 }
