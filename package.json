@@ -121,7 +121,7 @@
   },
   "scripts": {
     "start:frontend": "react-scripts start",
-    "start:serverdb": "nodemon backend/server/mongodb.js",
+    "start:serverdb": "node --max-old-space-size=4096 backend/server/mongodb.js",
     "start:socketserver": "nodemon backend/server/socket.js",
     "start:chatserver": "nodemon backend/server/chatserver.js",
     "build": "react-scripts build",
