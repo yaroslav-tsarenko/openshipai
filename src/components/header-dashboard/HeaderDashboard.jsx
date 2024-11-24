@@ -1,29 +1,39 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, {useState} from 'react';
+import {Link} from 'react-router-dom';
 import './HeaderDashboard.css';
 import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
-import { MdNotificationsNone } from "react-icons/md";
-import { LuSettings } from "react-icons/lu";
-import {ReactComponent as SearchbarIcon } from '../../assets/settings-ios-icon.svg';
-import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
+import DefaultUserAvatar from "../../assets/default-avatar.png";
+import {MdNotificationsNone} from "react-icons/md";
+import {LuSettings} from "react-icons/lu";
+import {ReactComponent as SearchbarIcon} from '../../assets/settings-ios-icon.svg';
+import {ReactComponent as BarsIcon} from "../../assets/fa-bars-icon.svg";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
-const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountName, accountRole, profileLink, bellLink, settingsLink, avatar }) => {
+const HeaderDashboard = ({
+                             onBurgerClick,
+                             contentTitle,
+                             contentSubtitle,
+                             accountName,
+                             accountRole,
+                             profileLink,
+                             bellLink,
+                             settingsLink,
+                             avatar
+                         }) => {
 
     const [isSearchPopupOpen, setIsSearchPopupOpen] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [filteredSuggestions, setFilteredSuggestions] = useState([]);
     const animation = useGsapAnimation('smoothTransition');
     const suggestions = [
-        { text: "Drivers & Equipment", url: "/link", icon: SearchbarIcon },
-        { text: "Take Load", url: "/link", icon: SearchbarIcon },
-        { text: "My Loads", url: "/link", icon: SearchbarIcon },
-        { text: "Chat", url: "/link", icon: SearchbarIcon },
-        { text: "Payments", url: "/link", icon: SearchbarIcon },
-        { text: "Profile", url: "/link", icon: SearchbarIcon },
-        { text: "Settings", url: "/link", icon: SearchbarIcon },
-        { text: "Dashboard", url: "/link", icon: SearchbarIcon },
+        {text: "Drivers & Equipment", url: "/link", icon: SearchbarIcon},
+        {text: "Take Load", url: "/link", icon: SearchbarIcon},
+        {text: "My Loads", url: "/link", icon: SearchbarIcon},
+        {text: "Chat", url: "/link", icon: SearchbarIcon},
+        {text: "Payments", url: "/link", icon: SearchbarIcon},
+        {text: "Profile", url: "/link", icon: SearchbarIcon},
+        {text: "Settings", url: "/link", icon: SearchbarIcon},
+        {text: "Dashboard", url: "/link", icon: SearchbarIcon},
     ];
 
     const animationRef = useGsapAnimation('pop');
@@ -39,9 +49,9 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
         <>
             {isSearchPopupOpen && (
                 <>
-                    <div className="search-popup-overlay"  onClick={() => setIsSearchPopupOpen(false)}></div>
+                    <div className="search-popup-overlay" onClick={() => setIsSearchPopupOpen(false)}></div>
                     <div className="search-popup" ref={animationRef}>
-                        <div className="dashboard-searchbar-expanded" >
+                        <div className="dashboard-searchbar-expanded">
                             <SearchIcon className="search-icon-searchbar"/>
                             <input
                                 type="text"
@@ -67,7 +77,7 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
                 <div>
                     <h2 className="dashboard-content-title">{contentTitle}</h2>
                     <button className="bars-button" onClick={onBurgerClick}>
-                        <BarsIcon />
+                        <BarsIcon/>
                     </button>
                 </div>
                 <div className="account-container">
@@ -79,18 +89,17 @@ const HeaderDashboard = ({onBurgerClick, contentTitle, contentSubtitle, accountN
                         <SearchIcon/>
                     </button>
                     <div className="dashboard-account-info">
-                        <section className="account-info">
+                        <div className="account-info">
                             {avatar ? (
-                                <img src={avatar} className="user-header-avatar" alt="User Avatar"
-                                     />
+                                <img src={avatar} className="user-header-avatar" alt="User Avatar"/>
                             ) : (
-                                <DefaultUserAvatar className="user-header-avatar" width="60" height="60"/>
+                                <img src={DefaultUserAvatar} className="user-header-avatar" width="60" height="60" alt="User Avatar"/>
                             )}
                             <Link to={profileLink} className="dashboard-account-info-text">
                                 <h3 className="header-dashboard-account-info-name">{accountName}</h3>
                                 <p className="header-dashboard-account-info-role">{accountRole}</p>
                             </Link>
-                        </section>
+                        </div>
                         <Link to={bellLink} className="account-info-buttons"><MdNotificationsNone size={25}/></Link>
                         <Link to={settingsLink} className="account-info-buttons"><LuSettings size={25}/></Link>
                     </div>

@@ -9,7 +9,6 @@ import axios from 'axios';
 import GoogleMapCurrentLoadDirections
     from "../../google-map-show-current-load-direction/GoogleMapCurrentLoadDirections";
 import ImageSlider from "../../image-slider/ImageSlider";
-import DefaultUserAvatar from "../../../assets/default-avatar.svg";
 import CarrierLoadBid from "../../carrier-load-bid/CarrierLoadBid";
 import {Skeleton} from "@mui/material";
 import {BACKEND_URL} from "../../../constants/constants";
@@ -122,7 +121,7 @@ const ShipperLoadPage = () => {
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
-                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                     />
                     <div className="load-page-content-page-section" ref={animation}>
                         <div className="load-page-header">

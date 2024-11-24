@@ -150,7 +150,7 @@ const ShipperPaymentsPage = () => {
     useEffect(() => {
         const fetchSelectedCard = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-selected-card/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-selected-card/carrier/${shipperID}`);
                 if (response.data.status === 'Success') {
                     setSelectedCard(response.data.card);
                     console.log(response);
@@ -189,7 +189,7 @@ const ShipperPaymentsPage = () => {
 
     const handleCardClickAsync = async (cardNumber) => {
         try {
-            const response = await axios.put(`${BACKEND_URL}/update-selected-card/${shipperID}`, {cardNumber});
+            const response = await axios.put(`${BACKEND_URL}/update-selected-card/shipper/${shipperID}`, {cardNumber});
             if (response.data.status === 'Success') {
                 alert('Card selected successfully');
             } else {
@@ -297,7 +297,7 @@ const ShipperPaymentsPage = () => {
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
-                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
                     {/*  <div className={styles.paymentsMethodSelector}>

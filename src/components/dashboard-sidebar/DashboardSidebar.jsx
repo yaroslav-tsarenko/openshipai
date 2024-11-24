@@ -16,10 +16,6 @@ import {ReactComponent as ProfileIcon} from "../../assets/profile-icon-grey.svg"
 import {ReactComponent as ProfileIconWhite} from "../../assets/profile-icon-white.svg";
 import {ReactComponent as QoutesIcon} from "../../assets/listing-icon-grey.svg";
 import {ReactComponent as QoutesIconWhite} from "../../assets/listing-icon-white.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../assets/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../assets/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../assets/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../assets/load-box-icon.svg";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const DashboardSidebar = ({

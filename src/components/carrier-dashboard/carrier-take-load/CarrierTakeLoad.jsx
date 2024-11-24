@@ -20,7 +20,6 @@ import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
 import Button from "../../button/Button";
 
-
 const CarrierTakeLoad = () => {
     const [sortOrder, setSortOrder] = useState(null);
     const [loads, setLoads] = useState([]);
@@ -340,7 +339,6 @@ const CarrierTakeLoad = () => {
                             <p onClick={() => handleSelectSubLoadTypeOption('RV (Recreational Vehicles)')}>RV
                                 (Recreational Vehicles)</p>
                         </div>
-
                     </div>
                 </div>
             )}
@@ -450,7 +448,6 @@ const CarrierTakeLoad = () => {
                     </div>
                 </div>
             )}
-
             {showSortPopup && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
@@ -919,6 +916,49 @@ const CarrierTakeLoad = () => {
                                                 loadHeight={load.loadHeight}
                                                 loadLength={load.loadLength}
                                                 loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                                loadDescription={load.loadDescription}
+                                                loadCarrierConfirmation={load.loadCarrierConfirmation}
+                                                loadPaymentStatus={load.loadPaymentStatus}
+                                                loadAssignedDriverID={load.loadAssignedDriverID}
+                                                loadSpecifiedItem={load.loadSpecifiedItem}
+                                                loadMovingSize={load.loadMovingSize}
+                                                loadNumberOfBedrooms={load.loadNumberOfBedrooms}
+                                                loadNumberOfPallets={load.loadNumberOfPallets}
+                                                loadDeliveredStatus={load.loadDeliveredStatus}
+                                                loadPickupStories={load.loadPickupStories}
+                                                loadDeliveryStories={load.loadDeliveryStories}
+                                                loadSpecialHandlingRequirements={load.loadSpecialHandlingRequirements}
+                                                loadIndustrySector={load.loadIndustrySector}
+                                                loadPrimaryContactName={load.loadPrimaryContactName}
+                                                loadMajorItems={load.loadMajorItems}
+                                                loadSecondaryContactName={load.loadSecondaryContactName}
+                                                loadPickupFloor={load.loadPickupFloor}
+                                                loadDeliveryFloor={load.loadDeliveryFloor}
+                                                loadBusinessName={load.loadBusinessName}
+                                                loadTypeOfBusiness={load.loadTypeOfBusiness}
+                                                loadLiftedItemsQuantity={load.loadLiftedItemsQuantity}
+                                                loadHaveFreightElevator={load.loadHaveFreightElevator}
+                                                loadDestinationOptions={load.loadDestinationOptions}
+                                                loadServiceExpressOptions={load.loadServiceExpressOptions}
+                                                loadAreaOption={load.loadAreaOption}
+                                                loadQuantity={load.loadQuantity}
+                                                loadOperable={load.loadOperable}
+                                                loadConvertible={load.loadConvertible}
+                                                loadModified={load.loadModified}
+                                                loadNumberOfItems={load.loadNumberOfItems}
+                                                loadTrike={load.loadTrike}
+                                                loadIsCrate={load.loadIsCrate}
+                                                loadIsPallet={load.loadIsPallet}
+                                                loadTripStarted={load.loadTripStarted}
+                                                loadAdditionalSelectedLoadOptions={load.loadAdditionalSelectedLoadOptions}
+                                                loadIsBox={load.loadIsBox}
+                                                loadCredentialID={load.loadCredentialID}
+                                                isOnTrailer={load.isOnTrailer}
+                                                hasTrailerPreference={load.hasTrailerPreference}
+                                                loadTypeOfTrailer={load.loadTypeOfTrailer}
+                                                loadLocationStops={load.loadLocationStops}
+                                                loadOriginDeliveryPreference={load.loadOriginDeliveryPreference}
+                                                shipperID={load.shipperID}
                                             />
                                         ))
                                     ) : (

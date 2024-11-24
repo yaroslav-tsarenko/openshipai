@@ -17,6 +17,9 @@ import Popup from "../../popup/Popup";
 import Card from "../../card/Card";
 import styles from "./CarrierPaymentsPage.module.scss"
 import TransactionItem from "../../transaction-item/TransactionItem";
+import TextInput from "../../text-input/TextInput";
+import Button from "../../button/Button";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const CarrierPaymentPage = () => {
     const [selectedCard, setSelectedCard] = useState(null);
@@ -25,7 +28,7 @@ const CarrierPaymentPage = () => {
     const [shipperInfo, setShipperInfo] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [isPopupOpen, setIsPopupOpen] = useState(false);
     const [cards, setCards] = useState([]);
     const [transactions, setTransactions] = useState([]);
@@ -34,7 +37,7 @@ const CarrierPaymentPage = () => {
     const toggleMobileSidebar = () => {setIsMobileSidebarOpen(!isMobileSidebarOpen);};
     const [formData, setFormData] = useState({
         cardLastNameFirstName: '',
-        userID: shipperID,
+        userID: carrierID,
         cardNumber: '',
         expirationDate: '',
         cvv: '',
@@ -64,7 +67,7 @@ const CarrierPaymentPage = () => {
         const fetchCards = async () => {
             try {
                 setLoadingCards(true);
-                const response = await fetch(`${BACKEND_URL}/get-cards/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-cards/${carrierID}`);
                 const data = await response.json();
                 if (data.status === 'Success' && Array.isArray(data.cards)) {
                     setCards(data.cards);
@@ -81,7 +84,7 @@ const CarrierPaymentPage = () => {
         };
         const fetchTransactions = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-all-transactions/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-all-transactions/${carrierID}`);
                 setTransactions(response.data);
             } catch (error) {
                 console.error('Error fetching transactions:', error);
@@ -90,7 +93,7 @@ const CarrierPaymentPage = () => {
 
         fetchTransactions();
         fetchCards();
-    }, [shipperID]);
+    }, [carrierID]);
 
     const handleChange = (field) => (event) => {
         setFormData({
@@ -154,7 +157,7 @@ const CarrierPaymentPage = () => {
     useEffect(() => {
         const fetchSelectedCard = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-selected-card/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-selected-card/carrier/${carrierID}`);
                 if (response.data.status === 'Success') {
                     setSelectedCard(response.data.card);
                     console.log(response);
@@ -166,9 +169,8 @@ const CarrierPaymentPage = () => {
             }
         };
 
-
         fetchSelectedCard();
-    }, [shipperID]);
+    }, [carrierID]);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
@@ -193,7 +195,7 @@ const CarrierPaymentPage = () => {
 
     const handleCardClickAsync = async (cardNumber) => {
         try {
-            const response = await axios.put(`${BACKEND_URL}/update-selected-card/${shipperID}`, {cardNumber});
+            const response = await axios.put(`${BACKEND_URL}/update-selected-card/carrier/${carrierID}`, {cardNumber});
             if (response.data.status === 'Success') {
                 alert('Card selected successfully');
             } else {
@@ -209,7 +211,7 @@ const CarrierPaymentPage = () => {
     useEffect(() => {
         const getUser = async () => {
             try {
-                const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
                 const data = await response.json();
 
                 setShipperInfo(data);
@@ -219,80 +221,64 @@ const CarrierPaymentPage = () => {
         };
 
         getUser();
-    }, [shipperID]);
+    }, [carrierID]);
 
     return (
         <>
             {isPopupOpen && (
                 <Popup onClose={togglePopup} title="Add Card" footerText="You need to enter full data of your card">
-                    <div className="google-input-wrapper">
-                        <input
+                    <TextInput
+                        type="text"
+                        id="cardLastNameFirstName"
+                        value={formData.cardLastNameFirstName}
+                        onChange={handleChange('cardLastNameFirstName')}
+                        label="Card Last Name & First Name"
+                        style={{placeholder: 'JOHN DOE'}}
+                    />
+                    <TextInput
+                        type="text"
+                        id="cardNumber"
+                        value={formData.cardNumber}
+                        onChange={handleCardNumberChange}
+                        label="Card Number"
+                        style={{placeholder: '1234 5678..'}}
+                    />
+                    <div className="card-data-section">
+                        <TextInput
                             type="text"
-                            id="cardLastNameFirstName"
-                            autoComplete="off"
-                            className="google-style-input"
-                            placeholder="JOHN DOE"
-                            required
-                            onChange={handleChange('cardLastNameFirstName')}
-                            value={formData.cardLastNameFirstName}
+                            id="expirationDate"
+                            value={formData.expirationDate}
+                            onChange={handleExpirationDateChange}
+                            label="Expiration Date"
+                            style={{placeholder: 'MM/YY'}}
                         />
-                        <label htmlFor="cardLastNameFirstName" className="google-style-input-label">Card Last Name &
-                            First Name</label>
-                    </div>
-                    <div className="google-input-wrapper">
-                        <input
+                        <TextInput
                             type="text"
-                            id="cardNumber"
-                            autoComplete="off"
-                            className="google-style-input"
-                            placeholder="1234 5678.."
-                            required
-                            onChange={handleCardNumberChange}
-                            value={formData.cardNumber}
+                            id="cvv"
+                            value={formData.cvv}
+                            onChange={handleCVVChange}
+                            label="CVV"
+                            style={{placeholder: 'CVV'}}
                         />
-                        <label htmlFor="cardNumber" className="google-style-input-label">Card Number</label>
                     </div>
-                    <section className="card-data-section">
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="expirationDate"
-                                autoComplete="off"
-                                className="google-style-input"
-                                placeholder="MM/YY"
-                                required
-                                onChange={handleExpirationDateChange}
-                                value={formData.expirationDate}
-                            />
-                            <label htmlFor="expirationDate" className="google-style-input-label">Expiration Date</label>
-                        </div>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                id="cvv"
-                                autoComplete="off"
-                                className="google-style-input"
-                                placeholder="CVV"
-                                required
-                                onChange={handleCVVChange}
-                                value={formData.cvv}
-                            />
-                            <label htmlFor="cvv" className="google-style-input-label">CVV</label>
-                        </div>
-                    </section>
-                    <div className="custom-select-wrapper">
-                        <select
-                            className="custom-select"
-                            onChange={handleChange('cardPaymentSystem')}
-                            value={formData.cardPaymentSystem}
-                        >
-                            <option value="Visa">Visa</option>
-                            <option value="Master Card">Master Card</option>
-                        </select>
-                    </div>
-                    <button className="custom-button" onClick={handleAddCard}>
-                        Add Card
-                    </button>
+                    <TextInput
+                        type="select"
+                        id="cardPaymentSystem"
+                        value={formData.cardPaymentSystem}
+                        onChange={handleChange('cardPaymentSystem')}
+                        options={[
+                            {value: 'Visa', label: 'Visa'},
+                            {value: 'Master Card', label: 'Master Card'}
+                        ]}
+                    />
+                    <Button variant="apply-non-responsive" onClick={handleAddCard}>
+                        {isLoading ?
+                            <>
+                                <RotatingLinesLoader title="Processing..."/>
+                            </>
+                            :
+                            "Add Card"}
+                    </Button>
                 </Popup>
             )}
             <div className={styles.shipperDashboardContentWrapper}>

@@ -22,6 +22,7 @@ body {
     --royal-green: #0c945c;
     --royal-yellow: #e4ad21;
     --royal-green-hovered: #009f52;
+    --royal-green-hovered-2: rgba(0, 159, 82, 0.25);
     --royal-green-hovered-transparent: #d8f0e6;
     --alert-success: #b6eacd;
     --alert-info: #c2edfe;

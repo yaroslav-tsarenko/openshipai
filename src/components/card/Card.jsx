@@ -15,13 +15,13 @@ const Card = ({
     const getCardBackground = () => {
         switch (cardColor) {
             case 'red':
-                return styles.cardBgPurple;
+                return styles.cardBgRed;
             case 'blue':
                 return styles.cardBgBlue;
             case 'green':
                 return styles.cardBgGreen;
             case 'yellow':
-                return styles.cardBgGreen;
+                return styles.cardBgYellow;
             default:
                 return '';
         }
