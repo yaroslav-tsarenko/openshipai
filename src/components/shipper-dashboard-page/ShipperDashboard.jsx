@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import './ShipperDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
+import DefaultUserAvatar from "../../assets/default-avatar.png";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
@@ -93,7 +93,7 @@ const ShipperDashboard = () => {
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
-                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="dashboard-content-mobile">
@@ -111,15 +111,15 @@ const ShipperDashboard = () => {
                                     <Grid columns="1, 1fr">
                                         <MetricCompoent text="Service Rating"
                                                         description="It’s yours global reputation on service"
-                                                        percent={75}
+                                                        percent={25}
                                                         color="#FFC107"/>
                                         <MetricCompoent text="Success agreement "
                                                         description="Average percent of  cooperate with carrier"
-                                                        percent={55}
+                                                        percent={25}
                                                         color="#0061ff"/>
                                         <MetricCompoent text="Service Activity"
                                                         description="Monitoring, service usability, connections"
-                                                        percent={86}
+                                                        percent={25}
                                                         color="#009f52"/>
                                     </Grid>
                                 </div>
@@ -138,18 +138,24 @@ const ShipperDashboard = () => {
                         <div className="dashboard-content">
                             <div className="chat-metric-content">
                                 <Grid columns="3, 3fr" >
-                                    <MetricCompoent text="Service Rating"
-                                                    description="It’s yours global reputation on service"
-                                                    percent={75}
-                                                    color="#FFC107"/>
-                                    <MetricCompoent text="Success agreement "
-                                                    description="Average percent of  cooperate with carrier"
-                                                    percent={55}
-                                                    color="#0061ff"/>
-                                    <MetricCompoent text="Service Activity"
-                                                    description="Monitoring, service usability, connections"
-                                                    percent={86}
-                                                    color="#009f52"/>
+                                    <MetricCompoent
+                                        text="Service Rating"
+                                        description="It’s yours global reputation on service"
+                                        percent={shipperInfo ? shipperInfo.userShipperServiceActivity : 0}
+                                        color="#FFC107"
+                                    />
+                                    <MetricCompoent
+                                        text="Success agreement"
+                                        description="Average percent of cooperate with carrier"
+                                        percent={shipperInfo ? shipperInfo.userShipperServiceAgreement : 0}
+                                        color="#0061ff"
+                                    />
+                                    <MetricCompoent
+                                        text="Service Activity"
+                                        description="Monitoring, service usability, connections"
+                                        percent={shipperInfo ? shipperInfo.userShipperServiceRating : 0}
+                                        color="#009f52"
+                                    />
                                 </Grid>
                                 <OpenShipAIChat userID={shipperID} userRole="shipper"/>
                             </div>

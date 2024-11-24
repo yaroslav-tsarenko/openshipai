@@ -16,6 +16,9 @@ const ShipperSchema = new mongoose.Schema({
     userShipperID: {type: String, unique: true, required: true},
     userShipperChatEndpoints: [{type: mongoose.Schema.Types.ObjectId, ref: 'ChatHistory'}],
     userShipperRole: {type: String, default: 'shipper'},
+    userShipperServiceRating: Number,
+    userShipperServiceAgreement: Number,
+    userShipperServiceActivity: Number,
 })
 
 const ShipperModel = mongoose.model("shippers", ShipperSchema);

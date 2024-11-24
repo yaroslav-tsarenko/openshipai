@@ -59,6 +59,7 @@ require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
 const multer = require('multer');
+require('./utils/updateServiceRatings');
 const {Card} = require("@mui/material");
 const sendEmail = require('./utils/sendEmail');
 const apiKey = 'AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM';
@@ -135,7 +136,7 @@ mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mon
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
-    console.log('Connected to MongoDB');
+    console.log('✅ Connected to MongoDB');
 }).catch(err => {
     console.error('Failed to connect to MongoDB:', err);
 });
@@ -223,44 +224,79 @@ app.post('/register-shipper', async (req, res) => {
         res.status(500).send('Error creating shipper: ' + error.message);
     }
 });
-app.get('/get-selected-card/:shipperID', async (req, res) => {
-    const {shipperID} = req.params;
+
+app.get('/get-selected-card/:role/:userID', async (req, res) => {
+    const {role, userID} = req.params;
+
     try {
-        const shipper = await Shipper.findOne({userShipperID: shipperID});
-        if (!shipper) {
-            return res.status(404).json({message: 'Shipper not found'});
+        let user;
+        if (role === 'shipper') {
+            user = await Shipper.findOne({userShipperID: userID});
+            if (!user) {
+                return res.status(404).json({message: 'Shipper not found'});
+            }
+        } else if (role === 'carrier') {
+            user = await Carrier.findOne({carrierID: userID});
+            if (!user) {
+                return res.status(404).json({message: 'Carrier not found'});
+            }
+        } else {
+            return res.status(400).json({message: 'Invalid role'});
         }
-        const selectedCard = await CardModel.findOne({cardNumber: shipper.userShipperSelectedCard});
+
+        const selectedCard = await CardModel.findOne({cardNumber: user.userShipperSelectedCard || user.carrierSelectedCard});
         if (!selectedCard) {
             return res.status(404).json({message: 'Selected card not found'});
         }
+
         res.status(200).json({status: 'Success', card: selectedCard});
     } catch (error) {
         console.error('Error fetching selected card:', error);
         res.status(500).json({message: 'Server error'});
     }
 });
-app.put('/update-selected-card/:shipperID', async (req, res) => {
-    const {shipperID} = req.params;
+app.put('/update-selected-card/:role/:userID', async (req, res) => {
+    const {userID} = req.params;
     const {cardNumber} = req.body;
+    const {role} = req.params;
 
-    try {
-        const shipper = await Shipper.findOneAndUpdate(
-            {userShipperID: shipperID},
-            {userShipperSelectedCard: cardNumber},
-            {new: true}
-        );
+    if (role === "shipper") {
+        try {
+            const shipper = await Shipper.findOneAndUpdate(
+                {userShipperID: userID},
+                {userShipperSelectedCard: cardNumber},
+                {new: true}
+            );
 
-        if (!shipper) {
-            return res.status(404).json({status: 'Error', message: 'Shipper not found'});
+            if (!shipper) {
+                return res.status(404).json({status: 'Error', message: 'Shipper not found'});
+            }
+
+            res.status(200).json({status: 'Success', shipper});
+        } catch (error) {
+            console.error('Error updating selected card:', error);
+            res.status(500).json({status: 'Error', message: 'Server error'});
         }
+    } else if (role === "carrier") {
+        try {
+            const carrier = await Carrier.findOneAndUpdate(
+                {carrierID: userID},
+                {carrierSelectedCard: cardNumber},
+                {new: true}
+            );
 
-        res.status(200).json({status: 'Success', shipper});
-    } catch (error) {
-        console.error('Error updating selected card:', error);
-        res.status(500).json({status: 'Error', message: 'Server error'});
+            if (!carrier) {
+                return res.status(404).json({status: 'Error', message: 'Carrier not found'});
+            }
+
+            res.status(200).json({status: 'Success', carrier});
+        } catch (error) {
+            console.error('Error updating selected card:', error);
+            res.status(500).json({status: 'Error', message: 'Server error'});
+        }
     }
 });
+
 app.get('/get-cards/:shipperID', async (req, res) => {
     const {shipperID} = req.params;
     try {
@@ -1350,6 +1386,52 @@ app.post('/save-carrier-data', async (req, res) => {
     }
 });
 
+app.post('/google-sign-up', async (req, res) => {
+    const {token} = req.body;
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const {email, given_name, family_name} = ticket.getPayload();
+    const existingUser = await Shipper.findOne({userShipperEmail: email});
+    if (existingUser) {
+        return res.status(400).send({message: 'Email already exists'});
+    }
+    res.status(200).send({email, name: given_name, family_name});
+});
+
+app.post('/google-login', async (req, res) => {
+    const {token} = req.body;
+    const ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const {email} = ticket.getPayload();
+
+    const existingUser = await Shipper.findOne({userShipperEmail: email});
+    if (existingUser) {
+        return res.status(200).send({userShipperID: existingUser.userShipperID});
+    } else {
+        return res.status(400).send({message: 'User not found'});
+    }
+});
+
+app.post('/save-shipper-data', async (req, res) => {
+    const newShipper = new Shipper(req.body);
+    await newShipper.save();
+    res.status(200).send({status: 'Success'});
+});
+
+app.post('/send-email', async (req, res) => {
+    const {to, subject, text} = req.body;
+    try {
+        await sendEmail(to, subject, text);
+        res.status(200).send('Email sent successfully');
+    } catch (error) {
+        res.status(500).send('Error sending email: ' + error.toString());
+    }
+});
+
 app.post('/save-shipper-data', async (req, res) => {
     const shipperData = req.body;
     const newShipper = new Shipper(shipperData);
@@ -1366,7 +1448,6 @@ function splitPascalCase(text) {
 }
 
 app.post("/save-load-data", upload.array("loadImages", 5), async (req, res) => {
-
 
 
     console.log("Received request to /save-load-data");
@@ -2742,5 +2823,5 @@ app.post('/google-login', async (req, res) => {
 
 
 app.listen(port, () => {
-    console.log(`Server is up and running on port: ${port}`);
+    console.log(`✅ Server is up and running on port: ${port}`);
 });

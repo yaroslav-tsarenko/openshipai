@@ -153,6 +153,9 @@ const CarrierSchema = new Schema({
         type: String,
         default: 'carrier'
     },
+    carrierSelectedCard:{
+        type: String,
+    },
     carrierAvatar:{
         type: String,
     },

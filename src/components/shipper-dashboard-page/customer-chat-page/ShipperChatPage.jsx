@@ -589,7 +589,7 @@ const ShipperChatPage = () => {
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
                         settingsLink={`/shipper-profile/${shipperID}`}
-                        avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
+                        avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="chat-content">

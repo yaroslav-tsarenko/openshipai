@@ -42,16 +42,53 @@ function LoginForm() {
                     navigate(`/driver-dashboard/${id}`);
                 }, 1000)
             }
-            setMessage({type: 'success', text: 'Login successful'});
+            setMessage({
+                status: 'success',
+                text: 'Login successful!',
+                description: 'Redirecting to your dashboard...'
+            });
         } else {
-            setMessage({type: 'error', text: response.data.message});
+            setMessage({
+                status: 'error',
+                text: 'Login failed.',
+                description: 'User not found or an error occurred. Please try again.'
+            });
         }
     };
 
     const animationRef = useGsapAnimation('fadeIn');
 
-    const handleGoogleLoginSuccess = (credentialResponse) => {
+    const handleGoogleLoginSuccess = async (credentialResponse) => {
+        const { credential } = credentialResponse;
+        try {
+            const response = await axios.post(`${BACKEND_URL}/google-login`, { token: credential });
 
+            if (response.status === 200) {
+                const { userShipperID } = response.data;
+                setMessage({
+                    status: 'success',
+                    text: 'Login successful!',
+                    description: 'Redirecting to your dashboard...'
+                });
+                setTimeout(() => {
+                    navigate(`/shipper-dashboard/${userShipperID}`);
+                }, 1500);
+            }
+        } catch (error) {
+            if (error.response && error.response.status === 400) {
+                setMessage({
+                    status: 'error',
+                    text: 'Login failed.',
+                    description: 'Not associated account with this email, sign up with Google on the sign-up page, then continue in the login page to make auth.'
+                });
+            } else {
+                setMessage({
+                    status: 'error',
+                    text: 'Login failed.',
+                    description: 'User not found or an error occurred. Please try again.'
+                });
+            }
+        }
     };
 
     return (
@@ -61,9 +98,7 @@ function LoginForm() {
                 description="Login to OpenShipAI to manage your logistics and shipping operations efficiently."
                 keywords="login, OpenShipAI, logistics, shipping, AI"
             />
-            {message && (message.type === 'success' ?
-                <Alert status="success" description="You have succesfully logged in " text={message.text}/> :
-                <Alert description="Something went wrong. Try again" status="error" text={message.text}/>)}
+            {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             <div className="sign-in-wrapper">
                 <div className="left-side">
                     <form onSubmit={handleSubmit} className="login-custom-form" ref={animationRef}>
@@ -114,14 +149,7 @@ function LoginForm() {
                 <div className="right-side-login" ref={animationRef}>
                     <section className="right-side-login-section">
                         <h1 className="right-side-login-side-title">
-                            <Typewriter
-                                options={{
-                                    strings: ["Welcome"],
-                                    autoStart: true,
-                                    loop: true,
-                                    pauseFor: 4500,
-                                }}
-                            />
+                            WELCOME SHIPPER
                         </h1>
                         <p className="right-side-login-side-description">
                             <Typewriter

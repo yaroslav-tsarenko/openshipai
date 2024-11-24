@@ -1,0 +1,27 @@
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: fit-content;
+}
+
+.labelInfoItem {
+  font-size: 1.5rem;
+  color: var(--grey);
+}
+
+.infoItemText {
+  font-size: 1.7rem;
+  background: var(--light-grey);
+  padding: 7px 12px;
+  border-radius: 8px;
+  width: fit-content;
+  color: var(--grey);
+}
+
+.green {
+  background: var(--royal-green-hovered-2);
+  color: var(--royal-green);
+  font-weight: bold;
+}
+
