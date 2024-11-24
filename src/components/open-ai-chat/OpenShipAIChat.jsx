@@ -116,7 +116,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         }
     }, [shipperInfo]);
 
-    useEffect(() => {
+    /*useEffect(() => {
         const getUser = async () => {
             try {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
@@ -128,7 +128,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
         };
 
         getUser();
-    }, [shipperInfo, shipperID]);
+    }, [shipperInfo, shipperID]);*/
 
     useEffect(() => {
         const fetchAIChats = async () => {
