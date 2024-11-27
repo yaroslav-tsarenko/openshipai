@@ -119,10 +119,10 @@
     "zustand": "^4.5.5"
   },
   "scripts": {
-    "start:frontend": "react-scripts start",
+    "start:frontend": "node --max-old-space-size=4096 node_modules/react-scripts/scripts/start.js",
     "start:serverdb": "node --max-old-space-size=4096 backend/server/mongodb.js",
     "start:socketserver": "nodemon backend/server/socket.js",
-    "start:chatserver": "nodemon backend/server/chatserver.js",
+    "start:chatserver": "nodemon backend/server/chataserver.js",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
