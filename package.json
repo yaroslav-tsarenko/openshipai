@@ -40,7 +40,6 @@
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
     "bootstrap": "^5.3.3",
-    "canvas": "^2.11.2",
     "cors": "^2.8.5",
     "docusign-esign": "^6.5.1",
     "elasticemail": "^0.2.0",
