@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import './ShipperDashboard.css';
-import DefaultUserAvatar from "../../assets/default-avatar.png";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
@@ -26,45 +25,39 @@ const ShipperDashboard = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
-
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
-
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        if (shipperInfo && shipperInfo.userShipperAvatar) {
-            setLoading(true);
-            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-            console.log(avatarUrl)
-            axios.get(avatarUrl)
-                .then(() => {
-                    setPreviewSavedImage(avatarUrl);
-                    setLoading(false);
-                })
-                .catch(() => {
-                    console.error('Image does not exist');
-                    setLoading(false);
-                });
-        }
-    }, [shipperInfo]);
-
-    useEffect(() => {
-        const getUser = async () => {
+        const getUserAndAvatar = async () => {
             try {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
                 setShipperInfo(data);
+
+                if (data && data.userShipperAvatar) {
+                    setLoading(true);
+                    const avatarUrl = `${BACKEND_URL}/${data.userShipperAvatar}`;
+                    console.log(avatarUrl);
+                    try {
+                        await axios.get(avatarUrl);
+                        setPreviewSavedImage(avatarUrl);
+                    } catch {
+                        console.error('Image does not exist');
+                    } finally {
+                        setLoading(false);
+                    }
+                }
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
-        getUser();
-    }, [shipperInfo, shipperID]);
+        getUserAndAvatar();
+    }, [shipperID]);
 
     return (
         <>
