@@ -5038,7 +5038,6 @@ const JarvisChatComponent = () => {
             </section>
         </div>
     )
-        ;
 };
 
 export default JarvisChatComponent;
