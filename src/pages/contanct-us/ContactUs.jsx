@@ -11,8 +11,6 @@ import Grid from "../../components/grid-two-columns/Grid";
 import {BACKEND_URL} from "../../constants/constants";
 
 const ContactUs = () => {
-
-
     const [formData, setFormData] = useState({
         name: '',
         lastName: '',
