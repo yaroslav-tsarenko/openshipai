@@ -121,14 +121,15 @@
     "zustand": "^4.5.5"
   },
   "scripts": {
-    "start:frontend": "node --max-old-space-size=4096 node_modules/react-scripts/scripts/start.js",
-    "start:serverdb": "node --max-old-space-size=4096 backend/server/mongodb.js",
-    "start:socketserver": "nodemon backend/server/socket.js",
-    "start:chatserver": "nodemon backend/server/chataserver.js",
-    "build": "node --max-old-space-size=4096 node_modules/react-scripts/scripts/build.js",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "start:frontend": "node node_modules/react-scripts/scripts/start.js",
+    "start:serverdb": "node backend/server/mongodb.js",
+    "start:socketserver": "nodemon --exec 'node --max-old-space-size=2048' backend/server/socket.js",
+    "start:chatserver": "nodemon --exec 'node --max-old-space-size=2048' backend/server/chataserver.js",
+    "build": "node ./node_modules/react-scripts/scripts/build.js",
+    "test": "node ./node_modules/react-scripts/scripts/test.js",
+    "eject": "node ./node_modules/react-scripts/scripts/eject.js"
   },
+
   "eslintConfig": {
     "extends": [
       "react-app",
@@ -150,6 +151,9 @@
   "devDependencies": {
     "dotenv": "^16.3.1",
     "eslint-plugin-unused-imports": "^4.1.4",
-    "ora": "^7.0.1"
+    "ora": "^7.0.1",
+    "webpack": "^5.96.1",
+    "webpack-bundle-analyzer": "^4.10.2",
+    "webpack-cli": "^5.1.4"
   }
 }
