@@ -13,7 +13,7 @@
 .right-side-login {
     width: 100vw;
     height: 98vh;
-    background: url("../../../src/assets/images/sunset-truck.svg") no-repeat center;
+    background: url("../../../src/assets/images/sunset-truck.png") no-repeat center;
     background-size: cover;
     backdrop-filter: blur(5px);
     align-content: center;
