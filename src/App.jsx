@@ -30,7 +30,6 @@ import FailedPaymentPage from "./pages/failed-payment/FailedPaymentPage";
 import DriverAssignedLoad from "./components/driver-dashboard/driver-assigned-load/DriverAssignedLoad";
 import SuccessLoadDelivering from "./pages/success-load-delivering/SuccessLoadDelivering";
 import DistanceCalculator from "./components/distance-calculator/DistanceCalculator";
-import LatAndLangConverter from "./components/lat-lang-converter/LatAndLangConverter";
 import LandingPageNew from "./components/landing-page-new/LandingPageNew";
 import OpenPage from "./pages/open-page/OpenPage";
 import ShipPage from "./pages/ship-page/ShipPage";
@@ -87,7 +86,6 @@ function App() {
 
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
                 <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
-                <Route path="/lat-lang-converter" element={<LatAndLangConverter/>}/>
 
                 <Route path="/open-page" element={<OpenPage/>}/>
                 <Route path="/ship-page" element={<ShipPage/>}/>

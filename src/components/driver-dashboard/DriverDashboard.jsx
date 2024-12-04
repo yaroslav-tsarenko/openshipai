@@ -12,6 +12,8 @@ import axios from "axios";
 import Grid from "../grid-two-columns/Grid";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import Button from "../button/Button";
+import TextInput from "../text-input/TextInput";
+import Popup from "../popup/Popup";
 
 const DriverDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -160,48 +162,34 @@ const DriverDashboard = () => {
 
     return (
         <>
-            {showPopup && (
-                <div className="driver-data-popup-overlay">
-                    <div className="driver-popup">
-                        <h3>Complete Your Profile</h3>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                name="driverLicenceClass"
-                                value={formData.driverLicenceClass}
-                                onChange={handleChange}
-                                className="google-style-input"
-                                required
-                            />
-                            <label className="google-style-input-label">Driver Licence Class</label>
-                        </div>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="text"
-                                name="driverTruck"
-                                value={formData.driverTruck}
-                                onChange={handleChange}
-                                className="google-style-input"
-                                required
-                            />
-                            <label className="google-style-input-label">Driver Truck</label>
-                        </div>
-                        <div className="google-input-wrapper">
-                            <input
-                                type="date"
-                                name="driverInsurance"
-                                value={formData.driverInsurance}
-                                onChange={handleChange}
-                                className="google-style-input"
-                                required
-                            />
-                            <label className="google-style-input-label">Driver Insurance Valid To</label>
-                        </div>
-                        <p>Before using or account, you need to completed you data, to satisfy our service!</p>
-                        <button className="submit-bid-button" onClick={handleSubmit}>Submit</button>
-                    </div>
-                </div>
-            )}
+            {/*{showPopup && (*/}
+            {/*    <Popup title="Complete information" abilityToClose={true} footerText="Before using or account, you need to completed you data, to satisfy our service!">*/}
+            {/*        <Grid columns="1, 1fr">*/}
+            {/*            <TextInput*/}
+            {/*                type="text"*/}
+            {/*                id="driverLicenceClass"*/}
+            {/*                value={formData.driverLicenceClass}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                label="Driver Licence Class"*/}
+            {/*            />*/}
+            {/*            <TextInput*/}
+            {/*                type="text"*/}
+            {/*                id="driverTruck"*/}
+            {/*                value={formData.driverTruck}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                label="Driver Truck"*/}
+            {/*            />*/}
+            {/*            <TextInput*/}
+            {/*                type="date"*/}
+            {/*                id="driverInsurance"*/}
+            {/*                value={formData.driverInsurance}*/}
+            {/*                onChange={handleChange}*/}
+            {/*                label="Driver Insurance Valid To"*/}
+            {/*            />*/}
+            {/*            <Button variant="apply-non-responsive" onClick={handleSubmit}>Submit</Button>*/}
+            {/*        </Grid>*/}
+            {/*    </Popup>*/}
+            {/*)}*/}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
                     DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
@@ -257,7 +245,7 @@ const DriverDashboard = () => {
                                 </div>
                             )}
                             {activeTab === "Loads" && (
-                                    <ActiveLoadsPanel user="driver" userID={driverID}/>
+                                    <ActiveLoadsPanel userRole="driver" userID={driverID}/>
                             )}
                         </div>
                     </div>
@@ -278,10 +266,10 @@ const DriverDashboard = () => {
                                                     percent={86}
                                                     color="#009f52"/>
                                 </Grid>
-                                <OpenShipAIChat userID={driverID} userRole="shipper"/>
+                                <OpenShipAIChat userID={driverID} userRole="driver"/>
                             </div>
                             <div className="map-content">
-                                <ActiveLoadsPanel user="driver" userID={driverID}/>
+                                <ActiveLoadsPanel userID={driverID} userRole="driver"/>
                             </div>
                         </div>
 

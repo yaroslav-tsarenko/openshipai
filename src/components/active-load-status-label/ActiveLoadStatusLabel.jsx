@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ActiveLoadStatusLabel.module.scss';
 
-const ActiveLoadStatusLabel = ({ loadStatus }) => {
+const ActiveLoadStatusLabel = ({loadStatus}) => {
     const getStatusClass = (status) => {
         switch (status) {
             case 'Published':
@@ -10,6 +10,10 @@ const ActiveLoadStatusLabel = ({ loadStatus }) => {
                 return styles.active;
             case 'Completed':
                 return styles.completed;
+            case 'Booked':
+                return styles.booked;
+            case 'Delivered':
+                return styles.delivered;
             case 'Cancelled':
                 return styles.cancelled;
             default:

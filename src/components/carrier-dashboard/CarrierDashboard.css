@@ -722,13 +722,20 @@
     flex-direction: column;
 }
 
+.carrier-dashboard-drivers{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 80vh;
+    overflow: auto;
+}
+
 .taken-loads-container {
     display: flex;
     flex-direction: column;
     width: 100%;
-    height: 100%;
-    overflow: scroll;
-    overflow-x: hidden;
+    height: 90vh;
+    overflow: auto;
 }
 
 .driver-container-card-wrapper {

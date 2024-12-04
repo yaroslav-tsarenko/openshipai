@@ -10,7 +10,10 @@
     background: var(--royal-white);
     padding: 10px;
     margin: 15px;
+    height: 90vh;
+    overflow: auto;
     gap: 15px;
+    border: 1px solid var(--light-grey);
     border-radius: 15px;
 }
 

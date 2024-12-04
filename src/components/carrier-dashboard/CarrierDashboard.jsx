@@ -119,7 +119,7 @@ const CarrierDashboard = () => {
                             </div>
                         )}
                         {activeTab === "Loads" && (
-                            <ActiveLoadsPanel user="carrier" userID={carrierID}/>
+                            <ActiveLoadsPanel userID={carrierID} user="carrier"/>
                         )}
                     </div>
                 </div>
@@ -143,7 +143,7 @@ const CarrierDashboard = () => {
                             <OpenShipAIChat userID={carrierID} userRole="shipper"/>
                         </div>
                         <div className="map-content">
-                            <ActiveLoadsPanel userID={carrierID} user="carrier"/>
+                            <ActiveLoadsPanel userID={carrierID} userRole="carrier"/>
                         </div>
                     </div>
                 </div>

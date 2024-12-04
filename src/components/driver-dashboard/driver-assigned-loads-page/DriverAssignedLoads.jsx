@@ -8,11 +8,6 @@ import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import AssignedLoadContainer from "../../assigned-load-container/AssignedLoadContainer";
 import {Skeleton} from "@mui/material";
-import Button from "../../button/Button";
-import Grid from "../../grid-two-columns/Grid";
-import MetricCompoent from "../../metric-component/MetricCompoent";
-import OpenShipAIChat from "../../open-ai-chat/OpenShipAIChat";
-import ActiveLoadsPanel from "../../shipper-active-loads-panel/ActiveLoadsPanel";
 
 const DriverAssignedLoads = () => {
 
@@ -94,10 +89,10 @@ const DriverAssignedLoads = () => {
     useEffect(() => {
         const fetchLoads = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-all-loads`);
+                const response = await axios.get(`${BACKEND_URL}/get-driver-loads/${driverID}`);
                 setLoads(response.data);
             } catch (error) {
-                console.error('Error fetching loads:', error);
+                console.error('Error fetching driver loads:', error);
             }
         };
 
@@ -130,6 +125,21 @@ const DriverAssignedLoads = () => {
                 />
                 <div className="shipper-dashboard-content-body">
                     <div className="loads-containers-block">
+                        {loads.map(load => (
+                            <AssignedLoadContainer
+                                key={load.loadID}
+                                loadTitle={load.loadTitle}
+                                loadWeight={load.loadWeight}
+                                loadType={load.loadType}
+                                driverID={driverID}
+                                loadTrip={load.loadMilesTrip}
+                                loadCredentialID={load.loadCredentialID}
+                                loadPickupLocation={load.loadPickupLocation}
+                                loadPickupLocationDate={load.loadPickupDate}
+                                loadDeliveryLocation={load.loadDeliveryLocation}
+                                loadDeliveryLocationDate={load.loadDeliveryDate}
+                            />
+                        ))}
                         {assignedLoads.length > 0 ? (
                             assignedLoads.map(load => (
                                 <AssignedLoadContainer

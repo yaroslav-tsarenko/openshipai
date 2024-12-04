@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import './ShipperDashboard.css';
-import DefaultUserAvatar from "../../assets/default-avatar.png";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
@@ -50,7 +49,7 @@ const ShipperDashboard = () => {
                     setLoading(false);
                 });
         }
-    }, [shipperInfo]);
+    }, [shipperID]);
 
     useEffect(() => {
         const getUser = async () => {
@@ -130,7 +129,7 @@ const ShipperDashboard = () => {
                                 </div>
                             )}
                             {activeTab === "Loads" && (
-                                <ActiveLoadsPanel user="shipper" userID={shipperID}/>
+                                <ActiveLoadsPanel userID={shipperID} userRole="shipper"/>
                             )}
                         </div>
                     </div>

@@ -15,6 +15,7 @@ import TextInput from "../text-input/TextInput";
 import InfoItem from "../info-item/InfoItem";
 import Grid from "../grid-two-columns/Grid";
 import ImageSlider from "../image-slider/ImageSlider";
+import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
 
 
 const LoadContainerBid = ({
@@ -90,6 +91,7 @@ const LoadContainerBid = ({
     const [isSuccess, setIsSuccess] = useState(false);
     const [loadImages, setLoadImages] = useState([]);
     const [isError, setIsError] = useState(false);
+    const [message, setMessage] = useState(null);
     const {carrierID} = useParams();
 
     useEffect(() => {
@@ -146,13 +148,10 @@ const LoadContainerBid = ({
         try {
             const response = await axios.post(`${BACKEND_URL}/create-bid`, formData);
             console.log(response.data);
-            setIsSuccess(true);
-            setTimeout(() => {
-                window.location.reload();
-            }, 1000);
+            setMessage({ status: 'success', text: 'Load Created Successfully', description: '' });
         } catch (error) {
             console.error(error);
-            setIsError(true);
+            setMessage({ status: 'error', text: 'Something went wrong. Try Again', description: '' });
         } finally {
             setIsLoading(false);
         }
@@ -173,8 +172,7 @@ const LoadContainerBid = ({
 
     return (
         <>
-            {isSuccess && <Alert text="Load Created Successfully"/>}
-            {isError && <FloatingWindowFailed text="Something went wrong. Try Again"/>}
+            {message && <Alert status={message.status} text={message.text} description={message.description} />}
             <div className={`take-load-bid-container-wrapper ${isExpanded ? 'expanded' : ''}`}>
                 <div className="take-load-bid-container-short-info">
                     <div className="take-load-bid-container-content">
@@ -417,7 +415,7 @@ const LoadContainerBid = ({
                             />
                         </div>
                         <Button variant="apply-non-responsive" className="submit-bid-button" onClick={handleSubmit}>
-                            {isLoading ? <ClipLoader size={15} color={"#ffffff"}/> : "Submit Bid"}
+                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Submit Bid"}
                         </Button>
                     </div>
                 </Popup>

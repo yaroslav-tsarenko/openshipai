@@ -66,17 +66,11 @@ const ShipperLoadPage = () => {
 
         const fetchAllLoadBids = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-all-load-bids`);
-                const data = await response.data;
-
-                if (response.status === 200) {
-                    const filteredBids = data.filter(bid => bid.loadCredentialID === loadCredentialID);
-                    setLoadBids(filteredBids);
-                } else {
-                    console.error('Failed to fetch all load bids:', data);
-                }
+                const response = await axios.get(`${BACKEND_URL}/get-load-bids-by-load/${loadCredentialID}`);
+                setLoadBids(response.data);
+                console.log('Load Bids:', response.data);
             } catch (error) {
-                console.error('Error fetching all load bids:', error);
+                console.error('Error fetching load bids:', error);
             }
         };
 
@@ -220,7 +214,6 @@ const ShipperLoadPage = () => {
                                     <h1>Listing From Carriers</h1>
                                     <p>Choose the best matching carrier for your load</p>
                                 </div>
-
                                 {loadBids.length !== 0 ? (
                                     loadBids.map(loadBid => (
                                         <CarrierLoadBid
@@ -228,7 +221,7 @@ const ShipperLoadPage = () => {
                                             loadBidPrice={loadBid.loadBidPrice}
                                             loadID={loadBid.loadCredentialID}
                                             shipperID={shipperID}
-                                            loadCarrierID={loadBid.loadCarrierID}
+                                            loadCarrierID={loadBid.loadBidCarrierID}
                                             loadBidCoverLetter={loadBid.loadBidCoverLetter}
                                             loadEstimatedDeliveryTime={loadBid.loadBidDeliveryDate}
                                         />
@@ -238,7 +231,6 @@ const ShipperLoadPage = () => {
                                         <p>Current listing from carriers is empty...</p>
                                     </div>
                                 )}
-
                             </div>
                         </div>
                         {/*<div style={{background: "grey"}}>

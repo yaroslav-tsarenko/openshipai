@@ -5,6 +5,7 @@ import axios from "axios";
 import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../../constants/constants";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID }) => {
 
     const [isAssignSuccess, setIsAssignSuccess] = useState(false);
@@ -15,12 +16,8 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
         setIsAssignLoading(true);
 
         try {
-            // Assign the load to the driver
             const assignResponse = await axios.put(`${BACKEND_URL}/assign-load/${driverID}`, { loadID: loadID });
-
-            // Update the loadAssignedDriverID field of the Load
             const updateResponse = await axios.put(`${BACKEND_URL}/update-load-assigning/${loadID}`, { loadAssignedDriverID: driverID });
-
             if (assignResponse.status === 200 && updateResponse.status === 200) {
                 setIsAssignSuccess(true);
             } else {
@@ -30,7 +27,6 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
             console.error('Error assigning load to driver:', error);
             setIsAssignFailed(true);
         }
-
         setIsAssignLoading(false);
     };
 
@@ -51,8 +47,7 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
                 <button className="assign-driver-button" onClick={handleAssignLoad}>
                     {isAssignLoading ?
                         <>
-                            <ClipLoader color="#fffff" loading={true} size={17} className="payment-loader"/>
-                            Assigning...
+                            <RotatingLinesLoader title="Assigning..."/>
                         </>
                         : 'Assign'}
                 </button>

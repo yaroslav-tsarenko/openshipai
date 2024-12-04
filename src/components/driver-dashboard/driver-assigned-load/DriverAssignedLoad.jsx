@@ -65,10 +65,8 @@ const DriverAssignedLoad = () => {
             const durationInMinutes = durationInSeconds / 60;
             const hours = Math.floor(durationInMinutes / 60);
             const minutes = Math.round(durationInMinutes % 60);
-
             const arrival = new Date();
             arrival.setMinutes(arrival.getMinutes() + durationInMinutes);
-
             setDistance(distanceInMiles.toFixed(2));
             setTripDuration(`${hours} hours ${minutes} min`);
             setArrivalTime(arrival.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}));
@@ -225,6 +223,19 @@ const DriverAssignedLoad = () => {
         getLoad();
     }, [loadID]);
 
+    const updateLoadStatus = async (status) => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/update-load-status-custom/${loadID}/${status}`);
+            if (response.status === 200) {
+                console.log(`Load status updated to ${status}`);
+            } else {
+                console.error('Error updating load status:', response);
+            }
+        } catch (error) {
+            console.error('Error updating load status:', error);
+        }
+    };
+
     const handleDeliveredClick = async () => {
         setIsCompletingDelivering(true);
         try {
@@ -234,6 +245,9 @@ const DriverAssignedLoad = () => {
             if (response.status === 200) {
                 console.log('Load status updated successfully');
                 setIsLoadDeliveredStatus(true);
+                updateLoadStatus('Delivered')
+                const response = await axios.post(`${BACKEND_URL}/payment-for-carrier`, { loadID: loadID });
+                console.log('Payment response:', response.data);
                 navigate(`/load-delivered-success/${driverID}`);
             } else {
                 console.log('Error updating load status:', response);
@@ -252,6 +266,7 @@ const DriverAssignedLoad = () => {
             });
             if (response.status === 200) {
                 console.log('Load status updated successfully');
+                updateLoadStatus('Picked Up')
             } else {
                 console.log('Error updating load status:', response);
             }
@@ -268,6 +283,7 @@ const DriverAssignedLoad = () => {
             const response = await axios.put(`${BACKEND_URL}/start-trip/${loadID}`);
             if (response.status === 200) {
                 setLoad(prevLoad => ({...prevLoad, loadTripStarted: 'Started'}));
+                updateLoadStatus('Dispatched');
             } else {
                 console.error('Error starting trip:', response);
             }

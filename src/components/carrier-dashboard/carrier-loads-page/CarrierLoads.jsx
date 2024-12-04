@@ -40,6 +40,7 @@ const CarrierLoads = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [hoveredButton, setHoveredButton] = useState('');
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+    const [loadBids, setLoadBids] = useState([]);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
@@ -71,7 +72,18 @@ const CarrierLoads = () => {
                 console.error('Error:', error);
             }
         };
+        const fetchLoadBids = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/load-bids`);
+                const filteredLoadBids = response.data.filter(loadBid => loadBid.loadBidCarrierID === carrierID);
+                setLoadBids(filteredLoadBids);
+            } catch (error) {
+                console.error('Error fetching load bids:', error);
+            }
+        };
+
         getUser();
+        fetchLoadBids();
         getAvatar();
     }, [carrierID]);
     return (
@@ -101,66 +113,76 @@ const CarrierLoads = () => {
                 />
                 <div className="carrier-dashboard-content-body">
                     <div className="taken-loads-container">
-                        <LoadContainerBid
-                            loadPrice="1060$"
-                            loadTitle="Moving"
-                            loadPickUpLocation="Oregon, USA"
-                            loadPickUpDate="4 May - 11:00"
-                            loadDeliveryLocation="Los Angeles, USA"
-                            loadDeliveryDate="6 March - 15:00"
-                            loadType="Moving"
-                            loadWeight="500 lb"
-                            loadDistance="1290 mil"
-                            loadQoutes="12"
-                        />
-                        <LoadContainerBid
-                            loadPrice="560$"
-                            loadTitle="Car Load"
-                            loadPickUpLocation="New York, USA"
-                            loadPickUpDate="4 March - 13:00"
-                            loadDeliveryLocation="Los Angeles, USA"
-                            loadDeliveryDate="4 March - 13:00"
-                            loadType="Vehicle"
-                            loadWeight="1300 lb"
-                            loadDistance="230 mil"
-                            loadQoutes="No"
-                        />
-                        <LoadContainerBid
-                            loadPrice="1560$"
-                            loadTitle="Construction"
-                            loadPickUpLocation="New York, USA"
-                            loadPickUpDate="4 March - 13:00"
-                            loadDeliveryLocation="Los Angeles, USA"
-                            loadDeliveryDate="1 March - 15:00"
-                            loadType="Heavy"
-                            loadWeight="2300 lb"
-                            loadDistance="290 mil"
-                            loadQoutes="35"
-                        />
-                        <LoadContainerBid
-                            loadPrice="560$"
-                            loadTitle="Car Load"
-                            loadPickUpLocation="New York, USA"
-                            loadPickUpDate="4 March - 13:00"
-                            loadDeliveryLocation="Los Angeles, USA"
-                            loadDeliveryDate="4 March - 13:00"
-                            loadType="Vehicle"
-                            loadWeight="1300 lb"
-                            loadDistance="230 mil"
-                            loadQoutes="35"
-                        />
-                        <LoadContainerBid
-                            loadPrice="1560$"
-                            loadTitle="Construction"
-                            loadPickUpLocation="New York, USA"
-                            loadPickUpDate="4 March - 13:00"
-                            loadDeliveryLocation="Los Angeles, USA"
-                            loadDeliveryDate="1 March - 15:00"
-                            loadType="Heavy"
-                            loadWeight="2300 lb"
-                            loadDistance="290 mil"
-                            loadQoutes="35"
-                        />
+                        {loadBids.length > 0 ? (
+                            loadBids.map(loadBid => (
+                                <LoadContainerBid
+                                    key={loadBid._id}
+                                    loadPrice={loadBid.loadBidPrice}
+                                    loadTitle={loadBid.loadTitle}
+                                    loadPickUpLocation={loadBid.loadPickUpLocation}
+                                    loadPickUpDate={loadBid.loadPickUpDate}
+                                    loadDeliveryLocation={loadBid.loadDeliveryLocation}
+                                    loadDeliveryDate={loadBid.loadDeliveryDate}
+                                    loadType={loadBid.loadType}
+                                    loadWeight={loadBid.loadWeight}
+                                    loadDistance={loadBid.loadDistance}
+                                    loadQoutes={loadBid.loadQoutes}
+                                    loadID={loadBid.loadCredentialID}
+                                    loadVehicleMake={loadBid.loadVehicleMake}
+                                    loadStatus={loadBid.loadStatus}
+                                    loadVehicleModel={loadBid.loadVehicleModel}
+                                    loadVehicleYear={loadBid.loadVehicleYear}
+                                    loadWidth={loadBid.loadWidth}
+                                    loadHeight={loadBid.loadHeight}
+                                    loadLength={loadBid.loadLength}
+                                    loadTypeOfPackaging={loadBid.loadTypeOfPackaging}
+                                    loadDescription={loadBid.loadDescription}
+                                    loadCarrierConfirmation={loadBid.loadCarrierConfirmation}
+                                    loadPaymentStatus={loadBid.loadPaymentStatus}
+                                    loadAssignedDriverID={loadBid.loadAssignedDriverID}
+                                    loadSpecifiedItem={loadBid.loadSpecifiedItem}
+                                    loadMovingSize={loadBid.loadMovingSize}
+                                    loadNumberOfBedrooms={loadBid.loadNumberOfBedrooms}
+                                    loadNumberOfPallets={loadBid.loadNumberOfPallets}
+                                    loadDeliveredStatus={loadBid.loadDeliveredStatus}
+                                    loadPickupStories={loadBid.loadPickupStories}
+                                    loadDeliveryStories={loadBid.loadDeliveryStories}
+                                    loadSpecialHandlingRequirements={loadBid.loadSpecialHandlingRequirements}
+                                    loadIndustrySector={loadBid.loadIndustrySector}
+                                    loadPrimaryContactName={loadBid.loadPrimaryContactName}
+                                    loadMajorItems={loadBid.loadMajorItems}
+                                    loadSecondaryContactName={loadBid.loadSecondaryContactName}
+                                    loadPickupFloor={loadBid.loadPickupFloor}
+                                    loadDeliveryFloor={loadBid.loadDeliveryFloor}
+                                    loadBusinessName={loadBid.loadBusinessName}
+                                    loadTypeOfBusiness={loadBid.loadTypeOfBusiness}
+                                    loadLiftedItemsQuantity={loadBid.loadLiftedItemsQuantity}
+                                    loadHaveFreightElevator={loadBid.loadHaveFreightElevator}
+                                    loadDestinationOptions={loadBid.loadDestinationOptions}
+                                    loadServiceExpressOptions={loadBid.loadServiceExpressOptions}
+                                    loadAreaOption={loadBid.loadAreaOption}
+                                    loadQuantity={loadBid.loadQuantity}
+                                    loadOperable={loadBid.loadOperable}
+                                    loadConvertible={loadBid.loadConvertible}
+                                    loadModified={loadBid.loadModified}
+                                    loadNumberOfItems={loadBid.loadNumberOfItems}
+                                    loadTrike={loadBid.loadTrike}
+                                    loadIsCrate={loadBid.loadIsCrate}
+                                    loadIsPallet={loadBid.loadIsPallet}
+                                    loadTripStarted={loadBid.loadTripStarted}
+                                    loadAdditionalSelectedLoadOptions={loadBid.loadAdditionalSelectedLoadOptions}
+                                    loadIsBox={loadBid.loadIsBox}
+                                    isOnTrailer={loadBid.isOnTrailer}
+                                    hasTrailerPreference={loadBid.hasTrailerPreference}
+                                    loadTypeOfTrailer={loadBid.loadTypeOfTrailer}
+                                    loadLocationStops={loadBid.loadLocationStops}
+                                    loadOriginDeliveryPreference={loadBid.loadOriginDeliveryPreference}
+                                    shipperID={loadBid.shipperID}
+                                />
+                            ))
+                        ) : (
+                            <p>No loads found for this carrier.</p>
+                        )}
                     </div>
                 </div>
             </div>

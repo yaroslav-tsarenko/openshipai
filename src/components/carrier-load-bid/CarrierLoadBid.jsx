@@ -1,11 +1,9 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {ReactComponent as CarrierAvatar} from "../../assets/userAvatar2.svg"
 import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
-import {ClipLoader} from "react-spinners";
 import axios from "axios";
 import Alert from "../floating-window-success/Alert";
-import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../constants/constants";
 import Button from "../button/Button";
 import Popup from "../popup/Popup";
@@ -29,7 +27,13 @@ const CarrierLoadBid = ({
     const formattedDate = `${day} ${month} at ${time}`;
     const [isLoading, setIsLoading] = useState(false);
     const [statusMessage, setStatusMessage] = useState('');
+    const [alert, setAlert] = useState(null);
     const [isSuccess, setIsSuccess] = useState(null);
+
+    useEffect(() => {
+        console.log(loadCarrierID + "loadCarrierID")
+    }, [loadCarrierID]);
+
 
     const handleClosePopup = () => {
         setIsPopupOpen(false);
@@ -38,7 +42,6 @@ const CarrierLoadBid = ({
     const handleOpenPopup = () => {
         setIsPopupOpen(true);
     };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -55,20 +58,23 @@ const CarrierLoadBid = ({
             const response = await axios.post(`${BACKEND_URL}/create-deal-chat-conversation`, chatData);
             if (response.status === 200) {
                 console.log('DealChatConversation created successfully');
-                setStatusMessage('Your bid applied successfully');
+                await axios.post(`${BACKEND_URL}/update-load-status/${loadID}`);
+                await axios.post(`${BACKEND_URL}/update-load-price/${loadID}/${loadBidPrice}`);
                 setTimeout(() => {
                     navigate(`/shipper-chat-conversation/${shipperID}`);
                 }, 1000);
-                setIsSuccess(true);
+                setAlert({status: "success", text: "Your bid applied successfully", description: "applied"});
             } else {
                 console.error('Failed to create DealChatConversation:', response.data);
                 setStatusMessage('Failed to apply bid. Try again');
                 setIsSuccess(false);
+                setAlert({status: "error", text: "Failed to apply bid", description: "Try again"});
             }
         } catch (error) {
             console.error('Error creating DealChatConversation:', error);
             setStatusMessage('Failed to apply bid. Try again');
             setIsSuccess(false);
+            setAlert({status: "error", text: "Failed to apply bid", description: "Try again"});
         } finally {
             setIsLoading(false);
         }
@@ -76,13 +82,13 @@ const CarrierLoadBid = ({
 
     return (
         <>
-            {isSuccess === true && <Alert text={statusMessage}/>}
-            {isSuccess === false && <FloatingWindowFailed text={statusMessage}/>}
+            {alert && <Alert text={alert.text} status={alert.status} description={alert.description}/>}
             <div className="carrier-load-bid-container">
                 <div className="carrier-load-bid-container-header">
                     <section>
                         <CarrierAvatar/>
                         <h2>{loadCarrierName}</h2>
+                        <h2>{loadCarrierID}</h2>
                     </section>
                     <section>
                         <h4>Estimated delivery: {formattedDate}</h4>
@@ -93,16 +99,14 @@ const CarrierLoadBid = ({
                     <p>{loadBidCoverLetter}</p>
                 </div>
                 <div className="carrier-load-bid-container-bottom">
-                    <section style={{width: "250px"}}>
+                    <div style={{width: "250px"}}>
                         <Button variant="apply" onClick={handleOpenPopup}>Apply Bid</Button>
-
-                    </section>
+                    </div>
                 </div>
             </div>
             {isPopupOpen && (
                 <Popup title={`Applying bid for load: ${loadID}`} onClose={handleClosePopup} footerText="Do not follow the carrier's instructions to conduct business in
                                         other messengers to prevent scam actions.">
-
                     <div className="carrier-bid-popup-content">
                         <div className="carrier-bid-description">
                             <h3>Before accepting</h3>
