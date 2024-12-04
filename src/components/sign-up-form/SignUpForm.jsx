@@ -7,7 +7,6 @@ import {GoogleLogin} from '@react-oauth/google';
 import ReCAPTCHA from "react-google-recaptcha";
 import Typewriter from "typewriter-effect";
 import Alert from "../floating-window-success/Alert";
-import {CircularProgress} from "@mui/material";
 import {BACKEND_URL} from "../../constants/constants";
 import Button from "../button/Button";
 import TextInput from "../text-input/TextInput";

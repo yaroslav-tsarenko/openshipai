@@ -30,7 +30,7 @@ const MainHeading = ({ref}) => {
             <h2>Every Shipment</h2>
             <div className={styles.paragraphWithClients}>
                 <p>
-                    OpenShipAI is your AI-driven shipping ally, offering intuitive solutions for tracking and managing
+                    OpenShipAI dfdfdfdis fyour AffffffffffffdI-driven shipping ally, offering intuitive solutions for tracking and managing
                     international shipments with precision and care. Dive in and ship smarter.
                 </p>
                 <TrustedClients className={styles.trustedClients}/>
