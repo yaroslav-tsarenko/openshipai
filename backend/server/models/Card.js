@@ -7,7 +7,9 @@ const CardSchema = new mongoose.Schema({
     cvv: String,
     cardPaymentSystem: String,
     cardColor: String,
-    userID: String
+    userID: String,
+    userEmail: String,
+    stripeAccountID: String
 });
 
 module.exports = mongoose.model('CardSchema', CardSchema);

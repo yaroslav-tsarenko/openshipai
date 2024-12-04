@@ -45,7 +45,8 @@ const CarrierPaymentPage = () => {
         cardColor: (() => {
             const colors = ['red', 'green', 'blue', "yellow"];
             return colors[Math.floor(Math.random() * colors.length)];
-        })()
+        })(),
+        userEmail: '',
     });
 
     useEffect(() => {
@@ -54,6 +55,7 @@ const CarrierPaymentPage = () => {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
                 const data = await response.json();
                 setCarrierInfo(data);
+                console.log(carrierInfo.carrierAccountAccountEmail)
             } catch (error) {
                 console.error('Error:', error);
             }
@@ -140,17 +142,26 @@ const CarrierPaymentPage = () => {
     };
 
     const handleAddCard = async () => {
+        setLoading(true);
         try {
-            const response = await axios.post(`${BACKEND_URL}/save-card`, formData);
+            // Generate stripeAccountID
+            const stripeResponse = await axios.post(`${BACKEND_URL}/create-stripe-account`, { email: formData.userEmail });
+            const stripeAccountID = stripeResponse.data.stripeAccountID;
+
+            // Add stripeAccountID to formData
+            const cardData = { ...formData, stripeAccountID };
+
+            const response = await axios.post(`${BACKEND_URL}/save-card`, cardData);
             if (response.data.status === 'Success') {
                 alert('Card added successfully');
-                console.log(response);
             } else {
                 alert('Error adding card');
             }
         } catch (error) {
             console.error('Error adding card:', error);
             alert('Error adding card');
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -242,6 +253,14 @@ const CarrierPaymentPage = () => {
                         onChange={handleCardNumberChange}
                         label="Card Number"
                         style={{placeholder: '1234 5678..'}}
+                    />
+                    <TextInput
+                        type="text"
+                        id="userEmail"
+                        value={formData.userEmail}
+                        onChange={handleChange('userEmail')}
+                        label="User Email"
+                        style={{ placeholder: 'example@example.com' }}
                     />
                     <div className="card-data-section">
                         <TextInput

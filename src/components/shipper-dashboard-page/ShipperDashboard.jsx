@@ -25,39 +25,45 @@ const ShipperDashboard = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
+
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
+
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
+
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {
-        const getUserAndAvatar = async () => {
+        if (shipperInfo && shipperInfo.userShipperAvatar) {
+            setLoading(true);
+            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
+            console.log(avatarUrl)
+            axios.get(avatarUrl)
+                .then(() => {
+                    setPreviewSavedImage(avatarUrl);
+                    setLoading(false);
+                })
+                .catch(() => {
+                    console.error('Image does not exist');
+                    setLoading(false);
+                });
+        }
+    }, [shipperID]);
+
+    useEffect(() => {
+        const getUser = async () => {
             try {
                 const response = await fetch(`${BACKEND_URL}/get-current-user/shipper/${shipperID}`);
                 const data = await response.json();
                 setShipperInfo(data);
-
-                if (data && data.userShipperAvatar) {
-                    setLoading(true);
-                    const avatarUrl = `${BACKEND_URL}/${data.userShipperAvatar}`;
-                    console.log(avatarUrl);
-                    try {
-                        await axios.get(avatarUrl);
-                        setPreviewSavedImage(avatarUrl);
-                    } catch {
-                        console.error('Image does not exist');
-                    } finally {
-                        setLoading(false);
-                    }
-                }
             } catch (error) {
                 console.error('Error:', error);
             }
         };
 
-        getUserAndAvatar();
-    }, [shipperID]);
+        getUser();
+    }, [shipperInfo, shipperID]);
 
     return (
         <>
@@ -123,7 +129,7 @@ const ShipperDashboard = () => {
                                 </div>
                             )}
                             {activeTab === "Loads" && (
-                                <ActiveLoadsPanel user="shipper" userID={shipperID}/>
+                                <ActiveLoadsPanel userID={shipperID} userRole="shipper"/>
                             )}
                         </div>
                     </div>

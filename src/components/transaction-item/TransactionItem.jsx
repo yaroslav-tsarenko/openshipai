@@ -22,8 +22,9 @@ const TransactionItem = ({currentUser, typeOfPayment, monthAndYear, time, priceA
                     <h1>{monthAndYear}</h1>
                     <p>{time}</p>
                 </div>
-                <div className={styles.priceAmount}>
-                    <h1>-{priceAmount}</h1>
+                <div className={styles.priceAmount}
+                     style={{color: typeOfPayment === "Payed to Card" ? "#52b100" : "inherit"}}>
+                    <h1>{typeOfPayment === "Payed to Card" ? `+${priceAmount}` : `-${priceAmount}`}</h1>
                 </div>
             </div>
         </div>

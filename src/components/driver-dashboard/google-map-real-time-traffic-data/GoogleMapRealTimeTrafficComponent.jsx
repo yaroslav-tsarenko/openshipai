@@ -28,8 +28,6 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
         }
     }, [origin, destination, currentRequest.origin, currentRequest.destination]);
 
-
-
     const directionsCallback = response => {
         if (response !== null) {
             if (response.status === 'OK') {
@@ -40,27 +38,10 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
                     duration: leg.duration.text
                 });
                 setInfoWindowPosition(leg.steps[0].start_location);
-                findFuelStops(leg);
             } else {
                 console.log('Directions request failed due to ' + response.status);
             }
         }
-    };
-
-    const findFuelStops = (leg) => {
-        const service = new window.google.maps.places.PlacesService(mapRef.current.state.map);
-        const request = {
-            location: leg.start_location,
-            radius: '50000',
-            type: ['gas_station']
-        };
-
-        service.nearbySearch(request, (results, status) => {
-            if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-                setFuelStops(results);
-                setFuelStopsCount(results.length);
-            }
-        });
     };
 
     return (
@@ -100,14 +81,6 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
                     <Marker key={index} position={place.geometry.location} />
                 ))}
 
-                {infoWindowPosition && (
-                    <InfoWindow
-                        position={infoWindowPosition}
-                        onCloseClick={() => setInfoWindowPosition(null)}
-                    >
-                        <></>
-                    </InfoWindow>
-                )}
             </GoogleMap>
         </LoadScript>
     );

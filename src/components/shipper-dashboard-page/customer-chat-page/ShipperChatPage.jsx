@@ -102,7 +102,7 @@ const ShipperChatPage = () => {
                     console.error('Image does not exist');
                 });
         }
-    }, [shipperInfo]);
+    }, [shipperID]);
 
     useEffect(() => {
         const getAvatar = async () => {
@@ -532,7 +532,14 @@ const ShipperChatPage = () => {
     const handlePayClick = async () => {
         setIsProcessingPayment(true);
         try {
-            // Create a Stripe checkout session with the necessary data
+            console.log('Creating checkout session with data:', {
+                amount: load.loadPrice * 1.03,
+                loadType: load.loadType,
+                description: " (Including taxes and fee)",
+                shipperID: shipperID,
+                chatID: chatID,
+            });
+
             const response = await axios.post(`${BACKEND_URL}/create-checkout-session-2`, {
                 amount: load.loadPrice * 1.03,
                 loadType: load.loadType,
@@ -540,14 +547,14 @@ const ShipperChatPage = () => {
                 shipperID: shipperID,
                 chatID: chatID,
             });
-            const sessionId = response.data.sessionId;
 
-            // Redirect to the Stripe checkout page
+            const sessionId = response.data.sessionId;
+            console.log('Checkout session created:', sessionId);
+
             const stripe = await stripePromise;
             const { error } = await stripe.redirectToCheckout({ sessionId });
-
             if (error) {
-                console.log(error);
+                console.log('Stripe redirect error:', error);
             }
         } catch (error) {
             console.error('Error creating checkout session:', error);

@@ -23,21 +23,21 @@ const ActiveLoadContainer = ({
                     <div className="load-directions">
                         <DirectionIcon className="load-directions-icon"/>
                         <div className="origin-destination-container">
-                            <section className="section-origin-destination">
+                            <div className="section-origin-destination">
                                 <h3 className="load-directions-title">{loadPickupLocation}</h3>
                                 <p className="load-directions-description">{loadPickupDate}</p>
-                            </section>
-                            <section className="section-origin-destination">
+                            </div>
+                            <div className="section-origin-destination">
                                 <h3 className="load-directions-title">{loadDeliveryLocation}</h3>
                                 <p className="load-directions-description">{loadDeliveryDate}</p>
-                            </section>
+                            </div>
                         </div>
                     </div>
                 </div>
                 <div className="load-container-info">
-                    <section className="load-info-section">{typeOfLoad}</section>
-                    <section className="load-info-section">{loadMilTrip}</section>
-                    <section className="load-info-section">{loadCredentialID}</section>
+                    <div className="load-info-section">{typeOfLoad}</div>
+                    <div className="load-info-section">{loadMilTrip}</div>
+                    <div className="load-info-section">{loadCredentialID}</div>
                 </div>
                 <div className="load-container-carrier">
                     <CarrierIcon className="carrier-icon"/>

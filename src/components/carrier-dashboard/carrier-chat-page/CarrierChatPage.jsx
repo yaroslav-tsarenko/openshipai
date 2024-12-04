@@ -24,6 +24,7 @@ import styles from "./CarrierChatPage.module.scss";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
 import {FaArrowLeft} from "react-icons/fa6";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const CarrierChatPage = () => {
 
@@ -585,14 +586,14 @@ const CarrierChatPage = () => {
                         </div>
                     </div>
                     <div className={`chat-messages-content ${isChatVisible ? 'active' : ''}`}>
-                        <button className="go-to-chats-button" onClick={handleBackToConversations}>
+                       {/* <button className="go-to-chats-button" onClick={handleBackToConversations}>
                             <FaArrowLeft/>
-                        </button>
+                        </button>*/}
                         <div className="shipper-chat-header">
                             <div className="shipper-carrier-chat-header">
                                 <span className="status-circle"></span>
                                 <h1 className="chat-user-name">{shipper ? shipper.userShipperName :
-                                    <ClipLoader color="#024ecc" loading={true} size={25}/>}</h1>
+                                    <Skeleton width="150"/>}</h1>
                             </div>
                             {load && load.loadCarrierConfirmation === 'Confirmed' ? (
                                 load.loadPaymentStatus === 'Paid' ? (
@@ -601,8 +602,7 @@ const CarrierChatPage = () => {
                                     </button>
                                 ) : (
                                     <button className="waiting-for-approval-button" disabled>
-                                        <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
-                                        Waiting for Shipper's payment
+                                     <RotatingLinesLoader title="Waiting for shipper approval..."/>
                                     </button>
                                 )
                             ) : (

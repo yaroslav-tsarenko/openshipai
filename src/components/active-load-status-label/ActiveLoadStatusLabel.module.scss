@@ -15,6 +15,15 @@
   background: var(--royal-green);
 }
 
+.delivered{
+  background: var(--light-grey-hovered);
+  color: var(--royal-green);
+}
+
+.booked{
+  background: var(--orange);
+}
+
 .completed {
   background: var(--royal-blue);
 }

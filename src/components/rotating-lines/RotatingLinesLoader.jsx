@@ -19,8 +19,6 @@ const RotatingLinesLoader = ({title}) => {
             />
             <span>{title}</span>
         </div>
-
-
     );
 };
 

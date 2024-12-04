@@ -54,7 +54,7 @@ const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
 const Load = require('./models/Load');
 const LoadBid = require('./models/LoadBid');
-const stripe = require('stripe')('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');
+const stripe = require('stripe')('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');
 require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
@@ -320,37 +320,77 @@ app.post('/save-card', async (req, res) => {
         res.status(500).json({status: 'Error', message: error.message});
     }
 });
+
 app.post('/send-driver-credentials', async (req, res) => {
     const {driverEmail, driverPassword} = req.body;
     try {
-        await sendEmailWithNode(driverEmail, driverPassword);
+        await sendEmail(driverEmail, 'Carrier successfully added you to workspace!🚛 Your Driver Credentials is:', `Driver Email: ${driverEmail}\nDriver Password: ${driverPassword}`);
         res.status(200).send({message: 'Email sent successfully'});
     } catch (error) {
         console.error('Failed to send email:', error);
         res.status(500).send({message: 'Failed to send email'});
     }
 });
-app.post('/create-bid', async (req, res) => {
+app.post('/send-bid-notification', async (req, res) => {
+    const {loadCredentialID} = req.body;
+
     try {
-        const newLoadBid = new LoadBid(req.body);
-        const savedLoadBid = await newLoadBid.save();
+        const load = await Load.findOne({loadCredentialID});
+        if (!load) {
+            return res.status(404).json({message: 'Load not found'});
+        }
 
-        const bids = await LoadBid.find({loadCredentialID: req.body.loadCredentialID});
+        const shipperID = load.shipperID;
 
-        const averagePrice = bids.reduce((total, bid) => total + bid.loadBidPrice, 0) / bids.length;
+        const shipper = await Shipper.findOne({userShipperID: shipperID});
+        if (!shipper) {
+            return res.status(404).json({message: 'Shipper not found'});
+        }
 
-        const load = await Load.findOne({loadCredentialID: req.body.loadCredentialID});
+        const userShipperEmail = shipper.userShipperEmail;
 
-        const updatedQuotes = load.loadQoutes + 1;
+        await sendEmail(userShipperEmail, 'New Bid Notification', 'You have new bids from carriers! Hurry up to pick your best carrier for load!');
 
-        await Load.updateOne({loadCredentialID: req.body.loadCredentialID}, {
-            loadPrice: averagePrice,
-            loadQoutes: updatedQuotes
+        res.status(200).json({message: 'Email sent successfully'});
+    } catch (error) {
+        console.error('Error sending email:', error);
+        res.status(500).json({message: 'Internal server error'});
+    }
+});
+
+app.post('/create-bid', async (req, res) => {
+    const {loadBidCarrierID, loadCredentialID, loadBidCoverLetter, loadBidPrice, loadBidDeliveryDate} = req.body;
+
+    try {
+        const newBid = new LoadBid({
+            loadBidCarrierID,
+            loadCredentialID,
+            loadBidCoverLetter,
+            loadBidPrice,
+            loadBidDeliveryDate,
         });
 
-        res.json(savedLoadBid);
+        await newBid.save();
+
+        const load = await Load.findOne({loadCredentialID});
+        if (!load) {
+            return res.status(404).json({message: 'Load not found'});
+        }
+
+        const shipperID = load.shipperID;
+        const shipper = await Shipper.findOne({userShipperID: shipperID});
+        if (!shipper) {
+            return res.status(404).json({message: 'Shipper not found'});
+        }
+
+        const userShipperEmail = shipper.userShipperEmail;
+        console.log('Sending email to:', userShipperEmail);
+        await sendEmail(userShipperEmail, 'New Bid Notification', 'You have new bids from carriers! Hurry up to pick your best carrier for load!');
+
+        res.status(200).json({message: 'Bid created and email sent successfully'});
     } catch (error) {
-        res.status(500).json({message: error.message});
+        console.error('Error creating bid or sending email:', error);
+        res.status(500).json({message: 'Internal server error'});
     }
 });
 app.get('/api/distance', async (req, res) => {
@@ -436,12 +476,17 @@ app.get('/load/:loadCredentialID', async (req, res) => {
         res.status(500).json({message: error.message});
     }
 });
-app.get('/get-all-load-bids', async (req, res) => {
+app.get('/get-load-bids-by-load/:loadCredentialID', async (req, res) => {
+    const {loadCredentialID} = req.params;
     try {
-        const loadBids = await LoadBid.find({});
+        const loadBids = await LoadBid.find({loadCredentialID});
+        if (!loadBids) {
+            return res.status(404).json({message: 'Load bids not found'});
+        }
         res.status(200).json(loadBids);
     } catch (error) {
-        res.status(500).json({message: error.message});
+        console.error('Error fetching load bids:', error);
+        res.status(500).json({message: 'Server error'});
     }
 });
 app.delete('/delete-all-load-bids', async (req, res) => {
@@ -807,6 +852,21 @@ app.put('/update-user-password/:role/:id', async (req, res) => {
     }
 });
 
+app.get('/get-driver-loads/:userID', async (req, res) => {
+    const {userID} = req.params;
+    try {
+        const driver = await Driver.findOne({driverID: userID});
+        if (!driver) {
+            return res.status(404).json({message: 'Driver not found'});
+        }
+        const loadIDs = driver.driverAssignedLoadsID;
+        const loads = await Load.find({loadCredentialID: {$in: loadIDs}});
+        res.status(200).json(loads);
+    } catch (error) {
+        res.status(500).json({message: error.message});
+    }
+});
+
 app.get('/get-all-loads', async (req, res) => {
     try {
         const loads = await Load.find({});
@@ -844,9 +904,63 @@ app.get('/get-all-loads/:shipperID', async (req, res) => {
     }
 });
 
+app.post('/update-load-status-custom/:loadID/:status', async (req, res) => {
+    const {loadID, status} = req.params;
+    try {
+        const load = await Load.findOneAndUpdate(
+            {loadCredentialID: loadID},
+            {loadStatus: status},
+            {new: true}
+        );
+        if (!load) {
+            return res.status(404).json({message: 'Load not found'});
+        }
+        res.status(200).json({message: `Load status updated to ${status}`, load});
+    } catch (error) {
+        console.error('Error updating load status:', error);
+        res.status(500).json({message: 'Server error'});
+    }
+});
+
+app.post('/update-load-status/:loadID', async (req, res) => {
+    const {loadID} = req.params;
+    try {
+        const load = await Load.findOneAndUpdate(
+            {loadCredentialID: loadID},
+            {loadStatus: 'Booked'},
+            {new: true}
+        );
+        if (!load) {
+            return res.status(404).json({message: 'Load not found'});
+        }
+        res.status(200).json({message: 'Load status updated to Booked', load});
+    } catch (error) {
+        console.error('Error updating load status:', error);
+        res.status(500).json({message: 'Server error'});
+    }
+});
+
+app.post('/update-load-price/:loadID/:price', async (req, res) => {
+    const {loadID} = req.params;
+    const {price} = req.params;
+    try {
+        const load = await Load.findOneAndUpdate(
+            {loadCredentialID: loadID},
+            {loadPrice: price},
+            {new: true}
+        );
+        if (!load) {
+            return res.status(404).json({message: 'Load not found'});
+        }
+        res.status(200).json({message: 'Load status updated to Booked', load});
+    } catch (error) {
+        console.error('Error updating load status:', error);
+        res.status(500).json({message: 'Server error'});
+    }
+});
+
 app.post('/create-deal-chat-conversation', async (req, res) => {
     const {chatID, loadID, shipperID, carrierID} = req.body;
-
     try {
         const newChat = new DealChatConversation({
             chatID,
@@ -854,7 +968,6 @@ app.post('/create-deal-chat-conversation', async (req, res) => {
             shipperID,
             carrierID
         });
-
         await newChat.save();
         res.status(200).json({message: 'DealChatConversation created successfully'});
     } catch (error) {
@@ -2075,18 +2188,18 @@ app.put('/assign-load/:driverID', async (req, res) => {
 
     try {
         const driver = await Driver.findOne({driverID: driverID});
+        const driverEmail = driver.driverEmail;
 
         if (!driver) {
             return res.status(404).json({message: 'Driver not found'});
         }
 
-        // Add the loadID to the driver's assigned loads
         driver.driverAssignedLoadsID.push(loadID);
 
-        // Save the updated driver
         await driver.save();
 
         res.status(200).json({message: 'Load assigned successfully to driver', driver: driver});
+        sendEmail(driverEmail, 'Carrier Assigned Load for You!', `You have been assigned a new load with ID: ${loadID}`);
     } catch (error) {
         console.error('Error assigning load to driver:', error);
         res.status(500).json({message: error.message});
@@ -2268,6 +2381,112 @@ app.post('/create-checkout-session', async (req, res) => {
     res.json({sessionId: session.id});
 });
 
+app.post('/create-stripe-account', async (req, res) => {
+    const { email } = req.body;
+    console.log('Received request to create Stripe account with email:', email);
+    try {
+        const account = await stripe.accounts.create({
+            type: 'custom',
+            country: 'US',
+            email: email,
+            capabilities: {
+                card_payments: { requested: true },
+                transfers: { requested: true },
+            },
+        });
+        console.log('Stripe account created successfully:', account.id);
+        res.status(200).json({ stripeAccountID: account.id });
+    } catch (error) {
+        console.error('Error creating Stripe account:', error);
+        res.status(500).json({ message: error.message });
+    }
+});
+
+app.post('/payment-for-carrier', async (req, res) => {
+    const { loadID } = req.body;
+
+    try {
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        const loadBid = await LoadBid.findOne({ loadCredentialID: loadID });
+        if (!loadBid) {
+            return res.status(404).json({ message: 'Load bid not found' });
+        }
+
+        const loadBidCarrierID = loadBid.loadBidCarrierID;
+        const loadBidPrice = loadBid.loadBidPrice;
+
+        const carrier = await Carrier.findOne({ carrierID: loadBidCarrierID });
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        const carrierSelectedCard = carrier.carrierSelectedCard;
+        if (!carrierSelectedCard) {
+            return res.status(404).json({ message: 'Carrier selected card not found' });
+        }
+
+        const card = await CardModel.findOne({ cardNumber: carrierSelectedCard });
+        if (!card) {
+            return res.status(404).json({ message: 'Card not found' });
+        }
+
+        // Create a payment intent
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: loadBidPrice * 100,
+            currency: 'usd',
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: 'never'
+            }
+        });
+
+        // Create a transfer to the card
+        const transfer = await stripe.transfers.create({
+            amount: loadBidPrice * 100,
+            currency: 'usd',
+            destination: card.stripeAccountID // Ensure this is the Stripe account ID associated with the card
+        });
+
+        // Create a new transaction
+        const currentDate = new Date();
+        const formattedDate = currentDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        });
+        const formattedTime = currentDate.toLocaleTimeString('en-US', {
+            hour: 'numeric',
+            minute: 'numeric',
+            hour12: true
+        });
+
+        const transaction = new Transaction({
+            userID: loadBidCarrierID,
+            amount: loadBidPrice,
+            paymentStatus: 'Payed to Card',
+            currentDate: formattedDate,
+            currentTime: formattedTime
+        });
+
+        await transaction.save();
+
+        res.status(200).json({
+            message: 'Payment processed successfully',
+            loadBidCarrierID,
+            loadBidPrice,
+            paymentIntent,
+            transfer
+        });
+    } catch (error) {
+        console.error('Error processing payment:', error);
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 app.put('/load-update-delivered-status/:loadID', async (req, res) => {
     const loadID = req.params.loadID;
     const {loadDeliveredStatus} = req.body;
@@ -2355,6 +2574,9 @@ app.post('/sign-up-shipper-account', async (req, res) => {
 
 app.post('/create-checkout-session-2', async (req, res) => {
     const {amount, loadType, description, shipperID, chatID} = req.body;
+    console.log('Received request to create checkout session');
+    console.log('Request body:', req.body);
+
     try {
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ['card'],
@@ -2369,9 +2591,11 @@ app.post('/create-checkout-session-2', async (req, res) => {
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `https://openshipai.onrender.com/payment-success/${shipperID}/${chatID}`,
-            cancel_url: `https://openshipai.onrender.com/payment-failed`,
+            success_url: `http://localhost:3000/payment-success/${shipperID}/${chatID}`,
+            cancel_url: `http://localhost:3000/payment-failed`,
         });
+
+        console.log('Stripe session created:', session.id);
 
         const newTransaction = new Transaction({
             userID: shipperID,
@@ -2382,7 +2606,8 @@ app.post('/create-checkout-session-2', async (req, res) => {
         });
 
         await newTransaction.save();
-        console.log("Transaction Saved");
+        console.log('Transaction saved:', newTransaction);
+
         res.json({sessionId: session.id});
     } catch (error) {
         console.error('Error creating checkout session:', error);
@@ -2709,6 +2934,29 @@ app.post('/sign-up', (req, res) => {
             console.error('Error during registration:', err);
             res.json({status: 'Error', message: err});
         });
+});
+
+app.get('/load-bids', async (req, res) => {
+    try {
+        const loadBids = await LoadBid.find();
+        res.status(200).json(loadBids);
+    } catch (error) {
+        console.error('Error fetching load bids:', error);
+        res.status(500).json({message: 'Server error'});
+    }
+});
+
+app.get('/get-load-bids-by-carrier/:carrierID', async (req, res) => {
+    const {carrierID} = req.params;
+    try {
+        const loadBids = await LoadBid.find({loadBidCarrierID: carrierID});
+        const loadCredentialIDs = loadBids.map(bid => bid.loadCredentialID);
+        const loads = await Load.find({loadCredentialID: {$in: loadCredentialIDs}});
+        res.status(200).json({loadBids, loads});
+    } catch (error) {
+        console.error('Error fetching load bids and loads:', error);
+        res.status(500).json({message: 'Server error'});
+    }
 });
 
 app.get('/get-current-user/:userRole/:userID', async (req, res) => {
