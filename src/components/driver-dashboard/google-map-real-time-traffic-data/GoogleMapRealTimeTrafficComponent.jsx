@@ -46,7 +46,7 @@ function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
 
     return (
         <LoadScript
-            googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM" // Replace with your API key
+            googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM"
             libraries={libraries}
         >
             <GoogleMap

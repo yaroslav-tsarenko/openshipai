@@ -2382,7 +2382,7 @@ app.post('/create-checkout-session', async (req, res) => {
 });
 
 app.post('/create-stripe-account', async (req, res) => {
-    const { email } = req.body;
+    const {email} = req.body;
     console.log('Received request to create Stripe account with email:', email);
     try {
         const account = await stripe.accounts.create({
@@ -2390,48 +2390,55 @@ app.post('/create-stripe-account', async (req, res) => {
             country: 'US',
             email: email,
             capabilities: {
-                card_payments: { requested: true },
-                transfers: { requested: true },
+                card_payments: {requested: true},
+                transfers: {requested: true},
             },
         });
         console.log('Stripe account created successfully:', account.id);
-        res.status(200).json({ stripeAccountID: account.id });
+        res.status(200).json({stripeAccountID: account.id});
     } catch (error) {
         console.error('Error creating Stripe account:', error);
-        res.status(500).json({ message: error.message });
+        res.status(500).json({message: error.message});
     }
 });
 
 app.post('/payment-for-carrier', async (req, res) => {
-    const { loadID } = req.body;
+    const {loadID} = req.body;
 
     try {
-        const load = await Load.findOne({ loadCredentialID: loadID });
+        const load = await Load.findOne({loadCredentialID: loadID});
         if (!load) {
-            return res.status(404).json({ message: 'Load not found' });
+            return res.status(404).json({message: 'Load not found'});
         }
 
-        const loadBid = await LoadBid.findOne({ loadCredentialID: loadID });
+        const loadBid = await LoadBid.findOne({loadCredentialID: loadID});
         if (!loadBid) {
-            return res.status(404).json({ message: 'Load bid not found' });
+            return res.status(404).json({message: 'Load bid not found'});
         }
 
         const loadBidCarrierID = loadBid.loadBidCarrierID;
         const loadBidPrice = loadBid.loadBidPrice;
 
-        const carrier = await Carrier.findOne({ carrierID: loadBidCarrierID });
+        const carrier = await Carrier.findOne({carrierID: loadBidCarrierID});
         if (!carrier) {
-            return res.status(404).json({ message: 'Carrier not found' });
+            return res.status(404).json({message: 'Carrier not found'});
         }
 
         const carrierSelectedCard = carrier.carrierSelectedCard;
         if (!carrierSelectedCard) {
-            return res.status(404).json({ message: 'Carrier selected card not found' });
+            return res.status(404).json({message: 'Carrier selected card not found'});
         }
 
-        const card = await CardModel.findOne({ cardNumber: carrierSelectedCard });
+        const card = await CardModel.findOne({cardNumber: carrierSelectedCard});
+        console.log(card + " - Card")
         if (!card) {
-            return res.status(404).json({ message: 'Card not found' });
+            return res.status(404).json({message: 'Card not found'});
+        }
+        const cardNumber = card.cardNumber;
+        const stripeAccountID = card.stripeAccountID;
+        console.log(stripeAccountID + " stripeAccountID")
+        if (!stripeAccountID) {
+            return res.status(404).json({message: 'Stripe account ID not found'});
         }
 
         // Create a payment intent
@@ -2448,7 +2455,7 @@ app.post('/payment-for-carrier', async (req, res) => {
         const transfer = await stripe.transfers.create({
             amount: loadBidPrice * 100,
             currency: 'usd',
-            destination: card.stripeAccountID // Ensure this is the Stripe account ID associated with the card
+            destination: stripeAccountID // Ensure this is the Stripe account ID associated with the card
         });
 
         // Create a new transaction
@@ -2483,7 +2490,7 @@ app.post('/payment-for-carrier', async (req, res) => {
         });
     } catch (error) {
         console.error('Error processing payment:', error);
-        res.status(500).json({ message: 'Server error' });
+        res.status(500).json({message: 'Server error'});
     }
 });
 
