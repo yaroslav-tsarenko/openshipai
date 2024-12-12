@@ -485,7 +485,7 @@ const OpenShipAIChat = ({ userID, userRole, name }) => {
                 </div>
                 <p className="info">
                     OpenShip AI may display inaccurate info, including about people, so double-check its response.
-                    <a href="">
+                    <a href="/">
                         Your privacy & Openship
                     </a>
                 </p>

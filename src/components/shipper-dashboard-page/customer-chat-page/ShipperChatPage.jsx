@@ -7,10 +7,7 @@ import {ReactComponent as UserChatAvatar} from "../../../assets/userAvatar.svg";
 import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/skrepka-icon.svg";
 import {ReactComponent as SendVoiceMessage} from "../../../assets/mic-chat-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import useSound from 'use-sound';
-import notificationSound from '../../../assets/sound-effects/message-sent.mp3';
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import styles from "./ShipperChatPage.module.scss";
 import {loadStripe} from '@stripe/stripe-js';
@@ -25,40 +22,38 @@ import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const ShipperChatPage = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [loadConfirmation, setLoadConfirmation] = useState(null);
-    const [user, setUser] = useState(null);
+    const [ setIsSidebarOpen] = useState(true);
+    const [ setLoadConfirmation] = useState(null);
+    const [ setUser] = useState(null);
     const navigate = useNavigate();
     const {shipperID} = useParams();
-    const [touchStart, setTouchStart] = useState(null);
-    const [touchEnd, setTouchEnd] = useState(null);
+    const [touchStart] = useState(null);
+    const [touchEnd] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const minSwipeDistance = 50;
     const [selectedChatID, setSelectedChatID] = useState(null);
     const [load, setLoad] = useState(null);
-    const [bids, setBids] = useState([]);
+    const [ setBids] = useState([]);
     const {chatID} = useParams();
-    const [selectedBid, setSelectedBid] = useState(null);
+    const [selectedBid] = useState(null);
     const [carrier, setCarrier] = useState(null);
     const [inputMessage, setInputMessage] = useState("");
     const [conversations, setConversations] = useState([]);
     const [chatMessages, setChatMessages] = useState([]);
     const socketRef = useRef();
-    const [userName, setUserName] = useState("");
     const [shipper, setShipper] = useState("");
-    const [selectedCard, setSelectedCard] = useState(null);
+    const [setSelectedCard] = useState(null);
     const [isChatVisible, setIsChatVisible] = useState(false);
-    const [play] = useSound(notificationSound);
     const [cardData, setCardData] = useState({
         cardNumber: '',
         cardLastNameFirstName: '',
         expirationDate: '',
         cvv: ''
     });
-    const [dealChatConversations, setDealChatConversations] = useState([]);
+    const [ setDealChatConversations] = useState([]);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-    const [showSuccessContainer, setShowSuccessContainer] = useState(false);
-    const [showBOLContainer, setShowBOLContainer] = useState(false);
+    const [ setShowSuccessContainer] = useState(false);
+    const [ setShowBOLContainer] = useState(false);
     const [showSuccessWindow, setShowSuccessWindow] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
     const stripePromise = loadStripe('pk_live_51OpgSNJyJQMrMLmUKYcZUuTAZjBS34yI30KVPevbM974WZd25lNOskkoTqMzt1ZjASYA1NKgcN02ONX469pOjWlR00yn6CSBN3');

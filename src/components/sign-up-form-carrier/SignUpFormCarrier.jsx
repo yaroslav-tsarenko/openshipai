@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import {Link} from "react-router-dom";
 import axios from 'axios';
 import {useNavigate} from "react-router-dom";
 import "./SignUpFormCarrier.css";
@@ -40,7 +39,6 @@ import {CircularProgress} from "@mui/material";
 
 function SignCarrierUpForm() {
     const navigate = useNavigate();
-    const [progress, setProgress] = useState(50);
     const [step, setStep] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState(null);

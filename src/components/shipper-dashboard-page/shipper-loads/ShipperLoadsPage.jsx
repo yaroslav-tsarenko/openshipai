@@ -1,14 +1,13 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import '../ShipperDashboard.css';
 import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
 import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
 import {ReactComponent as AddLoadIcon} from "../../../assets/add-load-icon.svg";
+import {useParams} from "react-router-dom";
 import VehicleLoadType from "../../../assets/vehicle-load-type.png";
 import MovingLoadType from "../../../assets/movin-load-type.png";
 import FreightLoadType from "../../../assets/freight-load-type.png";
 import HeavyLoadType from "../../../assets/heavy-load-type.png";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainer from "../../load-container/LoadContainer";
@@ -54,9 +53,9 @@ const ShipperLoadsPage = () => {
     const [loads, setLoads] = useState([]);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [step, setStep] = useState(1);
-    const [sortedLoads, setSortedLoads] = useState([]);
+    const [ setSortedLoads] = useState([]);
     const [shipperInfo, setShipperInfo] = useState(null);
-    const [loading, setLoading] = useState(false);
+    const [ setLoading] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('');
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
