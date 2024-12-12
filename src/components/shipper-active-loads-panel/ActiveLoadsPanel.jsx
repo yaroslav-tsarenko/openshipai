@@ -3,8 +3,6 @@ import axios from 'axios';
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
 import {BACKEND_URL} from "../../constants/constants";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
-import GoogleMapRealTimeTrafficComponent
-    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 
 const ActiveLoadsPanel = ({userRole, userID}) => {
     const [loads, setLoads] = useState([]);

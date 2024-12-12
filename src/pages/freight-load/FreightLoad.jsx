@@ -1,6 +1,5 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import axios from 'axios';
 import Header from '../../components/landing-page-new/header/Header';
 import LandingPageFooter from '../../components/landing-page/landing-footer/LandingPageFooter';
 import styles from './FreightLoad.module.scss';
@@ -11,8 +10,7 @@ const FreightLoad = () => {
 
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
-    const [distance, setDistance] = useState(null);
-    const [selectedLoadType, setSelectedLoadType] = useState(''); // Track the selected LoadFrameButton
+    const [selectedLoadType] = useState(''); // Track the selected LoadFrameButton
 
     const [formData, setFormData] = useState({
         pickupLocation: '',

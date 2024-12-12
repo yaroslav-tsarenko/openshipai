@@ -3,8 +3,6 @@ import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
 import Alert from "../../floating-window-success/Alert";
-import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
-import {ClipLoader} from "react-spinners";
 import {BACKEND_URL} from "../../../constants/constants";
 import CreateLoadContainer from "../../create-load-container/CreateLoadContainer";
 import Grid from "../../grid-two-columns/Grid";

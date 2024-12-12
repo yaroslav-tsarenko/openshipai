@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import './ShipperDashboard.css';
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
@@ -14,7 +14,6 @@ import Button from "../button/Button";
 import SEO from "../seo/SEO";
 
 const ShipperDashboard = () => {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [shipperInfo, setShipperInfo] = useState(null);
     const {shipperID} = useParams();
     localStorage.setItem('shipperID',

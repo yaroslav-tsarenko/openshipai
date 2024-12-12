@@ -4,7 +4,6 @@ import './Tooltip.css';
 const Tooltip = ({ children, isVisible }) => {
     const tooltipRef = useRef(null);
     const [position, setPosition] = useState({ top: 0, left: 0 });
-    const [show, setShow] = useState(false); // Internal state to manage visibility
 
     useEffect(() => {
         if (tooltipRef.current) {

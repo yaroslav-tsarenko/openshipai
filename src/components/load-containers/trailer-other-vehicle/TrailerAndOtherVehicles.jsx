@@ -35,13 +35,8 @@ const TrailerAndOtherVehicles = ({
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
     const fileInputRef = useRef();
     const imageInputRef = useRef();
-    const [isOperable, setIsOperable] = useState(false);
-    const [isConvertible, setIsConvertible] = useState(false);
-    const [isModified, setIsModified] = useState(false);
-    const [loadTypeOfTrailer, setLoadTypeOfTrailer] = useState('');
     const [isLoadCreatedSuccess, setIsLoadCreatedSuccess] = useState(false);
     const [isLoadCreatedFailed, setIsLoadCreatedFailed] = useState(false);
-
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
     const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
     const { shipperID: paramShipperID } = useParams();

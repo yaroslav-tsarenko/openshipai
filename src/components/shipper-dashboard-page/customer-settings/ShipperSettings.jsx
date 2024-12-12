@@ -46,8 +46,8 @@ const ShipperSettings = () => {
     const [shipperEmail, setShipperEmail] = useState('');
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [loading, setLoading] = useState(false);
-    const [avatarFromDB, setAvatarFromDB] = useState(null);
+    const [ setLoading] = useState(false);
+    const [avatarFromDB] = useState(null);
     const [email, setEmail] = useState(shipperInfo ? shipperInfo.userShipperEmail : '');
     const [description, setDescription] = useState('');
     const settingsRef = useRef();
@@ -567,7 +567,7 @@ const ShipperSettings = () => {
                                     </div>
                                     <section className="deleting-account-section">
                                         <h2>Delete Account</h2>
-                                        <a href="#" onClick={handleDeleteClick}>
+                                        <a href="/" onClick={handleDeleteClick}>
                                             I want to permanently delete my account
                                             <DeleteRedBinIcon className="delete-bin-icon"/>
                                         </a>
