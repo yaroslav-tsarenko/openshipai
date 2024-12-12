@@ -531,7 +531,7 @@ const CarrierTakeLoad = () => {
                                     </button>
                                 </div>
                             </section>
-                            <section className="slider-wrapper-miles">
+                            <div className="slider-wrapper-miles">
                                 <input
                                     type="number"
                                     placeholder="Miles"
@@ -561,8 +561,8 @@ const CarrierTakeLoad = () => {
                                         },
                                     }}
                                 />
-                            </section>
-                            <section className="pickup-delivery-location-wrapper">
+                            </div>
+                            <div className="pickup-delivery-location-wrapper">
                                 <h3>Delivery Location</h3>
                                 <div className="pickup-delivery-location-input">
                                     <DeliveryLocationArrow/>
@@ -576,8 +576,8 @@ const CarrierTakeLoad = () => {
                                         <MarkerIcon/>
                                     </button>
                                 </div>
-                            </section>
-                            <section className="slider-wrapper-miles">
+                            </div>
+                            <div className="slider-wrapper-miles">
                                 <input
                                     type="number"
                                     placeholder="Miles"
@@ -608,9 +608,9 @@ const CarrierTakeLoad = () => {
                                         },
                                     }}
                                 />
-                            </section>
+                            </div>
 
-                            <section className="additional-filters">
+                            <div className="additional-filters">
                                 <hr/>
                                 <div className="load-filter" onClick={toggleLoadTypePopup}>
                                     <label>Load Type</label>
@@ -676,7 +676,7 @@ const CarrierTakeLoad = () => {
                                     <label>Location Type</label>
                                     <h4>{selectedLocationTypeOption || 'All'}</h4>
                                 </div>
-                            </section>
+                            </div>
                         </div>
                         <div className="loads-container-wrapper">
                             <div className="load-filter-container">

@@ -182,6 +182,7 @@
     background: var(--light-grey-hovered-2);
     max-width: 600px;
     border-radius: 50px;
+    gap: 10px;
     padding: 15px 25px 15px 25px;
 }
 
@@ -195,7 +196,7 @@
 }
 
 .ai-chat-input-icons {
-    width: 18px;
+    font-size: 18px;
 }
 
 .input-container button {
@@ -205,6 +206,7 @@
     justify-content: center;
     border: none;
     border-radius: 50px;
+    background: none;
     transition: 0.2s ease-in-out;
 }
 
@@ -220,6 +222,22 @@
     background-color: var(--light-grey-hovered);
 }
 
+.greeting {
+    font-size: 64px;
+    background: -webkit-linear-gradient(var(--royal-blue), var(--royal-green));
+    -webkit-background-clip: text;
+    font-weight: bold;
+    -webkit-text-fill-color: transparent;
+}
+
+.greeting-subtitle {
+    font-size: 24px;
+    font-weight: bold;
+    background: -webkit-linear-gradient(var(--grey-darker), var(--grey-design));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
 .burger-button {
     display: flex;
     align-content: center;
@@ -227,7 +245,9 @@
     width: fit-content;
     height: fit-content;
     border: none;
+    background: none;
     border-radius: 50px;
+    margin: 15px 0 0 15px;
     z-index: 10;
     cursor: pointer;
     transition: 0.2s ease-in-out;

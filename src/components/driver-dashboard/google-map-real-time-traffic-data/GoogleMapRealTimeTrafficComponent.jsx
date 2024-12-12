@@ -1,5 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { GoogleMap, LoadScript, DirectionsService, DirectionsRenderer, TrafficLayer, Marker, InfoWindow } from '@react-google-maps/api';
+import {
+    GoogleMap,
+    LoadScriptNext,
+    DirectionsService,
+    DirectionsRenderer,
+    TrafficLayer,
+    Marker,
+} from '@react-google-maps/api';
+import ErrorBoundary from "../../error-boundary/ErrorBoundary";
+
 const libraries = ['places'];
 
 const containerStyle = {
@@ -10,79 +19,74 @@ const containerStyle = {
 
 function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
     const [directionsResponse, setDirectionsResponse] = useState(null);
-    const [infoWindowPosition, setInfoWindowPosition] = useState(null);
     const [routeInfo, setRouteInfo] = useState({ distance: '', duration: '' });
     const [fuelStops, setFuelStops] = useState([]);
-    const [fuelStopsCount, setFuelStopsCount] = useState(0);
-    const [weather, setWeather] = useState(null); // State for weather data
-    const [currentRequest, setCurrentRequest] = useState({ origin, destination });
-    const directionsServiceRef = useRef();
-    const mapRef = useRef();
+    const mapRef = useRef(null);
 
     useEffect(() => {
-        if (origin && destination && (origin !== currentRequest.origin || destination !== currentRequest.destination)) {
-            setDirectionsResponse(null);
-            setFuelStops([]);
-            setFuelStopsCount(0);
-            setCurrentRequest({ origin, destination });
-        }
-    }, [origin, destination, currentRequest.origin, currentRequest.destination]);
+        if (!origin || !destination) return;
+        setDirectionsResponse(null); // Reset on new origin/destination
+    }, [origin, destination]);
 
-    const directionsCallback = response => {
-        if (response !== null) {
-            if (response.status === 'OK') {
-                setDirectionsResponse(response);
-                const leg = response.routes[0].legs[0];
-                setRouteInfo({
-                    distance: leg.distance.text,
-                    duration: leg.duration.text
-                });
-                setInfoWindowPosition(leg.steps[0].start_location);
-            } else {
-                console.log('Directions request failed due to ' + response.status);
-            }
+    const directionsCallback = (response) => {
+        if (!response) {
+            console.error('No response from DirectionsService');
+            return;
+        }
+
+        if (response.status === 'OK') {
+            setDirectionsResponse(response);
+            const leg = response.routes[0].legs[0];
+            setRouteInfo({
+                distance: leg.distance.text,
+                duration: leg.duration.text,
+            });
+        } else {
+            console.error(`Directions request failed: ${response.status}`);
         }
     };
 
+    const handleMapLoad = (map) => {
+        mapRef.current = map;
+    };
+
     return (
-        <LoadScript
-            googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM"
-            libraries={libraries}
-        >
-            <GoogleMap
-                mapContainerStyle={containerStyle}
-                center={directionsResponse ? directionsResponse.routes[0].bounds.getCenter() : { lat: -34.397, lng: 150.644 }}
-                zoom={10}
-                ref={mapRef}
+        <ErrorBoundary>
+            <LoadScriptNext
+                googleMapsApiKey="AIzaSyBBf32Vkymgt4v6YF5TAw_0cmCx9ESeuD4"
+                libraries={libraries}
+                loadingElement={<div>Loading Google Maps...</div>}
+                id="google-maps-script"
             >
-                <TrafficLayer />
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={directionsResponse ? directionsResponse.routes[0].legs[0].start_location : { lat: 37.7749, lng: -122.4194 }}
+                    zoom={10}
+                    onLoad={handleMapLoad}
+                >
+                    <TrafficLayer />
+                    {origin && destination && !directionsResponse && (
+                        <DirectionsService
+                            options={{
+                                destination,
+                                origin,
+                                travelMode: 'DRIVING',
+                            }}
+                            callback={directionsCallback}
+                        />
+                    )}
+                    {directionsResponse && (
+                        <DirectionsRenderer
+                            options={{ directions: directionsResponse }}
+                        />
+                    )}
+                    {fuelStops.map((stop, index) => (
+                        <Marker key={index} position={stop.location} />
+                    ))}
+                </GoogleMap>
+            </LoadScriptNext>
+        </ErrorBoundary>
 
-                {origin && destination && !directionsResponse && (
-                    <DirectionsService
-                        ref={directionsServiceRef}
-                        options={{
-                            destination: destination,
-                            origin: origin,
-                            travelMode: 'DRIVING'
-                        }}
-                        callback={directionsCallback}
-                    />
-                )}
-
-                {directionsResponse && (
-                    <DirectionsRenderer
-                        options={{
-                            directions: directionsResponse
-                        }}
-                    />
-                )}
-
-                {fuelStops.map((place, index) => (
-                    <Marker key={index} position={place.geometry.location} />
-                ))}
-
-            </GoogleMap>
-        </LoadScript>
     );
 }
 

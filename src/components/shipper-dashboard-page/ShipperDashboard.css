@@ -887,13 +887,6 @@
     transition: 0.2s ease-in-out;
 }
 
-.search-icon-searchbar {
-    cursor: pointer;
-    padding: 2px;
-}
-
-.search-icon-searchbar:hover {
-}
 
 .shipper-dashboard-searchbar input {
     width: 230px;

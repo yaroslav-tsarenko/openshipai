@@ -7,6 +7,8 @@
   padding: 10px 20px;
   cursor: pointer;
   font-size: 16px;
+  text-decoration: none;
+  text-align: center;
   color: var(--royal-white);
   transition: 0.2s ease-in-out;
 
@@ -14,6 +16,8 @@
     background-color: var(--royal-blue-hovered);
   }
 }
+
+
 
 .disabled {
   cursor: not-allowed;
@@ -127,6 +131,8 @@
   justify-content: center;
   justify-items: center;
   font-size: 16px;
+  text-decoration: none;
+  text-align: center;
   color: var(--royal-white);
   transition: 0.2s ease-in-out;
 

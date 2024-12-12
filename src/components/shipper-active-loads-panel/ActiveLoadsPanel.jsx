@@ -57,11 +57,11 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
 
     return (
         <div className="shipper-dashboard-side-panel-wrapper" ref={animation}>
-            <div className="shipper-map-container">
+           {/* <div className="shipper-map-container">
                 <GoogleMapRealTimeTrafficComponent
                     origin={selectedLoad ? selectedLoad.loadPickupLocation : origin}
                     destination={selectedLoad ? selectedLoad.loadDeliveryLocation : destination}/>
-            </div>
+            </div>*/}
             <div className="shipper-dashboard-side-panel">
                 {loads.length === 0 ? (
                     <p className="chat-message-alert">Currently you didn't have any active loads</p>

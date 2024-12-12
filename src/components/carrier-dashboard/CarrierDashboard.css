@@ -641,7 +641,7 @@
     height: 70px;
     padding: 0 15px 0 17px;
     border-radius: 40px;
-    justify-content: center;
+    justify-content: space-between;
     justify-items: center;
     align-items: center;
     font-weight: bold;
@@ -659,14 +659,6 @@
 .carrier-dashboard-searchbar:focus {
     border: 2px solid var(--royal-blue);
     transition: 0.2s ease-in-out;
-}
-
-.search-icon-searchbar {
-    cursor: pointer;
-    padding: 2px;
-}
-
-.search-icon-searchbar:hover {
 }
 
 .carrier-dashboard-searchbar input {

@@ -1,0 +1,68 @@
+.container {
+  list-style: none;
+  padding: 0 0 0 40px;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  counter-reset: item;
+  position: relative;
+  width: 300px;
+}
+
+.column {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  counter-increment: item;
+}
+
+.column::before {
+  content: counter(item);
+  width: 30px;
+  height: 30px;
+  border: 2px solid var(--royal-blue);
+  background-color: transparent;
+  color: var(--royal-blue);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 50%;
+  position: absolute;
+  left: -40px; /* Adjust for bullet position */
+  z-index: 1;
+}
+
+.column::after {
+  content: '';
+  position: absolute;
+  width: 2px;
+  background-color: var(--royal-blue);
+  top: 30px;
+  bottom: -20px; /* Connects to the next item */
+  left: -25px; /* Aligns with the bullet center */
+}
+
+.column:last-child::after {
+  display: none; /* No line after the last item */
+}
+
+.infoContainer {
+  display: flex;
+  width: fit-content;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.location {
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+}
+
+.date {
+  font-size: 14px;
+  color: #666;
+}

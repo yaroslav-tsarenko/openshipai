@@ -3,7 +3,7 @@ import {Link} from 'react-router-dom';
 import './HeaderDashboard.css';
 import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
 import DefaultUserAvatar from "../../assets/default-avatar.png";
-import {MdNotificationsNone} from "react-icons/md";
+import {MdSearch, MdNotificationsNone} from "react-icons/md";
 import {LuSettings} from "react-icons/lu";
 import {ReactComponent as SearchbarIcon} from '../../assets/settings-ios-icon.svg';
 import {ReactComponent as BarsIcon} from "../../assets/fa-bars-icon.svg";
@@ -52,7 +52,7 @@ const HeaderDashboard = ({
                     <div className="search-popup-overlay" onClick={() => setIsSearchPopupOpen(false)}></div>
                     <div className="search-popup" ref={animationRef}>
                         <div className="dashboard-searchbar-expanded">
-                            <SearchIcon className="search-icon-searchbar"/>
+                            <MdSearch className="search-icon-searchbar"/>
                             <input
                                 type="text"
                                 placeholder="Search anything..."
@@ -82,11 +82,11 @@ const HeaderDashboard = ({
                 </div>
                 <div className="account-container">
                     <div className="dashboard-searchbar" onClick={() => setIsSearchPopupOpen(true)}>
-                        <SearchIcon className="search-icon-searchbar"/>
+                        <MdSearch className="search-icon-searchbar"/>
                         <input type="text" placeholder="Search anything..."/>
                     </div>
                     <button className="searchbar-button-mobile" onClick={() => setIsSearchPopupOpen(true)}>
-                        <SearchIcon/>
+                        <MdSearch/>
                     </button>
                     <div className="dashboard-account-info">
                         <div className="account-info">

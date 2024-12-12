@@ -125,21 +125,7 @@ const DriverAssignedLoads = () => {
                 />
                 <div className="shipper-dashboard-content-body">
                     <div className="loads-containers-block">
-                        {loads.map(load => (
-                            <AssignedLoadContainer
-                                key={load.loadID}
-                                loadTitle={load.loadTitle}
-                                loadWeight={load.loadWeight}
-                                loadType={load.loadType}
-                                driverID={driverID}
-                                loadTrip={load.loadMilesTrip}
-                                loadCredentialID={load.loadCredentialID}
-                                loadPickupLocation={load.loadPickupLocation}
-                                loadPickupLocationDate={load.loadPickupDate}
-                                loadDeliveryLocation={load.loadDeliveryLocation}
-                                loadDeliveryLocationDate={load.loadDeliveryDate}
-                            />
-                        ))}
+
                         {assignedLoads.length > 0 ? (
                             assignedLoads.map(load => (
                                 <AssignedLoadContainer
