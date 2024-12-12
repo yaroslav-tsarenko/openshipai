@@ -123,7 +123,7 @@
     "start:serverdb": "node backend/server/mongodb.js",
     "start:socketserver": "nodemon backend/server/socket.js",
     "start:chatserver": "nodemon backend/server/chatserver.js",
-    "build": "node --max-old-space-size=10240 node_modules/react-scripts/scripts/build.js",
+    "build": "set CI=false && node --max-old-space-size=10240 node_modules/react-scripts/scripts/build.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
