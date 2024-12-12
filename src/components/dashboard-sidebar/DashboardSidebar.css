@@ -31,6 +31,7 @@
     max-width: 200px;
     display: flex;
     margin: 0 auto;
+    object-fit: contain;
     width: 100%;
 }
 

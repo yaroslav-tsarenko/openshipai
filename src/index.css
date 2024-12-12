@@ -1,10 +1,17 @@
 * {
     color: var(--grey);
     font-family: "Google Sans", "sans-serif";
+    object-fit: contain;
 }
 
 html {
     font-size: 60%;
+}
+
+input{
+    outline: none;
+    border: none;
+    background: transparent;
 }
 
 body {

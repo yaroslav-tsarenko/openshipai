@@ -2,9 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 import './OpenShipAIChat.css';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ReactComponent as FaMic } from "../../assets/mic-icon.svg";
-import { ReactComponent as FaSend } from "../../assets/send-icon.svg";
-import { ReactComponent as FaPicture } from "../../assets/image-icon.svg";
+import { FaMicrophone, FaPaperPlane, FaImage } from 'react-icons/fa';
 import { ReactComponent as PlusIcon } from "../../assets/plus-blue-icon.svg";
 import { ReactComponent as BarsIcon } from "../../assets/fa-bars-icon.svg";
 import { ReactComponent as TimesIcon } from "../../assets/fa-times-icon.svg";
@@ -16,7 +14,7 @@ import Recorder from 'recorder-js';
 import {Bars} from "react-loader-spinner";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
-const OpenShipAIChat = ({ userID, userRole }) => {
+const OpenShipAIChat = ({ userID, userRole, name }) => {
     const { shipperID, aiChatID } = useParams();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -376,13 +374,13 @@ const OpenShipAIChat = ({ userID, userRole }) => {
             </div>
             <button className={`burger-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}>
                 {isSidebarOpen ?
-                    <button className="times-close-sidebar-button">
+                    <div className="times-close-sidebar-button">
                         <TimesIcon/>
-                    </button>
+                    </div>
                     :
-                    <button className="bars-open-sidebar-button">
+                    <div className="bars-open-sidebar-button">
                         <BarsIcon/>
-                    </button>}
+                    </div>}
             </button>
             <div className="chat-container">
                 {hasStarted ? (
@@ -414,7 +412,7 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                 ) : (
                     <div className="chat-starting-screen">
                         <div className="greeting-wrapper">
-                            <h1 className="greeting">Hello, John</h1>
+                            <h1 className="greeting">Hello, {name}</h1>
                             <span className="greeting-subtitle">
                                 <Typewriter
                                     options={{
@@ -478,10 +476,11 @@ const OpenShipAIChat = ({ userID, userRole }) => {
                             style={{display: 'none'}}
                             onChange={handleImageChange}
                         />
-                        <button onClick={() => document.getElementById('file-input').click()}><FaPicture
+                        <button onClick={() => document.getElementById('file-input').click()}><FaImage
                             className="ai-chat-input-icons"/></button>
-                        <button onMouseDown={handleMicDown} onMouseUp={handleMicUp}><FaMic className="ai-chat-input-icons"/></button>
-                        <button onClick={handleSendMessage}><FaSend className="ai-chat-input-icons"/></button>
+                        <button onMouseDown={handleMicDown} onMouseUp={handleMicUp}><FaMicrophone
+                            className="ai-chat-input-icons"/></button>
+                        <button onClick={handleSendMessage}><FaPaperPlane className="ai-chat-input-icons"/></button>
                     </div>
                 </div>
                 <p className="info">

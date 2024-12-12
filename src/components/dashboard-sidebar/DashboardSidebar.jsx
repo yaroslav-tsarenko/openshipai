@@ -39,7 +39,7 @@ const DashboardSidebar = ({
         <>
             <div className="dashboard-sidebar-wrapper" ref={animation}>
                 <div className={`dashboard-sidebar ${isSidebarOpen ? '' : 'closed'}`}>
-                    <section className="dashboard-sidebar-main-buttons">
+                    <div className="dashboard-sidebar-main-buttons">
                         <OpenshipLogo className="dashboard-logo"/>
                         {DashboardAI && DashboardAI.visible && (
                             <Link
@@ -140,7 +140,7 @@ const DashboardSidebar = ({
                                 Settings
                             </Link>
                         )}
-                    </section>
+                    </div>
                     <Link
                         className="dashboard-link-nav-button"
                         to={"/sign-in"}

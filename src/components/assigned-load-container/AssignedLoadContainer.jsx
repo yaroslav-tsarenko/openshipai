@@ -1,50 +1,61 @@
 import React from 'react';
-import {ReactComponent as DirectionIconNumbers} from "../../assets/directions-number-icons.svg";
 import {ReactComponent as BidArrowIcon} from "../../assets/bid-arrow-icon.svg";
-import {Link, useParams} from "react-router-dom";
+import {Link} from "react-router-dom";
 import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
+import InfoItem from "../info-item/InfoItem";
+import './AssignedLoadContainer.css';
+import LoadInfoList from "../load-direction-info-list/LoadInfoList";
+import Grid from "../grid-two-columns/Grid";
+import Button from "../button/Button";
 
-const AssignedLoadContainer = ({loadTitle, driverID, loadPickupLocation, loadPickupLocationDate, loadCredentialID, loadDeliveryLocation, loadDeliveryLocationDate, loadType, loadWeight, loadTrip}) => {
+const AssignedLoadContainer = ({
+                                   loadTitle,
+                                   driverID,
+                                   loadPickupLocation,
+                                   loadPickupLocationDate,
+                                   loadCredentialID,
+                                   loadDeliveryLocation,
+                                   loadDeliveryLocationDate,
+                                   loadType,
+                                   loadWeight,
+                                   loadTrip
+                               }) => {
 
     return (
         <div className="take-load-container">
-            <div className="driver-load-directions-wrapper">
-                <span>
-                    <label htmlFor="">Load Title</label>
-                    <h3>{loadTitle}</h3>
-                </span>
-                <div className="driver-load-directions">
-                    <DirectionIconNumbers height="500px"/>
-                    <div className="load-driver-direction">
-                        <section>
-                            <h3>{loadPickupLocation}</h3>
-                            <p>{loadPickupLocationDate}</p>
-                        </section>
-                        <section>
-                            <h3>{loadDeliveryLocation}</h3>
-                            <p>{loadDeliveryLocationDate}</p>
-                        </section>
+            <div className="load-container-content">
+                <Grid columns="3, 1fr">
+                    <div className="assigned-load-info">
+                        <InfoItem label="Load Title">
+                            {loadTitle}
+                        </InfoItem>
+                        <LoadInfoList
+                            loadPickupLocation="Oregon"
+                            loadPickupLocationDate="2024-12-14T19:46"
+                            loadDeliveryLocation="Washington"
+                            loadDeliveryLocationDate="2024-12-11T18:46"
+                        />
                     </div>
-                </div>
-            </div>
-            <div className="load-short-info">
-                <span>
-                    <label>Load Type</label>
-                    <h3>{loadType}</h3>
-                </span>
-                <span>
-                    <label>Weight</label>
-                    <h3>{loadWeight}</h3>
-                </span>
-                <span>
-                    <label>Trip</label>
-                    <h3>{loadTrip}</h3>
-                </span>
-            </div>
-            <div className="instant-book-load">
-                <label>Assigned to you</label>
-                <Link to={`/driver-assigned-load/${driverID}/${loadCredentialID}`}
-                      className="bid-button">View<BidArrowIcon className="bid-arrow-icon"/></Link>
+                    <div className="assigned-load-info">
+                        <InfoItem label="Load Type">
+                            {loadType}
+                        </InfoItem>
+                        <InfoItem label="Weight">
+                            {loadWeight}
+                        </InfoItem>
+                        <InfoItem label="Trip">
+                            {loadTrip}
+                        </InfoItem>
+                    </div>
+                    <div className="assigned-load-info-assigned">
+                        <div className="assigned-load-info-assigned-content">
+                            <label className="assigned-load-info-label">Assigned to you</label>
+                            <Button variant="apply" to={`/driver-assigned-load/${driverID}/${loadCredentialID}`}>
+                                View
+                            </Button>
+                        </div>
+                    </div>
+                </Grid>
             </div>
             <div className="map-load-section-load-container">
                 <GoogleMapShowDirection origin={loadPickupLocation} destination={loadDeliveryLocation}/>
