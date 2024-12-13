@@ -1,5 +1,5 @@
 import React from 'react';
-import {ReactComponent as RightArrowIcon} from "../../../assets/vector-right-arrow.svg";
+import {ReactComponent as RightArrowIcon} from "../../../assets/images/vector-right-arrow.svg";
 import "../LandingPage.css"
 import {useNavigate} from "react-router-dom";
 

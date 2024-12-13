@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ReactComponent as DriverAvatarExample } from "../../assets/default-user-avatar.svg";
-import { ReactComponent as MoreButton } from "../../assets/more-button.svg";
+import { ReactComponent as DriverAvatarExample } from "../../assets/images/default-user-avatar.svg";
+import { ReactComponent as MoreButton } from "../../assets/images/more-button.svg";
 import './DriverContainer.css';
 import GoogleMapShowLocation from "../google-map-show-driver-location/GoogleMapShowLocation";
 

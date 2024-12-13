@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Button.module.scss';
-import { ReactComponent as FaCamera } from '../../assets/photo-icon-button.svg';
-import { ReactComponent as FaFile } from '../../assets/attach-document-icon.svg';
+import { ReactComponent as FaCamera } from '../../assets/images/photo-icon-button.svg';
+import { ReactComponent as FaFile } from '../../assets/images/attach-document-icon.svg';
 
 const Button = ({ variant = 'default', buttonText, onClick, children, disabled = false, to }) => {
     const buttonClass = `${styles[variant] || styles.default} ${disabled ? styles.disabled : ''}`;

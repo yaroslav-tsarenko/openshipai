@@ -1,12 +1,12 @@
 import React, {useEffect, useState} from "react";
 import axios from 'axios';
 import '../CarrierDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
-import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
-import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
-import {ReactComponent as CreateLoadIcon} from "../../../assets/add-driver-icon.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
+import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
+import {ReactComponent as SortIconWhite} from "../../../assets/images/sort-icon-white.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/images/filter-icon-blue.svg";
+import {ReactComponent as FilterIconWhite} from "../../../assets/images/filter-icon-white.svg";
+import {ReactComponent as CreateLoadIcon} from "../../../assets/images/add-driver-icon.svg";
 import {useParams} from 'react-router-dom';
 import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";

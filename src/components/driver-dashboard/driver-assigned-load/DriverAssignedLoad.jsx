@@ -2,7 +2,7 @@ import React, {useEffect, useState} from "react";
 import '../DriverDashboard.css';
 import {Link, useParams} from 'react-router-dom';
 import axios from "axios";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {useNavigate} from 'react-router-dom';

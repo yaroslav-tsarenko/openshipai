@@ -5,34 +5,34 @@ import "./SignUpFormCarrier.css";
 import Typewriter from "typewriter-effect";
 import {
     ReactComponent as ProgressBar1
-} from "../../assets/progres-bar-1-page.svg";
+} from "../../assets/images/progres-bar-1-page.svg";
 import {
     ReactComponent as ProgressBar2
-} from "../../assets/progres-bar-2-page.svg";
+} from "../../assets/images/progres-bar-2-page.svg";
 import {
     ReactComponent as ProgressBar3
-} from "../../assets/progres-bar-3-page.svg";
+} from "../../assets/images/progres-bar-3-page.svg";
 import {
     ReactComponent as ProgressBar4
-} from "../../assets/progres-bar-4-page.svg";
+} from "../../assets/images/progres-bar-4-page.svg";
 import {
     ReactComponent as ProgressBar5
-} from "../../assets/progres-bar-5-page.svg";
+} from "../../assets/images/progres-bar-5-page.svg";
 import {
     ReactComponent as ProgressBar6
-} from "../../assets/progres-bar-6-page.svg";
+} from "../../assets/images/progres-bar-6-page.svg";
 import {
     ReactComponent as ProgressBar7
-} from "../../assets/progres-bar-7-page.svg";
+} from "../../assets/images/progres-bar-7-page.svg";
 import {
     ReactComponent as ProgressBar8
-} from "../../assets/progres-bar-8-page.svg";
+} from "../../assets/images/progres-bar-8-page.svg";
 import {
     ReactComponent as ProgressBar9
-} from "../../assets/progres-bar-9-page.svg";
+} from "../../assets/images/progres-bar-9-page.svg";
 import {
     ReactComponent as ProgressBar10
-} from "../../assets/progres-bar-10-page.svg";
+} from "../../assets/images/progres-bar-10-page.svg";
 import Alert from "../floating-window-success/Alert";
 import {BACKEND_URL} from "../../constants/constants";
 import {CircularProgress} from "@mui/material";

@@ -3,10 +3,10 @@ import Header from "../../components/landing-page-new/header/Header";
 import LandingPageFooter from "../../components/landing-page/landing-footer/LandingPageFooter";
 import Description from "../../components/landing-page-new/description/Description";
 import LeftIntroductionContainer from "../../components/landing-page/landing-left-container/LeftIntroductionContainer";
-import EasyShippingImage from "../../assets/easy-shipping-illustration.svg";
+import EasyShippingImage from "../../assets/images/easy-shipping-illustration.svg";
 import RightIntroductionContainer
     from "../../components/landing-page/landing-right-container/RightIntroductionContainer";
-import TransparentPricing from "../../assets/transparent-pricing.svg";
+import TransparentPricing from "../../assets/images/transparent-pricing.svg";
 
 const AboutPage = () => {
     return (

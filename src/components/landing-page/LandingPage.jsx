@@ -3,10 +3,10 @@ import "./LandingPage.css"
 import LandingPageFooter from "./landing-footer/LandingPageFooter";
 import LandingHeader from "./landing-header/LandingHeader";
 import LeftIntroductionContainer from "./landing-left-container/LeftIntroductionContainer";
-import EasyShippingImage from "../../assets/easy-shipping-illustration.svg"
-import AiScreens from "../../assets/ai-screens.svg";
-import TransparentPricing from "../../assets/transparent-pricing.svg";
-import AllTimeUpdate from "../../assets/all-time-update.svg";
+import EasyShippingImage from "../../assets/images/easy-shipping-illustration.svg"
+import AiScreens from "../../assets/images/ai-screens.svg";
+import TransparentPricing from "../../assets/images/transparent-pricing.svg";
+import AllTimeUpdate from "../../assets/images/all-time-update.svg";
 import RightIntroductionContainer from "./landing-right-container/RightIntroductionContainer";
 import {Fade} from "react-awesome-reveal";
 import FullPageSlider from "./flicking-slider/FullPageSlider";

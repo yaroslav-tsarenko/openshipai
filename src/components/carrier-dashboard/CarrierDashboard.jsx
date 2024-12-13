@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import './CarrierDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../assets/images/default-avatar.svg";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";

@@ -1,6 +1,6 @@
 import React from 'react';
 import {Fade} from "react-awesome-reveal";
-import {ReactComponent as RightArrowIconBlue} from "../../../assets/vector-right-arrow-blue.svg";
+import {ReactComponent as RightArrowIconBlue} from "../../../assets/images/vector-right-arrow-blue.svg";
 import "../LandingPage.css"
 
 const LeftAdvantageContainer = ({ title, description, image }) => {

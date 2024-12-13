@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import styles from './Header.module.scss';
-import { ReactComponent as Logo } from '../../../assets/openshipai.svg';
-import { ReactComponent as FaBars } from '../../../assets/fa-bars-icon.svg';
-import { ReactComponent as FaTimes } from '../../../assets/fa-times-icon.svg';
+import { ReactComponent as Logo } from '../../../assets/images/openshipai.svg';
+import { ReactComponent as FaBars } from '../../../assets/images/fa-bars-icon.svg';
+import { ReactComponent as FaTimes } from '../../../assets/images/fa-times-icon.svg';
 import { Link } from "react-router-dom";
 
 const Header = () => {

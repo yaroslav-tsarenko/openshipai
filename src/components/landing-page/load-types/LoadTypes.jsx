@@ -1,8 +1,8 @@
 import React from 'react';
-import VehicleIcon from "../../../assets/vehicles-icon.svg";
-import HouseHold from "../../../assets/household-item.svg";
-import HeavyEquipemnt from "../../../assets/heavy-equipment-icon.svg";
-import BoxIcon from "../../../assets/box-pallet-icon.svg";
+import VehicleIcon from "../../../assets/images/vehicles-icon.svg";
+import HouseHold from "../../../assets/images/household-item.svg";
+import HeavyEquipemnt from "../../../assets/images/heavy-equipment-icon.svg";
+import BoxIcon from "../../../assets/images/box-pallet-icon.svg";
 import "../LandingPage.css"
 
 const LoadTypes = () => {

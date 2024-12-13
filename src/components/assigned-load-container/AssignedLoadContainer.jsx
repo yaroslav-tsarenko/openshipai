@@ -1,5 +1,5 @@
 import React from 'react';
-import {ReactComponent as BidArrowIcon} from "../../assets/bid-arrow-icon.svg";
+import {ReactComponent as BidArrowIcon} from "../../assets/images/bid-arrow-icon.svg";
 import {Link} from "react-router-dom";
 import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
 import InfoItem from "../info-item/InfoItem";

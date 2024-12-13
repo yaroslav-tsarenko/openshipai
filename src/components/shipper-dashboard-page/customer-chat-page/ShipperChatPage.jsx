@@ -1,12 +1,12 @@
 import React, {useEffect, useState, useRef} from "react";
 import "../ShipperDashboard.css";
 import io from 'socket.io-client';
-import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
-import {ReactComponent as SearchBarIcon} from "../../../assets/search-bar-icon.svg";
-import {ReactComponent as UserChatAvatar} from "../../../assets/userAvatar.svg";
-import {ReactComponent as SendButtonIcon} from "../../../assets/send-chat-icon.svg";
-import {ReactComponent as AttachFile} from "../../../assets/skrepka-icon.svg";
-import {ReactComponent as SendVoiceMessage} from "../../../assets/mic-chat-icon.svg";
+import {ReactComponent as UserAvatarComponent} from "../../../assets/images/userAvatar2.svg";
+import {ReactComponent as SearchBarIcon} from "../../../assets/images/search-bar-icon.svg";
+import {ReactComponent as UserChatAvatar} from "../../../assets/images/userAvatar.svg";
+import {ReactComponent as SendButtonIcon} from "../../../assets/images/send-chat-icon.svg";
+import {ReactComponent as AttachFile} from "../../../assets/images/skrepka-icon.svg";
+import {ReactComponent as SendVoiceMessage} from "../../../assets/images/mic-chat-icon.svg";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import styles from "./ShipperChatPage.module.scss";

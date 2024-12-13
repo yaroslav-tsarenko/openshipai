@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './Card.module.scss';
-import visaIcon from '../../assets/visa-icon.svg';
-import mastercardIcon from '../../assets/mastercard-icon.svg';
+import visaIcon from '../../assets/images/visa-icon.svg';
+import mastercardIcon from '../../assets/images/mastercard-icon.svg';
 
 const Card = ({
                   cardNumber,

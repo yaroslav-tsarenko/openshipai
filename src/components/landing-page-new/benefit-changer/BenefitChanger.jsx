@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./BenefitChanger.module.scss";
 import { useNavigate } from 'react-router-dom';
-import { ReactComponent as PlusIcon } from "../../../assets/plus-icon-static.svg";
+import { ReactComponent as PlusIcon } from "../../../assets/images/plus-icon-static.svg";
 
 const BenefitChanger = ({ backgroundColor, label, title, description, img, subDescription, buttonType, subImage, variant }) => {
     const [isExpanded, setIsExpanded] = useState(false);

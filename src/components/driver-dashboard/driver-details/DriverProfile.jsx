@@ -1,10 +1,10 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../DriverDashboard.css';
-import {ReactComponent as MoreVertIcon} from "../../../assets/more-verical-icons.svg";
-import {ReactComponent as PlusIconBlue} from "../../../assets/plus-blue-icon.svg";
-import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
-import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as MoreVertIcon} from "../../../assets/images/more-verical-icons.svg";
+import {ReactComponent as PlusIconBlue} from "../../../assets/images/plus-blue-icon.svg";
+import {ReactComponent as IconInfo} from "../../../assets/images/info-icon.svg";
+import {ReactComponent as PencilIcon} from "../../../assets/images/pencil-edit-icon.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
 import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";

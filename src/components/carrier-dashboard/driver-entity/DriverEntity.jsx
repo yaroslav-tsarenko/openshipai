@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
+import {ReactComponent as UserAvatarComponent} from "../../../assets/images/userAvatar2.svg";
 import ClipLoader from 'react-spinners/ClipLoader';
 import axios from "axios";
 import Alert from "../../floating-window-success/Alert";

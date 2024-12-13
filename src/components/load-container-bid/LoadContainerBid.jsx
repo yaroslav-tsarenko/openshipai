@@ -1,9 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import "./LoadContainerBid.css";
 import axios from 'axios';
-import {ReactComponent as BidArrowIcon} from "../../assets/bid-arrow-icon.svg";
-import {ReactComponent as MoreInfoArrow} from "../../assets/blue-arrow-down.svg";
-import {ReactComponent as DirectionIconNumbers} from "../../assets/direction-icon.svg";
+import {ReactComponent as BidArrowIcon} from "../../assets/images/bid-arrow-icon.svg";
+import {ReactComponent as MoreInfoArrow} from "../../assets/images/blue-arrow-down.svg";
+import {ReactComponent as DirectionIconNumbers} from "../../assets/images/direction-icon.svg";
 import {useParams} from "react-router-dom";
 import {ClipLoader} from "react-spinners";
 import Alert from "../floating-window-success/Alert";

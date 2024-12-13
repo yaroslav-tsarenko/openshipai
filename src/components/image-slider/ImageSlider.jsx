@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './ImageSlider.css';
-import { ReactComponent as ArrowLeft } from "../../assets/arrow-left.svg";
-import { ReactComponent as ArrowRight } from "../../assets/arrow-right.svg";
+import { ReactComponent as ArrowLeft } from "../../assets/images/arrow-left.svg";
+import { ReactComponent as ArrowRight } from "../../assets/images/arrow-right.svg";
 
 const ImageSlider = ({ images }) => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);

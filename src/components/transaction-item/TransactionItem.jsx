@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from "./TransactionItem.module.scss";
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../assets/images/default-avatar.svg";
 
 const TransactionItem = ({currentUser, typeOfPayment, monthAndYear, time, priceAmount, avatar}) => {
     return (

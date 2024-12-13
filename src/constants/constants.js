@@ -2,6 +2,7 @@ export const BACKEND_URL = 'http://localhost:8080';
 export const FRONTEND_URL = 'http://localhost:3000';
 export const SOCKET_URL = 'http://localhost:8083';
 export const ASSISTANT_URL = 'http://localhost:7777';
+export const IMAGE_URL = 'https://images.openshipai.com/my-images';
 
 
 /*

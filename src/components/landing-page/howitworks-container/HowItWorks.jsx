@@ -1,6 +1,6 @@
 import React from 'react';
 import '../LandingPage.css';
-import {ReactComponent as HowItWorksVector} from "../../../assets/how-it-works.svg";
+import {ReactComponent as HowItWorksVector} from "../../../assets/images/how-it-works.svg";
 
 const HowItWorks = () => {
     return (

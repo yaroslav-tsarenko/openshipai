@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ChoosingRolePage.module.scss';
-import customerImage from '../../assets/view-beautiful-caucasian-female-writing-cardboard-box-surrounded-with-boxes.jpg';
-import carrierImage from '../../assets/courier-with-delivery-cardboard-box-by-car.jpg';
+import customerImage from '../../assets/images/view-beautiful-caucasian-female-writing-cardboard-box-surrounded-with-boxes.jpg';
+import carrierImage from '../../assets/images/courier-with-delivery-cardboard-box-by-car.jpg';
 import Typewriter from "typewriter-effect";
 import {Link} from "react-router-dom";
 

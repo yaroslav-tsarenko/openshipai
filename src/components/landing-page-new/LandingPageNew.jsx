@@ -3,15 +3,15 @@ import Header from "./header/Header";
 import MainHeading from "./main-heading/MainHeading";
 import LoadCategory from "./load-category/LoadCategory";
 import LoadCategories from "./load-categories-section/LoadCategories";
-import vehicleLoadCategory from "../../assets/vehicles-category-image.svg"
-import movingLoadCategory from "../../assets/moving-category-image.svg"
-import heavyLoadCategory from "../../assets/heavy-construction-category.svg"
-import freightLoadCategory from "../../assets/freight-category-image.svg"
+import vehicleLoadCategory from "../../assets/images/vehicles-category-image.svg"
+import movingLoadCategory from "../../assets/images/moving-category-image.svg"
+import heavyLoadCategory from "../../assets/images/heavy-construction-category.svg"
+import freightLoadCategory from "../../assets/images/freight-category-image.svg"
 import { gsap } from 'gsap';
-import shipper from "../../assets/shipper.svg"
-import carrier from "../../assets/carrier.svg"
-import broker from "../../assets/broker.svg"
-import dispatch from "../../assets/dispatch2.png"
+import shipper from "../../assets/images/shipper.svg"
+import carrier from "../../assets/images/carrier.svg"
+import broker from "../../assets/images/broker.svg"
+import dispatch from "../../assets/images/dispatch2.png"
 import HowItWorks from "./how-it-works/HowItWorks";
 import BenefitWrapper from "./benefit-wrapper/BenefitWrapper";
 import BenefitChanger from "./benefit-changer/BenefitChanger";
@@ -19,21 +19,20 @@ import UniversalSection from "./universal/UniversalSection";
 import Role from "./role-container/Role";
 import ClientReviewContent from "./client-review-content/ClientReviewContent";
 import ClientItemReview from "./client-item-review/ClientItemReview";
-import clientAvatar from "../../assets/avatar-client-1.svg";
-import clientAvatar2 from "../../assets/avatar-client-2.svg";
-import clientAvatar3 from "../../assets/avatar-client-3.jpg";
-import clientAvatar4 from "../../assets/avatar-client-4.jpg";
-import sliderPhoto1 from "../../assets/sliderImage1.svg";
-import sliderPhoto2 from "../../assets/landing-page-slide-2.svg";
-import sliderPhoto3 from "../../assets/landing-page-slide-3.svg";
-import LightingFastLogistics from "../../assets/lighting-fast-logistics.svg";
-import RoadAnalys from "../../assets/analyse-road-data.svg";
-import AutoTransportDesicions from "../../assets/auto-transport-delivery.svg";
-import AdaptiveWeatherPlanning from "../../assets/adaptive-weather-planning.svg";
-import EasyShippingImage from "../../assets/easy-shipping-illustration.svg"
-import AiScreens from "../../assets/ai-screens.svg";
-import TransparentPricing from "../../assets/transparent-pricing.svg";
-import AllTimeUpdate from "../../assets/all-time-update.svg";
+import clientAvatar from "../../assets/images/avatar-client-1.svg";
+import clientAvatar2 from "../../assets/images/avatar-client-2.svg";
+import clientAvatar3 from "../../assets/images/avatar-client-3.jpg";
+import clientAvatar4 from "../../assets/images/avatar-client-4.jpg";
+import sliderPhoto1 from "../../assets/images/sliderImage1.svg";
+import sliderPhoto2 from "../../assets/images/landing-page-slide-2.svg";
+import sliderPhoto3 from "../../assets/images/landing-page-slide-3.svg";
+import RoadAnalys from "../../assets/images/analyse-road-data.svg";
+import AutoTransportDesicions from "../../assets/images/auto-transport-delivery.svg";
+import AdaptiveWeatherPlanning from "../../assets/images/adaptive-weather-planning.svg";
+import EasyShippingImage from "../../assets/images/easy-shipping-illustration.svg"
+import AiScreens from "../../assets/images/ai-screens.svg";
+import TransparentPricing from "../../assets/images/transparent-pricing.svg";
+import AllTimeUpdate from "../../assets/images/all-time-update.svg";
 import FullPageSlider from "./full-slider/FullPageSlider";
 import LandingPageFooter from "../landing-page/landing-footer/LandingPageFooter";
 import FAQSection from "./faq-section/FAQSection";
@@ -58,6 +57,9 @@ const images = [
 ];
 
 const LandingPageNew = () => {
+
+    const IMAGE_URL = 'https://res.cloudinary.com/dd3rwqwll/image/upload/v1734100101/analyse-road-data_qie21v.svg';
+    console.log(IMAGE_URL);
 
     const headerRef = useGsapAnimation((el) => {
         gsap.fromTo(el, { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
@@ -98,8 +100,8 @@ const LandingPageNew = () => {
                     title="AI Optimized Supply Chain"
                     description="Maximize efficiency with AI insights that automatically suggest the best routes."
                     subDescription="AI tracks shipments and vehicle availability in real-time, optimizing routes and reducing idle time, boosting your supply chain's performance."
-                    subImage={LightingFastLogistics}
-                    img={LightingFastLogistics}
+                    subImage={IMAGE_URL}
+                    img={IMAGE_URL}
                     variant="blue"
                     buttonType="click-to-action"
                 />

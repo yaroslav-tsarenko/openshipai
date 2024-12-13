@@ -139,7 +139,7 @@
 }
 
 .assistant-avatar {
-    background-image: url('../../assets/ai-avatar.svg');
+    background-image: url('../../assets/images/ai-avatar.svg');
     background-size: cover;
     width: 40px;
     height: 40px;

@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './RoundedCheckbox.module.scss';
-import { ReactComponent as CheckBoxUnchecked } from '../../assets/checkbox-unchecked.svg';
-import { ReactComponent as CheckBoxChecked } from '../../assets/checkbox-checked.svg';
+import { ReactComponent as CheckBoxUnchecked } from '../../assets/images/checkbox-unchecked.svg';
+import { ReactComponent as CheckBoxChecked } from '../../assets/images/checkbox-checked.svg';
 
 const RoundedCheckbox = ({ isChecked }) => {
     return (

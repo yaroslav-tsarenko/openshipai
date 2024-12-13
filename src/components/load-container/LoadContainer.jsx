@@ -1,6 +1,6 @@
 import React from 'react';
-import {ReactComponent as DirectionIcon} from "../../assets/load-container-directions-smaller.svg";
-import {ReactComponent as DirectionIconMobile} from "../../assets/a-to-bo-direction-icon.svg";
+import {ReactComponent as DirectionIcon} from "../../assets/images/load-container-directions-smaller.svg";
+import {ReactComponent as DirectionIconMobile} from "../../assets/images/a-to-bo-direction-icon.svg";
 import "./LoadContainer.css"
 import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
 import {Link} from "react-router-dom";

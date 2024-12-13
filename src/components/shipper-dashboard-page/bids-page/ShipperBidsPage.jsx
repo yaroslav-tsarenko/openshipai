@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from "react";
 import '../ShipperDashboard.css';
 
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
 import {useParams} from 'react-router-dom';
 import {BACKEND_URL} from "../../../constants/constants";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";

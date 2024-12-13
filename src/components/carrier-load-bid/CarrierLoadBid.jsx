@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ReactComponent as CarrierAvatar} from "../../assets/userAvatar2.svg"
+import {ReactComponent as CarrierAvatar} from "../../assets/images/userAvatar2.svg"
 import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
 import axios from "axios";

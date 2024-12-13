@@ -1,7 +1,7 @@
 import React from 'react';
-import {ReactComponent as AutomatedDispatch} from "../../../assets/automated-dispatch-minimalistic.svg";
-import {ReactComponent as Support24} from "../../../assets/support24-7-minimalistic.svg";
-import {ReactComponent as SecurePayments} from "../../../assets/secure-payments-minimalistic.svg";
+import {ReactComponent as AutomatedDispatch} from "../../../assets/images/automated-dispatch-minimalistic.svg";
+import {ReactComponent as Support24} from "../../../assets/images/support24-7-minimalistic.svg";
+import {ReactComponent as SecurePayments} from "../../../assets/images/secure-payments-minimalistic.svg";
 
 const MainBenefits = () => {
     return (

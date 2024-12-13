@@ -1,8 +1,8 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import "./DashboardSidebar.css";
-import {ReactComponent as OpenshipLogo} from "../../assets/openship-ai-logo-updated.svg";
-import OpenshipLogoPng from "../../assets/logo-png.png";
+import {ReactComponent as OpenshipLogo} from "../../assets/images/openship-ai-logo-updated.svg";
+import OpenshipLogoPng from "../../assets/images/logo-png.png";
 import {LuLayoutDashboard} from "react-icons/lu";
 import { PiTruck } from "react-icons/pi";
 import { IoChatbubblesOutline } from "react-icons/io5";
@@ -12,10 +12,10 @@ import { LiaTruckLoadingSolid } from "react-icons/lia";
 import { LuSettings } from "react-icons/lu";
 import { TbLogout } from "react-icons/tb";
 import { MdOutlineAssignment } from "react-icons/md";
-import {ReactComponent as ProfileIcon} from "../../assets/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../assets/profile-icon-white.svg";
-import {ReactComponent as QoutesIcon} from "../../assets/listing-icon-grey.svg";
-import {ReactComponent as QoutesIconWhite} from "../../assets/listing-icon-white.svg";
+import {ReactComponent as ProfileIcon} from "../../assets/images/profile-icon-grey.svg";
+import {ReactComponent as ProfileIconWhite} from "../../assets/images/profile-icon-white.svg";
+import {ReactComponent as QoutesIcon} from "../../assets/images/listing-icon-grey.svg";
+import {ReactComponent as QoutesIconWhite} from "../../assets/images/listing-icon-white.svg";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const DashboardSidebar = ({

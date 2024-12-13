@@ -1,12 +1,12 @@
 import React, {useState} from 'react';
 import {Link} from 'react-router-dom';
 import './HeaderDashboard.css';
-import {ReactComponent as SearchIcon} from "../../assets/search-icon.svg";
-import DefaultUserAvatar from "../../assets/default-avatar.png";
+import {ReactComponent as SearchIcon} from "../../assets/images/search-icon.svg";
+import DefaultUserAvatar from "../../assets/images/default-avatar.png";
 import {MdSearch, MdNotificationsNone} from "react-icons/md";
 import {LuSettings} from "react-icons/lu";
-import {ReactComponent as SearchbarIcon} from '../../assets/settings-ios-icon.svg';
-import {ReactComponent as BarsIcon} from "../../assets/fa-bars-icon.svg";
+import {ReactComponent as SearchbarIcon} from '../../assets/images/settings-ios-icon.svg';
+import {ReactComponent as BarsIcon} from "../../assets/images/fa-bars-icon.svg";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const HeaderDashboard = ({

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import './DriverDashboard.css';
 import { useParams } from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
-import { ReactComponent as DefaultUserAvatar } from "../../assets/default-avatar.svg";
+import { ReactComponent as DefaultUserAvatar } from "../../assets/images/default-avatar.svg";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";

@@ -1,8 +1,8 @@
 import React from 'react';
-import ShipperImage from "../../../assets/shipper-image.jpg";
-import BrokerImage from "../../../assets/broker-image.jpg";
-import DispatchImage from "../../../assets/dispatch-image.jpg";
-import CarrierImage from "../../../assets/carrier-image.jpg";
+import ShipperImage from "../../../assets/images/shipper-image.jpg";
+import BrokerImage from "../../../assets/images/broker-image.jpg";
+import DispatchImage from "../../../assets/images/dispatch-image.jpg";
+import CarrierImage from "../../../assets/images/carrier-image.jpg";
 
 const RolesContainer = () => {
     return (
