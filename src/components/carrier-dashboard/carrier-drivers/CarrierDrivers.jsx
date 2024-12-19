@@ -1,12 +1,10 @@
 import React, {useEffect, useState} from "react";
 import axios from 'axios';
 import '../CarrierDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as SortIconWhite} from "../../../assets/sort-icon-white.svg";
-import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
-import {ReactComponent as FilterIconWhite} from "../../../assets/filter-icon-white.svg";
-import {ReactComponent as CreateLoadIcon} from "../../../assets/add-driver-icon.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
+import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/images/filter-icon-blue.svg";
+import {ReactComponent as CreateLoadIcon} from "../../../assets/images/add-driver-icon.svg";
 import {useParams} from 'react-router-dom';
 import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
@@ -15,7 +13,6 @@ import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
 import DriverContainer from "../../driver-container/DriverContainer";
-import {ClipLoader} from "react-spinners";
 import Button from "../../button/Button";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 import TextInput from "../../text-input/TextInput";
@@ -38,7 +35,7 @@ const CarrierDrivers = () => {
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
     const [sortOrder, setSortOrder] = useState('');
-    const [sortedAndFilteredLoads, setSortedAndFilteredLoads] = useState([]);
+    const [message, setMessage] = useState('');
     const [isLoading, setIsLoading] = useState(false)
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
@@ -100,7 +97,7 @@ const CarrierDrivers = () => {
         driverAddress: '',
         driverLicenseClass: '',
         role: 'driver',
-        driverAvatar: selectedImage,
+        driverAvatar: selectedImage || 'uploads/default-avatar.svg',
         driverPassword: (Math.random().toString(36) + Math.random().toString(36)).slice(2, 66),
         driverID: Math.random().toString(36).substring(2, 36) + Math.random().toString(36).substring(2, 36)
             + Math.random().toString(36).substring(2, 36),
@@ -152,11 +149,19 @@ const CarrierDrivers = () => {
             setIsEmailSentSuccesfully(true);
             setTimeout(() => {
                 setIsDriverPopupOpen(false);
-                setIsSuccessCredentials(false);
-                window.location.reload();
             }, 1500);
+            setMessage({
+                status: 'success',
+                text: 'Login successful!',
+                description: 'Data sent'
+            });
         } catch (error) {
             console.error('Error:', error);
+            setMessage({
+                status: 'error',
+                text: 'Something went wrong!',
+                description: 'Try again later'
+            });
         }
     };
 
@@ -165,8 +170,8 @@ const CarrierDrivers = () => {
     };
 
     return (
-
         <>
+            {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             {showSortPopup && (
                 <div className="overlay-popup-select" onClick={toggleSortPopup}>
                     <div className="select-popup" onClick={e => e.stopPropagation()}>

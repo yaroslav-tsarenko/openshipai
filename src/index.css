@@ -21,6 +21,7 @@ body {
     font-family: "Google Sans", "sans-serif";
 }
 
+
 :root {
     --royal-blue: #024ec9;
     --royal-blue-hovered: #0061ff;
@@ -44,6 +45,7 @@ body {
     --royal-white-transparent: rgba(255, 255, 255, 0.66);
     --dark-grey: #2e2a2a;
     --grey: #707070;
+    --dark: #292929;
     --light-grey: #cacaca;
     --grey-darker: #bcbcbc;
     --light-grey-hovered: #e5e5e5;

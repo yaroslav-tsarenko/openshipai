@@ -2,10 +2,10 @@ import React from 'react';
 import Header from "../../components/landing-page-new/header/Header";
 import LandingPageFooter from "../../components/landing-page/landing-footer/LandingPageFooter";
 
-import americanTruck from "../../assets/american-truck.jpg"
-import realTimeTracking from "../../assets/real-time-tracking.jpg"
-import logisticsOptimization from "../../assets/logistic-driver.jpg"
-import freight from "../../assets/truck-driver.jpg"
+import americanTruck from "../../assets/images/american-truck.jpg"
+import realTimeTracking from "../../assets/images/real-time-tracking.jpg"
+import logisticsOptimization from "../../assets/images/logistic-driver.jpg"
+import freight from "../../assets/images/truck-driver.jpg"
 import styles from "./BlogPage.module.scss";
 import Description from "../../components/landing-page-new/description/Description";
 

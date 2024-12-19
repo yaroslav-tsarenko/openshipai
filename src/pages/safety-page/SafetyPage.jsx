@@ -4,9 +4,9 @@ import LandingPageFooter from "../../components/landing-page/landing-footer/Land
 import Description from "../../components/landing-page-new/description/Description";
 import RightIntroductionContainer
     from "../../components/landing-page/landing-right-container/RightIntroductionContainer";
-import EasyShippingImage from "../../assets/easy-shipping-illustration.svg";
+import EasyShippingImage from "../../assets/images/easy-shipping-illustration.svg";
 import LeftIntroductionContainer from "../../components/landing-page/landing-left-container/LeftIntroductionContainer";
-import TransparentPricing from "../../assets/transparent-pricing.svg";
+import TransparentPricing from "../../assets/images/transparent-pricing.svg";
 
 const SafetyPage = () => {
     return (

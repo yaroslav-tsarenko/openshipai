@@ -1,0 +1,117 @@
+.wrapper {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  height: 100dvh;
+}
+
+.left {
+  display: flex;
+  height: 100%;
+  width: 50%;
+  gap: 10px;
+  padding: 40px;
+  flex-direction: column;
+  text-align: left;
+  align-content: center;
+  justify-content: center;
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    margin: 0 0 20px 0;
+    color: var(--grey);
+    text-align: left;
+  }
+
+  h1 {
+    font-size: 4.5rem;
+    font-weight: 600;
+    margin: 20px 0 0 0;
+    color: var(--royal-blue);
+    text-align: left;
+  }
+
+  p {
+    font-size: 2rem;
+    margin: 0 0 20px 0;
+    font-weight: 300;
+    color: var(--grey);
+    text-align: left;
+
+    span {
+      font-size: 2rem;
+      margin: 0 0 20px 0;
+      font-weight: 300;
+      color: var(--grey);
+      text-decoration: line-through;
+    }
+  }
+
+  @media screen and (max-width: 768px) {
+    width: 100%;
+  }
+}
+
+.question {
+  display: flex;
+  align-content: center;
+  justify-content: center;
+  margin: 0 auto;
+  text-align: center;
+  text-decoration: none;
+
+  p {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 1.5rem;
+
+    span {
+      font-size: 1.5rem;
+      text-decoration: none;
+    }
+  }
+;
+
+
+}
+
+.right {
+  display: flex;
+  background: url("../../assets/images/sunset-truck.png");
+  height: 100%;
+  width: 50%;
+  padding: 20px;
+}
+
+.logo {
+  width: 150px;
+  height: auto;
+  margin: 0 auto;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 20px;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  justify-items: center;
+}
+
+.formContent {
+  display: flex;
+  flex-direction: column;
+  max-height: 700px;
+  overflow: auto;
+}

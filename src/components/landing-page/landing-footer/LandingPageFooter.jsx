@@ -1,11 +1,11 @@
 import React, {useState} from 'react';
 import axios from "axios";
-import {ReactComponent as OpenshipLogoWhite} from "../../../assets/openship-logo-updated-white.svg";
+import {ReactComponent as OpenshipLogoWhite} from "../../../assets/images/openship-logo-updated-white.svg";
 import {BsTwitterX} from "react-icons/bs";
 import {FaLinkedinIn} from "react-icons/fa";
 import {FaInstagram} from "react-icons/fa";
 import {FaFacebookF} from "react-icons/fa";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {BACKEND_URL} from "../../../constants/constants";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 import Alert from "../../floating-window-success/Alert";
@@ -14,7 +14,6 @@ const LandingPageFooter = () => {
 
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
     const [alert, setAlert] = useState({show: false, status: '', text: '', description: ''});
 
     const handleSubscribe = async () => {
@@ -59,12 +58,17 @@ const LandingPageFooter = () => {
                         <Link className="footer-section-link" to="/contact-us">Contact Us</Link>
                     </div>
                     <div className="footer-section-content">
+                        <h3>Contact us through email</h3>
+                        <Link className="footer-section-link" to="mailto:info@openshipai.com">info@openshipai.com</Link>
+                        <Link className="footer-section-link" to="mailto:openshipai@gmail.com">openshipai@gmail.com</Link>
+                    </div>
+                    <div className="footer-section-content">
                         <h3>Product</h3>
                         <Link className="footer-section-link" to="/cookie-policy">Cookie Policy</Link>
                         <Link className="footer-section-link" to="/time-schedule">Time Schedule</Link>
                         <Link className="footer-section-link" to="/lead-generate">Lead Generate</Link>
                     </div>
-                    <div className="footer-section-content-newsletter">
+                   {/* <div className="footer-section-content-newsletter">
                         <OpenshipLogoWhite/>
                         <p>Subscribe for Our Newsletter</p>
                         <div className="footer-input-wrapper">
@@ -98,7 +102,7 @@ const LandingPageFooter = () => {
                                 <FaFacebookF className="footer-icons"/>
                             </button>
                         </div>
-                    </div>
+                    </div>*/}
                 </section>
                 <section className="footer-section-bottom">
                     <p>All rights are reserved. Copyright 2024</p>

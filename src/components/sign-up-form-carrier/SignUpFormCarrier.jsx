@@ -1,51 +1,29 @@
-import React, {useState} from 'react'
+import React, { useState } from 'react';
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
-import "./SignUpFormCarrier.css";
+import styles from "./SignUpFormCarrier.module.scss";
+import { ReactComponent as LogoBlue } from "../../assets/images/logo-blue.svg";
+import CustomCheckBox from '../custom-checkbox/CustomCheckBox';
+import TextInput from '../text-input/TextInput';
+import Button from '../button/Button';
+import { useNavigate } from 'react-router-dom';
 import Typewriter from "typewriter-effect";
-import {
-    ReactComponent as ProgressBar1
-} from "../../assets/progres-bar-1-page.svg";
-import {
-    ReactComponent as ProgressBar2
-} from "../../assets/progres-bar-2-page.svg";
-import {
-    ReactComponent as ProgressBar3
-} from "../../assets/progres-bar-3-page.svg";
-import {
-    ReactComponent as ProgressBar4
-} from "../../assets/progres-bar-4-page.svg";
-import {
-    ReactComponent as ProgressBar5
-} from "../../assets/progres-bar-5-page.svg";
-import {
-    ReactComponent as ProgressBar6
-} from "../../assets/progres-bar-6-page.svg";
-import {
-    ReactComponent as ProgressBar7
-} from "../../assets/progres-bar-7-page.svg";
-import {
-    ReactComponent as ProgressBar8
-} from "../../assets/progres-bar-8-page.svg";
-import {
-    ReactComponent as ProgressBar9
-} from "../../assets/progres-bar-9-page.svg";
-import {
-    ReactComponent as ProgressBar10
-} from "../../assets/progres-bar-10-page.svg";
+import Grid from "../grid-two-columns/Grid";
+import { BACKEND_URL } from "../../constants/constants";
 import Alert from "../floating-window-success/Alert";
-import {BACKEND_URL} from "../../constants/constants";
-import {CircularProgress} from "@mui/material";
+import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+import {Link} from "react-router-dom";
 
-function SignCarrierUpForm() {
-    const navigate = useNavigate();
-    const [step, setStep] = useState(1);
+const SignUpFormCarrier = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [message, setMessage] = useState(null);
+    const [currentStep, setCurrentStep] = useState(1);
+    const [message, setMessage] = useState(false);
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         carrierUSDotNumber: '',
         carrierDotNumber: '',
         intrastateCarrier: '',
+        categories: [],
+        equipment: [],
         carrierContactCompanyName: '',
         carrierContactAddress: '',
         carrierContactSuiteOffice: '',
@@ -91,1081 +69,340 @@ function SignCarrierUpForm() {
         carrierAccountLastName: '',
         carrierAccountAccountEmail: '',
         carrierAccountPassword: '',
+        carrierAvatar: "uploads/avatar-default.svg",
         role: 'carrier',
         carrierID: Math.random().toString(36).substring(2, 36) + Math.random().toString(36).substring(2, 36),
     });
-
-    const nextStep = () => {
-        setStep(step + 1);
+    const handleNext = () => {
+        setCurrentStep(currentStep + 1);
+    };
+    const handlePrevious = () => {
+        setCurrentStep(currentStep - 1);
+    };
+    const handleChange = (e) => {
+        const { id, value } = e.target;
+        setFormData({ ...formData, [id]: value });
     };
 
-    const prevStep = () => {
-        setStep(step - 1);
+    const handleCheckboxChange = (field, value) => {
+        setFormData(prevState => {
+            const newArray = prevState[field].includes(value)
+                ? prevState[field].filter(item => item !== value)
+                : [...prevState[field], value];
+            console.log(`Updated ${field}:`, newArray);
+            return { ...prevState, [field]: newArray };
+        });
     };
 
-    const handleChange = (input) => (e) => {
-        setFormData({...formData, [input]: e.target.value});
-    };
 
-    const handleSubmit = (e) => {
-        e.preventDefault();
+    const handleSubmit = async (e) => {
         setIsLoading(true);
-        axios.post(`${BACKEND_URL}/save-carrier-data`, formData)
-            .then(response => {
-                console.log(response);
-                if (response.status === 200) {
-                    setTimeout(() => {
-                        setMessage("Account created successfully!");
-                        setIsLoading(false);
-                        setTimeout(() => {
-                            navigate(`/sign-in`);
-                        }, 1500);
-                    }, 500);
-                }
-            })
-            .catch(error => {
-                console.log('Error:', error);
-                setIsLoading(false);
+        e.preventDefault();
+        try {
+            const response = await axios.post(`${BACKEND_URL}/sign-up-carrier-account`, formData);
+            console.log(response.data);
+            setMessage({
+                status: 'success',
+                text: 'Login successful!',
+                description: 'Redirecting to your dashboard...'
             });
+            setTimeout(() => {
+                navigate('/sign-in');
+            }, 1500);
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            setMessage({
+                status: 'error',
+                text: 'Something went wrong!',
+                description: 'Try again later.'
+            });
+        }
+        setIsLoading(false);
     };
 
-    switch (step) {
-        case 1:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Carrier Prequalification</h2>
-                            <h3 className="h3-title-sign-up-carrier">Enter one carrier indentifier for registration</h3>
-                            <h5 className="h5-title-carrier-sign-up">Interstate Carrier</h5>
-                            <div className="google-input-wrapper">
-                                <input
+    return (
+        <>
+            {message && <Alert status={message.status} text={message.text} description={message.description}/>}
+            <div className={styles.wrapper}>
+                <div className={styles.left}>
+                    <Link to="/sign-in">
+                        <LogoBlue className={styles.logo}/>
+                    </Link>
+                    <h1>Welcome, Carrier!</h1>
+                    <p><span>Truck to earn</span> - Bid to earn</p>
+                    <div className={styles.form}>
+                        {currentStep === 1 && (
+                            <div className={styles.formContent}>
+                                <h2>Select Coverage Area</h2>
+                                <CustomCheckBox
+                                    label="International"
+                                    checked={formData.intrastateCarrier === 'International'}
+                                    onChange={() => handleCheckboxChange('intrastateCarrier', 'International')}
+                                />
+                                <CustomCheckBox
+                                    label="Florida only"
+                                    checked={formData.intrastateCarrier === 'Florida only'}
+                                    onChange={() => handleCheckboxChange('intrastateCarrier', 'Florida only')}
+                                />
+                                <CustomCheckBox
+                                    label="United States"
+                                    checked={formData.intrastateCarrier === 'United States'}
+                                    onChange={() => handleCheckboxChange('intrastateCarrier', 'United States')}
+                                />
+                            </div>
+                        )}
+                        {currentStep === 2 && (
+                            <div className={styles.formContent}>
+                                <h2>What will you be transporting</h2>
+                                <CustomCheckBox
+                                    label="All Categories"
+                                    checked={formData.categories.includes('All Categories')}
+                                    onChange={() => handleCheckboxChange('categories', 'All Categories')}
+                                />
+                                <CustomCheckBox
+                                    label="Vehicles"
+                                    checked={formData.categories.includes('Vehicles')}
+                                    onChange={() => handleCheckboxChange('categories', 'Vehicles')}
+                                />
+                                <CustomCheckBox
+                                    label="Household Goods"
+                                    checked={formData.categories.includes('Household Goods')}
+                                    onChange={() => handleCheckboxChange('categories', 'Household Goods')}
+                                />
+                                <CustomCheckBox
+                                    label="Household & Office Moves"
+                                    checked={formData.categories.includes('Household & Office Moves')}
+                                    onChange={() => handleCheckboxChange('categories', 'Household & Office Moves')}
+                                />
+                                <CustomCheckBox
+                                    label="Boats"
+                                    checked={formData.categories.includes('Boats')}
+                                    onChange={() => handleCheckboxChange('categories', 'Boats')}
+                                />
+                                <CustomCheckBox
+                                    label="Heavy Equipment"
+                                    checked={formData.categories.includes('Heavy Equipment')}
+                                    onChange={() => handleCheckboxChange('categories', 'Heavy Equipment')}
+                                />
+                                <CustomCheckBox
+                                    label="Less than Truckload"
+                                    checked={formData.categories.includes('Less than Truckload')}
+                                    onChange={() => handleCheckboxChange('categories', 'Less than Truckload')}
+                                />
+                                <CustomCheckBox
+                                    label="FTL Freight"
+                                    checked={formData.categories.includes('FTL Freight')}
+                                    onChange={() => handleCheckboxChange('categories', 'FTL Freight')}
+                                />
+                                <CustomCheckBox
+                                    label="Motorcycles & Power Sports"
+                                    checked={formData.categories.includes('Motorcycles & Power Sports')}
+                                    onChange={() => handleCheckboxChange('categories', 'Motorcycles & Power Sports')}
+                                />
+                                <CustomCheckBox
+                                    label="Other"
+                                    checked={formData.categories.includes('Other')}
+                                    onChange={() => handleCheckboxChange('categories', 'Other')}
+                                />
+                            </div>
+                        )}
+                        {currentStep === 3 && (
+                            <div className={styles.formContent}>
+                                <h2>What equipment will you use?</h2>
+                                <CustomCheckBox
+                                    label="All equipment types"
+                                    checked={formData.equipment.includes('All equipment types')}
+                                    onChange={() => handleCheckboxChange('equipment', 'All equipment types')}
+                                />
+                                <CustomCheckBox
+                                    label="Powerdack"
+                                    checked={formData.equipment.includes('Powerdack')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Powerdack')}
+                                />
+                                <CustomCheckBox
+                                    label="Lowboy"
+                                    checked={formData.equipment.includes('Lowboy')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Lowboy')}
+                                />
+                                <CustomCheckBox
+                                    label="Dry Van"
+                                    checked={formData.equipment.includes('Dry Van')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Dry Van')}
+                                />
+                                <CustomCheckBox
+                                    label="Flatbed"
+                                    checked={formData.equipment.includes('Flatbed')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Flatbed')}
+                                />
+                                <CustomCheckBox
+                                    label="Step Deck"
+                                    checked={formData.equipment.includes('Step Deck')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Step Deck')}
+                                />
+                                <CustomCheckBox
+                                    label="Power Only"
+                                    checked={formData.equipment.includes('Power Only')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Power Only')}
+                                />
+                                <CustomCheckBox
+                                    label="Reefer"
+                                    checked={formData.equipment.includes('Reefer')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Reefer')}
+                                />
+                                <CustomCheckBox
+                                    label="Air Ride Van"
+                                    checked={formData.equipment.includes('Air Ride Van')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Air Ride Van')}
+                                />
+                                <CustomCheckBox
+                                    label="Auto Carrier"
+                                    checked={formData.equipment.includes('Auto Carrier')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Auto Carrier')}
+                                />
+                                <CustomCheckBox
+                                    label="Dump"
+                                    checked={formData.equipment.includes('Dump')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Dump')}
+                                />
+                                <CustomCheckBox
+                                    label="Flatbed Double"
+                                    checked={formData.equipment.includes('Flatbed Double')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Flatbed Double')}
+                                />
+                                <CustomCheckBox
+                                    label="Tanker"
+                                    checked={formData.equipment.includes('Tanker')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Tanker')}
+                                />
+                                <CustomCheckBox
+                                    label="Van Double"
+                                    checked={formData.equipment.includes('Van Double')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Van Double')}
+                                />
+                                <CustomCheckBox
+                                    label="Other"
+                                    checked={formData.equipment.includes('Other')}
+                                    onChange={() => handleCheckboxChange('equipment', 'Other')}
+                                />
+                            </div>
+                        )}
+                        {currentStep === 4 && (
+                            <div>
+                                <h2>Enter US DOT Number</h2>
+                                <TextInput
                                     type="text"
-                                    id="us-docket"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierUSDotNumber')}
+                                    id="carrierUSDotNumber"
                                     value={formData.carrierUSDotNumber}
+                                    onChange={(e) => setFormData({...formData, carrierUSDotNumber: e.target.value})}
+                                    label="US DOT Number"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">US Docket (MC, FF,
-                                    MX)</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
+                                <TextInput
                                     type="text"
-                                    id="us-dot-number"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDotNumber')} value={formData.carrierDotNumber}
+                                    id="carrierDotNumber"
+                                    value={formData.carrierDotNumber}
+                                    onChange={(e) => setFormData({...formData, carrierDotNumber: e.target.value})}
+                                    label="DOT Number"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">US DOT Number</label>
-                            </div>
-                            <p className="carrier-sign-up-p-text">Or</p>
-                            <h5 className="h5-title-carrier-sign-up">Intrastate Carrier</h5>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="intrastate-carrier"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('intrastateCarrier')} value={formData.intrastateCarrier}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Intrastate Carrier</label>
-                            </div>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar1/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 2:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Contact Information</h2>
-                            <h3 className="h3-title-sign-up-carrier">You must complete the fields below, If you don't
-                                know any specific information, you can just no fill this field</h3>
-                            <div className="google-input-wrapper">
-                                <input
+                                <TextInput
                                     type="text"
                                     id="carrierContactCompanyName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactCompanyName')}
                                     value={formData.carrierContactCompanyName}
+                                    onChange={(e) => setFormData({...formData, carrierContactCompanyName: e.target.value})}
+                                    label="Company Name"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">Company Name</label>
                             </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactAddress"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactAddress')}
-                                    value={formData.carrierContactAddress}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Address</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactSuiteOffice"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactSuiteOffice')}
-                                    value={formData.carrierContactSuiteOffice}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Suite/Office</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactCity"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactCity')} value={formData.carrierContactCity}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">City</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactStateProvince"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactStateProvince')} value={formData.carrierContactStateProvince}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">State/Province</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactZip"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactZip')} value={formData.carrierContactZip}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Zip/Postal Code</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierContactCountry"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierContactCountry')}
-                                    value={formData.carrierContactCountry}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Country</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar2/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 3:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Pay to information</h2>
-                            <h3 className="h3-title-sign-up-carrier">You must complete the fields below, If you don't
-                                know any specific information, you can just no fill this field</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToCompanyName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToCompanyName')}
-                                    value={formData.carrierPayToCompanyName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to Company Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToAddress"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToAddress')} value={formData.carrierPayToAddress}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to Address</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToSuiteOffice"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToSuiteOffice')} value={formData.carrierPayToSuiteOffice}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to Suite/Office</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToCity"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToCity')} value={formData.carrierPayToCity}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to City</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToStateProvince"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToStateProvince')} value={formData.carrierPayToStateProvince}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to
-                                    State/Province</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToZipPostal"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToZipPostal')} value={formData.carrierPayToZipPostal}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to Zip/Postal
-                                    Code</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierPayToCountry"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierPayToCountry')} value={formData.carrierPayToCountry}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Pay to Country</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDunsNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDunsNumber')} value={formData.carrierDunsNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">DUNS Number</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
+                        )}
 
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar3/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
+                        {currentStep === 5 && (
+                            <Grid columns="2, 1fr">
+                                <TextInput
+                                    type="email"
+                                    id="carrierAccountAccountEmail"
+                                    value={formData.carrierAccountAccountEmail}
+                                    onChange={(e) => setFormData({
+                                        ...formData,
+                                        carrierAccountAccountEmail: e.target.value
+                                    })}
+                                    label="Email"
                                 />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 4:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Corporate Contact Information</h2>
-                            <h3 className="h3-title-sign-up-carrier">You must complete the fields below, If you don't
-                                know any specific information, you can just no fill this field</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierCorporateNameLastName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierCorporateNameLastName')} value={formData.carrierCorporateNameLastName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Name & Last Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierCorporatePhoneNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierCorporatePhoneNumber')} value={formData.carrierCorporatePhoneNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Phone Number</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierCorporateTitle"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierCorporateTitle')} value={formData.carrierCorporateTitle}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Title</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierCorporateSellPhone"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierCorporateSellPhone')} value={formData.carrierCorporateSellPhone}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Sell Phone</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesContactNameLastName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesContactNameLastName')} value={formData.carrierSalesContactNameLastName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Fax</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar4/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 5:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Sales Contact Information</h2>
-                            <h3 className="h3-title-sign-up-carrier">You must complete the fields below, If you don't
-                                know any specific information, you can just no fill this field, or if you have data
-                                similar data like in previous pages, you can skip this step</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesContactNameLastName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesContactNameLastName')} value={formData.carrierSalesContactNameLastName}
-                                />
-                                <label htmlFor="carrierSalesContactNameLastName" className="google-style-input-label">Name & Last Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesPhoneNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesPhoneNumber')} value={formData.carrierSalesPhoneNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Phone Number</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesTitle"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesTitle')} value={formData.carrierSalesTitle}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Title</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesSellPhone"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesSellPhone')} value={formData.carrierSalesSellPhone}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Sell Phone</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierSalesFax"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierSalesFax')} value={formData.carrierSalesFax}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Fax</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar5/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 6:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Dispatch Contact Information</h2>
-                            <h3 className="h3-title-sign-up-carrier">You must complete the fields below, If you don't
-                                know any specific information, you can just no fill this field, or if you have data
-                                similar data like in previous pages, you can skip this step</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDispatchNameLastName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDispatchNameLastName')} value={formData.carrierDispatchNameLastName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Name & Last Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDispatchPhoneNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDispatchPhoneNumber')} value={formData.carrierDispatchPhoneNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Phone Number</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDispatchTitle"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDispatchTitle')} value={formData.carrierDispatchTitle}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Title</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDispatchSellPhone"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDispatchSellPhone')} value={formData.carrierDispatchSellPhone}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Sell Phone</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierDispatchFax"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierDispatchFax')} value={formData.carrierDispatchFax}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Fax</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar6/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 7:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Broker-Carrier Agreement</h2>
-                            <h3 className="h3-title-sign-up-carrier">
-                                Check the box for any of the companies you do not want to be set up with.
-                            </h3>
-                            <div className="checkbox-container-wrapper">
-                                <label className="checkbox-container">
-                                    <input type="checkbox" />
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Aetna Freight Lines, Inc.</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">American Transport, Inc</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">American Wind Transport Group, LLC</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">ATI Trucking, LLC</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Greentree Transportation Co</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Greentree Logisctics</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Hot Shop Expres, Inc.</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Jones Express, Inc</p>
-
-                                </label>
-                                <label className="checkbox-container">
-                                    <input type="checkbox"/>
-                                    <span className="checkmark"></span>
-                                    <p className="checkbox-text">Jonec Motor Co., Inc.</p>
-
-                                </label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar7/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 8:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Cargo Insurance Agency</h2>
-                            <h3 className="h3-title-sign-up-carrier">You need to enter information about your cargo
-                                insurance agency, if you do not have specify information, you can skip this step</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierInsuranceAgencyCompanyName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierInsuranceAgencyCompanyName')} value={formData.carrierInsuranceAgencyCompanyName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Insurance Agency Company
-                                    Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierInsuranceAgencyPhoneNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierInsuranceAgencyPhoneNumber')} value={formData.carrierInsuranceAgencyPhoneNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Insurance Agency
-                                    Phone</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierInsuranceAgencyFax"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierInsuranceAgencyFax')} value={formData.carrierInsuranceAgencyFax}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Insurance Agency Fax</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierInsuranceAgencyEmail"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierInsuranceAgencyEmail')} value={formData.carrierInsuranceAgencyEmail}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Insurance Agency
-                                    Email</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierInsurancePolicyNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierInsurancePolicyNumber')} value={formData.carrierInsurancePolicyNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Your Policy Number</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar8/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 9:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Request For Taxpayer</h2>
-                            <h3 className="h3-title-sign-up-carrier">You need to enter identification number and
-                                certification</h3>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerName')} value={formData.carrierRequestForTaxPayerName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerBusinessName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerBusinessName')} value={formData.carrierRequestForTaxPayerBusinessName}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Business Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerAddress"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerAddress')} value={formData.carrierRequestForTaxPayerAddress}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Address</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerCityStateZip"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerCityStateZip')} value={formData.carrierRequestForTaxPayerCityStateZip}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">City, State and Zip</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerSocialSecurityNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerSocialSecurityNumber')} value={formData.carrierRequestForTaxPayerSocialSecurityNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Social Security
-                                    Number</label>
-                            </div>
-                            <p className="carrier-sign-up-p-text">Or</p>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierRequestForTaxPayerEmployerIdentificationNumber"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierRequestForTaxPayerEmployerIdentificationNumber')} value={formData.carrierRequestForTaxPayerEmployerIdentificationNumber}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Employer Identification
-                                    Number</label>
-                            </div>
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-sign-up" onClick={nextStep}>Next</button>
-                        </div>
-                    </div>
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                            <ProgressBar9/>
-                        </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
-                    </div>
-                </div>
-            )
-        case 10:
-            return (
-                <div className="sign-in-wrapper">
-                    <div className="carrier-sign-up-left-side-container">
-                        <div className="carrier-sign-up-left-side-content">
-                            <h2 className="h2-title-sign-up-carrier">Let's Finish</h2>
-                            <h3 className="h3-title-sign-up-carrier">Now you need to fill fields for your Openship
-                                profile</h3>
-                            <div className="google-input-wrapper">
-                                <input
+                                <TextInput
                                     type="text"
                                     id="carrierAccountName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierAccountName')} value={formData.carrierAccountName}
+                                    value={formData.carrierAccountName}
+                                    onChange={(e) => setFormData({...formData, carrierAccountName: e.target.value})}
+                                    label="First Name"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
+                                <TextInput
                                     type="text"
                                     id="carrierAccountLastName"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierAccountLastName')} value={formData.carrierAccountLastName}
+                                    value={formData.carrierAccountLastName}
+                                    onChange={(e) => setFormData({...formData, carrierAccountLastName: e.target.value})}
+                                    label="Last Name"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">Last Name</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="carrierAccountAccountEmail"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierAccountAccountEmail')} value={formData.carrierAccountAccountEmail}
-                                />
-                                <label htmlFor="email" className="google-style-input-label">Main Email</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
+                                <TextInput
+                                    type="password"
                                     id="carrierAccountPassword"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
-                                    onChange={handleChange('carrierAccountPassword')} value={formData.carrierAccountPassword}
+                                    value={formData.carrierAccountPassword}
+                                    onChange={(e) => setFormData({...formData, carrierAccountPassword: e.target.value})}
+                                    label="Password"
                                 />
-                                <label htmlFor="email" className="google-style-input-label">Password</label>
-                            </div>
-                            <div className="google-input-wrapper">
-                                <input
-                                    type="text"
-                                    id="confirmPassword"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    required
+                                <TextInput
+                                    type="phone-number"
+                                    id="carrierCorporatePhoneNumber"
+                                    value={formData.carrierCorporatePhoneNumber}
+                                    onChange={(e) => setFormData({
+                                        ...formData,
+                                        carrierCorporatePhoneNumber: e.target.value
+                                    })}
+                                    label="Phone Number"
                                 />
-                                <label htmlFor="confirmPassword" className="google-style-input-label">Confirm Password</label>
-                            </div>
-                            <p className="carrier-sign-up-p-text">NOTE: This data which you need to use to login</p>
+                            </Grid>
+                        )}
 
-                            <button className="previous-button-carrier-sign-up" onClick={prevStep}>&larr;
-                            </button>
-                            <button className="next-button-carrier-submit-button" onClick={handleSubmit}>
-                                {isLoading ? <CircularProgress size={30}/>
-                                    : 'Create Account'}
-                            </button>
-                            {message && <Alert text={message} />}
+                        <div className={styles.buttonContainer}>
+                            {currentStep > 1 && (
+                                <Button variant="darkGrey-100" buttonText="Previous" onClick={handlePrevious}/>
+                            )}
+                            {currentStep < 5 ? (
+                                <Button variant="default-non-responsive" buttonText="Next" onClick={handleNext}/>
+                            ) : (
+                                <Button variant="apply-non-responsive" onClick={handleSubmit}>
+                                    {isLoading ?
+                                        <>
+                                            <RotatingLinesLoader title="Processing..."/>
+                                        </>
+                                        :
+                                        "Register"}
+                                </Button>
+                            )}
                         </div>
-                    </div>
-                    <div className="carrier-sign-up-right-side">
-                        <div className="progress-bar-container">
-                        <ProgressBar10/>
+                        <div className={styles.question}>
+                            <p>Already have an account? <span>
+                            <Link to="/sign-in">Sign in now</Link>
+                            </span></p>
                         </div>
-                        <section className="carrier-sign-up-right-side-section">
-                            <h1 className="carrier-sign-up-right-side-title">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I'm Carrier"],
-                                        autoStart: true,
-                                        loop: true,
-                                        pauseFor: 4500,
-                                    }}
-                                />
-                            </h1>
-                            <p className="carrier-sign-up-right-side-description">
-                                <Typewriter
-                                    options={{
-                                        strings: ["I have empty space in my truck"],
-                                        autoStart: true,
-                                        loop: true,
-                                    }}
-                                />
-                            </p>
-                        </section>
                     </div>
                 </div>
-            )
-        default:
-            return <h1>Invalid step</h1>;
-    }
-}
+                <div className="right-side-login">
+                    <section className="right-side-login-section">
+                        <h1 className="right-side-login-side-title">
+                        WELCOME CARRIER
+                        </h1>
+                        <p className="right-side-login-side-description">
+                            <Typewriter
+                                options={{
+                                    strings: ["We appreciate see you", "Hope you will be satisfied"],
+                                    autoStart: true,
+                                    loop: true,
+                                }}
+                            />
+                        </p>
+                    </section>
+                </div>
+            </div>
 
-export default SignCarrierUpForm;
+        </>
+    );
+};
+
+export default SignUpFormCarrier;

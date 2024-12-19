@@ -1,5 +1,6 @@
 import React from 'react';
 import styles from './Popup.module.scss';
+import Button from "../button/Button";
 
 const Popup = ({ title, onClose, children, footerText, abilityToClose }) => {
     return (
@@ -8,7 +9,7 @@ const Popup = ({ title, onClose, children, footerText, abilityToClose }) => {
                 <div className={styles.header}>
                     <h2>{title}</h2>
                     {!abilityToClose && (
-                        <button className={styles.closeButton} onClick={onClose}>Close</button>
+                        <Button variant="close" onClick={onClose}>Close</Button>
                     )}
                 </div>
                 <div className={styles.content}>

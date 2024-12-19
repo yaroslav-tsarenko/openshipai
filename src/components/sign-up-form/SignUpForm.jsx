@@ -11,7 +11,7 @@ import {BACKEND_URL} from "../../constants/constants";
 import Button from "../button/Button";
 import TextInput from "../text-input/TextInput";
 import Grid from "../grid-two-columns/Grid";
-import {ReactComponent as LogoBlue} from "../../assets/logo-blue.svg"
+import {ReactComponent as LogoBlue} from "../../assets/images/logo-blue.svg"
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
 

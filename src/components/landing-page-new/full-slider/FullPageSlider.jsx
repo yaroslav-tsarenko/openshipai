@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styles from "./FullPageSlider.module.scss";
-import { ReactComponent as ArrowLeft } from "../../../assets/nav-slider-arrow.svg";
-import { ReactComponent as ArrowRight } from "../../../assets/nav-slider-button-right.svg";
+import { ReactComponent as ArrowLeft } from "../../../assets/images/nav-slider-arrow.svg";
+import { ReactComponent as ArrowRight } from "../../../assets/images/nav-slider-button-right.svg";
 
 const FullPageSlider = ({ title, description, images }) => {
     const [currentIndex, setCurrentIndex] = useState(0);

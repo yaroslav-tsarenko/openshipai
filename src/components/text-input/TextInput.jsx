@@ -5,7 +5,7 @@ import styles from './TextInput.module.scss';
 
 const TextInput = ({ type = 'text', id, value, onChange, label, options = [], style = {} }) => {
     const [isEmailValid, setIsEmailValid] = useState(true);
-    const [setIsPhoneValid] = useState(true);
+    const [isPhoneValid, setIsPhoneValid] = useState(true);
 
     const handleInputChange = (e) => {
         const inputValue = e.target.value;
@@ -19,7 +19,7 @@ const TextInput = ({ type = 'text', id, value, onChange, label, options = [], st
 
     const handlePhoneChange = (phone) => {
         onChange({ target: { value: phone } });
-        setIsPhoneValid(phone.length >= 10);  // Example validation
+        setIsPhoneValid(phone.length >= 10); // Example validation
     };
 
     return (

@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ReactComponent as CarrierAvatar} from "../../assets/userAvatar2.svg"
+import {ReactComponent as CarrierAvatar} from "../../assets/images/userAvatar2.svg"
 import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
 import axios from "axios";
@@ -8,6 +8,7 @@ import {BACKEND_URL} from "../../constants/constants";
 import Button from "../button/Button";
 import Popup from "../popup/Popup";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+import {Skeleton} from "@mui/material";
 
 const CarrierLoadBid = ({
                             loadCarrierID,
@@ -22,6 +23,7 @@ const CarrierLoadBid = ({
     const date = new Date(loadEstimatedDeliveryTime);
     const navigate = useNavigate();
     const day = date.getDate();
+    const [carrier, setCarrier] = useState(null);
     const month = date.toLocaleString('default', {month: 'long'});
     const time = date.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
     const formattedDate = `${day} ${month} at ${time}`;
@@ -32,6 +34,17 @@ const CarrierLoadBid = ({
 
     useEffect(() => {
         console.log(loadCarrierID + "loadCarrierID")
+
+        const fetchCarrier = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier/${loadCarrierID}`);
+                setCarrier(response.data);
+            } catch (error) {
+                console.error('Error fetching carrier:', error);
+            }
+        }
+
+        fetchCarrier();
     }, [loadCarrierID]);
 
 
@@ -43,10 +56,37 @@ const CarrierLoadBid = ({
         setIsPopupOpen(true);
     };
 
+    const sendEmail = async (userType, userID) => {
+        try {
+            const response = await axios.post(`${BACKEND_URL}/send-email-2`, {
+                userType,
+                userID
+            });
+
+            if (response.status === 200) {
+                console.log('Email sent successfully');
+            } else {
+                console.error('Error sending email:', response.data.message);
+            }
+        } catch (error) {
+            console.error('Error sending email:', error);
+        }
+    };
+
+
+
+    const updateLoadStatus = async (loadID, newStatus) => {
+        try {
+            await axios.put(`${BACKEND_URL}/update-load-status/${loadID}`, {newStatus});
+            console.log('Load status updated successfully');
+        } catch (error) {
+            console.error('Error updating load status:', error);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
-
         const chatID = Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
         const chatData = {
             chatID: chatID,
@@ -54,16 +94,14 @@ const CarrierLoadBid = ({
             shipperID: shipperID,
             carrierID: loadCarrierID,
         };
+
         try {
             const response = await axios.post(`${BACKEND_URL}/create-deal-chat-conversation`, chatData);
             if (response.status === 200) {
                 console.log('DealChatConversation created successfully');
-                await axios.post(`${BACKEND_URL}/update-load-status/${loadID}`);
+                await updateLoadStatus(loadID, 'Booked');
+               sendEmail('carrier', loadCarrierID);
                 await axios.post(`${BACKEND_URL}/update-load-price/${loadID}/${loadBidPrice}`);
-                setTimeout(() => {
-                    navigate(`/shipper-chat-conversation/${shipperID}`);
-                }, 1000);
-                setAlert({status: "success", text: "Your bid applied successfully", description: "applied"});
             } else {
                 console.error('Failed to create DealChatConversation:', response.data);
                 setStatusMessage('Failed to apply bid. Try again');
@@ -77,6 +115,7 @@ const CarrierLoadBid = ({
             setAlert({status: "error", text: "Failed to apply bid", description: "Try again"});
         } finally {
             setIsLoading(false);
+            navigate(`/shipper-chat-conversation/${shipperID}`);
         }
     };
 
@@ -88,7 +127,7 @@ const CarrierLoadBid = ({
                     <section>
                         <CarrierAvatar/>
                         <h2>{loadCarrierName}</h2>
-                        <h2>{loadCarrierID}</h2>
+                        <h2>{carrier ? carrier.carrierContactCompanyName : <Skeleton width={100} height={30}/>}</h2>
                     </section>
                     <section>
                         <h4>Estimated delivery: {formattedDate}</h4>

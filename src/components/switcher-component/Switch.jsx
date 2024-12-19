@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './Switch.css';
-import {ReactComponent as QuestionIcon} from '../../assets/question-icon.svg';
+import {ReactComponent as QuestionIcon} from '../../assets/images/question-icon.svg';
 
 const Switch = ({isOn, handleToggle, label, tip}) => {
     const [showTooltip, setShowTooltip] = useState(false);

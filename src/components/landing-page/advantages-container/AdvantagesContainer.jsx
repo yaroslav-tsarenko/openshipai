@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import "../LandingPage.css";
-import LightingFastLogistics from "../../../assets/lighting-fast-logistics.svg";
-import RoadAnalys from "../../../assets/analyse-road-data.svg";
-import AutoTransportDesicions from "../../../assets/auto-transport-delivery.svg";
-import AdaptiveWeatherPlanning from "../../../assets/adaptive-weather-planning.svg";
+import LightingFastLogistics from "../../../assets/images/lighting-fast-logistics.svg";
+import RoadAnalys from "../../../assets/images/analyse-road-data.svg";
+import AutoTransportDesicions from "../../../assets/images/auto-transport-delivery.svg";
+import AdaptiveWeatherPlanning from "../../../assets/images/adaptive-weather-planning.svg";
 import LeftAdvantageContainer from "../left-advantage-container/LeftAdvantageContainer";
 import RightAdvantageContainer from "../right-advantage-container/RightAdvantageContainer";
 

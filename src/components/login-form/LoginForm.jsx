@@ -10,7 +10,7 @@ import {BACKEND_URL} from "../../constants/constants";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
 import Button from "../button/Button";
 import TextInput from "../text-input/TextInput";
-import {ReactComponent as LogoBlue} from "../../assets/logo-blue.svg"
+import {ReactComponent as LogoBlue} from "../../assets/images/logo-blue.svg"
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 import SEO from "../seo/SEO";
 
@@ -62,17 +62,22 @@ function LoginForm() {
         const { credential } = credentialResponse;
         try {
             const response = await axios.post(`${BACKEND_URL}/google-login`, { token: credential });
-
             if (response.status === 200) {
-                const { userShipperID } = response.data;
+                const { id, role } = response.data;
                 setMessage({
                     status: 'success',
                     text: 'Login successful!',
                     description: 'Redirecting to your dashboard...'
                 });
                 setTimeout(() => {
-                    navigate(`/shipper-dashboard/${userShipperID}`);
-                }, 1500);
+                    if (role === 'carrier') {
+                        navigate(`/carrier-dashboard/${id}`);
+                    } else if (role === 'shipper') {
+                        navigate(`/shipper-dashboard/${id}`);
+                    } else if (role === 'driver') {
+                        navigate(`/driver-dashboard/${id}`);
+                    }
+                }, 500);
             }
         } catch (error) {
             if (error.response && error.response.status === 400) {

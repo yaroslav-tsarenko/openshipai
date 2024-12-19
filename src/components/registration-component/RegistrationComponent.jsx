@@ -5,8 +5,8 @@ import styles from "./RegistrationComponent.module.scss";
 import Grid from "../grid-two-columns/Grid";
 import TextInput from "../text-input/TextInput";
 import Button from "../button/Button";
-import { ReactComponent as TimesIcon } from "../../assets/fa-times-icon-list.svg";
-import { ReactComponent as CheckIcon } from "../../assets/fa-check-icon-list.svg";
+import { ReactComponent as TimesIcon } from "../../assets/images/fa-times-icon-list.svg";
+import { ReactComponent as CheckIcon } from "../../assets/images/fa-check-icon-list.svg";
 import { BACKEND_URL } from "../../constants/constants";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
 import Alert from "../floating-window-success/Alert";
@@ -59,7 +59,6 @@ const RegistrationComponent = ({ onRegistrationSuccess })  => {
                     setShowRegistrationPopup(false);  // Hide registration popup after success
                 }, 3000);
             } else {
-                // Trigger error alert
                 setAlert({
                     visible: true,
                     status: 'error',

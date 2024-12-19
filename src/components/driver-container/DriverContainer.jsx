@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { ReactComponent as DriverAvatarExample } from "../../assets/default-user-avatar.svg";
-import { ReactComponent as MoreButton } from "../../assets/more-button.svg";
+import { ReactComponent as MoreButton } from "../../assets/images/more-button.svg";
+import { ReactComponent as DefaultUserAvatar } from "../../assets/images/default-user-avatar.svg";
 import './DriverContainer.css';
-import GoogleMapShowLocation from "../google-map-show-driver-location/GoogleMapShowLocation";
+import GoogleMapRealTimeTrafficComponent
+    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 
 const DriverContainer = ({
                              driverNameAndLastName,
@@ -39,9 +40,13 @@ const DriverContainer = ({
         }
     }, [driverLat, driverLng]);
 
+    const latitude = Number(driverLat);
+    const longitude = Number(driverLng);
+
+
     return (
         <div className="driver-container-card">
-            <DriverAvatarExample className="driver-photo-example" />
+            <DefaultUserAvatar className="driver-photo-example" />
             <div className="driver-info-container">
                 <section>
                     <label>Name & Last Name</label>
@@ -79,8 +84,7 @@ const DriverContainer = ({
                 </button>
             </div>
             <div className="driver-location-map">
-                <GoogleMapShowLocation lat={driverLat} lng={driverLng} />
-
+                <GoogleMapRealTimeTrafficComponent type="location" lat={latitude} lng={longitude} borderRadius={["0px", "30px", "30px", "0px"]} />
             </div>
         </div>
     );

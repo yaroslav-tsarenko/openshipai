@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Carousel } from 'react-responsive-carousel';
-import { ReactComponent as CustomPrevArrow } from "../../../assets/custom-arrow-left.svg";
-import { ReactComponent as CustomNextArrow } from "../../../assets/custom-arrow-right.svg";
+import { ReactComponent as CustomPrevArrow } from "../../../assets/images/custom-arrow-left.svg";
+import { ReactComponent as CustomNextArrow } from "../../../assets/images/custom-arrow-right.svg";
 import "../LandingPage.css"
 
 const ImageSlider = ({ image, image2, image3 }) => {

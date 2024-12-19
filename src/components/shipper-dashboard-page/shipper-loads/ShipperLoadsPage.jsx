@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
 import '../ShipperDashboard.css';
-import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as FilterIcon} from "../../../assets/filter-icon-blue.svg";
-import {ReactComponent as AddLoadIcon} from "../../../assets/add-load-icon.svg";
+import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/images/filter-icon-blue.svg";
+import {ReactComponent as AddLoadIcon} from "../../../assets/images/add-load-icon.svg";
 import {useParams} from "react-router-dom";
-import VehicleLoadType from "../../../assets/vehicle-load-type.png";
-import MovingLoadType from "../../../assets/movin-load-type.png";
-import FreightLoadType from "../../../assets/freight-load-type.png";
-import HeavyLoadType from "../../../assets/heavy-load-type.png";
+import VehicleLoadType from "../../../assets/images/vehicle-load-type.png";
+import MovingLoadType from "../../../assets/images/movin-load-type.png";
+import FreightLoadType from "../../../assets/images/freight-load-type.png";
+import HeavyLoadType from "../../../assets/images/heavy-load-type.png";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainer from "../../load-container/LoadContainer";
@@ -46,7 +46,6 @@ import LocationTimeDataForm from "../../location-time-data-form/LocationTimeData
 import SEO from "../../seo/SEO";
 import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
-
 const ShipperLoadsPage = () => {
     const [createLoadSection, setCreateLoadSection] = useState(true);
     const {shipperID} = useParams();
@@ -55,7 +54,7 @@ const ShipperLoadsPage = () => {
     const [step, setStep] = useState(1);
     const [ setSortedLoads] = useState([]);
     const [shipperInfo, setShipperInfo] = useState(null);
-    const [ setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('');
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
@@ -358,7 +357,6 @@ const ShipperLoadsPage = () => {
                         <div className="shipper-loads-dashboard-content-body">
                             <div className="create-load-container-content">
                                 {step === 1 && (
-
                                     <CreateLoadContainer
                                         step={1}
                                         title="Choose Load Type"

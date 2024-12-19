@@ -727,6 +727,7 @@
     flex-direction: column;
     width: 100%;
     height: 90vh;
+    gap: 15px;
     overflow: auto;
 }
 
@@ -793,7 +794,7 @@
     background: var(--royal-white);
     border-radius: 40px;
     border: none;
-    justify-content: center;
+    justify-content: space-between;
     align-content: center;
     align-items: center;
     justify-items: center;
@@ -852,6 +853,11 @@
     gap: 10px;
     align-items: start;
     padding: 0 0 0 20px;
+
+    @media screen and (max-width: 768px) {
+        padding: 0;
+        gap: 5px;
+    }
 }
 
 .load-filter-container section {
@@ -865,6 +871,7 @@
     display: flex;
     flex-direction: column;
     width: 100%;
+    gap: 15px;
     overflow: scroll;
     padding: 20px 0 0 20px;
     overflow-x: hidden;
@@ -2058,7 +2065,6 @@
 .assign-driver-popup-content {
     display: flex;
     flex-direction: column;
-    padding: 20px;
     overflow: scroll;
     overflow-x: hidden;
 }
@@ -2067,6 +2073,7 @@
     display: flex;
     width: 100%;
     padding: 20px;
+    gap: 20px;
     justify-content: space-between;
     margin: 5px 0 5px 0;
     align-content: center;

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {ReactComponent as DirectionIcon} from "../../../assets/direction-icon.svg";
-import {ReactComponent as CarrierIcon} from "../../../assets/trane-logo-carrier.svg";
+import {ReactComponent as DirectionIcon} from "../../../assets/images/direction-icon.svg";
+import {ReactComponent as CarrierIcon} from "../../../assets/images/trane-logo-carrier.svg";
 import Button from "../../button/Button";
 import ActiveLoadStatusLabel from "../../active-load-status-label/ActiveLoadStatusLabel";
 

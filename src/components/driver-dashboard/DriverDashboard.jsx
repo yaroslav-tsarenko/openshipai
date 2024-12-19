@@ -2,18 +2,17 @@ import React, { useState, useEffect } from "react";
 import './DriverDashboard.css';
 import { useParams } from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
-import { ReactComponent as DefaultUserAvatar } from "../../assets/default-avatar.svg";
+import { ReactComponent as DefaultUserAvatar } from "../../assets/images/default-avatar.svg";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../header-dashboard/HeaderDashboard";
 import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import { BACKEND_URL } from "../../constants/constants";
+import { useJsApiLoader } from '@react-google-maps/api';
 import { Skeleton } from "@mui/material";
 import axios from "axios";
 import Grid from "../grid-two-columns/Grid";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import Button from "../button/Button";
-import TextInput from "../text-input/TextInput";
-import Popup from "../popup/Popup";
 
 const DriverDashboard = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
@@ -24,11 +23,14 @@ const DriverDashboard = () => {
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
-    const [activeTab, setActiveTab] = useState("Statistics");
+    const [activeTab, setActiveTab] = useState("Chat");
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
+    const { isLoaded } = useJsApiLoader({
+        googleMapsApiKey: "AIzaSyD-9tSrke72PouQMnMX-a7eZSW0jkFMBWY",
+    });
 
     const [showPopup, setShowPopup] = useState(false);
     const [formData, setFormData] = useState({
@@ -38,17 +40,19 @@ const DriverDashboard = () => {
     });
 
     useEffect(() => {
-        const getCurrentPosition = () => {
+        const updateDriverLocation = async () => {
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     async (position) => {
                         const { latitude, longitude } = position.coords;
                         try {
-                            await axios.put(`${BACKEND_URL}/update-driver-location/${driverID}`, {
-                                latitude,
-                                longitude
+                            const url = `${BACKEND_URL}/update-driver-location/${driverID}/${latitude}/${longitude}`;
+                            await axios.put(url, {
+                                driverID, // You might not need to send this again if it's already in the URL
+                                location: { latitude, longitude },
+                                locationData: `Lat: ${latitude}, Lon: ${longitude}`
                             });
-                            console.log('Driver location updated');
+                            console.log(`Driver location updated to: ${latitude} ${longitude}`);
                         } catch (error) {
                             console.error('Error updating driver location:', error);
                         }
@@ -62,18 +66,11 @@ const DriverDashboard = () => {
                 console.error('Geolocation is not supported by this browser.');
             }
         };
+        if (isLoaded) {
+            updateDriverLocation();
+        }
+    }, [driverID, isLoaded]);
 
-        getCurrentPosition();
-
-        const intervalId = setInterval(getCurrentPosition, 60000); // Update every 60 seconds
-
-        return () => clearInterval(intervalId);
-    }, [driverID]);
-
-    const handleClick = (load) => {
-        setOrigin(load.loadPickupLocation);
-        setDestination(load.loadDeliveryLocation);
-    };
 
     useEffect(() => {
         const fetchLoads = async () => {

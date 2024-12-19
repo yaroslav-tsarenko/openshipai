@@ -1,10 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styles from './Alert.module.scss';
-import { ReactComponent as SuccessIcon } from "../../assets/alert-success-icon.svg";
-import { ReactComponent as WarningIcon } from "../../assets/alert-warning-triangle.svg";
-import { ReactComponent as InfoIcon } from "../../assets/alert-info-icon.svg";
-import { ReactComponent as ErrorIcon } from "../../assets/alert-error-icon.svg";
-import { ReactComponent as TimesIcon } from "../../assets/fa-times-icon.svg";
+import { ReactComponent as SuccessIcon } from "../../assets/images/alert-success-icon.svg";
+import { ReactComponent as WarningIcon } from "../../assets/images/alert-warning-triangle.svg";
+import { ReactComponent as InfoIcon } from "../../assets/images/alert-info-icon.svg";
+import { ReactComponent as ErrorIcon } from "../../assets/images/alert-error-icon.svg";
+import { ReactComponent as TimesIcon } from "../../assets/images/fa-times-icon.svg";
 
 const Alert = ({ status, text, description }) => {
     const ref = useRef(null);

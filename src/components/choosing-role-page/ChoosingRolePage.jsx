@@ -1,7 +1,7 @@
 import React from 'react';
 import styles from './ChoosingRolePage.module.scss';
-import customerImage from '../../assets/view-beautiful-caucasian-female-writing-cardboard-box-surrounded-with-boxes.jpg';
-import carrierImage from '../../assets/courier-with-delivery-cardboard-box-by-car.jpg';
+import customerImage from '../../assets/images/view-beautiful-caucasian-female-writing-cardboard-box-surrounded-with-boxes.jpg';
+import carrierImage from '../../assets/images/courier-with-delivery-cardboard-box-by-car.jpg';
 import Typewriter from "typewriter-effect";
 import {Link} from "react-router-dom";
 
@@ -16,6 +16,7 @@ const ChoosingRolePage = () => {
                     <div className={styles.blackout}>
                         <h2 className={styles.roleText}>Shipper</h2>
                         <Typewriter
+                            className={styles.typewriter}
                             options={{
                                 strings: [
                                     "We appreciate see you",
@@ -39,6 +40,7 @@ const ChoosingRolePage = () => {
                     <div className={styles.blackout}>
                         <h2 className={styles.roleText}>Carrier</h2>
                         <Typewriter
+                            className={styles.typewriter}
                             options={{
                                 strings: [
                                     "Manage Loads, Deliver Loads, Get Paid, Make your Business Simple",

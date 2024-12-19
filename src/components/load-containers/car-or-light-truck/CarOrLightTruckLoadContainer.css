@@ -177,7 +177,7 @@
     text-align: center;
     align-content: center;
     align-items: center;
-    background: url("/src/assets/file-bg.jpg") no-repeat center center;
+    background: url("/src/assets/images/file-bg.jpg") no-repeat center center;
     background-size: contain;
    height: 80px;
 }

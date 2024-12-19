@@ -1,6 +1,6 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import './CarrierDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../assets/images/default-avatar.svg";
 import {useParams} from 'react-router-dom';
 import MetricCompoent from "../metric-component/MetricCompoent";
 import DashboardSidebar from "../dashboard-sidebar/DashboardSidebar";
@@ -12,7 +12,6 @@ import OpenShipAIChat from "../open-ai-chat/OpenShipAIChat";
 import ActiveLoadsPanel from "../shipper-active-loads-panel/ActiveLoadsPanel";
 import Grid from "../grid-two-columns/Grid";
 import Button from "../button/Button";
-import useGsapAnimation from "../../hooks/useGsapAnimation";
 
 const CarrierDashboard = () => {
 
@@ -20,13 +19,11 @@ const CarrierDashboard = () => {
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [activeTab, setActiveTab] = useState("Statistics");
+    const [activeTab, setActiveTab] = useState("Chat");
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
-
-    const animation = useGsapAnimation('slideRight');
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
@@ -119,7 +116,7 @@ const CarrierDashboard = () => {
                             </div>
                         )}
                         {activeTab === "Loads" && (
-                            <ActiveLoadsPanel userID={carrierID} user="carrier"/>
+                            <ActiveLoadsPanel userID={carrierID} userRole="carrier"/>
                         )}
                     </div>
                 </div>

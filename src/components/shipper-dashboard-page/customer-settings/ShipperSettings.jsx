@@ -1,14 +1,14 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
 import axios from 'axios';
-import {ReactComponent as SettingsAccount} from "../../../assets/person-settings.svg";
-import {ReactComponent as SettingsPassword} from "../../../assets/lock-settings.svg";
-import {ReactComponent as SettingsNotifications} from "../../../assets/notification-person.svg";
-import {ReactComponent as SettingsHelp} from "../../../assets/help-settings.svg";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as DeleteRedBinIcon} from "../../../assets/delete-account-bin-icon.svg";
-import {ReactComponent as PencilIcon} from "../../../assets/pencil-edit-icon.svg";
-import {ReactComponent as IconInfo} from "../../../assets/info-icon.svg";
+import {ReactComponent as SettingsAccount} from "../../../assets/images/person-settings.svg";
+import {ReactComponent as SettingsPassword} from "../../../assets/images/lock-settings.svg";
+import {ReactComponent as SettingsNotifications} from "../../../assets/images/notification-person.svg";
+import {ReactComponent as SettingsHelp} from "../../../assets/images/help-settings.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
+import {ReactComponent as DeleteRedBinIcon} from "../../../assets/images/delete-account-bin-icon.svg";
+import {ReactComponent as PencilIcon} from "../../../assets/images/pencil-edit-icon.svg";
+import {ReactComponent as IconInfo} from "../../../assets/images/info-icon.svg";
 import Switch from '../../switcher-component/Switch';
 import {useNavigate, useParams} from 'react-router-dom';
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
@@ -38,7 +38,7 @@ const ShipperSettings = () => {
     const fileInputRef = useRef();
     const navigate = useNavigate();
     const [status, setStatus] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSetLoading, setIsLoading] = useState(false);
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -46,7 +46,7 @@ const ShipperSettings = () => {
     const [shipperEmail, setShipperEmail] = useState('');
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [ setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [avatarFromDB] = useState(null);
     const [email, setEmail] = useState(shipperInfo ? shipperInfo.userShipperEmail : '');
     const [description, setDescription] = useState('');
@@ -215,7 +215,6 @@ const ShipperSettings = () => {
                 console.error(error);
             }
         }
-        window.location.reload();
     };
 
     useEffect(() => {

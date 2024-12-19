@@ -1,25 +1,25 @@
 import React from 'react';
-import {ReactComponent as BidArrowIcon} from "../../assets/bid-arrow-icon.svg";
-import {Link} from "react-router-dom";
-import GoogleMapShowDirection from "../google-map-show-direction/GoogleMapShowDirection";
 import InfoItem from "../info-item/InfoItem";
 import './AssignedLoadContainer.css';
 import LoadInfoList from "../load-direction-info-list/LoadInfoList";
 import Grid from "../grid-two-columns/Grid";
 import Button from "../button/Button";
+import GoogleMapRealTimeTrafficComponent
+    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 
 const AssignedLoadContainer = ({
                                    loadTitle,
                                    driverID,
                                    loadPickupLocation,
-                                   loadPickupLocationDate,
                                    loadCredentialID,
                                    loadDeliveryLocation,
-                                   loadDeliveryLocationDate,
                                    loadType,
                                    loadWeight,
                                    loadTrip
                                }) => {
+
+    const loadPickupLocationFormatted =  loadPickupLocation ? loadPickupLocation.split(",")[0] : "Oregon";
+    const loadDeliveryLocationFormatted =  loadDeliveryLocation ? loadDeliveryLocation.split(",")[0] : "Oregon";
 
     return (
         <div className="take-load-container">
@@ -58,7 +58,7 @@ const AssignedLoadContainer = ({
                 </Grid>
             </div>
             <div className="map-load-section-load-container">
-                <GoogleMapShowDirection origin={loadPickupLocation} destination={loadDeliveryLocation}/>
+                <GoogleMapRealTimeTrafficComponent type="destination" origin={loadPickupLocationFormatted} destination={loadDeliveryLocationFormatted} borderRadius={["", "45px", "45px", ""]}/>
             </div>
         </div>
     );

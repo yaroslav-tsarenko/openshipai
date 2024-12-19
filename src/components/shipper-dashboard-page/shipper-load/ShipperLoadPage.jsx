@@ -3,8 +3,8 @@ import '../ShipperDashboard.css';
 import {Link, useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
-import {ReactComponent as DirectionIcon} from "../../../assets/load-container-directions-smaller.svg";
-import {ReactComponent as ArrowNav} from "../../../assets/arrow-nav.svg";
+import {ReactComponent as DirectionIcon} from "../../../assets/images/load-container-directions-smaller.svg";
+import {ReactComponent as ArrowNav} from "../../../assets/images/arrow-nav.svg";
 import axios from 'axios';
 import GoogleMapCurrentLoadDirections
     from "../../google-map-show-current-load-direction/GoogleMapCurrentLoadDirections";

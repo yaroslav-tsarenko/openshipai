@@ -1,17 +1,17 @@
 import React, {useState} from 'react';
-import {ReactComponent as UserAvatarComponent} from "../../../assets/userAvatar2.svg";
-import ClipLoader from 'react-spinners/ClipLoader';
+import {ReactComponent as UserAvatarComponent} from "../../../assets/images/userAvatar2.svg";
 import axios from "axios";
 import Alert from "../../floating-window-success/Alert";
 import FloatingWindowFailed from "../../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../../constants/constants";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import Button from "../../button/Button";
 const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID }) => {
 
     const [isAssignSuccess, setIsAssignSuccess] = useState(false);
     const [isAssignFailed, setIsAssignFailed] = useState(false);
     const [isAssignLoading, setIsAssignLoading] = useState(false);
-
+    const [message, setMessage] = useState(null)
     const handleAssignLoad = async () => {
         setIsAssignLoading(true);
 
@@ -23,34 +23,40 @@ const DriverEntity = ({ driverFirstAndLastName, driverEmail, driverID, loadID })
             } else {
                 setIsAssignFailed(true);
             }
+            setMessage({
+                status: 'success',
+                text: 'Load assigned!',
+                description: 'Driver will be notified'
+            });
         } catch (error) {
+            setMessage({
+                status: 'error',
+                text: 'Something went wrong!',
+                description: 'Try again later'
+            });
             console.error('Error assigning load to driver:', error);
-            setIsAssignFailed(true);
         }
         setIsAssignLoading(false);
     };
 
     return (
         <>
-            {isAssignSuccess && <Alert text="You succesfully asigned load for driver"  />}
-            {isAssignFailed && <FloatingWindowFailed text="Something went wrong. Try again"  />}
+            {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             <div className="driver-container-entity">
                 <div className="driver-entity-info">
                     <UserAvatarComponent/>
                     <section>
                         <h2>{driverFirstAndLastName}</h2>
                         <p>{driverEmail}</p>
-                        <p>{driverID}</p>
-                        <p>{loadID}</p>
                     </section>
                 </div>
-                <button className="assign-driver-button" onClick={handleAssignLoad}>
+                <Button variant="apply-non-responsive"  onClick={handleAssignLoad}>
                     {isAssignLoading ?
                         <>
                             <RotatingLinesLoader title="Assigning..."/>
                         </>
                         : 'Assign'}
-                </button>
+                </Button>
             </div>
         </>
 

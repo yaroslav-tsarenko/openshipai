@@ -1,21 +1,21 @@
 import React, {useEffect, useState} from "react";
 import '../CarrierDashboard.css';
-import {ReactComponent as MarkerIcon} from "../../../assets/location-marker-icon.svg";
-import {ReactComponent as MarkerIconWhite} from "../../../assets/location-marker-icon-white.svg";
-import {ReactComponent as AlongRouteIcon} from "../../../assets/route-marker-icon.svg";
-import {ReactComponent as AlongRouteIconWhite} from "../../../assets/route-marker-icon-white.svg";
-import {ReactComponent as PickupLocationArrow} from "../../../assets/arrow-icon-pickup.svg";
-import {ReactComponent as DeliveryLocationArrow} from "../../../assets/arrow-icon-delivery.svg";
+import {ReactComponent as MarkerIcon} from "../../../assets/images/location-marker-icon.svg";
+import {ReactComponent as MarkerIconWhite} from "../../../assets/images/location-marker-icon-white.svg";
+import {ReactComponent as AlongRouteIcon} from "../../../assets/images/route-marker-icon.svg";
+import {ReactComponent as AlongRouteIconWhite} from "../../../assets/images/route-marker-icon-white.svg";
+import {ReactComponent as PickupLocationArrow} from "../../../assets/images/arrow-icon-pickup.svg";
+import {ReactComponent as DeliveryLocationArrow} from "../../../assets/images/arrow-icon-delivery.svg";
 import {useParams} from 'react-router-dom';
 import Slider from '@mui/material/Slider';
 import axios from 'axios';
-import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as FilterIcon} from "../../../assets/filter-icon.svg";
-import {ReactComponent as DateIcon} from "../../../assets/date-icon.svg";
+import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
+import {ReactComponent as FilterIcon} from "../../../assets/images/filter-icon.svg";
+import {ReactComponent as DateIcon} from "../../../assets/images/date-icon.svg";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
+import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
 import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
 import Button from "../../button/Button";
@@ -314,14 +314,12 @@ const CarrierTakeLoad = () => {
             {showAutomotiveSubOptions && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
-
                         <div className="select-popup-header">
                             <h2>Automotive Options</h2>
                             <button className="close-popup-button"
                                     onClick={() => setShowAutomotiveSubOptions(false)}>Close
                             </button>
                         </div>
-
                         <div className="select-popup-content">
                             <p onClick={() => handleSelectSubLoadTypeOption('Car or Light Truck')}>Car or Light
                                 Truck</p>
@@ -897,7 +895,7 @@ const CarrierTakeLoad = () => {
                                         sortedAndFilteredLoads.map(load => (
                                             <LoadContainerBid
                                                 key={load._id}
-                                                loadPrice={load.loadPrice}
+                                                loadPrice={load.loadAveragePrice}
                                                 loadTitle={load.loadTitle}
                                                 loadPickUpLocation={load.loadPickupLocation}
                                                 loadPickUpDate={load.loadPickupDate}
@@ -966,7 +964,6 @@ const CarrierTakeLoad = () => {
                                             date</p>
                                     )}
                                 </div>
-
                             )}
                         </div>
                     </div>

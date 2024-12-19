@@ -4,8 +4,8 @@ import Button from "../../button/Button";
 import {useState} from 'react';
 import axios from "axios";
 import TextInput from "../../text-input/TextInput";
-import shipperImage from "../../../assets/shipper-booking.png"
-import carrierImage from "../../../assets/carrier-truck.svg"
+import shipperImage from "../../../assets/images/shipper-booking.png"
+import carrierImage from "../../../assets/images/carrier-truck.svg"
 import {BACKEND_URL} from "../../../constants/constants";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 import Alert from "../../floating-window-success/Alert";

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ReactComponent as PlusBlue } from "../../../assets/fa-plus-blue.svg";
-import { ReactComponent as MinusBlue } from "../../../assets/fa-minus.svg";
+import { ReactComponent as PlusBlue } from "../../../assets/images/fa-plus-blue.svg";
+import { ReactComponent as MinusBlue } from "../../../assets/images/fa-minus.svg";
 import styles from "./FAQItem.module.scss";
 
 const FaqItem = ({ title, description }) => {

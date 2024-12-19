@@ -1,7 +1,7 @@
 import React from 'react';
-import {ReactComponent as GreenCheckmark} from "../../../assets/checkmark-green.svg";
-import {ReactComponent as TrustedCompanies} from "../../../assets/trusted-companies.svg";
-import {ReactComponent as TrustedClients} from "../../../assets/client-trusted.svg";
+import {ReactComponent as GreenCheckmark} from "../../../assets/images/checkmark-green.svg";
+import {ReactComponent as TrustedCompanies} from "../../../assets/images/trusted-companies.svg";
+import {ReactComponent as TrustedClients} from "../../../assets/images/client-trusted.svg";
 import styles from './MainHeading.module.scss';
 import Button from "../../button/Button";
 import {useNavigate} from "react-router-dom";

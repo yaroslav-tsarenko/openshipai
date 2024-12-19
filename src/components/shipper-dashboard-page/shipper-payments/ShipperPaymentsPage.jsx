@@ -1,13 +1,12 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/default-avatar.svg";
-import {ReactComponent as PlusIcon} from "../../../assets/plus-icon-static.svg";
-import {ReactComponent as SortIcon} from "../../../assets/sort-icon-blue.svg";
-import {ReactComponent as DeleteIcon} from "../../../assets/delete-account-bin-icon.svg";
-import {ReactComponent as PinCodeSettingsIcon} from "../../../assets/pin-code-icon.svg";
-import {ReactComponent as CashbackIcon} from "../../../assets/cashback-icon.svg";
-import {ReactComponent as LockIcon} from "../../../assets/lock-card-icon.svg";
-import {ReactComponent as SettingsIcon} from "../../../assets/settings-icon-card.svg";
+import {ReactComponent as PlusIcon} from "../../../assets/images/plus-icon-static.svg";
+import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
+import {ReactComponent as DeleteIcon} from "../../../assets/images/delete-account-bin-icon.svg";
+import {ReactComponent as PinCodeSettingsIcon} from "../../../assets/images/pin-code-icon.svg";
+import {ReactComponent as CashbackIcon} from "../../../assets/images/cashback-icon.svg";
+import {ReactComponent as LockIcon} from "../../../assets/images/lock-card-icon.svg";
+import {ReactComponent as SettingsIcon} from "../../../assets/images/settings-icon-card.svg";
 import {useParams} from 'react-router-dom';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
@@ -300,9 +299,6 @@ const ShipperPaymentsPage = () => {
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
-                    {/*  <div className={styles.paymentsMethodSelector}>
-                        <button>Credit Card</button>
-                    </div>*/}
                     <div ref={cardsAnimation} className={styles.allCardsSection}>
                         <h4>All cards</h4>
                         <section>
@@ -375,10 +371,10 @@ const ShipperPaymentsPage = () => {
                                     <p>No card selected</p>
                                 )}
                                 <section>
-                                    <button><PinCodeSettingsIcon/> Pin code settings</button>
-                                    <button><CashbackIcon/> Cashback</button>
-                                    <button><LockIcon/> Block Card</button>
-                                    <button><SettingsIcon/> Settings Limits</button>
+                                    <Button variant="darkGrey-100"><PinCodeSettingsIcon/> Pin code settings</Button>
+                                    <Button variant="darkGrey-100"><CashbackIcon/> Cashback</Button>
+                                    <Button variant="darkGrey-100"><LockIcon/> Block Card</Button>
+                                    <Button variant="darkGrey-100"><SettingsIcon/> Settings Limits</Button>
                                 </section>
                             </div>
                         </div>
