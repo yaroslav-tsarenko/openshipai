@@ -52,8 +52,8 @@ const ShipperChatPage = () => {
     });
     const [ setDealChatConversations] = useState([]);
     const [isProcessingPayment, setIsProcessingPayment] = useState(false);
-    const [ setShowSuccessContainer] = useState(false);
-    const [ setShowBOLContainer] = useState(false);
+    const [isShowSuccessContainer, setShowSuccessContainer] = useState(false);
+    const [isShowBOLContainer ,setShowBOLContainer] = useState(false);
     const [showSuccessWindow, setShowSuccessWindow] = useState(false);
     const [isApproved, setIsApproved] = useState(false);
     const stripePromise = loadStripe('pk_live_51OpgSNJyJQMrMLmUKYcZUuTAZjBS34yI30KVPevbM974WZd25lNOskkoTqMzt1ZjASYA1NKgcN02ONX469pOjWlR00yn6CSBN3');
@@ -635,28 +635,27 @@ const ShipperChatPage = () => {
                                         load.loadDeliveredStatus === 'Delivered' ? (
                                             <h4 className="load-status-delivering">Load Delivered successfully</h4>
                                         ) : (
-                                            <button className="waiting-for-approval-button" disabled>
+                                            <Button variant="wait" disabled>
                                                 <RotatingLinesLoader title="Carrier assigning driver for load..."/>
-                                            </button>
+                                            </Button>
                                         )
                                     ) : (
-                                        <button className="pay-button" onClick={handlePayClick}>
+                                        <Button variant="apply-non-responsive" onClick={handlePayClick}>
                                             {isProcessingPayment ?
                                                 <>
                                                     <RotatingLinesLoader title="Processing..."/>
                                                 </>
                                                 : "Pay"
                                             }
-                                        </button>
+                                        </Button>
                                     )
                                 ) : !isApproved ? (
-                                    <button className="send-bol-button" onClick={handleApprove}>Approve
-                                        Agreement</button>
+                                    <Button variant="apply-non-responsive" className="send-bol-button" onClick={handleApprove}>Approve
+                                        Agreement</Button>
                                 ) : (
-                                    <button className="waiting-for-approval-button" disabled>
-                                        <ClipLoader className="fade-loader" color="#cacaca" loading={true} size={15}/>
-                                        Waiting for Carrier's approval
-                                    </button>
+                                    <Button variant="wait" disabled>
+                                        <RotatingLinesLoader title="Waiting for carrier approval..."/>
+                                    </Button>
                                 )}
                             </div>
                             {chatID ? (
@@ -759,40 +758,33 @@ const ShipperChatPage = () => {
                                                         }}/>
                                                     ))}
                                                 </div>
-
                                                 <div className="chat-input-area">
-                                                    <Button
-                                                        variant="attachMaterial"
-                                                        onClick={() => fileInputRef.current.click()} // Trigger file input click
-                                                    >
-                                                        <AttachFile/>
-                                                    </Button>
-
-                                                    <input
-                                                        type="text"
-                                                        className="chat-input"
-                                                        placeholder="Type your message here..."
-                                                        value={inputMessage}
-                                                        onChange={e => setInputMessage(e.target.value)}
-                                                        onKeyDown={handleKeyDown}
-                                                    />
-                                                    {/*
-                                                <AttachCamera className="chat-input-icons"/>
-                                                <AttachImage className="chat-input-icons"/>
-
-                                                */}
-                                                    <input
-                                                        type="file"
-                                                        ref={fileInputRef}
-                                                        style={{display: 'none'}}
-                                                        onChange={handleFileChange}
-                                                        multiple
-                                                    />
-                                                    <Button
-                                                        variant="attachMaterial"
-                                                    >
-                                                        <SendVoiceMessage/>
-                                                    </Button>
+                                                    <div className="chat-input-options">
+                                                        <Button
+                                                            variant="attachMaterial">
+                                                            <SendVoiceMessage/>
+                                                        </Button>
+                                                        <Button
+                                                            variant="attachMaterial"
+                                                            onClick={() => fileInputRef.current.click()}>
+                                                            <AttachFile/>
+                                                        </Button>
+                                                        <input
+                                                            type="text"
+                                                            className="chat-input"
+                                                            placeholder="Type your message here..."
+                                                            value={inputMessage}
+                                                            onChange={e => setInputMessage(e.target.value)}
+                                                            onKeyDown={handleKeyDown}
+                                                        />
+                                                        <input
+                                                            type="file"
+                                                            ref={fileInputRef}
+                                                            style={{display: 'none'}}
+                                                            onChange={handleFileChange}
+                                                            multiple
+                                                        />
+                                                    </div>
                                                     <Button
                                                         variant="sendButton"
                                                         onClick={() => {

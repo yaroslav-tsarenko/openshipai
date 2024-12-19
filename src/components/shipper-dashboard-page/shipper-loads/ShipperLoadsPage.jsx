@@ -46,7 +46,6 @@ import LocationTimeDataForm from "../../location-time-data-form/LocationTimeData
 import SEO from "../../seo/SEO";
 import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
-
 const ShipperLoadsPage = () => {
     const [createLoadSection, setCreateLoadSection] = useState(true);
     const {shipperID} = useParams();
@@ -55,7 +54,7 @@ const ShipperLoadsPage = () => {
     const [step, setStep] = useState(1);
     const [ setSortedLoads] = useState([]);
     const [shipperInfo, setShipperInfo] = useState(null);
-    const [ setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [selectedFilter, setSelectedFilter] = useState('');
     const [showSortPopup, setShowSortPopup] = useState(false);
     const [showFilterPopup, setShowFilterPopup] = useState(false);
@@ -358,7 +357,6 @@ const ShipperLoadsPage = () => {
                         <div className="shipper-loads-dashboard-content-body">
                             <div className="create-load-container-content">
                                 {step === 1 && (
-
                                     <CreateLoadContainer
                                         step={1}
                                         title="Choose Load Type"

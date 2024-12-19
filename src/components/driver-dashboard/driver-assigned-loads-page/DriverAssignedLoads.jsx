@@ -89,7 +89,7 @@ const DriverAssignedLoads = () => {
     useEffect(() => {
         const fetchLoads = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-driver-loads/${driverID}`);
+                const response = await axios.get(`${BACKEND_URL}/driver-assigned-loads/${driverID}`);
                 setLoads(response.data);
             } catch (error) {
                 console.error('Error fetching driver loads:', error);

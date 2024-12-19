@@ -1,93 +1,68 @@
-import React, { useState, useEffect, useRef } from 'react';
-import {
-    GoogleMap,
-    LoadScriptNext,
-    DirectionsService,
-    DirectionsRenderer,
-    TrafficLayer,
-    Marker,
-} from '@react-google-maps/api';
-import ErrorBoundary from "../../error-boundary/ErrorBoundary";
+import React, { useEffect, useRef } from "react";
 
-const libraries = ['places'];
-
-const containerStyle = {
-    width: '100%',
-    height: '100%',
-    borderRadius: '10px',
-};
-
-function GoogleMapRealTimeTrafficComponent({ origin, destination }) {
-    const [directionsResponse, setDirectionsResponse] = useState(null);
-    const [routeInfo, setRouteInfo] = useState({ distance: '', duration: '' });
-    const [fuelStops, setFuelStops] = useState([]);
+const GoogleMapRealTimeTrafficComponent = ({
+                                               type,
+                                               origin,
+                                               destination,
+                                               lat,
+                                               lng,
+                                               borderRadius = ["0px", "0px", "0px", "0px"]
+                                           }) => {
     const mapRef = useRef(null);
 
     useEffect(() => {
-        if (!origin || !destination) return;
-        setDirectionsResponse(null); // Reset on new origin/destination
-    }, [origin, destination]);
-
-    const directionsCallback = (response) => {
-        if (!response) {
-            console.error('No response from DirectionsService');
+        if (!window.google) {
+            console.error("Google Maps JavaScript API not loaded.");
             return;
         }
+        const isValidCoordinate = (coordinate) => typeof coordinate === 'number' && !isNaN(coordinate);
+        const validLat = isValidCoordinate(lat) ? lat : 0;
+        const validLng = isValidCoordinate(lng) ? lng : 0;
+        const map = new window.google.maps.Map(mapRef.current, {
+            center: { lat: validLat, lng: validLng },
+            zoom: 10,
+            styles: [],
+        });
 
-        if (response.status === 'OK') {
-            setDirectionsResponse(response);
-            const leg = response.routes[0].legs[0];
-            setRouteInfo({
-                distance: leg.distance.text,
-                duration: leg.duration.text,
+        const directionsService = new window.google.maps.DirectionsService();
+        const directionsRenderer = new window.google.maps.DirectionsRenderer({
+            map,
+        });
+
+        if (type === "destination" && origin && destination) {
+            directionsService.route({
+                origin,
+                destination,
+                travelMode: window.google.maps.TravelMode.DRIVING,
+            }, (result, status) => {
+                if (status === window.google.maps.DirectionsStatus.OK) {
+                    directionsRenderer.setDirections(result);
+                    map.fitBounds(result.routes[0].bounds);
+                } else {
+                    console.error("Directions request failed due to " + status);
+                }
             });
-        } else {
-            console.error(`Directions request failed: ${response.status}`);
-        }
-    };
 
-    const handleMapLoad = (map) => {
-        mapRef.current = map;
-    };
+        } else if (type === "location" && isValidCoordinate(lat) && isValidCoordinate(lng)) {
+            new window.google.maps.Marker({
+                position: { lat: validLat, lng: validLng },
+                map: map,
+            });
+            map.setCenter({ lat: validLat, lng: validLng });
+            map.setZoom(15);
+        }
+    }, [type, origin, destination, lat, lng]);
 
     return (
-        <ErrorBoundary>
-            <LoadScriptNext
-                googleMapsApiKey="AIzaSyBBf32Vkymgt4v6YF5TAw_0cmCx9ESeuD4"
-                libraries={libraries}
-                loadingElement={<div>Loading Google Maps...</div>}
-                id="google-maps-script"
-            >
-                <GoogleMap
-                    mapContainerStyle={containerStyle}
-                    center={directionsResponse ? directionsResponse.routes[0].legs[0].start_location : { lat: 37.7749, lng: -122.4194 }}
-                    zoom={10}
-                    onLoad={handleMapLoad}
-                >
-                    <TrafficLayer />
-                    {origin && destination && !directionsResponse && (
-                        <DirectionsService
-                            options={{
-                                destination,
-                                origin,
-                                travelMode: 'DRIVING',
-                            }}
-                            callback={directionsCallback}
-                        />
-                    )}
-                    {directionsResponse && (
-                        <DirectionsRenderer
-                            options={{ directions: directionsResponse }}
-                        />
-                    )}
-                    {fuelStops.map((stop, index) => (
-                        <Marker key={index} position={stop.location} />
-                    ))}
-                </GoogleMap>
-            </LoadScriptNext>
-        </ErrorBoundary>
-
+        <div
+            ref={mapRef}
+            style={{
+                borderRadius: borderRadius.join(" "),
+                width: "100%",
+                height: "100%",
+            }}
+        ></div>
     );
-}
+};
 
 export default GoogleMapRealTimeTrafficComponent;

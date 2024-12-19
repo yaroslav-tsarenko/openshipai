@@ -7,6 +7,8 @@ const containerStyle = {
     height: '100%',
 };
 
+const libraries = ['places'];
+
 const CustomMarker = ({ position, children }) => (
     <OverlayView
         position={position}
@@ -63,7 +65,7 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDire
     return (
         <LoadScript
             googleMapsApiKey="AIzaSyDVNDAsPWNwktSF0f7KnAKO5hr8cWSJmNM"
-            libraries={['places']}
+            libraries={libraries}
             preventGoogleFontsLoading
         >
             <GoogleMap

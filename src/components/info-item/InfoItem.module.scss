@@ -17,6 +17,10 @@
   border-radius: 8px;
   width: fit-content;
   color: var(--grey);
+
+  @media screen and (max-width: 1028px) {
+    font-size: 1rem;
+  }
 }
 
 .green {

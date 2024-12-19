@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef} from "react";
 import '../ShipperDashboard.css';
-import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
 import {ReactComponent as PlusIcon} from "../../../assets/images/plus-icon-static.svg";
 import {ReactComponent as SortIcon} from "../../../assets/images/sort-icon-blue.svg";
 import {ReactComponent as DeleteIcon} from "../../../assets/images/delete-account-bin-icon.svg";
@@ -300,9 +299,6 @@ const ShipperPaymentsPage = () => {
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
-                    {/*  <div className={styles.paymentsMethodSelector}>
-                        <button>Credit Card</button>
-                    </div>*/}
                     <div ref={cardsAnimation} className={styles.allCardsSection}>
                         <h4>All cards</h4>
                         <section>
@@ -375,10 +371,10 @@ const ShipperPaymentsPage = () => {
                                     <p>No card selected</p>
                                 )}
                                 <section>
-                                    <button><PinCodeSettingsIcon/> Pin code settings</button>
-                                    <button><CashbackIcon/> Cashback</button>
-                                    <button><LockIcon/> Block Card</button>
-                                    <button><SettingsIcon/> Settings Limits</button>
+                                    <Button variant="darkGrey-100"><PinCodeSettingsIcon/> Pin code settings</Button>
+                                    <Button variant="darkGrey-100"><CashbackIcon/> Cashback</Button>
+                                    <Button variant="darkGrey-100"><LockIcon/> Block Card</Button>
+                                    <Button variant="darkGrey-100"><SettingsIcon/> Settings Limits</Button>
                                 </section>
                             </div>
                         </div>

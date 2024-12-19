@@ -6,7 +6,7 @@ import {ReactComponent as SendVoiceMessage} from "../../../assets/images/mic-cha
 import {ReactComponent as UserAvatarComponent} from "../../../assets/images/userAvatar2.svg";
 import "../CarrierDashboard.css";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
-import {Link, useNavigate, useParams} from "react-router-dom";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {ReactComponent as AttachFile} from "../../../assets/images/skrepka-icon.svg";
 import {loadStripe} from '@stripe/stripe-js';
@@ -14,7 +14,7 @@ import io from 'socket.io-client';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader} from "react-spinners";
 import useSound from 'use-sound';
-import notificationSound from '../../../assets/sound-effects/message-sent.mp3'; // replace with the path to your sound file
+import notificationSound from '../../../assets/sound-effects/message-sent.mp3';
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
 import {SOCKET_URL} from "../../../constants/constants";
@@ -23,42 +23,27 @@ import Button from "../../button/Button";
 import styles from "./CarrierChatPage.module.scss";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {Skeleton} from "@mui/material";
-import {FaArrowLeft} from "react-icons/fa6";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import {FaArrowLeft} from "react-icons/fa";
+import Popup from "../../popup/Popup";
 
 const CarrierChatPage = () => {
 
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [user, setUser] = useState(null);
     const navigate = useNavigate();
     const [play] = useSound(notificationSound);
-    const [motoEquipmentLoads, setMotoEquipmentLoads] = useState([]);
-    const [isSuccess, setIsSuccess] = useState(false);
-    const [isAssignSuccess, setIsAssignSuccess] = useState(false);
-    const [isAssignFailed, setIsAssignFailed] = useState(false);
-    const [isAssignLoading, setIsAssignLoading] = useState(false);
-    const [boatLoads, setBoatLoads] = useState([]); // Add this line
-    const [constructionEquipmentLoads, setConstructionEquipmentLoads] = useState([]); // Add this line
-    const [heavyEquipmentLoads, setHeavyEquipmentLoads] = useState([]); // Add this line
+    const [shipperName, setShipperName] = useState(null);
     const [data, setData] = useState([]);
     const [touchStart, setTouchStart] = useState(null);
     const [touchEnd, setTouchEnd] = useState(null);
     const minSwipeDistance = 50;
     const [selectedChatID, setSelectedChatID] = useState(null);
     const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
-    const [isOpen, setIsOpen] = useState(false);
-    const [selectedLoad, setSelectedLoad] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [load, setLoad] = useState(null);
     const [formData, setFormData] = useState(null);
-    const [showEditForm, setShowEditForm] = useState(false);
-    const [isPopupVisible, setIsPopupVisible] = useState(false);
-    const sigCanvas = useRef({});
-    const [selectedDropdown, setSelectedDropdown] = useState(null);
     const [chatData, setChatData] = useState(null);
-    const [bid, setBid] = useState(null);
     const [conversations, setConversations] = useState([]);
-    const [bids, setBids] = useState([]);
     const [shipperApproval, setShipperApproval] = useState(false);
     const fileInputRef = useRef();
     const [selectedBid, setSelectedBid] = useState(null);
@@ -67,65 +52,16 @@ const CarrierChatPage = () => {
     const {carrierID} = useParams();
     const {chatID} = useParams();
     const [shipper, setShipper] = useState(null);
-    const [isChatVisible, setIsChatVisible] = useState(false);
+    const [isChatVisible, setChatVisible] = useState(false);
     const socketRef = useRef();
     const [inputMessage, setInputMessage] = useState("");
-    const [imagePreviewUrl, setImagePreviewUrl] = useState([]);
     const [filePreviewUrl, setFilePreviewUrl] = useState([]);
-    const [fileData, setFileData] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [isApprovalSent, setIsApprovalSent] = useState(false);
     const [showAssignDriverPopup, setShowAssignDriverPopup] = useState(false);
     const [drivers, setDrivers] = useState([]);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-
-    const toggleMobileSidebar = () => {
-        setIsMobileSidebarOpen(!isMobileSidebarOpen);
-    };
-    const [selectedFiles, setSelectedFiles] = useState([]);
-    const [filePreviews, setFilePreviews] = useState([]);
-    const fileInputRefChatFile = useRef(null); // Reference to the hidden file input
-    const handleBackToConversations = () => {
-        setIsChatVisible(false);
-    };
-
-    const toggleAssignDriverPopup = () => {
-        setShowAssignDriverPopup(!showAssignDriverPopup);
-    };
-
-    useEffect(() => {
-        const fetchDrivers = async () => {
-            const response = await fetch(`${BACKEND_URL}/get-drivers/${carrierID}`);
-            const data = await response.json();
-            setDrivers(data);
-        };
-
-        const getAvatar = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
-                if (response.data.carrierAvatar) {
-                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        const getUser = async () => {
-            try {
-                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
-                const data = await response.json();
-                setCarrierInfo(data);
-            } catch (error) {
-                console.error('Error:', error);
-            }
-        };
-        getUser();
-        getAvatar();
-        fetchDrivers();
-
-    }, [carrierID]);
-
     const handleFileChangeForButton = (event) => {
         const files = Array.from(event.target.files);
         if (files.length > 5) {
@@ -135,111 +71,58 @@ const CarrierChatPage = () => {
         const fileUrls = files.map(file => URL.createObjectURL(file));
         setFilePreviewUrl(prevFileUrls => [...prevFileUrls, ...fileUrls]);
     };
+    const toggleMobileSidebar = () => {
+        setIsMobileSidebarOpen(!isMobileSidebarOpen);
+    };
+    const [selectedFiles, setSelectedFiles] = useState([]);
+    const [filePreviews, setFilePreviews] = useState([]);
+    const fileInputRefChatFile = useRef(null); // Reference to the hidden file input
+    const toggleAssignDriverPopup = () => {
+        setShowAssignDriverPopup(!showAssignDriverPopup);
+    };
+    const handleFileChange = (event) => {
+        const files = Array.from(event.target.files);
+        setSelectedFiles(files);
 
-    useEffect(() => {
-        const fetchDrivers = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/get-all-drivers`); // Replace with your API endpoint
-                setDrivers(response.data);
-            } catch (error) {
-                console.error('Error fetching drivers:', error);
-            }
-        };
-
-        fetchDrivers();
-    }, []);
-
-
-    useEffect(() => {
-        const fetchChatData = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/get-deal-conversation-chat/${chatID}`);
-                setChatData(response.data);
-                console.log(response.data);
-            } catch (error) {
-                console.error('Error fetching chat data:', error);
-            }
-        };
-
-        fetchChatData();
-    }, [chatID])
-
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    axios.get(`${BACKEND_URL}/get-shipper/${response.data.shipperID}`)
-                        .then(shipperResponse => {
-                            if (shipperResponse.data && shipperResponse.status === 200) {
-                                setShipper(shipperResponse.data);
-                            }
-                        })
-                        .catch(shipperError => {
-                            console.error('Error fetching shipper data:', shipperError);
-                        });
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching chat conversation:', error);
-            });
-    }, [chatID]);
-
-    useEffect(() => {
-        if (selectedBid && selectedBid.carrierID) {
-            axios.get(`${BACKEND_URL}/get-carrier/${selectedBid.carrierID}`)
-                .then(response => {
-                    if (response.data && response.status === 200) {
-                        setCarrier(response.data);
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching carrier data:', error);
-                });
-        }
-    }, [selectedBid]);
-
-    useEffect(() => {
-        const fetchLoad = async () => {
-            try {
-                const response = await axios.get(`${BACKEND_URL}/get-load-by-chat/${chatID}`);
-                setLoad(response.data);
-                console.log(response.data);
-            } catch (error) {
-                console.error('Error fetching load:', error);
-            }
-        };
-
-        fetchLoad();
-    }, [chatID]);
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations/${carrierID}`)
-            .then(response => {
-                setConversations(response.data);
-                console.log(response.data + "conversations");
-            })
-            .catch(error => {
-                console.error('Error fetching conversations:', error);
-            });
-    }, []);
-
-    useEffect(() => {
-
-        socketRef.current = io.connect(`${SOCKET_URL}`);
-
-        socketRef.current.on('customer message', (data) => {
-            if (data.chatID === selectedChatID) {
-                setChatMessages((oldMessages) => [...oldMessages, data.message]); // Add the received message to the chatMessages state
-            }
+        const previews = files.map(file => {
+            return URL.createObjectURL(file);
+        });
+        setFilePreviews(previews);
+    };
+    const uploadFiles = async () => {
+        const formData = new FormData();
+        selectedFiles.forEach((file) => {
+            formData.append('files', file);
         });
 
-        return () => {
-            socketRef.current.disconnect();
-        };
-    }, [selectedChatID]);
+        try {
+            const response = await axios.post(`${BACKEND_URL}/upload-chat-files`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            return response.data.fileUrls; // Get the uploaded file URLs
+        } catch (error) {
+            console.error('Error uploading files:', error);
+            return [];
+        }
+    };
+    const handleCarrierApprove = async () => {
+        setIsApprovalSent(true);
+        try {
+            const response = await axios.put(`${BACKEND_URL}/confirm-load/${chatID}`);
+            if (response.status === 200) {
+                console.log(response.data.message);
+                socketRef.current.emit('carrier approval', {chatID: selectedChatID});
+            } else {
+                console.error('Error confirming load:', response);
+            }
+        } catch (error) {
+            console.error('Error confirming load:', error);
+        }
+    };
     const handleChatSelection = async (chatID) => {
-        setIsChatVisible(true);
+        setChatVisible(true);
         setSelectedChatID(chatID);
         try {
             const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
@@ -253,20 +136,6 @@ const CarrierChatPage = () => {
             console.error('Error fetching chat data:', error);
         }
     };
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setCarrier(response.data);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching carrier data:', error);
-            });
-    }, [carrierID]);
-
-
     const sendMessage = async (message) => {
         let fileUrls = [];
 
@@ -305,19 +174,6 @@ const CarrierChatPage = () => {
                 console.error('Error saving chat message:', error);
             });
     };
-
-    useEffect(() => {
-        setIsLoading(true);
-        axios.get(`${BACKEND_URL}/get-chat-history/${chatID}`)
-            .then(response => {
-                setChatMessages(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching chat messages:', error);
-            });
-        setIsLoading(false);
-    }, [chatID]);
-
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
             event.preventDefault(); // Prevents the default action to be taken
@@ -325,191 +181,168 @@ const CarrierChatPage = () => {
             setInputMessage(''); // Clears the input field
         }
     };
-
-
-    const handlePay = async (amount) => {
-        const response = await axios.post(`${BACKEND_URL}/create-checkout-session`, {amount});
-        const sessionId = response.data.sessionId;
-
-        const stripe = await stripePromise;
-        const {error} = await stripe.redirectToCheckout({sessionId});
-
-        if (error) {
-            console.log(error);
-        }
-    };
-
     useEffect(() => {
-        if (!touchStart || !touchEnd) return;
-        const distance = touchStart - touchEnd;
-        const isLeftSwipe = distance > minSwipeDistance;
-        const isRightSwipe = distance < -minSwipeDistance;
-        if (isLeftSwipe) {
-            setIsSidebarOpen(false);
-        } else if (isRightSwipe) {
-            setIsSidebarOpen(true);
-        }
-    }, [touchStart, touchEnd]);
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/all-user-loads`)
-            .then(response => {
-                setData(response.data);
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-    }, []);
+        const fetchDrivers = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-drivers/${carrierID}`);
+                const data = await response.json();
+                setDrivers(data);
+            } catch (error) {
+                console.error('Error fetching drivers:', error);
+            }
+        };
 
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-heavy-equipment-loads`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setHeavyEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Heavy Equipment loads:', response);
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
                 }
-            })
-            .catch(error => {
-                console.error('Error fetching Heavy Equipment loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-construction-equipment-loads`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setConstructionEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Construction Equipment loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Construction Equipment loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-boat-loads`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setBoatLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Boat Loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Boat Loads:', error);
-            });
-    }, []); // Empty dependency array means this effect runs once on component mount
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
 
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`)
-            .then(response => {
+        const getUser = async () => {
+            try {
+                const response = await fetch(`${BACKEND_URL}/get-current-user/carrier/${carrierID}`);
+                const data = await response.json();
+                setCarrierInfo(data);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
+
+        const fetchChatData = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-deal-conversation-chat/${chatID}`);
+                setChatData(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching chat data:', error);
+            }
+        };
+
+        const fetchShipperData = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation/${chatID}`);
+                if (response.data && response.status === 200) {
+                    const shipperResponse = await axios.get(`${BACKEND_URL}/get-shipper/${response.data.shipperID}`);
+                    if (shipperResponse.data && shipperResponse.status === 200) {
+                        setShipper(shipperResponse.data);
+                        console.log(shipper)
+                        setShipperName(shipperResponse.data.userShipperName);
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching shipper data:', error);
+            }
+        };
+
+        const fetchCarrierData = async (carrierID) => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier/${carrierID}`);
                 if (response.data && response.status === 200) {
                     setCarrier(response.data);
                 }
-            })
-            .catch(error => {
+            } catch (error) {
                 console.error('Error fetching carrier data:', error);
-            });
-    }, [carrierID]);
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-moto-equipment-loads`)
-            .then(response => {
-                if (response.data && response.status === 200) {
-                    setMotoEquipmentLoads(response.data.loads); // Set the loads in state
-                } else {
-                    console.error('Error fetching Moto Equipment loads:', response);
-                }
-            })
-            .catch(error => {
-                console.error('Error fetching Moto Equipment loads:', error);
-            });
-    }, []);
-
-    const handleCarrierApprove = async () => {
-        setIsApprovalSent(true);
-        try {
-            const response = await axios.put(`${BACKEND_URL}/confirm-load/${chatID}`);
-            if (response.status === 200) {
-                console.log(response.data.message);
-                socketRef.current.emit('carrier approval', {chatID: selectedChatID});
-            } else {
-                console.error('Error confirming load:', response);
             }
-        } catch (error) {
-            console.error('Error confirming load:', error);
-        }
-        window.location.reload();
-    };
+        };
 
-    useEffect(() => {
-        socketRef.current = io.connect(`${SOCKET_URL}`);
-
-        socketRef.current.on('payment updated', (data) => {
-            if (data.chatID === chatID) {
-                window.location.reload();
+        const fetchLoad = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-load-by-chat/${chatID}`);
+                setLoad(response.data);
+                console.log(response.data);
+            } catch (error) {
+                console.error('Error fetching load:', error);
             }
-        });
-
-        return () => {
-            socketRef.current.disconnect();
         };
-    }, [chatID]);
 
-    useEffect(() => {
-        socketRef.current.on('shipper approval', (data) => {
-            setShipperApproval(true);
-        });
-
-        return () => {
-            socketRef.current.off('shipper approval');
+        const fetchConversations = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations/${carrierID}`);
+                setConversations(response.data);
+                console.log(response.data + "conversations");
+            } catch (error) {
+                console.error('Error fetching conversations:', error);
+            }
         };
-    }, []);
 
-    const handleFileChange = (event) => {
-        const files = Array.from(event.target.files);
-        setSelectedFiles(files);
+        const fetchChatHistory = async () => {
+            try {
+                setIsLoading(true);
+                const response = await axios.get(`${BACKEND_URL}/get-chat-history/${chatID}`);
+                setChatMessages(response.data);
+                setIsLoading(false);
+            } catch (error) {
+                console.error('Error fetching chat messages:', error);
+                setIsLoading(false);
+            }
+        };
 
-        const previews = files.map(file => {
-            return URL.createObjectURL(file);
-        });
-        setFilePreviews(previews);
-    };
+        const fetchAllUserLoads = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/all-user-loads`);
+                setData(response.data);
+            } catch (error) {
+                console.error('There was an error!', error);
+            }
+        };
 
-    const uploadFiles = async () => {
-        const formData = new FormData();
-        selectedFiles.forEach((file) => {
-            formData.append('files', file);
-        });
+        const setupSocketListeners = () => {
+            socketRef.current = io.connect(`${SOCKET_URL}`);
 
-        try {
-            const response = await axios.post(`${BACKEND_URL}/upload-chat-files`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
+            socketRef.current.on('customer message', (data) => {
+                if (data.chatID === selectedChatID) {
+                    setChatMessages((oldMessages) => [...oldMessages, data.message]);
                 }
             });
-            return response.data.fileUrls; // Get the uploaded file URLs
-        } catch (error) {
-            console.error('Error uploading files:', error);
-            return [];
-        }
-    };
 
+            socketRef.current.on('payment updated', (data) => {
+                if (data.chatID === chatID) {
+                }
+            });
 
-    const handleAssignLoad = async (driver, loadID) => {
-        setIsAssignLoading(true);
-        try {
-            const response = await axios.put(`${BACKEND_URL}/assign-load/${driver.driverID}`, { loadID });
-            if (response.status === 200) {
-                console.log('Load assigned successfully');
-                isAssignSuccess(true);
-            } else {
-                console.error('Error assigning load:', response);
+            socketRef.current.on('shipper approval', (data) => {
+                setShipperApproval(true);
+            });
+
+            return () => {
+                socketRef.current.disconnect();
+            };
+        };
+
+        const handleSwipe = () => {
+            if (!touchStart || !touchEnd) return;
+            const distance = touchStart - touchEnd;
+            const isLeftSwipe = distance > minSwipeDistance;
+            const isRightSwipe = distance < -minSwipeDistance;
+            if (isLeftSwipe) {
+                setIsSidebarOpen(false);
+            } else if (isRightSwipe) {
+                setIsSidebarOpen(true);
             }
-        } catch (error) {
-            console.error('Error assigning load:', error);
-        }
-        setIsAssignLoading(false);
+        };
+
+        fetchDrivers();
+        getAvatar();
+        getUser();
+        fetchChatData();
+        fetchShipperData();
+        fetchCarrierData(carrierID);
+        fetchLoad();
+        fetchConversations();
+        fetchChatHistory();
+        fetchAllUserLoads();
+        setupSocketListeners();
+        handleSwipe();
+
+    }, [carrierID, chatID, selectedBid, selectedChatID, touchStart, touchEnd]);
+
+    const toggleChatVisibility = () => {
+        setChatVisible(!isChatVisible);
     };
 
     return (
@@ -518,29 +351,28 @@ const CarrierChatPage = () => {
                 <>
                     {play()}
                     <Alert
-                         text="Success!" status="success" description="Shipper approved your agreement. Approve shipper's agreement too, to continue next steps"/>
+                        text="Success!" status="success"
+                        description="Shipper approved your agreement. Approve shipper's agreement too, to continue next steps"/>
                 </>
             )}
             {showAssignDriverPopup &&
-                <div className="assign-driver-popup-overlay">
-                    <div className="assign-driver-popup">
-                        <div className="assign-driver-popup-header">
-                            <h1>Assign Driver for load: {load.loadCredentialID}</h1>
-                            <button className="close-button" onClick={toggleAssignDriverPopup}>Close</button>
-                        </div>
+                <Popup title={`Assign driver for load: ${load.loadCredentialID}`} onClose={toggleAssignDriverPopup}>
                         <div className="assign-driver-popup-content">
-                            {drivers.filter(driver => driver.driverCreatedByCarrierID === carrierID).map((driver, index) => (
-                                <DriverEntity
-                                    key={index}
-                                    driverFirstAndLastName={driver.driverFirstAndLastName}
-                                    driverEmail={driver.driverEmail}
-                                    driverID={driver.driverID}
-                                    loadID={load.loadCredentialID}
-                                />
-                            ))}
+                            {drivers.filter(driver => driver.driverCreatedByCarrierID === carrierID).length > 0 ? (
+                                drivers.filter(driver => driver.driverCreatedByCarrierID === carrierID).map((driver, index) => (
+                                    <DriverEntity
+                                        key={index}
+                                        driverFirstAndLastName={driver.driverFirstAndLastName}
+                                        driverEmail={driver.driverEmail}
+                                        driverID={driver.driverID}
+                                        loadID={load.loadCredentialID}
+                                    />
+                                ))
+                            ) : (
+                                <p>Currently you didn't add any drivers</p>
+                            )}
                         </div>
-                    </div>
-                </div>
+                </Popup>
             }
             <DashboardSidebar
                 DashboardAI={{visible: true, route: `/carrier-dashboard/${carrierID}`}}
@@ -559,7 +391,7 @@ const CarrierChatPage = () => {
                         <Skeleton variant="text" width={250}/>}
                     contentSubtitle="Monitor payments, loads, revenues"
                     accountName={carrierInfo ? carrierInfo.carrierAccountName : <Skeleton variant="text" width={60}/>}
-                    accountRole={carrierInfo ? carrierInfo.carrierAccountAccountEmail : <Skeleton variant="text" width={40}/>}
+                    accountRole={carrierInfo ? carrierInfo.role : <Skeleton variant="text" width={40}/>}
                     profileLink={`/shipper-profile/${carrierID}`}
                     bellLink={`/shipper-settings/${carrierID}`}
                     settingsLink={`/shipper-profile/${carrierID}`}
@@ -568,54 +400,60 @@ const CarrierChatPage = () => {
                 />
                 <div className="chat-content">
                     <div className={`shipper-deal-conversations-sidebar ${isChatVisible ? 'hidden' : ''}`}>
+                        <h2 className="messages-title">Messages</h2>
                         <div className="chat-conversation-search-bar">
                             <SearchBarIcon width="15"/>
                             <input type="text" placeholder="Search chat by load ID..."/>
                         </div>
                         <div className="chat-id-containers-wrapper">
-                            {conversations.map((conversation, index) => (
-                                <div key={index} className="chat-id-container"
-                                     onClick={() => handleChatSelection(conversation.chatID)}>
-                                    <UserChatAvatar className="user-avatar-chat"/>
-                                    <div className="chat-details">
-                                        <h3>Shipper Name</h3>
-                                        <h4>{conversation.chatID}</h4>
+                            {conversations.length === 0 ? (
+                                <p className="chat-message-warning">Shipper firstly need to approve your bid, then here
+                                    will appear chat with him</p>
+                            ) : (
+                                conversations.map((conversation, index) => (
+                                    <div key={index} className="chat-id-container"
+                                         onClick={() => handleChatSelection(conversation.chatID)}>
+                                        <UserChatAvatar className="user-avatar-chat"/>
+                                        <div className="chat-details">
+                                            <h3 className="chat-user-name">{shipperName ? shipperName :
+                                                <Skeleton width="150"/>}</h3>
+                                            <h4>{conversation.chatID}</h4>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
+                                ))
+                            )}
                         </div>
                     </div>
                     <div className={`chat-messages-content ${isChatVisible ? 'active' : ''}`}>
-                       {/* <button className="go-to-chats-button" onClick={handleBackToConversations}>
-                            <FaArrowLeft/>
-                        </button>*/}
                         <div className="shipper-chat-header">
                             <div className="shipper-carrier-chat-header">
-                                <span className="status-circle"></span>
+                                <Button variant="rounded" onClick={toggleChatVisibility}>
+                                    <FaArrowLeft />
+                                </Button>
                                 <h1 className="chat-user-name">{shipper ? shipper.userShipperName :
                                     <Skeleton width="150"/>}</h1>
                             </div>
                             {load && load.loadCarrierConfirmation === 'Confirmed' ? (
                                 load.loadPaymentStatus === 'Paid' ? (
-                                    <button className="send-bol-button" onClick={toggleAssignDriverPopup}>
+                                    <Button variant="apply-non-responsive" onClick={toggleAssignDriverPopup}>
                                         Assign Driver
-                                    </button>
+                                    </Button>
                                 ) : (
-                                    <button className="waiting-for-approval-button" disabled>
-                                     <RotatingLinesLoader title="Waiting for shipper approval..."/>
-                                    </button>
+                                    <Button variant="wait" disabled>
+                                        <RotatingLinesLoader title="Waiting for shipper payment..."/>
+                                    </Button>
                                 )
                             ) : (
-                                <button className="send-bol-button" onClick={handleCarrierApprove}>
+                                <Button variant="apply-non-responsive" onClick={handleCarrierApprove}>
                                     Approve Agreement
-                                </button>
+                                </Button>
                             )}
                         </div>
 
                         {chatID ? (
                             <>
                                 {isLoading ? (
-                                    <ClipLoader color="#024ecc" loading={true} size={40} className="clip-loader-style"/>
+                                    <Skeleton width={100} height={50}/>
                                 ) : (
                                     <div className="messaging-chat-wrapper">
                                         <div className="chat-messages">
@@ -626,7 +464,7 @@ const CarrierChatPage = () => {
                                                 }}>
                                                     {message.sender !== 'carrierID' && <UserAvatarComponent/>}
                                                     <div style={{
-                                                        backgroundColor: message.sender === 'carrierID' ? '#0084FF' : '#dfdfdf',
+                                                        backgroundColor: message.sender === 'carrierID' ? '#2527ea' : '#dfdfdf',
                                                         color: message.sender === 'carrierID' ? '#7d7d7d' : '#606060',
                                                         alignItems: 'start',
                                                         textAlign: 'left',
@@ -642,8 +480,7 @@ const CarrierChatPage = () => {
                                                                 <div>
                                                                     {shipper ?
                                                                         <p style={{color: '#a9a9a9'}}>{shipper.userShipperName}</p> :
-                                                                        <ClipLoader color="#024ecc" loading={true}
-                                                                                    size={25}/>
+                                                                        <Skeleton width={50} height={30}/>
                                                                     }
                                                                 </div>}
                                                             {message.sender !== 'carrierID' &&
@@ -659,11 +496,12 @@ const CarrierChatPage = () => {
                                                                 </div>}
                                                             {message.sender === 'carrierID' &&
                                                                 <div
-                                                                    style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#f3f3f3',}}>
+                                                                    style={{color: message.sender === 'carrierID' ? '#d3d3d3' : '#232323',}}>
                                                                     Carrier
                                                                 </div>}
                                                         </div>
-                                                        <div className={styles.messagesContent}>
+                                                        <div className={styles.messagesContent}
+                                                             style={{color: message.sender === 'shipperID' ? 'darkgrey' : ''}}>
                                                             {message.text}
                                                             {message.files && message.files.map((fileUrl, idx) => (
                                                                 <img key={idx} src={fileUrl} alt="Attachment" style={{
@@ -702,46 +540,46 @@ const CarrierChatPage = () => {
                                                 ))}
                                             </div>
                                             <div className="chat-input-area">
-                                                <input
-                                                    type="file"
-                                                    ref={fileInputRef}
-                                                    style={{display: 'none'}}
-                                                    onChange={handleFileChangeForButton}
-                                                    multiple
-                                                />
-                                                <button className="send-bol-button"
-                                                        onClick={() => fileInputRef.current.click()}>Send BOL
-                                                </button>
+                                                <div className="chat-input-area-content">
+                                                    <input
+                                                        type="file"
+                                                        ref={fileInputRef}
+                                                        style={{display: 'none'}}
+                                                        onChange={handleFileChangeForButton}
+                                                        multiple
+                                                    />
+                                                    <Button variant="square-non-responsive"
+                                                            onClick={() => fileInputRef.current.click()}>Send BOL
+                                                    </Button>
+                                                    <input
+                                                        type="file"
+                                                        ref={fileInputRefChatFile}
+                                                        style={{display: 'none'}}
+                                                        onChange={handleFileChange}
+                                                        multiple
+                                                    />
+                                                    <input
+                                                        type="text"
+                                                        className="chat-input"
+                                                        placeholder="Type your message here..."
+                                                        value={inputMessage}
+                                                        onChange={e => setInputMessage(e.target.value)}
+                                                        onKeyDown={handleKeyDown}
+                                                    />
 
-                                                <Button
-                                                    variant="attachMaterial"
-                                                    onClick={() => fileInputRefChatFile.current.click()} // Trigger file input click
-                                                >
-                                                    <AttachFile/>
-                                                </Button>
-
-                                                <input
-                                                    type="file"
-                                                    ref={fileInputRefChatFile}
-                                                    style={{display: 'none'}}
-                                                    onChange={handleFileChange}
-                                                    multiple
-                                                />
-
-                                                <input
-                                                    type="text"
-                                                    className="chat-input"
-                                                    placeholder="Type your message here..."
-                                                    value={inputMessage}
-                                                    onChange={e => setInputMessage(e.target.value)}
-                                                    onKeyDown={handleKeyDown}
-                                                />
-                                                <Button
-                                                    variant="attachMaterial"
-                                                >
-                                                    <SendVoiceMessage/>
-                                                </Button>
-                                                <Button
+                                                </div>
+                                                <div className="send-message-wrapper">
+                                                    <Button
+                                                        variant="attachMaterial"
+                                                        onClick={() => fileInputRefChatFile.current.click()} // Trigger file input click
+                                                    >
+                                                        <AttachFile/>
+                                                    </Button>
+                                                    <Button
+                                                        variant="attachMaterial"
+                                                    >
+                                                        <SendVoiceMessage/>
+                                                    </Button><Button
                                                     variant="sendButton"
                                                     onClick={() => {
                                                         sendMessage(inputMessage);
@@ -750,17 +588,15 @@ const CarrierChatPage = () => {
                                                 >
                                                     <SendButtonIcon/>
                                                 </Button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
                                 )
                                 }
                             </>
-
                         ) : (
-                            <div className="choose-chat-conversation">
-                                <p>Choose chat to start speaking with customer!</p>
-                            </div>
+                            <p className="text-message-warning">Choose chat to start speaking with customer!</p>
                         )}
                     </div>
                 </div>

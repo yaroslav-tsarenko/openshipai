@@ -68,7 +68,6 @@ function App() {
                 <Route path="/shipper-profile/:shipperID" element={<ShipperProfilePage/>}/>
                 <Route path="/shipper-settings/:shipperID" element={<ShipperSettings/>}/>
                 <Route path="/shipper-load/:shipperID/:loadCredentialID" element={<ShipperLoadPage/>}/>
-
                 <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
                 <Route path="/carrier-take-loads/:carrierID" element={<CarrierTakeLoad/>}/>
                 <Route path="/carrier-loads/:carrierID" element={<CarrierLoads/>}/>
@@ -77,16 +76,13 @@ function App() {
                 <Route path="/carrier-payments/:carrierID" element={<CarrierPaymentsPage/>}/>
                 <Route path="/carrier-drivers/:carrierID" element={<CarrierDrivers/>}/>
                 <Route path="/carrier-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
-
                 <Route path="/driver-dashboard/:driverID" element={<DriverDashboard/>}/>
                 <Route path="/driver-settings/:driverID" element={<DriverSettings/>}/>
                 <Route path="/driver-assigned-loads/:driverID" element={<DriverAssignedLoads/>}/>
                 <Route path="/driver-profile/:driverID" element={<DriverProfile/>}/>
                 <Route path="/driver-assigned-load/:driverID/:loadID" element={<DriverAssignedLoad/>}/>
-
                 <Route path="/bids-page/:personalEndpoint" element={<ShipperBidsPage/>}/>
                 <Route path="/distance-calculator" element={<DistanceCalculator/>}/>
-
                 <Route path="/open-page" element={<OpenPage/>}/>
                 <Route path="/ship-page" element={<ShipPage/>}/>
                 <Route path="/user-agreement" element={<UserAgreement/>}/>
@@ -108,8 +104,6 @@ function App() {
                 <Route path="/cookie-policy" element={<CookiePolicy/>}/>
                 <Route path="/privacy-policy" element={<PrivacyPolicy/>}/>
                 <Route path="/contact-us" element={<ContactUs/>}/>
-
-
                 <Route path="/carrier-deal-chat-conversation/:carrierID/:chatID" element={<CarrierChatPage/>} />
                 <Route path="/sign-up-carrier" element={<SignUpFormCarrier/>}/>
                 <Route path="/sign-up-shipper" element={<SignUpForm/>}/>

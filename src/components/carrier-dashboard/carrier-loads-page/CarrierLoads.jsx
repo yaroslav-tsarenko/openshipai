@@ -1,33 +1,7 @@
-import React, {useEffect, useState, useRef} from "react";
+import React, {useEffect, useState} from "react";
 import '../CarrierDashboard.css';
-import {ReactComponent as OpenshipLogo} from "../../../assets/images/openship-ai-logo-updated.svg";
-import {ReactComponent as DashboardIcon} from "../../../assets/images/dashboard-icon-grey.svg";
-import {ReactComponent as DashboardIconWhite} from "../../../assets/images/dashboard-icon-white.svg";
-import {ReactComponent as LoadIcon} from "../../../assets/images/load-icon-grey.svg";
-import {ReactComponent as LoadIconWhite} from "../../../assets/images/load-icon-white.svg";
-import {ReactComponent as LogoutIcon} from "../../../assets/images/logout-icon-grey.svg";
-import {ReactComponent as LogoutIconWhite} from "../../../assets/images/logout-icon-white.svg";
-import {ReactComponent as PaymentIcon} from "../../../assets/images/payment-icon-grey.svg";
-import {ReactComponent as PaymentIconWhite} from "../../../assets/images/payment-icon-white.svg";
-import {ReactComponent as ProfileIcon} from "../../../assets/images/profile-icon-grey.svg";
-import {ReactComponent as ProfileIconWhite} from "../../../assets/images/profile-icon-white.svg";
-import {ReactComponent as SettingsIcon} from "../../../assets/images/settings-icon-grey.svg";
-import {ReactComponent as SettingsIconWhite} from "../../../assets/images/settings-icon-white.svg";
-import {ReactComponent as CarrierChatIcon} from "../../../assets/images/chat-icon-grey.svg";
-import {ReactComponent as LoadBoxIconWhite} from "../../../assets/images/LoadBoxIconWhite.svg";
-import {ReactComponent as TireIcon} from "../../../assets/images/TireIcon.svg";
-import {ReactComponent as TireIconWhite} from "../../../assets/images/tire-icon-white.svg";
-import {ReactComponent as LoadBoxIcon} from "../../../assets/images/load-box-icon.svg";
-import {ReactComponent as CarrierChatIconWhite} from "../../../assets/images/chat-icon-white.svg";
-import {ReactComponent as ArrowNav} from "../../../assets/images/arrow-nav.svg";
-import {ReactComponent as SearchIcon} from "../../../assets/images/search-icon.svg";
 import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/default-avatar.svg";
-import {ReactComponent as BellIcon} from "../../../assets/images/bell-icon.svg";
-import {ReactComponent as SettingsAccountIcon} from "../../../assets/images/settings-icon.svg";
-import {ReactComponent as BidArrowIcon} from "../../../assets/images/bid-arrow-icon.svg";
-import {ReactComponent as DirectionIconNumbers} from "../../../assets/images/directions-number-icons.svg";
 import {useParams} from 'react-router-dom';
-import {Link} from "react-router-dom";
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import LoadContainerBid from "../../load-container-bid/LoadContainerBid";
@@ -37,18 +11,12 @@ import {Skeleton} from "@mui/material";
 
 const CarrierLoads = () => {
 
-    const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const [hoveredButton, setHoveredButton] = useState('');
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const [loadBids, setLoadBids] = useState([]);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
     const {carrierID} = useParams();
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-    };
-
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [carrierInfo, setCarrierInfo] = useState(null);
 
@@ -72,11 +40,11 @@ const CarrierLoads = () => {
                 console.error('Error:', error);
             }
         };
+
         const fetchLoadBids = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/load-bids`);
-                const filteredLoadBids = response.data.filter(loadBid => loadBid.loadBidCarrierID === carrierID);
-                setLoadBids(filteredLoadBids);
+                const response = await axios.get(`${BACKEND_URL}/get-load-bids-by-carrier/${carrierID}`);
+                setLoadBids(response.data);
             } catch (error) {
                 console.error('Error fetching load bids:', error);
             }
@@ -86,6 +54,7 @@ const CarrierLoads = () => {
         fetchLoadBids();
         getAvatar();
     }, [carrierID]);
+
     return (
         <div className="carrier-dashboard-wrapper">
             <DashboardSidebar
@@ -114,70 +83,71 @@ const CarrierLoads = () => {
                 <div className="carrier-dashboard-content-body">
                     <div className="taken-loads-container">
                         {loadBids.length > 0 ? (
-                            loadBids.map(loadBid => (
+                            loadBids.map(load => (
                                 <LoadContainerBid
-                                    key={loadBid._id}
-                                    loadPrice={loadBid.loadBidPrice}
-                                    loadTitle={loadBid.loadTitle}
-                                    loadPickUpLocation={loadBid.loadPickUpLocation}
-                                    loadPickUpDate={loadBid.loadPickUpDate}
-                                    loadDeliveryLocation={loadBid.loadDeliveryLocation}
-                                    loadDeliveryDate={loadBid.loadDeliveryDate}
-                                    loadType={loadBid.loadType}
-                                    loadWeight={loadBid.loadWeight}
-                                    loadDistance={loadBid.loadDistance}
-                                    loadQoutes={loadBid.loadQoutes}
-                                    loadID={loadBid.loadCredentialID}
-                                    loadVehicleMake={loadBid.loadVehicleMake}
-                                    loadStatus={loadBid.loadStatus}
-                                    loadVehicleModel={loadBid.loadVehicleModel}
-                                    loadVehicleYear={loadBid.loadVehicleYear}
-                                    loadWidth={loadBid.loadWidth}
-                                    loadHeight={loadBid.loadHeight}
-                                    loadLength={loadBid.loadLength}
-                                    loadTypeOfPackaging={loadBid.loadTypeOfPackaging}
-                                    loadDescription={loadBid.loadDescription}
-                                    loadCarrierConfirmation={loadBid.loadCarrierConfirmation}
-                                    loadPaymentStatus={loadBid.loadPaymentStatus}
-                                    loadAssignedDriverID={loadBid.loadAssignedDriverID}
-                                    loadSpecifiedItem={loadBid.loadSpecifiedItem}
-                                    loadMovingSize={loadBid.loadMovingSize}
-                                    loadNumberOfBedrooms={loadBid.loadNumberOfBedrooms}
-                                    loadNumberOfPallets={loadBid.loadNumberOfPallets}
-                                    loadDeliveredStatus={loadBid.loadDeliveredStatus}
-                                    loadPickupStories={loadBid.loadPickupStories}
-                                    loadDeliveryStories={loadBid.loadDeliveryStories}
-                                    loadSpecialHandlingRequirements={loadBid.loadSpecialHandlingRequirements}
-                                    loadIndustrySector={loadBid.loadIndustrySector}
-                                    loadPrimaryContactName={loadBid.loadPrimaryContactName}
-                                    loadMajorItems={loadBid.loadMajorItems}
-                                    loadSecondaryContactName={loadBid.loadSecondaryContactName}
-                                    loadPickupFloor={loadBid.loadPickupFloor}
-                                    loadDeliveryFloor={loadBid.loadDeliveryFloor}
-                                    loadBusinessName={loadBid.loadBusinessName}
-                                    loadTypeOfBusiness={loadBid.loadTypeOfBusiness}
-                                    loadLiftedItemsQuantity={loadBid.loadLiftedItemsQuantity}
-                                    loadHaveFreightElevator={loadBid.loadHaveFreightElevator}
-                                    loadDestinationOptions={loadBid.loadDestinationOptions}
-                                    loadServiceExpressOptions={loadBid.loadServiceExpressOptions}
-                                    loadAreaOption={loadBid.loadAreaOption}
-                                    loadQuantity={loadBid.loadQuantity}
-                                    loadOperable={loadBid.loadOperable}
-                                    loadConvertible={loadBid.loadConvertible}
-                                    loadModified={loadBid.loadModified}
-                                    loadNumberOfItems={loadBid.loadNumberOfItems}
-                                    loadTrike={loadBid.loadTrike}
-                                    loadIsCrate={loadBid.loadIsCrate}
-                                    loadIsPallet={loadBid.loadIsPallet}
-                                    loadTripStarted={loadBid.loadTripStarted}
-                                    loadAdditionalSelectedLoadOptions={loadBid.loadAdditionalSelectedLoadOptions}
-                                    loadIsBox={loadBid.loadIsBox}
-                                    isOnTrailer={loadBid.isOnTrailer}
-                                    hasTrailerPreference={loadBid.hasTrailerPreference}
-                                    loadTypeOfTrailer={loadBid.loadTypeOfTrailer}
-                                    loadLocationStops={loadBid.loadLocationStops}
-                                    loadOriginDeliveryPreference={loadBid.loadOriginDeliveryPreference}
-                                    shipperID={loadBid.shipperID}
+                                    key={load._id}
+                                    loadPrice={load.loadAveragePrice}
+                                    loadTitle={load.loadTitle}
+                                    loadPickUpLocation={load.loadPickupLocation}
+                                    loadPickUpDate={load.loadPickupDate}
+                                    loadDeliveryLocation={load.loadDeliveryLocation}
+                                    loadDeliveryDate={load.loadDeliveryDate}
+                                    loadType={load.loadType}
+                                    loadWeight={`${load.loadWeight} lb`}
+                                    loadDistance={`${load.loadMilesTrip} mil`}
+                                    loadQoutes={load.loadQoutes}
+                                    loadID={load.loadCredentialID}
+                                    loadVehicleMake={load.loadVehicleMake}
+                                    loadStatus={load.loadStatus}
+                                    loadVehicleModel={load.loadVehicleModel}
+                                    loadVehicleYear={load.loadVehicleYear}
+                                    loadWidth={load.loadWidth}
+                                    loadHeight={load.loadHeight}
+                                    loadLength={load.loadLength}
+                                    loadTypeOfPackaging={load.loadTypeOfPackaging}
+                                    loadDescription={load.loadDescription}
+                                    loadCarrierConfirmation={load.loadCarrierConfirmation}
+                                    loadPaymentStatus={load.loadPaymentStatus}
+                                    loadAssignedDriverID={load.loadAssignedDriverID}
+                                    loadSpecifiedItem={load.loadSpecifiedItem}
+                                    loadMovingSize={load.loadMovingSize}
+                                    loadNumberOfBedrooms={load.loadNumberOfBedrooms}
+                                    loadNumberOfPallets={load.loadNumberOfPallets}
+                                    loadDeliveredStatus={load.loadDeliveredStatus}
+                                    loadPickupStories={load.loadPickupStories}
+                                    loadDeliveryStories={load.loadDeliveryStories}
+                                    loadSpecialHandlingRequirements={load.loadSpecialHandlingRequirements}
+                                    loadIndustrySector={load.loadIndustrySector}
+                                    loadPrimaryContactName={load.loadPrimaryContactName}
+                                    loadMajorItems={load.loadMajorItems}
+                                    loadSecondaryContactName={load.loadSecondaryContactName}
+                                    loadPickupFloor={load.loadPickupFloor}
+                                    loadDeliveryFloor={load.loadDeliveryFloor}
+                                    loadBusinessName={load.loadBusinessName}
+                                    loadTypeOfBusiness={load.loadTypeOfBusiness}
+                                    loadLiftedItemsQuantity={load.loadLiftedItemsQuantity}
+                                    loadHaveFreightElevator={load.loadHaveFreightElevator}
+                                    loadDestinationOptions={load.loadDestinationOptions}
+                                    loadServiceExpressOptions={load.loadServiceExpressOptions}
+                                    loadAreaOption={load.loadAreaOption}
+                                    loadQuantity={load.loadQuantity}
+                                    loadOperable={load.loadOperable}
+                                    loadConvertible={load.loadConvertible}
+                                    loadModified={load.loadModified}
+                                    loadNumberOfItems={load.loadNumberOfItems}
+                                    loadTrike={load.loadTrike}
+                                    loadIsCrate={load.loadIsCrate}
+                                    loadIsPallet={load.loadIsPallet}
+                                    loadTripStarted={load.loadTripStarted}
+                                    loadAdditionalSelectedLoadOptions={load.loadAdditionalSelectedLoadOptions}
+                                    loadIsBox={load.loadIsBox}
+                                    loadCredentialID={load.loadCredentialID}
+                                    isOnTrailer={load.isOnTrailer}
+                                    hasTrailerPreference={load.hasTrailerPreference}
+                                    loadTypeOfTrailer={load.loadTypeOfTrailer}
+                                    loadLocationStops={load.loadLocationStops}
+                                    loadOriginDeliveryPreference={load.loadOriginDeliveryPreference}
+                                    shipperID={load.shipperID}
                                 />
                             ))
                         ) : (

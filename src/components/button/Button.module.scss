@@ -17,8 +17,6 @@
   }
 }
 
-
-
 .disabled {
   cursor: not-allowed;
   opacity: 0.6;
@@ -51,6 +49,7 @@
   align-items: center;
   font-size: 1.8rem;
   font-weight: bold;
+  padding: 10px 20px;
   justify-content: center;
   color: var(--dark-grey);
   background: transparent;
@@ -88,6 +87,7 @@
   border-radius: 16px;
   text-align: center;
   align-content: center;
+  padding: 10px 20px;
   align-items: center;
   font-size: 1.8rem;
   font-weight: bold;
@@ -151,6 +151,7 @@
   cursor: pointer;
   align-content: center;
   align-items: center;
+  max-width: 250px;
   justify-content: center;
   justify-items: center;
   font-size: 16px;
@@ -266,14 +267,143 @@
   width: 50px;
   align-content: center;
   align-items: center;
+  padding: 5px;
+  color: white;
   justify-content: center;
   border: none;
   border-radius: 10px;
   transition: 0.2s ease-in-out;
 }
 
+.square-non-responsive {
+  background: var(--royal-green);
+  display: flex;
+  align-content: center;
+  align-items: center;
+  max-width: 250px;
+  width: 100%;
+  font-size: 16px;
+  padding: 10px 20px;
+  color: white;
+  justify-content: center;
+  border: none;
+  border-radius: 10px;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--royal-green-hovered);
+  }
+}
+
 .sendButton:hover {
   background: var(--royal-blue-hovered);
+}
+
+.wait {
+  display: flex;
+  width: fit-content;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  border-radius: 50px;
+  background: var(--dark);
+  transition: 0.2s ease-in-out;
+}
+
+.grey-responsive {
+  display: flex;
+  width: fit-content;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  transition: 0.2s ease-in-out;
+  font-size: 16px;
+  border-radius: 55px;
+  color: var(--royal-blue);
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.grey {
+  display: flex;
+  width: fit-content;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  transition: 0.2s ease-in-out;
+  font-size: 16px;
+  border-radius: 55px;
+  color: var(--royal-blue);
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.darkGrey-100 {
+  display: flex;
+  width: 100%;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--grey-darker);
+  transition: 0.2s ease-in-out;
+  font-size: 16px;
+  border-radius: 55px;
+  color: var(--dark-grey);
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.close {
+  display: flex;
+  width: fit-content;
+  padding: 10px 20px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
+  transition: 0.2s ease-in-out;
+  font-size: 16px;
+  border-radius: 55px;
+  color: var(--royal-red);
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
+}
+
+.rounded {
+  display: flex;
+  height: 30px;
+  width: 30px;
+  border-radius: 50px;
+  background: var(--light-grey-hovered-2);
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  border: none;
+  transition: 0.2s ease-in-out;
+
+  &:hover {
+    background: var(--light-grey-hovered);
+  }
 }
 
 .attachMaterial {
@@ -283,6 +413,7 @@
   width: 55px;
   align-content: center;
   align-items: center;
+  padding: 10px 20px;
   justify-content: center;
   border: none;
   border-radius: 50px;
@@ -293,22 +424,27 @@
   background: var(--light-grey-hovered);
 }
 
-@media screen and (max-width: 768px){
-  .default{
+@media screen and (max-width: 768px) {
+  .default {
     padding: 6px 10px 6px 10px;
   }
 
-  .apply{
+  .apply {
+    padding: 7px 13px;
+    font-size: 13px;
+  }
+
+  .grey-responsive {
+    padding: 7px 13px;
+    font-size: 1rem;
+  }
+
+  .filter {
     padding: 7px;
     font-size: 13px;
   }
 
-  .filter{
-    padding: 7px;
-    font-size: 13px;
-  }
-
-  .neutral{
+  .neutral {
     padding: 6px 10px 6px 10px;
   }
 }

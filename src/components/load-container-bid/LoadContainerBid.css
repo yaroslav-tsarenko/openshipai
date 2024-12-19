@@ -5,12 +5,33 @@
     background: white;
     display: flex;
     flex-direction: column;
-    margin: 0 0 20px 0;
     align-items: center;
     border-radius: 20px;
     border: 1px solid var(--light-grey);
     transition: height 0.2s ease-in-out;
     cursor: pointer;
+
+    @media screen and (max-width: 1028px) {
+        display: none;
+    }
+}
+
+.take-load-bid-container-wrapper-mobile{
+    display: none;
+    justify-content: space-between;
+    background: var(--royal-white);
+    padding: 20px;
+    border-radius: 20px;
+    border: 1px solid var(--light-grey);
+
+    @media screen and (max-width: 1028px) {
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.tale-load-bid-wrapper-mobile.expanded{
+    height: auto;
 }
 
 .take-load-bid-container-wrapper.expanded {
@@ -23,6 +44,48 @@
     justify-content: space-between;
     opacity: 0;
     animation: fadeIn 0.5s forwards;
+}
+
+.take-load-content-mobile{
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    width: 60%;
+}
+
+.load-container-bid-more-info-mobile{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+    margin: 20px 0 0 0;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+}
+
+.google-map-container{
+    height: 200px;
+    width: 100%;
+
+}
+
+.load-item-wrap{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.take-load-title{
+    color: var(--royal-blue);
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.load-credentials{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
 @keyframes fadeIn {
@@ -62,13 +125,18 @@
 }
 
 .instant-book-load {
-    height: 60px;
+    height: fit-content;
     display: flex;
+    gap: 15px;
     flex-direction: column;
     align-content: center;
     text-align: center;
     justify-content: space-between;
-    width: 150px;
+    width: fit-content;
+
+    @media screen and (max-width: 1028px) {
+        width: 40%;
+    }
 }
 
 .more-info-button {
@@ -196,6 +264,10 @@
     display: flex;
     width: 600px;
     flex-direction: column;
+
+    @media screen and (max-width: 768px) {
+        width: 100%;
+    }
 }
 
 .bid-description {

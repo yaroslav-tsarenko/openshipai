@@ -121,15 +121,19 @@
 }
 
 
-@media only screen and (max-width: 694px) {
+@media only screen and (max-width: 768px) {
     .right-side-login {
         display: none;
     }
 
     .left-side {
         padding: 20px 0 20px 0;
-        height: fit-content;
-
+        height: 100vh;
+        margin: 0 auto;
+        align-content: center;
+        justify-content: center;
+        display: flex;
+        flex-direction: column;
         overflow-y: scroll;
     }
 }

@@ -59,7 +59,6 @@ const RegistrationComponent = ({ onRegistrationSuccess })  => {
                     setShowRegistrationPopup(false);  // Hide registration popup after success
                 }, 3000);
             } else {
-                // Trigger error alert
                 setAlert({
                     visible: true,
                     status: 'error',

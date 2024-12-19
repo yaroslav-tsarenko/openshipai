@@ -21,7 +21,7 @@
   content: counter(item);
   width: 30px;
   height: 30px;
-  border: 2px solid var(--royal-blue);
+  border: 2px dashed var(--royal-blue);
   background-color: transparent;
   color: var(--royal-blue);
   display: flex;
@@ -33,6 +33,12 @@
   position: absolute;
   left: -40px; /* Adjust for bullet position */
   z-index: 1;
+
+  @media screen and (max-width: 768px) {
+    width: 20px;
+    height: 20px;;
+    font-size: 10px;
+  }
 }
 
 .column::after {
@@ -43,6 +49,11 @@
   top: 30px;
   bottom: -20px; /* Connects to the next item */
   left: -25px; /* Aligns with the bullet center */
+
+  @media screen and (max-width: 768px) {
+    top: 20px;
+    left: -30px;
+  }
 }
 
 .column:last-child::after {
@@ -54,15 +65,32 @@
   width: fit-content;
   flex-direction: column;
   align-items: flex-start;
+
+  @media screen and (max-width: 768px) {
+    flex-direction: row;
+    align-content: center;
+    gap: 10px;
+    justify-items: center;
+    align-items: center;
+  }
 }
 
 .location {
   font-size: 16px;
   font-weight: bold;
+  margin: 0;
   color: #333;
+  @media screen and (max-width: 768px) {
+    font-size: 14px;
+  }
 }
 
 .date {
   font-size: 14px;
+  margin: 0;
   color: #666;
+
+  @media screen and (max-width: 768px) {
+    font-size: 10px;
+  }
 }

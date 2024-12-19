@@ -19,7 +19,7 @@ const ShipperDashboard = () => {
     localStorage.setItem('shipperID',
         shipperID);
     let shipperIDLocalStorage = localStorage.getItem('shipperID');
-    const [activeTab, setActiveTab] = useState("Statistics");
+    const [activeTab, setActiveTab] = useState("Chat");
     const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);

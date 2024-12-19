@@ -5,9 +5,7 @@ import {ReactComponent as BidArrowIcon} from "../../assets/images/bid-arrow-icon
 import {ReactComponent as MoreInfoArrow} from "../../assets/images/blue-arrow-down.svg";
 import {ReactComponent as DirectionIconNumbers} from "../../assets/images/direction-icon.svg";
 import {useParams} from "react-router-dom";
-import {ClipLoader} from "react-spinners";
 import Alert from "../floating-window-success/Alert";
-import FloatingWindowFailed from "../floating-window-failed/FloatingWindowFailed";
 import {BACKEND_URL} from "../../constants/constants";
 import Popup from "../popup/Popup";
 import Button from "../button/Button";
@@ -16,6 +14,9 @@ import InfoItem from "../info-item/InfoItem";
 import Grid from "../grid-two-columns/Grid";
 import ImageSlider from "../image-slider/ImageSlider";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
+import LoadInfoList from "../load-direction-info-list/LoadInfoList";
+import GoogleMapRealTimeTrafficComponent
+    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 
 
 const LoadContainerBid = ({
@@ -88,9 +89,7 @@ const LoadContainerBid = ({
     const [bidPrice, setBidPrice] = useState(0);
     const [calculatedPrice, setCalculatedPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSuccess, setIsSuccess] = useState(false);
     const [loadImages, setLoadImages] = useState([]);
-    const [isError, setIsError] = useState(false);
     const [message, setMessage] = useState(null);
     const {carrierID} = useParams();
 
@@ -131,40 +130,26 @@ const LoadContainerBid = ({
     const handleChange = (input) => (e) => {
         setFormData({...formData, [input]: e.target.value});
     };
-
-    const handleDeleteAllBids = async () => {
-        try {
-            const response = await axios.delete(`${BACKEND_URL}/delete-all-load-bids`);
-            console.log(response.data);
-            window.location.reload();
-        } catch (error) {
-            console.error(error);
-        }
-    }
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         setIsLoading(true);
         try {
             const response = await axios.post(`${BACKEND_URL}/create-bid`, formData);
             console.log(response.data);
-            setMessage({ status: 'success', text: 'Load Created Successfully', description: '' });
+            setMessage({status: 'success', text: 'Success!', description: 'Your bid has been submitted successfully!'});
         } catch (error) {
             console.error(error);
-            setMessage({ status: 'error', text: 'Something went wrong. Try Again', description: '' });
+            setMessage({status: 'error', text: 'Error', description: "Something went wrong, try again"});
         } finally {
             setIsLoading(false);
         }
     };
-
     const handleQuickBidClick = () => {
         setIsPopupOpen(true);
     };
-
     const handleClosePopup = () => {
         setIsPopupOpen(false);
     };
-
     const handleMoreInfoClick = () => {
         setIsExpanded(!isExpanded);
     };
@@ -172,7 +157,54 @@ const LoadContainerBid = ({
 
     return (
         <>
-            {message && <Alert status={message.status} text={message.text} description={message.description} />}
+            {isPopupOpen && (
+                <Popup onClose={handleClosePopup} title={`Bid: ${loadID}`} footerText={`Attention! According to the terms of use, you agree to a 10% commission
+                                        when using our service, the bet you make will be equal to - ${calculatedPrice} $.`}>
+                    <div className="bid-popup-content">
+                        <div className="bid-description">
+                            <h3>Before bid</h3>
+                            <p>Before bid we highly recommend to come up short but compelling message for
+                                customer
+                                and offer relevant price it will helps customer to choose the best carrier</p>
+                        </div>
+                        <TextInput
+                            type="textarea"
+                            id="loadBidCoverLetter"
+                            value={formData.loadBidCoverLetter}
+                            onChange={handleChange('loadBidCoverLetter')}
+                            label="Type message here"
+                            style={{height: '130px'}}
+                        />
+                        <div className="bid-popup-value-inputs">
+                            <TextInput
+                                type="datetime-local"
+                                id="loadBidDeliveryDate"
+                                value={formData.loadBidDeliveryDate}
+                                onChange={handleChange('loadBidDeliveryDate')}
+                                label="Delivery Date"
+                            />
+                            <TextInput
+                                type="text"
+                                id="loadBidPrice"
+                                value={bidPrice}
+                                onChange={(e) => {
+                                    if (e.target.value === '') {
+                                        setBidPrice('');
+                                        console.log(setBidPrice(''));
+                                    } else if (Number(e.target.value) >= 0) {
+                                        setBidPrice(Number(e.target.value));
+                                    }
+                                }}
+                                label="$ Bid Price"
+                            />
+                        </div>
+                        <Button variant="apply" className="submit-bid-button" onClick={handleSubmit}>
+                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Submit Bid"}
+                        </Button>
+                    </div>
+                </Popup>
+            )}
+            {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             <div className={`take-load-bid-container-wrapper ${isExpanded ? 'expanded' : ''}`}>
                 <div className="take-load-bid-container-short-info">
                     <div className="take-load-bid-container-content">
@@ -210,13 +242,13 @@ const LoadContainerBid = ({
                     <div className="instant-book-load">
                         <label>Instant Book</label>
                         <h3>{loadQoutes} Qoutes</h3>
-                        <button className="bid-button" onClick={handleQuickBidClick}>Quick Bid<BidArrowIcon
+                        <Button variant="apply-non-responsive" onClick={handleQuickBidClick}>Quick Bid<BidArrowIcon
                             className="bid-arrow-icon"/>
-                        </button>
-                        <button onClick={handleMoreInfoClick} className="more-info-button">
+                        </Button>
+                        <Button variant="grey" onClick={handleMoreInfoClick} className="more-info-button">
                             <MoreInfoArrow className={`more-info-icon-down ${isExpanded ? 'rotated' : ''}`}/>
                             {isExpanded ? 'Minimize' : 'More info'}
-                        </button>
+                        </Button>
                     </div>
                 </div>
                 {isExpanded && (
@@ -373,53 +405,188 @@ const LoadContainerBid = ({
 
                 )}
             </div>
-            {isPopupOpen && (
-                <Popup onClose={handleClosePopup} title={`Bid: ${loadID}`} footerText={`Attention! According to the terms of use, you agree to a 10% commission
-                                        when using our service, the bet you make will be equal to - ${calculatedPrice} $.`}>
-                    <div className="bid-popup-content">
-                        <div className="bid-description">
-                            <h3>Before bid</h3>
-                            <p>Before bid we highly recommend to come up short but compelling message for
-                                customer
-                                and offer relevant price it will helps customer to choose the best carrier</p>
+            <div className={`take-load-bid-container-wrapper-mobile ${isExpanded ? 'expanded' : ''}`}>
+                <div className="take-load-bid-container-short-info">
+                    <div className="take-load-content-mobile">
+                        <h3 className="take-load-title">
+                            {loadType}
+                        </h3>
+                        <div className="load-credentials">
+                            <InfoItem>
+                                {loadTitle}
+                            </InfoItem>
+                            <InfoItem>
+                                {loadTypeOfTrailer}
+                            </InfoItem>
+                            <InfoItem>
+                                {loadWeight}
+                            </InfoItem>
+                            <InfoItem>
+                                {loadDistance}
+                            </InfoItem>
                         </div>
-                        <TextInput
-                            type="textarea"
-                            id="loadBidCoverLetter"
-                            value={formData.loadBidCoverLetter}
-                            onChange={handleChange('loadBidCoverLetter')}
-                            label="Type message here"
-                            style={{height: '130px'}}
+                        <LoadInfoList
+                            loadPickupLocation="Oregon"
+                            loadPickupLocationDate="2024-12-14T19:46"
+                            loadDeliveryLocation="Washington"
+                            loadDeliveryLocationDate="2024-12-11T18:46"
                         />
-                        <div className="bid-popup-value-inputs">
-                            <TextInput
-                                type="datetime-local"
-                                id="loadBidDeliveryDate"
-                                value={formData.loadBidDeliveryDate}
-                                onChange={handleChange('loadBidDeliveryDate')}
-                                label="Delivery Date"
-                            />
-                            <TextInput
-                                type="text"
-                                id="loadBidPrice"
-                                value={bidPrice}
-                                onChange={(e) => {
-                                    if (e.target.value === '') {
-                                        setBidPrice('');
-                                        console.log(setBidPrice(''));
-                                    } else if (Number(e.target.value) >= 0) {
-                                        setBidPrice(Number(e.target.value));
-                                    }
-                                }}
-                                label="$ Bid Price"
-                            />
-                        </div>
-                        <Button variant="apply-non-responsive" className="submit-bid-button" onClick={handleSubmit}>
-                            {isLoading ? <RotatingLinesLoader title="Processing..."/> : "Submit Bid"}
+                    </div>
+                    <div className="instant-book-load">
+                        <label>Instant Book</label>
+                        <h3>{loadQoutes} Qoutes</h3>
+                        <Button variant="apply" onClick={handleQuickBidClick}>Quick Bid<BidArrowIcon
+                            className="bid-arrow-icon"/>
+                        </Button>
+                        <Button variant="grey" onClick={handleMoreInfoClick} className="more-info-button">
+                        <MoreInfoArrow className={`more-info-icon-down ${isExpanded ? 'rotated' : ''}`}/>
+                            {isExpanded ? 'Minimize' : 'More info'}
                         </Button>
                     </div>
-                </Popup>
-            )}
+                </div>
+                {isExpanded && (
+                    <div className="load-container-bid-more-info-mobile">
+                        <ImageSlider images={loadImages}/>
+                        <div className="google-map-container">
+                            <GoogleMapRealTimeTrafficComponent type="destination" origin={loadPickUpLocation} destination={loadDeliveryLocation} borderRadius={["20px", "20px","20px", "20px"]}/>
+                        </div>
+                        <div className="load-item-wrap">
+                            <InfoItem label="Vehicle Make">
+                                {loadVehicleMake}
+                            </InfoItem>
+                            <InfoItem label="Vehicle Year">
+                                {loadVehicleYear}
+                            </InfoItem>
+                            <InfoItem label="Vehicle Model">
+                                {loadVehicleModel}
+                            </InfoItem>
+                            <InfoItem label="Load Status">
+                                {loadStatus}
+                            </InfoItem>
+                            <InfoItem label="Load ID">
+                                {loadID}
+                            </InfoItem>
+                            <InfoItem label="Description">
+                                {loadDescription}
+                            </InfoItem>
+                            <InfoItem label="Carrier Confirmation">
+                                {loadCarrierConfirmation}
+                            </InfoItem>
+                            <InfoItem label="Payment Status">
+                                {loadPaymentStatus}
+                            </InfoItem>
+                            <InfoItem label="Specified Item">
+                                {loadSpecifiedItem}
+                            </InfoItem>
+                            <InfoItem label="Moving Size">
+                                {loadMovingSize}
+                            </InfoItem>
+                            <InfoItem label="Number of Bedrooms">
+                                {loadNumberOfBedrooms}
+                            </InfoItem>
+                            <InfoItem label="Number of Pallets">
+                                {loadNumberOfPallets}
+                            </InfoItem>
+                            <InfoItem label="Delivered Status">
+                                {loadDeliveredStatus}
+                            </InfoItem>
+                            <InfoItem label="Pickup Stories">
+                                {loadPickupStories}
+                            </InfoItem>
+                            <InfoItem label="Delivery Stories">
+                                {loadDeliveryStories}
+                            </InfoItem>
+                            <InfoItem label="Special Handling Requirements">
+                                {loadSpecialHandlingRequirements}
+                            </InfoItem>
+                            <InfoItem label="Industry Sector">
+                                {loadIndustrySector}
+                            </InfoItem>
+                            <InfoItem label="Primary Contact Name">
+                                {loadPrimaryContactName}
+                            </InfoItem>
+                            <InfoItem label="Major Items">
+                                {loadMajorItems}
+                            </InfoItem>
+                            <InfoItem label="Secondary Contact Name">
+                                {loadSecondaryContactName}
+                            </InfoItem>
+                            <InfoItem label="Pickup Floor">
+                                {loadPickupFloor}
+                            </InfoItem>
+                            <InfoItem label="Delivery Floor">
+                                {loadDeliveryFloor}
+                            </InfoItem>
+                            <InfoItem label="Business Name">
+                                {loadBusinessName}
+                            </InfoItem>
+                            <InfoItem label="Type of Business">
+                                {loadTypeOfBusiness}
+                            </InfoItem>
+                            <InfoItem label="Lifted Items Quantity">
+                                {loadLiftedItemsQuantity}
+                            </InfoItem>
+                            <InfoItem label="Have Freight Elevator">
+                                {loadHaveFreightElevator}
+                            </InfoItem>
+                            <InfoItem label="Destination Options">
+                                {loadDestinationOptions}
+                            </InfoItem>
+                            <InfoItem label="Service Express Options">
+                                {loadServiceExpressOptions}
+                            </InfoItem>
+                            <InfoItem label="Area Option">
+                                {loadAreaOption}
+                            </InfoItem>
+                            <InfoItem label="Quantity">
+                                {loadQuantity}
+                            </InfoItem>
+                            <InfoItem label="Operable">
+                                {loadOperable ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Convertible">
+                                {loadConvertible ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Modified">
+                                {loadModified ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Number of Items">
+                                {loadNumberOfItems}
+                            </InfoItem>
+                            <InfoItem label="Trike">
+                                {loadTrike ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Is Crate">
+                                {loadIsCrate}
+                            </InfoItem>
+                            <InfoItem label="Is Pallet">
+                                {loadIsPallet}
+                            </InfoItem>
+                            <InfoItem label="Trip Started">
+                                {loadTripStarted}
+                            </InfoItem>
+                            <InfoItem label="Additional Selected Load Options">
+                                {loadAdditionalSelectedLoadOptions.join(', ')}
+                            </InfoItem>
+                            <InfoItem label="Is Box">
+                                {loadIsBox}
+                            </InfoItem>
+                            <InfoItem label="Is On Trailer">
+                                {isOnTrailer ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Has Trailer Preference">
+                                {hasTrailerPreference ? 'Yes' : 'No'}
+                            </InfoItem>
+                            <InfoItem label="Type of Trailer">
+                                {loadTypeOfTrailer}
+                            </InfoItem>
+                            <InfoItem label="Origin Delivery Preference">
+                                {loadOriginDeliveryPreference.join(', ')}
+                            </InfoItem>
+                        </div>
+                    </div>
+                )}
+            </div>
         </>
     );
 };

@@ -16,7 +16,6 @@ import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {BACKEND_URL} from "../../../constants/constants";
 import axios from "axios";
 import {Skeleton} from "@mui/material";
-import {ClipLoader} from "react-spinners";
 import Tooltip from "../../tooltip/Tooltip";
 import Popup from "../../popup/Popup";
 import TextInput from "../../text-input/TextInput";
@@ -31,7 +30,6 @@ const CarrierSettings = () => {
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [isTooltipVisible, setIsTooltipVisible] = useState(false);
     const {carrierID} = useParams();
-
     const settingsRef = useRef();
     const fileInputRef = useRef();
     const [isOnAI, setIsOnAI] = useState(false);
@@ -172,7 +170,6 @@ const CarrierSettings = () => {
                 console.error(error);
             }
         }
-        window.location.reload();
     };
 
     useEffect(() => {
@@ -214,7 +211,6 @@ const CarrierSettings = () => {
             setPreviewImage(url);
         }
     };
-
 
     const handleUpdateNotificationsSettings = async () => {
         setIsLoading(true);
@@ -396,7 +392,7 @@ const CarrierSettings = () => {
                         onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="settings-container">
-                        <section className="settings-nav-mobile">
+                        <div className="settings-nav-mobile">
                             <Button variant={activeSetting === 'Account' ? 'default' : 'neutral'}
                                     onClick={() => handleButtonClick('Account')}>Account</Button>
                             <Button variant={activeSetting === 'Password' ? 'default' : 'neutral'}
@@ -405,8 +401,8 @@ const CarrierSettings = () => {
                                     onClick={() => handleButtonClick('Notifications')}>Notifications</Button>
                             <Button variant={activeSetting === 'Help' ? 'default' : 'neutral'}
                                     onClick={() => handleButtonClick('Help')}>Help</Button>
-                        </section>
-                        <section className="settings-nav">
+                        </div>
+                        <div className="settings-nav">
                             <button
                                 onClick={() => setActiveSetting('Account')}
                             >
@@ -431,7 +427,7 @@ const CarrierSettings = () => {
                                 <SettingsHelp className="link-nav-button-icon"/>
                                 Help
                             </button>
-                        </section>
+                        </div>
                         <section className="settings-content">
                             {activeSetting === 'Account' && (
                                 <>

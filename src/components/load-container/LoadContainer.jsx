@@ -26,8 +26,6 @@ const LoadContainer = ({
                            loadTypeOfPackaging,
                            shipperID,
                        }) => {
-
-
     return (
         <>
             <Link to={`/shipper-load/${shipperID}/${loadCredentialID}`} className="loadboard-load-container-wrapper">

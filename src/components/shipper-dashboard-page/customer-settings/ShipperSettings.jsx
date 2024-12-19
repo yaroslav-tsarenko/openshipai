@@ -38,7 +38,7 @@ const ShipperSettings = () => {
     const fileInputRef = useRef();
     const navigate = useNavigate();
     const [status, setStatus] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isSetLoading, setIsLoading] = useState(false);
     const [isLoadingFeedback, setIsLoadingFeedback] = useState(false);
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
@@ -46,7 +46,7 @@ const ShipperSettings = () => {
     const [shipperEmail, setShipperEmail] = useState('');
     const [previewImage, setPreviewImage] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [ setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [avatarFromDB] = useState(null);
     const [email, setEmail] = useState(shipperInfo ? shipperInfo.userShipperEmail : '');
     const [description, setDescription] = useState('');
@@ -215,7 +215,6 @@ const ShipperSettings = () => {
                 console.error(error);
             }
         }
-        window.location.reload();
     };
 
     useEffect(() => {

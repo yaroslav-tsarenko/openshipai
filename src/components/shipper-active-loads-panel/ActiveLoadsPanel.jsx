@@ -3,6 +3,8 @@ import axios from 'axios';
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
 import {BACKEND_URL} from "../../constants/constants";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
+import GoogleMapRealTimeTrafficComponent
+    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
 
 const ActiveLoadsPanel = ({userRole, userID}) => {
     const [loads, setLoads] = useState([]);
@@ -21,13 +23,12 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
                 .then(response => {
                     const filteredLoads = response.data.filter(load => load.shipperID === userID);
                     setLoads(filteredLoads);
-
                 })
                 .catch(error => {
                     console.error('Error fetching loads:', error);
                 });
         } else if (userRole === 'driver') {
-            axios.get(`${BACKEND_URL}/get-driver-loads/${userID}`)
+            axios.get(`${BACKEND_URL}/driver-assigned-loads/${userID}`)
                 .then(response => {
                     setLoads(response.data);
                     console.log('Loads:', response.data);
@@ -38,9 +39,7 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
         } else if (userRole === 'carrier') {
             axios.get(`${BACKEND_URL}/get-load-bids-by-carrier/${userID}`)
                 .then(response => {
-                    setLoads(response.data.loads);
-                    console.log('Load Bids:', response.data.loadBids);
-                    console.log('Loads:', response.data.loads);
+                    setLoads(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching load bids and loads:', error);
@@ -55,16 +54,19 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
 
     return (
         <div className="shipper-dashboard-side-panel-wrapper" ref={animation}>
-           {/* <div className="shipper-map-container">
+            <div className="shipper-map-container">
                 <GoogleMapRealTimeTrafficComponent
+                    type="destination"
                     origin={selectedLoad ? selectedLoad.loadPickupLocation : origin}
-                    destination={selectedLoad ? selectedLoad.loadDeliveryLocation : destination}/>
-            </div>*/}
+                    destination={selectedLoad ? selectedLoad.loadDeliveryLocation : destination}
+                    borderRadius={["20px", "20px", "20px", "20px"]}
+                />
+            </div>
             <div className="shipper-dashboard-side-panel">
-                {loads.length === 0 ? (
+                {Array.isArray(loads) && loads.length === 0 ? (
                     <p className="chat-message-alert">Currently you didn't have any active loads</p>
                 ) : (
-                    loads.map(load => (
+                    Array.isArray(loads) && loads.map(load => (
                         <div onClick={() => handleClickLoad(load)} key={load.loadCredentialID}>
                             <ActiveLoadContainer
                                 loadStatus={load.loadStatus}
@@ -78,9 +80,8 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
                             />
                         </div>
                     ))
-
                 )}
-              {/*  {selectedLoad && (
+                {/*  {selectedLoad && (
                     <div>
                         <h2>Selected Load Details</h2>
                         <p>Status: {selectedLoad.loadStatus}</p>

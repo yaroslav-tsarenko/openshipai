@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import "./CustomCheckBox.css";
 
-const CustomCheckBox = ({ checked, id, label, onClick, disabled }) => {
+const CustomCheckBox = ({ checked, id, label, onClick = () => {}, disabled }) => {
     const [isChecked, setIsChecked] = useState(checked);
 
     useEffect(() => {

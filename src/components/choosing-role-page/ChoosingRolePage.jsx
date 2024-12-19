@@ -16,6 +16,7 @@ const ChoosingRolePage = () => {
                     <div className={styles.blackout}>
                         <h2 className={styles.roleText}>Shipper</h2>
                         <Typewriter
+                            className={styles.typewriter}
                             options={{
                                 strings: [
                                     "We appreciate see you",
@@ -39,6 +40,7 @@ const ChoosingRolePage = () => {
                     <div className={styles.blackout}>
                         <h2 className={styles.roleText}>Carrier</h2>
                         <Typewriter
+                            className={styles.typewriter}
                             options={{
                                 strings: [
                                     "Manage Loads, Deliver Loads, Get Paid, Make your Business Simple",

@@ -818,23 +818,6 @@
     color: var(--royal-white);
 }
 
-.pickup-delivery-location-input {
-    display: flex;
-    width: 100%;
-    height: 50px;
-    background: var(--royal-white);
-    border-radius: 40px;
-    border: none;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
-    justify-items: center;
-    font-weight: bold;
-    font-size: 1.3rem;
-    padding: 0 5px 0 20px;
-    transition: 0.2s ease-in-out;
-}
-
 .load-filter {
     display: flex;
     width: 100%;
@@ -866,7 +849,6 @@
     background: var(--royal-blue-light-transparent);
     transition: 0.2s ease-in-out;
 }
-
 
 .take-load-container {
     width: 100%;
@@ -1516,6 +1498,10 @@
 .chat-input-area input {
     font-size: 1.5rem;
     font-weight: normal;
+
+    @media screen and (max-width: 768px) {
+        width: 50px
+    }
 }
 
 .chat-input-area input::placeholder {
@@ -1917,8 +1903,6 @@
         margin: 0 10px 0 10px;
     }
 
-    .instant-book-load {
-    }
 
     .load-driver-direction section h3 {
         font-size: 12px;

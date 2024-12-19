@@ -75,11 +75,11 @@ const CarrierPaymentPage = () => {
                     setCards(data.cards);
                 } else {
                     console.error(data.message);
-                    setCards([]); // Set to empty array on error
+                    setCards([]);
                 }
             } catch (error) {
                 console.error('Error fetching cards:', error);
-                setCards([]); // Set to empty array on error
+                setCards([]);
             } finally {
                 setLoadingCards(false);
             }
@@ -148,7 +148,6 @@ const CarrierPaymentPage = () => {
             const stripeResponse = await axios.post(`${BACKEND_URL}/create-stripe-account`, { email: formData.userEmail });
             const stripeAccountID = stripeResponse.data.stripeAccountID;
 
-            // Add stripeAccountID to formData
             const cardData = { ...formData, stripeAccountID };
 
             const response = await axios.post(`${BACKEND_URL}/save-card`, cardData);
@@ -179,30 +178,24 @@ const CarrierPaymentPage = () => {
                 console.error('Error fetching selected card:', error);
             }
         };
+        const getAvatar = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-carrier-avatar/${carrierID}`);
+                if (response.data.carrierAvatar) {
+                    setPreviewSavedImage(`${BACKEND_URL}/${response.data.carrierAvatar}`);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        };
 
+        getAvatar();
         fetchSelectedCard();
     }, [carrierID]);
 
     const togglePopup = () => {
         setIsPopupOpen(!isPopupOpen);
     };
-
-    useEffect(() => {
-        if (shipperInfo && shipperInfo.userShipperAvatar) {
-            setLoading(true);
-            const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
-            axios.get(avatarUrl)
-                .then(() => {
-                    setPreviewSavedImage(avatarUrl);
-                    setLoading(false);
-                })
-                .catch(() => {
-                    console.error('Image does not exist');
-                    setLoading(false);
-                });
-        }
-    }, [shipperInfo]);
 
     const handleCardClickAsync = async (cardNumber) => {
         try {
@@ -399,17 +392,14 @@ const CarrierPaymentPage = () => {
                                     <p>No card selected</p>
                                 )}
                                 <section>
-                                    <button><PinCodeSettingsIcon/> Pin code settings</button>
-                                    <button><CashbackIcon/> Cashback</button>
-                                    <button><LockIcon/> Block Card</button>
-                                    <button><SettingsIcon/> Settings Limits</button>
+                                    <Button variant="darkGrey-100"><PinCodeSettingsIcon/> Pin code settings</Button>
+                                    <Button variant="darkGrey-100"><CashbackIcon/> Cashback</Button>
+                                    <Button variant="darkGrey-100"><LockIcon/> Block Card</Button>
+                                    <Button variant="darkGrey-100"><SettingsIcon/> Settings Limits</Button>
                                 </section>
                             </div>
                         </div>
-
                     </div>
-
-
                 </div>
             </div>
         </>

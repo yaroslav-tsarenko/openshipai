@@ -314,14 +314,12 @@ const CarrierTakeLoad = () => {
             {showAutomotiveSubOptions && (
                 <div className="overlay-popup-select">
                     <div className="select-popup" onClick={e => e.stopPropagation()}>
-
                         <div className="select-popup-header">
                             <h2>Automotive Options</h2>
                             <button className="close-popup-button"
                                     onClick={() => setShowAutomotiveSubOptions(false)}>Close
                             </button>
                         </div>
-
                         <div className="select-popup-content">
                             <p onClick={() => handleSelectSubLoadTypeOption('Car or Light Truck')}>Car or Light
                                 Truck</p>
@@ -897,7 +895,7 @@ const CarrierTakeLoad = () => {
                                         sortedAndFilteredLoads.map(load => (
                                             <LoadContainerBid
                                                 key={load._id}
-                                                loadPrice={load.loadPrice}
+                                                loadPrice={load.loadAveragePrice}
                                                 loadTitle={load.loadTitle}
                                                 loadPickUpLocation={load.loadPickupLocation}
                                                 loadPickUpDate={load.loadPickupDate}
@@ -966,7 +964,6 @@ const CarrierTakeLoad = () => {
                                             date</p>
                                     )}
                                 </div>
-
                             )}
                         </div>
                     </div>

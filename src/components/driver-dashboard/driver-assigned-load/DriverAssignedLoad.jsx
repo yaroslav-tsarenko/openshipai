@@ -1,3 +1,4 @@
+
 import React, {useEffect, useState} from "react";
 import '../DriverDashboard.css';
 import {Link, useParams} from 'react-router-dom';
@@ -11,7 +12,6 @@ import Alert from "../../floating-window-success/Alert";
 import ClipLoader from "react-spinners/ClipLoader";
 import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
-import OpenRouteService from 'openrouteservice-js'; // Import OpenRouteService
 
 const DriverAssignedLoad = () => {
     const [isPickedUp, setIsPickedUp] = useState(false);
@@ -36,40 +36,87 @@ const DriverAssignedLoad = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
-    const calculateDistance = async (origin, destination) => {
-        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
-        try {
-            const originResponse = await axios.get(
-                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
-            );
-            const destinationResponse = await axios.get(
-                `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${destination}`
-            );
-            const originCoords = originResponse.data.features[0].geometry.coordinates;
-            const destinationCoords = destinationResponse.data.features[0].geometry.coordinates;
-            const routeResponse = await axios.post(
-                `https://api.openrouteservice.org/v2/directions/driving-car`,
-                {
-                    coordinates: [originCoords, destinationCoords]
-                },
-                {
-                    headers: {
-                        Authorization: apiKey,
-                        'Content-Type': 'application/json'
-                    }
+    useEffect(() => {
+        const fetchRouteData = async () => {
+            if (currentLocation.lat && currentLocation.lng && load.loadPickupLocation) {
+                try {
+                    const directionsService = new window.google.maps.DirectionsService();
+                    const request = {
+                        origin: new window.google.maps.LatLng(currentLocation.lat, currentLocation.lng),
+                        destination: new window.google.maps.LatLng(load.loadPickupLocation.lat, load.loadPickupLocation.lng),
+                        travelMode: window.google.maps.TravelMode.DRIVING
+                    };
+
+                    directionsService.route(request, (result, status) => {
+                        if (status === window.google.maps.DirectionsStatus.OK) {
+                            const route = result.routes[0];
+                            const duration = route.legs[0].duration.value / 60; // Convert to minutes
+                            const distance = route.legs[0].distance.value / 1000; // Convert to kilometers
+                            const arrival = new Date();
+                            arrival.setMinutes(arrival.getMinutes() + duration);
+                            setTripDuration(`${Math.round(duration)} mins`);
+                            setLoadMilesTrip(`${Math.round(distance * 0.621371)} miles`); // Convert km to miles
+                            setArrivalTime(arrival.toLocaleTimeString());
+                        } else {
+                            console.error('Directions request failed due to ' + status);
+                        }
+                    });
+                } catch (error) {
+                    console.error('Error fetching route data:', error);
                 }
-            );
-            const distanceInMeters = routeResponse.data.routes[0].summary.distance;
-            const distanceInMiles = distanceInMeters / 1609.344; // More accurate conversion factor
-            const durationInSeconds = routeResponse.data.routes[0].summary.duration;
-            const durationInMinutes = durationInSeconds / 60;
-            const hours = Math.floor(durationInMinutes / 60);
-            const minutes = Math.round(durationInMinutes % 60);
-            const arrival = new Date();
-            arrival.setMinutes(arrival.getMinutes() + durationInMinutes);
-            setDistance(distanceInMiles.toFixed(2));
-            setTripDuration(`${hours} hours ${minutes} min`);
-            setArrivalTime(arrival.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}));
+            }
+        };
+
+        fetchRouteData();
+    }, [currentLocation, load.loadPickupLocation]);
+
+    const calculateDistance = async (origin, destination) => {
+        try {
+            const geocoder = new window.google.maps.Geocoder();
+
+            const getCoordinates = (address) => {
+                return new Promise((resolve, reject) => {
+                    geocoder.geocode({ address }, (results, status) => {
+                        if (status === window.google.maps.GeocoderStatus.OK) {
+                            resolve(results[0].geometry.location);
+                        } else {
+                            reject('Geocode was not successful for the following reason: ' + status);
+                        }
+                    });
+                });
+            };
+
+            const originCoords = await getCoordinates(origin);
+            const destinationCoords = await getCoordinates(destination);
+
+            const directionsService = new window.google.maps.DirectionsService();
+            const request = {
+                origin: originCoords,
+                destination: destinationCoords,
+                travelMode: window.google.maps.TravelMode.DRIVING
+            };
+
+            directionsService.route(request, (result, status) => {
+                if (status === window.google.maps.DirectionsStatus.OK) {
+                    const route = result.routes[0];
+                    const distanceInMeters = route.legs[0].distance.value;
+                    const distanceInMiles = distanceInMeters / 1609.344; // More accurate conversion factor
+                    const durationInSeconds = route.legs[0].duration.value;
+                    const durationInMinutes = durationInSeconds / 60;
+                    const hours = Math.floor(durationInMinutes / 60);
+                    const minutes = Math.round(durationInMinutes % 60);
+                    const arrival = new Date();
+                    arrival.setMinutes(arrival.getMinutes() + durationInMinutes);
+                    setDistance(distanceInMiles.toFixed(2));
+                    setTripDuration(`${hours} hours ${minutes} min`);
+                    setArrivalTime(arrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                } else {
+                    console.error('Directions request failed due to ' + status);
+                    setDistance(null);
+                    setTripDuration(null);
+                    setArrivalTime(null);
+                }
+            });
         } catch (error) {
             console.error('Error calculating distance:', error);
             setDistance(null);
@@ -274,7 +321,6 @@ const DriverAssignedLoad = () => {
             console.error('Error updating load status:', error);
         }
         setIsCompletingDelivering(false);
-        window.location.reload();
     };
 
     const handleStartTrip = async () => {
@@ -290,7 +336,6 @@ const DriverAssignedLoad = () => {
         } catch (error) {
             console.error('Error starting trip:', error);
         }
-        window.location.reload();
         setIsStartingTrip(false);
     };
 
@@ -320,37 +365,6 @@ const DriverAssignedLoad = () => {
         return () => clearInterval(intervalId);
     }, []);
 
-    useEffect(() => {
-        const fetchRouteData = async () => {
-            if (currentLocation.lat && currentLocation.lng && load.loadPickupLocation) {
-                try {
-                    const client = new OpenRouteService.Directions({
-                        api_key: '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca'
-                    });
-
-                    const response = await client.calculate({
-                        coordinates: [[currentLocation.lng, currentLocation.lat], [load.loadPickupLocation.lng, load.loadPickupLocation.lat]],
-                        profile: 'driving-car',
-                        format: 'geojson'
-                    });
-
-                    const route = response.routes[0];
-                    const duration = route.summary.duration / 60; // Convert to minutes
-                    const distance = route.summary.distance / 1000; // Convert to kilometers
-                    const arrival = new Date();
-                    arrival.setMinutes(arrival.getMinutes() + duration);
-                    setTripDuration(`${Math.round(duration)} mins`);
-                    setLoadMilesTrip(`${Math.round(distance * 0.621371)} miles`); // Convert km to miles
-                    setArrivalTime(arrival.toLocaleTimeString());
-
-                } catch (error) {
-                    console.error('Error fetching route data:', error);
-                }
-            }
-        };
-
-        fetchRouteData();
-    }, [currentLocation, load.loadPickupLocation]);
 
     return (
         <>
