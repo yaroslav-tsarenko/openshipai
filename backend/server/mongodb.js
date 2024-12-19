@@ -54,7 +54,7 @@ const Signature = require('./models/Signature');
 const Driver = require('./models/Driver');
 const Load = require('./models/Load');
 const LoadBid = require('./models/LoadBid');
-const stripe = require('stripe')('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');
+const stripe = require('stripe')(process.env.STRIPE_PRIVATE_KEY);
 require('dotenv').config();
 const fs = require('fs');
 const nodemailer = require('nodemailer');
