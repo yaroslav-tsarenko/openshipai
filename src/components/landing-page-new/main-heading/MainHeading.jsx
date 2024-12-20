@@ -26,11 +26,11 @@ const MainHeading = ({ref}) => {
                 <section><GreenCheckmark className={styles.checkmark}/><span>Residential & Business</span></section>
                 <section><GreenCheckmark className={styles.checkmark}/><span>Ship Anything to Anywhere</span></section>
             </div>
-            <h3>Maximize Savings, Reduce Time, Automate Controll</h3>
+            <h3>Maximize Savings, Reduce Time, Automate Control</h3>
             <h2>Every Shipment</h2>
             <div className={styles.paragraphWithClients}>
                 <p>
-                    OpenShipAI dfdfdfdis fyour AffffffffffffdI-driven shipping ally, offering intuitive solutions for tracking and managing
+                    OpenShipAI your AI-driven shipping ally, offering intuitive solutions for tracking and managing
                     international shipments with precision and care. Dive in and ship smarter.
                 </p>
                 <TrustedClients className={styles.trustedClients}/>

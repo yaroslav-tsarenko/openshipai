@@ -119,7 +119,7 @@ body {
     display: flex;
     position: relative;
     flex-direction: column;
-    background: var(--light-grey);
+    background: #f1f3f4;
     color: var(--dark-grey);
     align-items: center;
     width: 100%;
@@ -131,6 +131,7 @@ body {
     align-items: center;
     width: 100%;
     margin: 0 auto;
+    max-width: 1920px;
     gap: 20px;
     align-content: center;
     justify-items: center;
@@ -153,12 +154,20 @@ body {
 .footer-section-content h3 {
     font-size: 2.5rem;
     font-weight: bold;
-    color: var(--dark-grey);
+    color: #939393;
 }
 
+.footer-section-link {
+    color: #939393;
+    font-size: 1.7rem;
+    font-weight: normal;
+    text-decoration: none;
+    transition: 0.2s ease-in-out;
+    cursor: pointer;
+}
 
-.footer-section-link{
-    color: var(--dark-grey);
+.footer-section-link:hover {
+    text-decoration: underline;
 }
 
 .footer-section-content-newsletter {
@@ -174,7 +183,7 @@ body {
 .footer-section-content-newsletter p {
     font-size: 1.7rem;
     font-weight: normal;
-    color: var(--dark-grey);
+    color: #939393;
 }
 
 .footer-input-wrapper {
@@ -183,21 +192,20 @@ body {
     align-items: center;
     width: 350px;
     border-radius: 30px;
-    padding: 5px 5px 5px 5px;
+    border: 2px solid var(--grey-darker);
+    padding: 5px 5px 5px 25px;
     background: var(--royal-white);
 }
 
 .footer-input-wrapper input {
     border: none;
-    border-radius: 30px;
-    padding: 0 20px 0 20px;
-    font-size: 1.7rem;
+    font-size: 1.5rem;
     font-weight: bold;
 }
 
 .footer-input-wrapper button {
     border: none;
-    background: var(--royal-green-hovered);
+    background: var(--light-grey);
     font-weight: bold;
     color: var(--royal-white);
     font-size: 1.7rem;
@@ -217,21 +225,6 @@ body {
     font-weight: bold;
 }
 
-.footer-section-content a {
-    color: var(--dark-grey);
-    text-decoration: none;
-    font-size: 1.7rem;
-    font-weight: normal;
-    transition: 0.2s ease-in-out;
-    text-align: left;
-}
-
-.footer-section-content a:hover {
-    color: var(--royal-white);
-    transition: 0.2s ease-in-out;
-    text-decoration: underline;
-}
-
 .footer-section-bottom {
     background: var(--royal-white);
     width: 100%;
@@ -246,7 +239,7 @@ body {
     margin: 0 auto;
     font-weight: bold;
     font-size: 2rem;
-    color: var(--dark-grey);
+    color: #3B3B3B;
 }
 
 .contact-icons-wrapper {
@@ -256,28 +249,10 @@ body {
 }
 
 .icon-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    justify-items: center;
-    align-content: center;
-    transition: 0.2s ease-in-out;
-    cursor: pointer;
-    border-radius: 50px;
-    margin: 0 0 0 0;
-    border: none;
-    background: var(--dark-grey);
+    color: #939393;
+    font-size: 20px;
 }
 
-.icon-container:hover {
-    transition: 0.2s ease-in-out;
-
-}
-
-.footer-icons {
-    font-size: 2rem;
-    color: var(--royal-blue);
-}
 
 .left-landing-introduction-container {
     display: flex;
@@ -1511,7 +1486,7 @@ body {
 }
 
 @media screen and (max-width: 768px) {
-    .footer-section-upper{
+    .footer-section-upper {
         display: grid;
         grid-template-columns: repeat(2, 2fr);
         align-content: start;
@@ -1541,7 +1516,7 @@ body {
 }
 
 @media screen and (max-width: 585px) {
-    .footer-section-upper{
+    .footer-section-upper {
         display: grid;
         grid-template-columns: repeat(1, 1fr);
         align-content: center;
@@ -1552,17 +1527,17 @@ body {
         gap: 20px;
     }
 
-    .footer-section-content{
-text-align: center;
+    .footer-section-content {
+        text-align: center;
     }
 
-    .footer-section-link{
+    .footer-section-link {
         display: flex;
         justify-content: center;
         align-items: center;
     }
 
-    .footer-section-content-newsletter{
+    .footer-section-content-newsletter {
         display: flex;
         flex-direction: column;
         align-content: center;
@@ -1604,11 +1579,6 @@ text-align: center;
         justify-content: space-between;
         margin: 40px 0 0 0;
         width: 100%;
-    }
-
-    .footer-section-upper {
-        flex-direction: column;
-        height: fit-content;
     }
 
     .landing-page-footer-wrapper {

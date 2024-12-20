@@ -34,15 +34,11 @@ const LandingPageFooter = () => {
         }
     };
 
-
-    const handleNavigateTo = (url) => {
-        window.location.href = url;
-    };
     return (
         <>
             {alert.show && <Alert status={alert.status} text={alert.text} description={alert.description}/>}
             <footer className="landing-page-footer-wrapper">
-                <section className="footer-section-upper">
+                <div className="footer-section-upper">
                     <div className="footer-section-content">
                         <h3>Company</h3>
                         <Link className="footer-section-link" to="/about-page">About Us</Link>
@@ -57,18 +53,18 @@ const LandingPageFooter = () => {
                         <Link className="footer-section-link" to="/blog-page">Blog</Link>
                         <Link className="footer-section-link" to="/contact-us">Contact Us</Link>
                     </div>
-                    <div className="footer-section-content">
+                   {/* <div className="footer-section-content">
                         <h3>Contact us through email</h3>
                         <Link className="footer-section-link" to="mailto:info@openshipai.com">info@openshipai.com</Link>
                         <Link className="footer-section-link" to="mailto:openshipai@gmail.com">openshipai@gmail.com</Link>
-                    </div>
+                    </div>*/}
                     <div className="footer-section-content">
                         <h3>Product</h3>
                         <Link className="footer-section-link" to="/cookie-policy">Cookie Policy</Link>
                         <Link className="footer-section-link" to="/time-schedule">Time Schedule</Link>
                         <Link className="footer-section-link" to="/lead-generate">Lead Generate</Link>
                     </div>
-                   {/* <div className="footer-section-content-newsletter">
+                    <div className="footer-section-content-newsletter">
                         <OpenshipLogoWhite/>
                         <p>Subscribe for Our Newsletter</p>
                         <div className="footer-input-wrapper">
@@ -83,27 +79,21 @@ const LandingPageFooter = () => {
                             </button>
                         </div>
                         <div className="contact-icons-wrapper">
-                            <button onClick={() => handleNavigateTo("https://x.com/openshipai_")}
-                                    className="icon-container">
+                            <Link to="https://x.com/openshipai_" className="icon-container">
                                 <BsTwitterX className="footer-icons"/>
-                            </button>
-                            <button
-                                onClick={() => handleNavigateTo("https://www.linkedin.com/company/open-ship-ai/?trk=ppro_cprof")}
-                                className="icon-container">
+                            </Link>
+                            <Link to="https://www.linkedin.com/company/open-ship-ai/?trk=ppro_cprof" className="icon-container">
                                 <FaLinkedinIn className="footer-icons"/>
-                            </button>
-                            <button onClick={() => handleNavigateTo("https://www.instagram.com/openshipai_/")}
-                                    className="icon-container">
+                            </Link>
+                            <Link to="https://www.instagram.com/openshipai_/" className="icon-container">
                                 <FaInstagram className="footer-icons"/>
-                            </button>
-                            <button
-                                onClick={() => handleNavigateTo("https://www.facebook.com/profile.php?id=61558698627638")}
-                                className="icon-container">
+                            </Link>
+                            <Link to="https://www.facebook.com/profile.php?id=61558698627638" className="icon-container">
                                 <FaFacebookF className="footer-icons"/>
-                            </button>
+                            </Link>
                         </div>
-                    </div>*/}
-                </section>
+                    </div>
+                </div>
                 <section className="footer-section-bottom">
                     <p>All rights are reserved. Copyright 2024</p>
                 </section>
