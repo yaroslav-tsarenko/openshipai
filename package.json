@@ -130,12 +130,6 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
   "browserslist": {
     "production": [
       ">0.2%",
@@ -150,7 +144,6 @@
   },
   "devDependencies": {
     "dotenv": "^16.3.1",
-    "eslint-plugin-unused-imports": "^4.1.4",
     "ora": "^7.0.1"
   }
 }
