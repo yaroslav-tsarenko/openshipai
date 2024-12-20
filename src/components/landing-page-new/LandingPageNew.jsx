@@ -60,11 +60,6 @@ const LandingPageNew = () => {
 
     const IMAGE_URL = 'https://res.cloudinary.com/dd3rwqwll/image/upload/v1734100101/analyse-road-data_qie21v.svg';
     console.log(IMAGE_URL);
-
-    const headerRef = useGsapAnimation((el) => {
-        gsap.fromTo(el, { opacity: 0, y: -50 }, { opacity: 1, y: 0, duration: 1 });
-    });
-
     const mainHeadingRef = useGsapAnimation((el) => {
         gsap.fromTo(el, { opacity: 0, x: -50 }, { opacity: 1, x: 0, duration: 1 });
     });

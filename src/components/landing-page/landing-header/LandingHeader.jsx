@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import "../LandingPage.css";
 import {ReactComponent as OpenshipLogo} from "../../../assets/images/openship-ai-logo-updated.svg";
-import {ReactComponent as DropDownIcon} from "../../../assets/images/dropbdown-arrow.svg";
-import {ReactComponent as BurgerMenuIcon} from "../../../assets/images/burger-button.svg";
-import {ReactComponent as FaTimesIcon} from "../../../assets/images/fa-times-icon.svg";
 import {Link} from "react-router-dom";
-import {BsTwitterX} from "react-icons/bs";
-import {FaFacebookF, FaInstagram, FaLinkedinIn} from "react-icons/fa";
 
 const LandingHeader = () => {
 

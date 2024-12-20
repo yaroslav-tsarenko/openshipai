@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react';
 import styles from "./HowItWorks.module.scss";
-import projectExample4 from "../../../assets/videos/projectExample4.mp4";
 
 const HowItWorks = () => {
+    const projectExample4 = `https://images.openshipai.com/project-example1.mp4`;
+
     const [activeItem, setActiveItem] = useState(0);
     const items = [
         {

@@ -4,9 +4,8 @@ import Button from "../../button/Button";
 import {useState} from 'react';
 import axios from "axios";
 import TextInput from "../../text-input/TextInput";
-import shipperImage from "../../../assets/images/shipper-booking.png"
-import carrierImage from "../../../assets/images/carrier-truck.svg"
 import {BACKEND_URL} from "../../../constants/constants";
+import {IMAGE_URL} from "../../../constants/constants";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 import Alert from "../../floating-window-success/Alert";
 
@@ -15,7 +14,8 @@ const GetStartedSection = () => {
     const [activeButton, setActiveButton] = useState('shipper');
     const [loading, setLoading] = useState(false);
     const [alert, setAlert] = useState(null);
-
+    const shipperImage = `${IMAGE_URL}/shipper-booking.png`
+    const carrierImage = `https://pub-234c0b2882e9417bbc7d6d89e634ad1f.r2.dev/carrier-truck.webp`
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -139,6 +139,8 @@ const GetStartedSection = () => {
                     {activeButton === 'shipper' ? (
                         <div className={styles.getStartedContent}>
                             <section>
+                                <h1>Become Shipper right now!</h1>
+                                <p>Be the part of our team</p>
                                 <div className={styles.getStartedContentInputs}>
                                     <TextInput
                                         placeholder="First Name"

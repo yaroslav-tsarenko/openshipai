@@ -1538,8 +1538,6 @@ app.post('/google-sign-up', async (req, res) => {
     res.status(200).send({email, name: given_name, family_name});
 });
 
-
-
 app.post('/google-login', async (req, res) => {
     const { token } = req.body;
     const ticket = await client.verifyIdToken({
