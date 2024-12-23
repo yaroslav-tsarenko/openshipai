@@ -31,3 +31,4 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./build/*
           target: ${{ secrets.TARGET_DIR }}
+          rm: true
