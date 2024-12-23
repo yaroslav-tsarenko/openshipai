@@ -323,28 +323,31 @@ const CarrierPaymentPage = () => {
                     <div className={styles.allCardsSection}>
                         <h4>All cards</h4>
                         <section>
-                            {loadingCards ? (
-                                <Skeleton variant="rounded" width={300} height={200}/>
-                            ) : (
-                                cards.map(card => (
-                                    <Card
-                                        key={card._id}
-                                        onClick={handleCardClickAsync}
-                                        cardNumber={card.cardNumber}
-                                        cardCVV={card.cvv}
-                                        cardColor={card.cardColor}
-                                        cardExpirationDate={card.expirationDate}
-                                        cardLastNameFirstName={card.cardLastNameFirstName}
-                                        cardPaymentSystem={card.cardPaymentSystem}
-                                    />
-                                ))
-                            )}
                             <div className={styles.addNewCard} onClick={togglePopup}>
                                 <section>
                                     <PlusIcon/>
                                     <h2>Add New</h2>
                                 </section>
                             </div>
+                            {loadingCards ? (
+                                <Skeleton variant="rounded" width={300} height={200}/>
+                            ) : (
+                                cards.length === 0 ? (
+                                    <p className="text-message-p">You haven't added any card to the list</p>
+                                ) : (
+                                    cards.map(card => (
+                                        <Card
+                                            key={card._id}
+                                            cardNumber={card.cardNumber}
+                                            cardCVV={card.cvv}
+                                            cardColor={card.cardColor}
+                                            cardExpirationDate={card.expirationDate}
+                                            cardLastNameFirstName={card.cardLastNameFirstName}
+                                            cardPaymentSystem={card.cardPaymentSystem}
+                                        />
+                                    ))
+                                )
+                            )}
                         </section>
 
                     </div>
@@ -357,17 +360,21 @@ const CarrierPaymentPage = () => {
                                 </button>
                             </div>
                             <div className={styles.transactionHistoryContent}>
-                                {transactions.map(transaction => (
-                                    <TransactionItem
-                                        key={transaction._id}
-                                        avatar={previewSavedImage}
-                                        currentUser="You"
-                                        monthAndYear={transaction.currentDate}
-                                        time={transaction.currentTime}
-                                        typeOfPayment={transaction.paymentStatus}
-                                        priceAmount={`${transaction.amount}$`}
-                                    />
-                                ))}
+                                {transactions.length === 0 ? (
+                                    <p className="text-message-p">You didn't have any transactions</p>
+                                ) : (
+                                    transactions.map(transaction => (
+                                        <TransactionItem
+                                            key={transaction._id}
+                                            avatar={previewSavedImage}
+                                            currentUser="You"
+                                            monthAndYear={transaction.currentDate}
+                                            time={transaction.currentTime}
+                                            typeOfPayment={transaction.paymentStatus}
+                                            priceAmount={`${transaction.amount}$`}
+                                        />
+                                    ))
+                                )}
                             </div>
                         </div>
                         <div className={styles.cardSettingsWrapper}>
@@ -389,14 +396,14 @@ const CarrierPaymentPage = () => {
                                         cardPaymentSystem={selectedCard.cardPaymentSystem}
                                     />
                                 ) : (
-                                    <p>No card selected</p>
+                                    <p className="text-message-p">No card selected</p>
                                 )}
-                                <section>
+                                {/*<section>
                                     <Button variant="darkGrey-100"><PinCodeSettingsIcon/> Pin code settings</Button>
                                     <Button variant="darkGrey-100"><CashbackIcon/> Cashback</Button>
                                     <Button variant="darkGrey-100"><LockIcon/> Block Card</Button>
                                     <Button variant="darkGrey-100"><SettingsIcon/> Settings Limits</Button>
-                                </section>
+                                </section>*/}
                             </div>
                         </div>
                     </div>

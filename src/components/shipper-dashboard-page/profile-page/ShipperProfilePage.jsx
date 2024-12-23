@@ -16,7 +16,7 @@ const ShipperProfilePage = () => {
     const [shipperInfo, setShipperInfo] = useState(null);
 
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
-    const [setLoading] = useState(false);
+    const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {

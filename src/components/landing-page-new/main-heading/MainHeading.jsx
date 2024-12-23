@@ -1,14 +1,13 @@
 import React from 'react';
-import {ReactComponent as GreenCheckmark} from "../../../assets/images/checkmark-green.svg";
-import {ReactComponent as TrustedCompanies} from "../../../assets/images/trusted-companies.svg";
-import {ReactComponent as TrustedClients} from "../../../assets/images/client-trusted.svg";
+import { ReactComponent as GreenCheckmark } from "../../../assets/images/checkmark-green.svg";
 import styles from './MainHeading.module.scss';
 import Button from "../../button/Button";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import ClientTrusted from "../../../assets/images/client-trusted.svg";
+import { IMAGE_URL } from "../../../constants/constants";
 
-const MainHeading = ({ref}) => {
-
-
+const MainHeading = ({ checkmarkTexts, h3, h2, p }) => {
+    const TrustedCompanies = `${IMAGE_URL}/trusted-companies.webp`;
     const navigate = useNavigate();
 
     const handleNavigateShipper = () => {
@@ -19,21 +18,21 @@ const MainHeading = ({ref}) => {
         navigate("/sign-up-carrier");
     }
 
-
     return (
-        <div className={styles.mainHeadingWrapper} ref={ref}>
+        <div className={styles.mainHeadingWrapper}>
             <div className={styles.littleBenefits}>
-                <section><GreenCheckmark className={styles.checkmark}/><span>Residential & Business</span></section>
-                <section><GreenCheckmark className={styles.checkmark}/><span>Ship Anything to Anywhere</span></section>
+                {checkmarkTexts.map((text, index) => (
+                    <section key={index}>
+                        <GreenCheckmark className={styles.checkmark} />
+                        <span>{text}</span>
+                    </section>
+                ))}
             </div>
-            <h3>Maximize Savings, Reduce Time, Automate Control</h3>
-            <h2>Every Shipment</h2>
+            <h3>{h3}</h3>
+            <h2>{h2}</h2>
             <div className={styles.paragraphWithClients}>
-                <p>
-                    OpenShipAI your AI-driven shipping ally, offering intuitive solutions for tracking and managing
-                    international shipments with precision and care. Dive in and ship smarter.
-                </p>
-                <TrustedClients className={styles.trustedClients}/>
+                <p>{p}</p>
+                <img src={ClientTrusted} className={styles.trustedClients} alt="trusted clients" height={250} />
             </div>
             <section>
                 <Button variant="apply-non-responsive" onClick={handleNavigateShipper}>
@@ -43,7 +42,7 @@ const MainHeading = ({ref}) => {
                     Become Carrier
                 </Button>
             </section>
-            <TrustedCompanies/>
+            <img src={TrustedCompanies} alt="Trusted Companies" className={styles.trustedCompanies} height={150} />
         </div>
     );
 };

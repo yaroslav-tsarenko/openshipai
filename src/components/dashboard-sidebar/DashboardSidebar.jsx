@@ -4,14 +4,14 @@ import "./DashboardSidebar.css";
 import {ReactComponent as OpenshipLogo} from "../../assets/images/openship-ai-logo-updated.svg";
 import OpenshipLogoPng from "../../assets/images/logo-png.png";
 import {LuLayoutDashboard} from "react-icons/lu";
-import { PiTruck } from "react-icons/pi";
-import { IoChatbubblesOutline } from "react-icons/io5";
-import { TbSteeringWheel } from "react-icons/tb";
-import { LuWallet2 } from "react-icons/lu";
-import { LiaTruckLoadingSolid } from "react-icons/lia";
-import { LuSettings } from "react-icons/lu";
-import { TbLogout } from "react-icons/tb";
-import { MdOutlineAssignment } from "react-icons/md";
+import {PiTruck} from "react-icons/pi";
+import {IoChatbubblesOutline} from "react-icons/io5";
+import {TbSteeringWheel} from "react-icons/tb";
+import {LiaTruckLoadingSolid} from "react-icons/lia";
+import {LuSettings} from "react-icons/lu";
+import {TbLogout} from "react-icons/tb";
+import { TbWallet } from "react-icons/tb";
+import {MdOutlineAssignment} from "react-icons/md";
 import {ReactComponent as ProfileIcon} from "../../assets/images/profile-icon-grey.svg";
 import {ReactComponent as ProfileIconWhite} from "../../assets/images/profile-icon-white.svg";
 import {ReactComponent as QoutesIcon} from "../../assets/images/listing-icon-grey.svg";
@@ -53,7 +53,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={TakeLoad.route}
                             >
-                                <PiTruck  className="dashboard-link-nav-button-icon"/> Take Load
+                                <PiTruck className="dashboard-link-nav-button-icon"/> Take Load
                             </Link>
                         )}
                         {MyLoads && MyLoads.visible && (
@@ -61,7 +61,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={MyLoads.route}
                             >
-                                    <LiaTruckLoadingSolid className="dashboard-link-nav-button-icon"/> My Loads
+                                <LiaTruckLoadingSolid className="dashboard-link-nav-button-icon"/> My Loads
                             </Link>
                         )}
                         {AssignedLoad && AssignedLoad.visible && (
@@ -75,7 +75,7 @@ const DashboardSidebar = ({
                             <Link
                                 className="dashboard-link-nav-button"
                                 to={ChatWithShipper.route}>
-                                    <IoChatbubblesOutline className="dashboard-link-nav-button-icon"/> Chat with Shipper
+                                <IoChatbubblesOutline className="dashboard-link-nav-button-icon"/> Chat with Shipper
                             </Link>
                         )}
                         {ChatWithCarrier && ChatWithCarrier.visible && (
@@ -83,7 +83,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={ChatWithCarrier.route}
                             >
-                                    <IoChatbubblesOutline className="dashboard-link-nav-button-icon"/>
+                                <IoChatbubblesOutline className="dashboard-link-nav-button-icon"/>
                                 Chat with Carrier
                             </Link>
                         )}
@@ -92,7 +92,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={DriversAndEquip.route}
                             >
-                                    <TbSteeringWheel className="dashboard-link-nav-button-icon"/>
+                                <TbSteeringWheel className="dashboard-link-nav-button-icon"/>
                                 Drivers & Equip
                             </Link>
                         )}
@@ -114,7 +114,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={Payments.route}
                             >
-                                    <LuWallet2 className="dashboard-link-nav-button-icon"/>
+                                <TbWallet className="dashboard-link-nav-button-icon"/>
                                 Payments
                             </Link>
                         )}
@@ -136,7 +136,7 @@ const DashboardSidebar = ({
                                 className="dashboard-link-nav-button"
                                 to={Settings.route}
                             >
-                                    <LuSettings className="dashboard-link-nav-button-icon"/>
+                                <LuSettings className="dashboard-link-nav-button-icon"/>
                                 Settings
                             </Link>
                         )}
@@ -145,7 +145,7 @@ const DashboardSidebar = ({
                         className="dashboard-link-nav-button"
                         to={"/sign-in"}
                     >
-                            <TbLogout className="dashboard-link-nav-button-icon"/>
+                        <TbLogout className="dashboard-link-nav-button-icon"/>
                         Logout
                     </Link>
                 </div>
@@ -163,7 +163,7 @@ const DashboardSidebar = ({
                                     className="dashboard-link-nav-button"
                                     to={DashboardAI.route}
                                 >
-                                        <LuLayoutDashboard className="dashboard-link-nav-button-icon"/> Dashboard AI
+                                    <LuLayoutDashboard className="dashboard-link-nav-button-icon"/> Dashboard AI
                                 </Link>
                             )}
                             {TakeLoad && TakeLoad.visible && (
@@ -171,7 +171,7 @@ const DashboardSidebar = ({
                                     className="dashboard-link-nav-button"
                                     to={TakeLoad.route}
                                 >
-                                    <PiTruck  className="dashboard-link-nav-button-icon"/> Take Load
+                                    <PiTruck className="dashboard-link-nav-button-icon"/> Take Load
                                 </Link>
                             )}
                             {MyLoads && MyLoads.visible && (
@@ -233,7 +233,7 @@ const DashboardSidebar = ({
                                     className="dashboard-link-nav-button"
                                     to={Payments.route}
                                 >
-                                    <LuWallet2 className="dashboard-link-nav-button-icon"/>
+                                    <TbWallet className="dashboard-link-nav-button-icon"/>
                                     Payments
                                 </Link>
                             )}
@@ -264,7 +264,7 @@ const DashboardSidebar = ({
                             className="dashboard-link-nav-button"
                             to={"/sign-in"}
                         >
-                                <TbLogout className="dashboard-link-nav-button-icon"/>
+                            <TbLogout className="dashboard-link-nav-button-icon"/>
                             Logout
                         </Link>
                     </div>

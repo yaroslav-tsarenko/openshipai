@@ -71,7 +71,7 @@ const VehicleLoad = () => {
     };
 
     const calculateDistance = async (origin, destination) => {
-        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
+        const apiKey = '5b3ce3597851110001cf6248762ba847e9554d668cd26cc9e7b6d06d';
         try {
             const originResponse = await axios.get(
                 `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
@@ -216,7 +216,7 @@ const VehicleLoad = () => {
                                 <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
                             <div className="create-load-buttons">
                                 <Button variant="neutral" buttonText="Go Back" onClick={() => setStep(1)}/>
-                                <Button variant="default" buttonText="Next" onClick={() => setStep(3)}/>
+                                <Button variant="default-100" buttonText="Next" onClick={() => setStep(3)}/>
                             </div>
                         </div>
                     </CreateLoadContainer>

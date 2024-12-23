@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {ReactComponent as CarrierAvatar} from "../../assets/images/userAvatar2.svg"
+import {ReactComponent as CarrierAvatar} from "../../assets/images/default-avatar.svg"
 import {useNavigate} from 'react-router-dom';
 import "./CarrierLoadBid.css"
 import axios from "axios";
@@ -9,6 +9,7 @@ import Button from "../button/Button";
 import Popup from "../popup/Popup";
 import RotatingLinesLoader from "../rotating-lines/RotatingLinesLoader";
 import {Skeleton} from "@mui/material";
+import InfoItem from "../info-item/InfoItem";
 
 const CarrierLoadBid = ({
                             loadCarrierID,
@@ -130,8 +131,8 @@ const CarrierLoadBid = ({
                         <h2>{carrier ? carrier.carrierContactCompanyName : <Skeleton width={100} height={30}/>}</h2>
                     </section>
                     <section>
-                        <h4>Estimated delivery: {formattedDate}</h4>
-                        <h3>{loadBidPrice}$</h3>
+                        <InfoItem>Estimated delivery: {formattedDate}</InfoItem>
+                        <InfoItem color="green">{loadBidPrice}$</InfoItem>
                     </section>
                 </div>
                 <div className="carrier-load-bid-container-body">

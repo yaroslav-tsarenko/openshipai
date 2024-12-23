@@ -10,7 +10,7 @@ require('dotenv').config();
 const AIChat = require('./models/AIChat');
 
 const app = express();
-const PORT = process.env.PORT || 7777;
+const PORT = process.env.PORT || 8888;
 
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
@@ -18,7 +18,7 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch(err => console.error('Failed to connect to MongoDB:', err));
 

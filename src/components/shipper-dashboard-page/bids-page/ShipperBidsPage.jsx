@@ -79,7 +79,7 @@ const ShipperLoadsPage = () => {
                     accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                     profileLink={`/shipper-profile/${shipperID}`}
                     bellLink={`/shipper-settings/${shipperID}`}
-                    settingsLink={`/shipper-profile/${shipperID}`}
+                    settingsLink={`/shipper-settings/${shipperID}`}
                     avatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                 />
                 <div className="shipper-qoutes-dashboard-content-body">

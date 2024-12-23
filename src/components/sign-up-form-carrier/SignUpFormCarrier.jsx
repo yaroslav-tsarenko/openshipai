@@ -125,7 +125,7 @@ const SignUpFormCarrier = () => {
             {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             <div className={styles.wrapper}>
                 <div className={styles.left}>
-                    <Link to="/sign-in">
+                    <Link to="/">
                         <LogoBlue className={styles.logo}/>
                     </Link>
                     <h1>Welcome, Carrier!</h1>
@@ -364,7 +364,7 @@ const SignUpFormCarrier = () => {
                                 <Button variant="darkGrey-100" buttonText="Previous" onClick={handlePrevious}/>
                             )}
                             {currentStep < 5 ? (
-                                <Button variant="default-non-responsive" buttonText="Next" onClick={handleNext}/>
+                                <Button variant="default-100" buttonText="Next" onClick={handleNext}/>
                             ) : (
                                 <Button variant="apply-non-responsive" onClick={handleSubmit}>
                                     {isLoading ?

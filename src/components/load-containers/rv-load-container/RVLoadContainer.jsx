@@ -355,7 +355,7 @@ const RVLoadContainer = ({
 
                 <Grid columns="2, 2fr">
                     <Button variant="neutral" buttonText="Go Back" onClick={goBack}/>
-                    <Button variant="default-non-responsive" onClick={handleCreateLoad}>
+                    <Button variant="default-100" onClick={handleCreateLoad}>
                         {isLoading ?
                             <RotatingLinesLoader title="Processing..."/>
                             :

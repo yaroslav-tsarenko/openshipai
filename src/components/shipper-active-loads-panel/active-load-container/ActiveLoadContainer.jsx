@@ -1,8 +1,11 @@
-import React from 'react';
-
+import React, {useEffect, useState} from 'react';
+import {useNavigate, useParams} from "react-router-dom";
 import {ReactComponent as DirectionIcon} from "../../../assets/images/direction-icon.svg";
 import {ReactComponent as CarrierIcon} from "../../../assets/images/trane-logo-carrier.svg";
+import {ReactComponent as ShipperIcon} from "../../../assets/images/shipper-icon.svg";
 import Button from "../../button/Button";
+import {BACKEND_URL} from "../../../constants/constants";
+import axios from "axios";
 import ActiveLoadStatusLabel from "../../active-load-status-label/ActiveLoadStatusLabel";
 
 const ActiveLoadContainer = ({
@@ -13,8 +16,35 @@ const ActiveLoadContainer = ({
                                  loadDeliveryDate,
                                  typeOfLoad,
                                  loadMilTrip,
+                                 loadCarrierID,
+                                 shipperID,
+                                 type,
                                  loadCredentialID
                              }) => {
+    const navigate = useNavigate();
+    const [chat, setChat] = useState(null);
+    const {carrierID} = useParams();
+
+    useEffect(() => {
+        const fetchChatData = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/get-deal-chat-conversation-by-load/${loadCredentialID}`);
+                setChat(response.data);
+            } catch (error) {
+                console.error('Error fetching chat data:', error);
+            }
+        };
+        fetchChatData();
+    }, [loadCredentialID]);
+
+    const handleClick = () => {
+        if (type === "carrier") {
+            navigate(`/carrier-chat-conversation/${carrierID}`);
+        } else {
+            navigate(`/customer-deal-chat-conversation/${shipperID}/${chat.chatID}`);
+        }
+    };
+
     return (
         <>
             <div className="active-load-container">
@@ -40,8 +70,14 @@ const ActiveLoadContainer = ({
                     <div className="load-info-section">{loadCredentialID}</div>
                 </div>
                 <div className="load-container-carrier">
-                    <CarrierIcon className="carrier-icon"/>
-                    <Button variant="outlined-non-responsive">Chat with Carrier</Button>
+                    {type === "carrier" ? <ShipperIcon className="carrier-icon"/> :
+                        <CarrierIcon className="carrier-icon"/>}
+                    {type === "driver" ?
+                        null :
+                        <Button variant="outlined-non-responsive" onClick={handleClick}>
+                            {type === "carrier" ? "Chat with Shipper" : "Chat with Carrier"}
+                        </Button>}
+
                 </div>
             </div>
             <hr/>

@@ -9,7 +9,6 @@ import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/defaul
 import {useNavigate, useParams} from "react-router-dom";
 import axios from 'axios';
 import {ReactComponent as AttachFile} from "../../../assets/images/skrepka-icon.svg";
-import {loadStripe} from '@stripe/stripe-js';
 import io from 'socket.io-client';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import {ClipLoader} from "react-spinners";
@@ -38,7 +37,6 @@ const CarrierChatPage = () => {
     const [touchEnd, setTouchEnd] = useState(null);
     const minSwipeDistance = 50;
     const [selectedChatID, setSelectedChatID] = useState(null);
-    const stripePromise = loadStripe('pk_test_51O5Q6UEOdY1hERYnWp8hCCQNdKR8Jiz9ZPRqy1Luk2mxqMaVTDvo6Z0FFWDhjRQc1ELOE95KIUatO2Ve4wCKKqiJ00O0f9R2eo');
     const [carrierInfo, setCarrierInfo] = useState(null);
     const [load, setLoad] = useState(null);
     const [formData, setFormData] = useState(null);
@@ -400,11 +398,11 @@ const CarrierChatPage = () => {
                 />
                 <div className="chat-content">
                     <div className={`shipper-deal-conversations-sidebar ${isChatVisible ? 'hidden' : ''}`}>
-                        <h2 className="messages-title">Messages</h2>
                         <div className="chat-conversation-search-bar">
                             <SearchBarIcon width="15"/>
                             <input type="text" placeholder="Search chat by load ID..."/>
                         </div>
+                        <h2 className="messages-title">Messages</h2>
                         <div className="chat-id-containers-wrapper">
                             {conversations.length === 0 ? (
                                 <p className="chat-message-warning">Shipper firstly need to approve your bid, then here

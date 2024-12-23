@@ -41,7 +41,7 @@ const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadCha
     };
 
     const calculateDistance = async (origin, destination) => {
-        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca'; // Replace with your API key
+        const apiKey = '5b3ce3597851110001cf6248762ba847e9554d668cd26cc9e7b6d06d'; // Replace with your API key
         try {
             const originResponse = await axios.get(
                 `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
@@ -180,7 +180,7 @@ const LocationTimeDataForm = ({currentStep, formData, setFormData, handleLoadCha
                     <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
                 <div className="create-load-buttons">
                     <Button variant="neutral" buttonText="Go Back" onClick={handleBack}/>
-                    <Button variant="default-non-responsive" buttonText="Next" onClick={handleNext}/>
+                    <Button variant="default-100" buttonText="Next" onClick={handleNext}/>
                 </div>
             </div>
         </CreateLoadContainer>

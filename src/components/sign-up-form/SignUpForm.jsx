@@ -127,7 +127,9 @@ function SignUpForm() {
             {message && <Alert status={message.status} text={message.text} description={message.description}/>}
             <div className="left-side">
                 <form onSubmit={handleSubmit} className="sign-up-custom-form">
-                    <LogoBlue className="logo-blue-sign-up"/>
+                    <Link to={"/"}>
+                        <LogoBlue className="logo-blue-sign-up"/>
+                    </Link>
                     <h2 className="h2-title-login-form">Welcome Back!</h2>
                     <h3 className="h3-title-login-form">We hope you will be satisfied using our service</h3>
                     <Grid columns="1, 1fr">
@@ -169,7 +171,7 @@ function SignUpForm() {
                     </Grid>
                     <ReCAPTCHA className="recaptcha-checkbox" sitekey="6Lcu-ogpAAAAAEOc-_bYulbAKG6_8lZboQ66BTS0"
                                onChange={handleCaptchaChange}/>
-                    <Button variant="default-non-responsive" className="sign-up-button" type="submit">
+                    <Button variant="default-100" className="sign-up-button" type="submit">
                         {isLoading ?
                             <RotatingLinesLoader title="Processing..." /> : 'Create Account'}
                     </Button>

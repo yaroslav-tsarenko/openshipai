@@ -137,10 +137,10 @@ const CarrierDashboard = () => {
                                                 percent={86}
                                                 color="#009f52"/>
                             </Grid>
-                            <OpenShipAIChat userID={carrierID} userRole="shipper"/>
+                            <OpenShipAIChat userID={carrierID} userRole="carrier"/>
                         </div>
                         <div className="map-content">
-                            <ActiveLoadsPanel userID={carrierID} userRole="carrier"/>
+                            <ActiveLoadsPanel userID={carrierID} userRole="carrier" type="carrier"/>
                         </div>
                     </div>
                 </div>

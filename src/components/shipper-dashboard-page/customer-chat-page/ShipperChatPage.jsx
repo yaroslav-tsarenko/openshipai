@@ -1,9 +1,9 @@
 import React, {useEffect, useState, useRef} from "react";
 import "../ShipperDashboard.css";
 import io from 'socket.io-client';
-import {ReactComponent as UserAvatarComponent} from "../../../assets/images/userAvatar2.svg";
+import {ReactComponent as UserAvatarComponent} from "../../../assets/images/default-avatar.svg";
 import {ReactComponent as SearchBarIcon} from "../../../assets/images/search-bar-icon.svg";
-import {ReactComponent as UserChatAvatar} from "../../../assets/images/userAvatar.svg";
+import {ReactComponent as UserChatAvatar} from "../../../assets/images/default-avatar.svg";
 import {ReactComponent as SendButtonIcon} from "../../../assets/images/send-chat-icon.svg";
 import {ReactComponent as AttachFile} from "../../../assets/images/skrepka-icon.svg";
 import {ReactComponent as SendVoiceMessage} from "../../../assets/images/mic-chat-icon.svg";
@@ -12,7 +12,6 @@ import axios from 'axios';
 import styles from "./ShipperChatPage.module.scss";
 import {loadStripe} from '@stripe/stripe-js';
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
-import {ClipLoader} from "react-spinners";
 import Alert from "../../floating-window-success/Alert";
 import {BACKEND_URL} from "../../../constants/constants";
 import {SOCKET_URL} from "../../../constants/constants";
@@ -20,6 +19,7 @@ import Button from "../../button/Button";
 import {Skeleton} from "@mui/material";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
+import {FaArrowLeft} from "react-icons/fa";
 
 const ShipperChatPage = () => {
     const [ setIsSidebarOpen] = useState(true);
@@ -32,6 +32,7 @@ const ShipperChatPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const minSwipeDistance = 50;
     const [selectedChatID, setSelectedChatID] = useState(null);
+    const [error, setError] = useState(null);
     const [load, setLoad] = useState(null);
     const [ setBids] = useState([]);
     const {chatID} = useParams();
@@ -43,7 +44,7 @@ const ShipperChatPage = () => {
     const socketRef = useRef();
     const [shipper, setShipper] = useState("");
     const [setSelectedCard] = useState(null);
-    const [isChatVisible, setIsChatVisible] = useState(false);
+    const [isChatVisible, setIsChatVisible] = useState(true);
     const [cardData, setCardData] = useState({
         cardNumber: '',
         cardLastNameFirstName: '',
@@ -64,12 +65,27 @@ const ShipperChatPage = () => {
     const toggleMobileSidebar = () => {
         setIsMobileSidebarOpen(!isMobileSidebarOpen);
     };
+    const [carrierCredentials, setCarrierCredentials] = useState(null);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
     const [shipperInfo, setShipperInfo] = useState(null);
 
-    const handleBackToConversations = () => {
-        setIsChatVisible(false);
-    };
+    useEffect(() => {
+        const fetchCarrierCredentials = async () => {
+            try {
+                const response = await axios.get(`${BACKEND_URL}/carrier-names-load-types/${chatID}`);
+                setCarrierCredentials(response.data);
+            } catch (err) {
+                setError(err.message);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        if (chatID) {
+            fetchCarrierCredentials();
+        }
+    }, [chatID]);
+
 
     useEffect(() => {
         const getUser = async () => {
@@ -85,6 +101,11 @@ const ShipperChatPage = () => {
 
         getUser();
     }, [shipperInfo, shipperID]);
+
+    const toggleChatVisibility = () => {
+        setIsChatVisible(false);
+    };
+
 
     useEffect(() => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
@@ -292,29 +313,6 @@ const ShipperChatPage = () => {
     };
 
     useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-deal-chat-conversations/${shipperID}`)
-            .then(response => {
-                setConversations(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching conversations:', error);
-            });
-    }, []);
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-bids-by-user/${shipperID}`)
-            .then(response => {
-                const bids = response.data;
-                setBids(bids);
-                console.log(bids);
-            })
-            .catch(error => {
-                console.error('Error fetching bids:', error);
-            });
-    }, [shipperID]);
-
-
-    useEffect(() => {
         axios.get(`${BACKEND_URL}/get-user/${shipperID}`)
             .then(response => {
                 if (response.data && response.status === 200) {
@@ -378,16 +376,6 @@ const ShipperChatPage = () => {
                 console.error('Error fetching shipper data:', error);
             });
     }, [shipperID]);
-
-    useEffect(() => {
-        axios.get(`${BACKEND_URL}/get-all-bids`)
-            .then(response => {
-                setBids(response.data);
-            })
-            .catch(error => {
-                console.error('Error fetching bids:', error);
-            });
-    }, []);
 
     useEffect(() => {
         const fetchLoad = async () => {
@@ -590,12 +578,11 @@ const ShipperChatPage = () => {
                         accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
-                        settingsLink={`/shipper-profile/${shipperID}`}
+                        settingsLink={`/shipper-settings/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
                     <div className="chat-content">
-
                         <div className={`shipper-deal-conversations-sidebar ${isChatVisible ? 'hidden' : ''}`}>
                             <div className="chat-conversation-search-bar">
                                 <SearchBarIcon width="15"/>
@@ -612,22 +599,32 @@ const ShipperChatPage = () => {
                                          onClick={() => handleChatSelection(conversation.chatID)}>
                                         <UserChatAvatar className="user-avatar-chat"/>
                                         <div className="chat-details">
-                                            <h3>Shipper Name</h3>
-                                            <p>{conversation.chatID}</p>
+                                            {isLoading ? (
+                                                <>
+                                                    <Skeleton height={30} width={100}/>
+                                                    <Skeleton height={30} width={100}/>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <h3>{carrierCredentials?.carrierContactCompanyName}</h3>
+                                                    <p>{carrierCredentials?.loadType}</p>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </div>
                         <div className={`chat-messages-content ${isChatVisible ? 'active' : ''}`}>
-                         {/*   <button className="go-to-chats-button" onClick={handleBackToConversations}>
-                                <FaArrowLeft/>
-                            </button>*/}
                             <div className="shipper-chat-header">
-                            <div className="shipper-carrier-chat-header">
+                                <Button variant="rounded" onClick={toggleChatVisibility}>
+                                    <FaArrowLeft />
+                                </Button>
+                                <div className="shipper-carrier-chat-header">
                                     <span className="status-circle"></span>
                                     <h1 className="chat-user-name">
-                                        <Skeleton width={200} height={45}/>
+                                        {carrierCredentials ? (carrierCredentials.carrierContactCompanyName) : (
+                                            <Skeleton width={200} height={45}/>)}
                                     </h1>
                                 </div>
                                 {load && load.loadCarrierConfirmation === 'Confirmed' ? (
@@ -665,7 +662,6 @@ const ShipperChatPage = () => {
                                         </>
                                     ) : (
                                         <div className="messaging-chat-wrapper">
-
                                             <div className="chat-messages">
                                                 {chatMessages.map((message, index) => (
                                                     <div key={index} style={{
@@ -693,10 +689,10 @@ const ShipperChatPage = () => {
                                                                         display: "flex",
                                                                         justifyContent: "space-between"
                                                                     }}>
-                                                                        {carrier ?
-                                                                            <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
+                                                                        {carrierCredentials ?
+                                                                            <p style={{color: "darkgrey"}}>{carrierCredentials ? carrierCredentials.carrierContactCompanyName :
                                                                                 <Skeleton width={55} height={25} />}</p> :
-                                                                            <p style={{color: "darkgrey"}}>{carrier ? carrier.carrierContactCompanyName :
+                                                                            <p style={{color: "darkgrey"}}>{carrierCredentials ? carrierCredentials.carrierContactCompanyName :
                                                                                 <Skeleton width={55} height={25}/>}</p>}
                                                                         {message.sender !== 'shipperID' &&
                                                                             <div

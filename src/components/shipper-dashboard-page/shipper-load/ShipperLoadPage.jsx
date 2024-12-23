@@ -15,6 +15,7 @@ import {BACKEND_URL} from "../../../constants/constants";
 import LoadStatus from "../../load-status-bar/LoadStatus";
 import SEO from "../../seo/SEO";
 import useGsapAnimation from "../../../hooks/useGsapAnimation";
+import ActiveLoadStatusLabel from "../../active-load-status-label/ActiveLoadStatusLabel";
 
 const ShipperLoadPage = () => {
 
@@ -114,7 +115,7 @@ const ShipperLoadPage = () => {
                         accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
-                        settingsLink={`/shipper-profile/${shipperID}`}
+                        settingsLink={`/shipper-settings/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                     />
                     <div className="load-page-content-page-section" ref={animation}>
@@ -128,7 +129,12 @@ const ShipperLoadPage = () => {
                             </section>
                         </div>
                         <div className="load-details-content-wrapper">
-                            <LoadStatus status={load.loadStatus}/>
+                            <div className="load-status-bar">
+                                <LoadStatus status={load.loadStatus}/>
+                            </div>
+                            <div className="load-status-label-container">
+                                <ActiveLoadStatusLabel loadStatus={load.loadStatus}/>
+                            </div>
                             <div className="load-details-content">
                                 <div className="load-details-container">
                                     <section>

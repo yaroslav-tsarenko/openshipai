@@ -107,7 +107,9 @@ function LoginForm() {
             <div className="sign-in-wrapper">
                 <div className="left-side">
                     <form onSubmit={handleSubmit} className="login-custom-form" ref={animationRef}>
-                        <LogoBlue className="logo-blue"/>
+                        <Link to={"/"}>
+                            <LogoBlue className="logo-blue"/>
+                        </Link>
                         <h2 className="h2-title-login-form">Welcome Back!</h2>
                         <h3 className="h3-title-login-form">We hope you will be satisfied using our service</h3>
                         <TextInput
@@ -124,7 +126,7 @@ function LoginForm() {
                             onChange={(e) => setPassword(e.target.value)}
                             label="Password"
                         />
-                        <Button variant="default-non-responsive">
+                        <Button variant="default-100">
                             {isLoading ?
                                 <>
                                     <RotatingLinesLoader title="Processing..."/>

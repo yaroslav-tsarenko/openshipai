@@ -7,16 +7,18 @@
 }
 
 * {
-    color: var(--grey);
     font-family: "Google Sans", "sans-serif";
     object-fit: contain;
 }
 
 html {
     font-size: 60%;
+    scroll-behavior: smooth;
+    background: #fbfbff;
+
 }
 
-input{
+input {
     outline: none;
     border: none;
     background: transparent;
@@ -37,7 +39,7 @@ body {
 :root {
     --royal-blue: #024ec9;
     --royal-blue-hovered: #0061ff;
-    --royal-blue-light: #4d93ff;
+    --royal-blue-light: #07aff0;
     --royal-blue-light-transparent: rgba(77, 147, 255, 0.11);
     --royal-green: #0c945c;
     --royal-yellow: #e4ad21;
@@ -53,13 +55,13 @@ body {
     --royal-red-hovered: #ea3528;
     --royal-blue-transparent: rgba(2, 78, 201, 0.31);
     --royal-white: #ffffff;
-    --royal-white-dark: #f4f4f4;
+    --royal-white-dark: #fbfbff;
     --royal-white-transparent: rgba(255, 255, 255, 0.66);
     --dark-grey: #2e2a2a;
     --grey: #707070;
     --dark: #292929;
     --light-grey: #afafaf;
-    --grey-darker: #bcbcbc;
+    --grey-darker: #979797;
     --light-grey-hovered: #e5e5e5;
     --light-grey-hovered-2: #f6f6f6;
     --light-grey-hovered-transparent: rgba(229, 229, 229, 0.23);

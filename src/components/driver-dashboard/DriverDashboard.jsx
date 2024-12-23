@@ -266,7 +266,7 @@ const DriverDashboard = () => {
                                 <OpenShipAIChat userID={driverID} userRole="driver"/>
                             </div>
                             <div className="map-content">
-                                <ActiveLoadsPanel userID={driverID} userRole="driver"/>
+                                <ActiveLoadsPanel userID={driverID} userRole="driver" type="driver"/>
                             </div>
                         </div>
 

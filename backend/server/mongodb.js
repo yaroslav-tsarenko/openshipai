@@ -81,6 +81,20 @@ const storage = multer.diskStorage({
     }
 });
 
+app.get('/get-deal-chat-conversation-by-load/:loadID', async (req, res) => {
+    const { loadID } = req.params;
+    try {
+        const chat = await DealChatConversation.findOne({ loadID });
+        if (chat) {
+            res.status(200).json(chat);
+        } else {
+            res.status(404).json({ message: 'Chat not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: 'Server error', error });
+    }
+});
+
 app.post('/sign-up-carrier-account', async (req, res) => {
     const formData = req.body;
 
@@ -459,6 +473,12 @@ app.post('/create-bid', async (req, res) => {
     const { loadBidCarrierID, loadCredentialID, loadBidCoverLetter, loadBidPrice, loadBidDeliveryDate } = req.body;
 
     try {
+        // Check if a bid with the same loadBidCarrierID already exists
+        const existingBid = await LoadBid.findOne({ loadBidCarrierID, loadCredentialID });
+        if (existingBid) {
+            return res.status(400).json({ message: 'This bid has already been submitted' });
+        }
+
         const newBid = new LoadBid({
             loadBidCarrierID,
             loadCredentialID,
@@ -467,21 +487,25 @@ app.post('/create-bid', async (req, res) => {
             loadBidDeliveryDate,
         });
         await newBid.save();
+
         const load = await Load.findOne({ loadCredentialID });
         if (!load) {
             return res.status(404).json({ message: 'Load not found' });
         }
+
         load.loadQoutes = (load.loadQoutes || 0) + 1;
         const allBids = await LoadBid.find({ loadCredentialID });
         const totalBidPrice = allBids.reduce((total, bid) => total + bid.loadBidPrice, 0);
         const averageBidPrice = (totalBidPrice / allBids.length).toFixed(2);
         load.loadAveragePrice = averageBidPrice;
         await load.save();
+
         const shipperID = load.shipperID;
         const shipper = await Shipper.findOne({ userShipperID: shipperID });
         if (!shipper) {
             return res.status(404).json({ message: 'Shipper not found' });
         }
+
         const userShipperEmail = shipper.userShipperEmail;
         console.log('Sending email to:', userShipperEmail);
         await sendEmail(userShipperEmail, 'New Bid Notification', 'You have new bids from carriers! Hurry up to pick your best carrier for load!');
@@ -1264,6 +1288,44 @@ app.get('/get-all-deal-chat-conversations/:carrierID', async (req, res) => {
         res.json(conversations);
     } catch (error) {
         res.json({message: error.message});
+    }
+});
+
+// Add this endpoint to your Express server
+
+app.get('/carrier-names-load-types/:chatID', async (req, res) => {
+    const { chatID } = req.params;
+
+    try {
+        // Find the DealChatConversation by chatID
+        const dealChatConversation = await DealChatConversation.findOne({ chatID });
+        if (!dealChatConversation) {
+            return res.status(404).json({ message: 'DealChatConversation not found' });
+        }
+
+        const { loadID, carrierID } = dealChatConversation;
+
+        // Find the carrier by carrierID
+        const carrier = await Carrier.findOne({ carrierID });
+        if (!carrier) {
+            return res.status(404).json({ message: 'Carrier not found' });
+        }
+
+        const carrierContactCompanyName = carrier.carrierContactCompanyName;
+
+        // Find the load by loadID
+        const load = await Load.findOne({ loadCredentialID: loadID });
+        if (!load) {
+            return res.status(404).json({ message: 'Load not found' });
+        }
+
+        const loadType = load.loadType;
+
+        // Return the carrierContactCompanyName and loadType
+        res.status(200).json({ carrierContactCompanyName, loadType });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).json({ message: 'Server error' });
     }
 });
 
@@ -2154,6 +2216,39 @@ app.put('/update-load-assigning/:loadID', async (req, res) => {
     } catch (error) {
         console.error('Error updating load:', error);
         res.status(500).json({message: error.message});
+    }
+});
+
+app.post('/carrier-create-bid', async (req, res) => {
+    const bidData = req.body;
+
+    try {
+        const newBid = new LoadBid(bidData);
+        await newBid.save();
+        res.status(201).json({ status: 'Success', bid: newBid });
+    } catch (error) {
+        console.error('Error creating bid:', error);
+        res.status(500).json({ status: 'Error', message: error.message });
+    }
+});
+
+
+app.post('/create-carrier', async (req, res) => {
+    const formData = req.body;
+    const { carrierAccountAccountEmail, carrierAccountPassword } = formData;
+
+    try {
+        const newCarrier = new Carrier(formData);
+        await newCarrier.save();
+
+        const subject = 'Welcome to OpenShipAI!🎉';
+        const text = `Dear Carrier,\n\nYour account has been successfully created.\n\nYour password is: ${carrierAccountPassword}\n\nBest regards,\nOpenShipAI Team`;
+        await sendEmail(carrierAccountAccountEmail, subject, text);
+
+        res.status(201).json({ status: 'Success', carrier: newCarrier });
+    } catch (error) {
+        console.error('Error creating carrier:', error);
+        res.status(500).json({ status: 'Error', message: error.message });
     }
 });
 

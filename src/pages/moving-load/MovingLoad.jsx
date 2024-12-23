@@ -68,7 +68,7 @@ const MovingLoad = () => {
     };
 
     const calculateDistance = async (origin, destination) => {
-        const apiKey = '5b3ce3597851110001cf6248aaf2054f2cee4e6da1ceb0598a98a7ca';
+        const apiKey = '5b3ce3597851110001cf6248762ba847e9554d668cd26cc9e7b6d06d';
         try {
             const originResponse = await axios.get(
                 `https://api.openrouteservice.org/geocode/search?api_key=${apiKey}&text=${origin}`
