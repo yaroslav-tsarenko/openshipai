@@ -299,13 +299,6 @@ body {
 .advantage-introduction-content {
     width: 600px;
     margin: 0 40px 0 40px;
-
-    @media screen and (max-width: 1028px) {
-        max-width: 600px;
-        width: 100%;
-        margin: 0;
-        padding: 0 20px;
-    }
 }
 
 .advantage-container-title {
@@ -388,8 +381,6 @@ body {
     text-decoration: none;
     border: none;
     transition: 0.2s ease-in-out;
-
-
 }
 
 .advantages-button-selected {

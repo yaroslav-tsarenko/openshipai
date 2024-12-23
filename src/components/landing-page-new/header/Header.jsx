@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import styles from './Header.module.scss';
 import { ReactComponent as Logo } from '../../../assets/images/openshipai.svg';
 import  Logo2 from '../../../assets/images/openshipai.svg';
@@ -7,21 +7,6 @@ import { ReactComponent as FaTimes } from '../../../assets/images/fa-times-icon.
 import { Link } from "react-router-dom";
 
 const Header = () => {
-    const [isScrolled, setIsScrolled] = useState(false);
-
-    useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 0) {
-                setIsScrolled(true);
-            } else {
-                setIsScrolled(false);
-            }
-        };
-
-        window.addEventListener('scroll', handleScroll);
-        return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
     const toggleSidebar = () => {
@@ -71,12 +56,10 @@ const Header = () => {
                     </div>
                 </div>
             </header>
-            <header
-                className={`${styles.header2} ${isScrolled ? styles.header2Scrolled : ''}`}
-            >
+            <header className={styles.header2}>
                 <div className={styles.headerInner2}>
                     <Link to="/">
-                        <img src={Logo2} className={styles.logo2} alt={"image"}/>
+                        <img src={Logo2} className={styles.logo2}/>
                     </Link>
                     <nav className={styles.navContent}>
                         <Link to={"/open-page"} className={styles.navLink}>Open</Link>
