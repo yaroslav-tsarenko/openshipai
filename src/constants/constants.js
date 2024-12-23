@@ -1,7 +1,7 @@
-export const BACKEND_URL = 'http://localhost:8080';
+export const BACKEND_URL = 'https://openshipai-backend.onrender.com';
 export const FRONTEND_URL = 'http://localhost:3000';
 export const SOCKET_URL = 'https://socket-chat-server-xly7.onrender.com';
-export const ASSISTANT_URL = 'http://localhost:8888';
+export const ASSISTANT_URL = 'https://openshipai-assistant-server.onrender.com';
 export const IMAGE_URL = 'https://images.openshipai.com';
 export const IMAGE_URL_PUBLIC = 'https://pub-234c0b2882e9417bbc7d6d89e634ad1f.r2.dev';
 
