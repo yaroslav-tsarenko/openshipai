@@ -255,7 +255,7 @@ const ShipperLoadsPage = () => {
                         accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
-                        settingsLink={`/shipper-profile/${shipperID}`}
+                        settingsLink={`/shipper-settings/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
@@ -390,7 +390,7 @@ const ShipperLoadsPage = () => {
                                         <div className="create-load-buttons">
                                             <Button variant="neutral-non-responsive" buttonText="Go Back"
                                                     onClick={() => setCreateLoadSection(true)}/>
-                                            <Button variant="default-non-responsive" buttonText="Next"
+                                            <Button variant="default-100" buttonText="Next"
                                                     onClick={handleNextClick}/>
                                         </div>
                                     </CreateLoadContainer>
@@ -440,7 +440,7 @@ const ShipperLoadsPage = () => {
                                                                 onClick={() => setStep(step - 1)}
                                                         />
                                                     }
-                                                    <Button variant="default-non-responsive" buttonText="Next"
+                                                    <Button variant="default-100" buttonText="Next"
                                                             onClick={handleSubmit}/>
                                                 </div>
                                             </CreateLoadContainer>
@@ -488,7 +488,7 @@ const ShipperLoadsPage = () => {
                                                         <Button variant="neutral" buttonText="Go Back"
                                                                 onClick={() => setStep(step - 1)}/>
                                                     )}
-                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                    <Button variant="default-100" buttonText="Next" onClick={handleSubmit}/>
                                                 </div>
                                             </CreateLoadContainer>
                                         )}
@@ -513,7 +513,7 @@ const ShipperLoadsPage = () => {
                                                         <Button variant="neutral" buttonText="Go Back"
                                                                 onClick={() => setStep(step - 1)}/>
                                                     )}
-                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                    <Button variant="default-100" buttonText="Next" onClick={handleSubmit}/>
                                                 </div>
                                             </CreateLoadContainer>
                                         )}
@@ -541,7 +541,7 @@ const ShipperLoadsPage = () => {
                                                         <Button variant="neutral" buttonText="Go Back"
                                                                 onClick={() => setStep(step - 1)}/>
                                                     )}
-                                                    <Button variant="default" buttonText="Next" onClick={handleSubmit}/>
+                                                    <Button variant="default-100" buttonText="Next" onClick={handleSubmit}/>
                                                 </div>
                                             </CreateLoadContainer>
                                         )}

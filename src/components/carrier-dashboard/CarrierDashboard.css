@@ -4,7 +4,7 @@
     box-sizing: border-box;
 }
 
-.carrier-dashboard-take-load-mobile{
+.carrier-dashboard-take-load-mobile {
     height: 100%;
     width: 100%;
     display: flex;
@@ -68,14 +68,14 @@
     transition: 0.2s ease-in-out;
 }
 
-.nav-items-wrapper{
+.nav-items-wrapper {
     display: flex;
     width: 100%;
     justify-content: space-between;
     padding: 15px;
 }
 
-.add-driver-section{
+.add-driver-section {
     display: flex;
     width: 30%;
 }
@@ -267,7 +267,6 @@
     background: var(--light-grey-hovered);
     transition: 0.2s ease-in-out;
 }
-
 
 
 .selected-card h2 {
@@ -618,8 +617,6 @@
 }
 
 
-
-
 .account-info-name {
     font-size: 2rem;
     font-weight: bold;
@@ -714,7 +711,7 @@
     flex-direction: column;
 }
 
-.carrier-dashboard-drivers{
+.carrier-dashboard-drivers {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -744,7 +741,7 @@
     justify-items: center;
 }
 
-.filter-loads-container-mobile{
+.filter-loads-container-mobile {
     display: flex;
     padding: 0 30px 0 30px;
     flex-direction: column;
@@ -758,7 +755,7 @@
     background: var(--royal-blue);
 }
 
-.filter-loads-container-mobile h2{
+.filter-loads-container-mobile h2 {
     font-size: 2.5rem;
     margin: 10px 0 0 0;
     font-weight: bold;
@@ -943,6 +940,23 @@
     font-weight: bold;
 }
 
+.text-message-p{
+    text-align: center;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--grey);
+    font-weight: normal;
+    margin: 0 auto;
+}
+
+.radius-text{
+    font-size: 1.3rem;
+    font-weight: normal;
+}
+
 .slider-wrapper-miles {
     display: flex;
     width: 100%;
@@ -956,6 +970,11 @@
     font-weight: bold;
     font-size: 1.3rem;
     transition: 0.2s ease-in-out;
+    position: relative;
+}
+
+.slider-miles{
+    display: flex;
 }
 
 .slider-wrapper-miles input {
@@ -1139,8 +1158,6 @@
 }
 
 
-
-
 .load-directions-icon {
 
 }
@@ -1204,7 +1221,6 @@
 }
 
 
-
 .ai-chat-content {
     display: flex;
     width: 100%;
@@ -1259,7 +1275,6 @@
     transition: 0.2s ease-in-out;
     color: var(--royal-white);
 }
-
 
 
 .button-nav-load-icon {
@@ -1564,8 +1579,6 @@
 }
 
 
-
-
 .chat-input-area input {
     font-size: 1.5rem;
     font-weight: normal;
@@ -1613,7 +1626,6 @@
 }
 
 
-
 .password-settings-container {
     display: flex;
     margin: 20px 0 0 0;
@@ -1621,7 +1633,6 @@
     justify-content: space-between;
     width: 350px;
 }
-
 
 
 .settings-content h2 {
@@ -1640,7 +1651,6 @@
     margin: 20px 0 0 0;
 
 }
-
 
 
 .apply-settings-button {
@@ -1776,6 +1786,7 @@
 .account-info-settings-2 {
     width: 225px;
 }
+
 .avatar-settings-icon {
     height: 150px;
     border-radius: 50%;
@@ -1787,9 +1798,6 @@
     align-items: center;
     margin: 0 auto;
 }
-
-
-
 
 
 .create-driver-overlay {
@@ -1896,7 +1904,7 @@
     transition: 0.2s ease-in-out;
 }
 
-.create-driver-button{
+.create-driver-button {
     background: var(--royal-green);
     border: none;
     height: fit-content;
@@ -1925,7 +1933,7 @@
     background: var(--light-grey-hovered);
 }
 
-.create-driver-button:hover{
+.create-driver-button:hover {
     background: var(--royal-green-hovered);
     transition: 0.2s ease-in-out;
 }
@@ -1940,7 +1948,7 @@
     align-items: center;
 }
 
-.create-driver-content{
+.create-driver-content {
     display: flex;
     width: 100%;
     height: 100%;
@@ -1948,7 +1956,7 @@
     justify-content: space-between;
 }
 
-.add-driver-description{
+.add-driver-description {
     width: 100%;
     text-align: left;
     display: flex;
@@ -1957,13 +1965,13 @@
 
 }
 
-.add-driver-description h2{
+.add-driver-description h2 {
     font-size: 2rem;
     font-weight: bold;
     color: var(--dark-grey);
 }
 
-.add-driver-description p{
+.add-driver-description p {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--grey);
@@ -2012,7 +2020,6 @@
     background: var(--royal-green-hovered);
     transition: 0.2s ease-in-out;
 }
-
 
 
 .assign-driver-popup-overlay {
@@ -2084,32 +2091,32 @@
 
 }
 
-.driver-container-entity:hover{
+.driver-container-entity:hover {
     background: var(--light-grey-hovered);
 }
 
-.driver-entity-info{
+.driver-entity-info {
     display: flex;
 }
 
-.driver-entity-info section{
+.driver-entity-info section {
     display: flex;
     flex-direction: column;
     text-align: left;
     margin: 0 0 0 10px;
 }
 
-.driver-entity-info section h2{
-   color: var(--dark-grey);
+.driver-entity-info section h2 {
+    color: var(--dark-grey);
     font-size: 15px;
 }
 
-.driver-entity-info section p{
+.driver-entity-info section p {
     color: var(--grey);
     font-size: 13px;
 }
 
-.assign-driver-button{
+.assign-driver-button {
     background: var(--royal-green);
     border: none;
     width: fit-content;
@@ -2124,16 +2131,16 @@
     transition: 0.2s ease-in-out;
 }
 
-.assign-driver-button:hover{
+.assign-driver-button:hover {
     background: var(--royal-green-hovered);
     transition: 0.2s ease-in-out;
 }
 
-.filter-button-carrier{
+.filter-button-carrier {
     display: none;
 }
 
-.condition-load-containers-bids-text{
+.condition-load-containers-bids-text {
     display: flex;
     font-weight: bold;
     justify-content: space-between;
@@ -2144,23 +2151,23 @@
     color: var(--light-grey);
 }
 
-.load-filter-weight{
+.load-filter-weight {
     padding: 0 20px 0 20px;
 }
 
-.load-filter-weight label{
+.load-filter-weight label {
     font-size: 1.5rem;
     font-weight: bold;
     color: var(--light-grey-hovered);
 }
 
-.load-filter-weight section{
+.load-filter-weight section {
     display: flex;
     justify-content: space-between;
     gap: 15px;
 }
 
-.load-filter-weight section input{
+.load-filter-weight section input {
     display: flex;
     padding: 0 20px 0 20px;
     border: none;
@@ -2175,24 +2182,24 @@
 }
 
 @media screen and (max-width: 1024px) {
-    .filter-loads-container{
+    .filter-loads-container {
         display: none;
     }
 
-    .filter-button-carrier{
+    .filter-button-carrier {
         display: block;
     }
 
-    .loads-containers-block{
+    .loads-containers-block {
         padding: 10px 0 0 0;
     }
 
-    .carrier-load-directions{
+    .carrier-load-directions {
         max-width: 350px;
         width: 100%;
     }
 
-    .load-filter-container section{
+    .load-filter-container section {
         width: 100%;
     }
 }

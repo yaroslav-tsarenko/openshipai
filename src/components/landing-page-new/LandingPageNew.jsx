@@ -41,6 +41,8 @@ import GetStartedSection from "./get-started-section/GetStartedSection";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 import SEO from "../seo/SEO";
 
+
+
 const images = [
     sliderPhoto1,
     sliderPhoto2,
@@ -57,7 +59,13 @@ const images = [
 ];
 
 const LandingPageNew = () => {
-
+    const checkmarkTexts = [
+        "Residential & Business",
+        "Ship Anything to Anywhere"
+    ];
+    const h3 = "Maximize Savings, Reduce Time, Automate Control";
+    const h2 = "Every Shipment";
+    const p = "OpenShipAI your AI-driven shipping ally, offering intuitive solutions for tracking and managing international shipments with precision and care. Dive in and ship smarter.";
     const IMAGE_URL = 'https://res.cloudinary.com/dd3rwqwll/image/upload/v1734100101/analyse-road-data_qie21v.svg';
     console.log(IMAGE_URL);
     const mainHeadingRef = useGsapAnimation((el) => {
@@ -73,7 +81,12 @@ const LandingPageNew = () => {
             />
                 <Header/>
             <div ref={mainHeadingRef}>
-                <MainHeading/>
+                <MainHeading
+                    checkmarkTexts={checkmarkTexts}
+                    h3={h3}
+                    h2={h2}
+                    p={p}
+                />
             </div>
             <LoadCategories>
                 <LoadCategory loadLabel="Vehicles & Boats"

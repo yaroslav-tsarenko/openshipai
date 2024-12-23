@@ -52,6 +52,8 @@ import ProjectManagement from "./pages/project-management/ProjectManagement";
 import CookiePolicy from "./pages/cookie-policy/CookiePolicy";
 import PrivacyPolicy from "./pages/privacy-policy/PrivacyPolicy";
 import ContactUs from "./pages/contanct-us/ContactUs";
+import BidLoad from "./pages/bid-load/BidLoad";
+import BidSumbited from "./pages/bid-submitted/BidSumbited";
 
 function App() {
     return (
@@ -68,6 +70,7 @@ function App() {
                 <Route path="/shipper-profile/:shipperID" element={<ShipperProfilePage/>}/>
                 <Route path="/shipper-settings/:shipperID" element={<ShipperSettings/>}/>
                 <Route path="/shipper-load/:shipperID/:loadCredentialID" element={<ShipperLoadPage/>}/>
+                <Route path="/carrier-dashboard/:carrierID/:aiChatID" element={<CarrierDashboard/>}/>
                 <Route path="/carrier-dashboard/:carrierID" element={<CarrierDashboard/>}/>
                 <Route path="/carrier-take-loads/:carrierID" element={<CarrierTakeLoad/>}/>
                 <Route path="/carrier-loads/:carrierID" element={<CarrierLoads/>}/>
@@ -76,6 +79,7 @@ function App() {
                 <Route path="/carrier-payments/:carrierID" element={<CarrierPaymentsPage/>}/>
                 <Route path="/carrier-drivers/:carrierID" element={<CarrierDrivers/>}/>
                 <Route path="/carrier-chat-conversation/:carrierID" element={<CarrierChatPage/>}/>
+                <Route path="/driver-dashboard/:driverID/:aiChatID" element={<DriverDashboard/>}/>
                 <Route path="/driver-dashboard/:driverID" element={<DriverDashboard/>}/>
                 <Route path="/driver-settings/:driverID" element={<DriverSettings/>}/>
                 <Route path="/driver-assigned-loads/:driverID" element={<DriverAssignedLoads/>}/>
@@ -96,6 +100,8 @@ function App() {
                 <Route path="/construction-load" element={<HeavyEquipmentLoad/>}/>
                 <Route path="/freight-load" element={<FreightLoad/>}/>
                 <Route path="/lead-generate" element={<LeadGenerate/>}/>
+                <Route path="/bid-load/:loadID" element={<BidLoad/>}/>
+                <Route path="/bid-success" element={<BidSumbited/>}/>
                 <Route path="/time-schedule" element={<TimeSchedule/>}/>
                 <Route path="/terms-and-conditions" element={<TermsAndConditions/>}/>
                 <Route path="/why-choose-us" element={<WhyChooseUs/>}/>

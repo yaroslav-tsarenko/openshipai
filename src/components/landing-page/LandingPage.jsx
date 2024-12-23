@@ -7,7 +7,7 @@ import EasyShippingImage from "../../assets/images/easy-shipping-illustration.sv
 import AiScreens from "../../assets/images/ai-screens.svg";
 import TransparentPricing from "../../assets/images/transparent-pricing.svg";
 import AllTimeUpdate from "../../assets/images/all-time-update.svg";
-import RightIntroductionContainer from "./landing-right-container/RightIntroductionContainer";
+import IntroductionContainer from "./landing-right-container/IntroductionContainer";
 import {Fade} from "react-awesome-reveal";
 import FullPageSlider from "./flicking-slider/FullPageSlider";
 import GetStartedContainer from "./get-started-container/GetStartedContainer";
@@ -42,12 +42,12 @@ const LandingPage = () => {
                                            image={EasyShippingImage}/>
             </Fade>
             <Fade>
-                <RightIntroductionContainer title="Streamlined Logistics"
-                                            description="openship.ai is your
+                <IntroductionContainer title="Streamlined Logistics"
+                                       description="openship.ai is your
                                             AI-driven shipping ally,
                                             offering intuitive solutions for tracking and managing
                                             international shipments with precision and care. Dive in and ship smarter."
-                                            image={AiScreens}/>
+                                       image={AiScreens}/>
             </Fade>
             <Fade>
                 <LeftIntroductionContainer title="Transparent Pricing"
@@ -56,10 +56,10 @@ const LandingPage = () => {
                                            image={TransparentPricing}/>
             </Fade>
             <Fade>
-                <RightIntroductionContainer title="24/7 Support & Advanced Tracking"
-                                            description="Experience round-the-clock support and real-time tracking.
+                <IntroductionContainer title="24/7 Support & Advanced Tracking"
+                                       description="Experience round-the-clock support and real-time tracking.
                                             Our AI-driven platform keeps you informed of your cargo's status and anticipates delays."
-                                            image={AllTimeUpdate}/>
+                                       image={AllTimeUpdate}/>
             </Fade>
             <Fade>
                 <RolesContainer/>

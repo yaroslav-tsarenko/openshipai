@@ -1,9 +1,9 @@
 .descriptionWrapper{
   display: flex;
   flex-direction: column;
-  margin: 120px auto 120px auto;
-  max-width: 1200px;
-  gap: 30px;
+  margin: 120px auto;
+  max-width: 1440px;
+  gap: 20px;
   height: fit-content;
 
   h1{
@@ -14,11 +14,11 @@
 
   }
 
-  p{
+  p {
     font-size: 2rem;
     font-weight: lighter;
-    color: var(--light-grey);
-    text-align: center;
+    text-align: justify;
+    width: 100%;
   }
 }
 
@@ -42,6 +42,15 @@
   display: flex;
   align-content: start;
   text-align: left;
+  color: var(--grey);
+}
+
+.listItem{
+  font-size: 1.7rem;
+  color: var(--grey-darker);
+  margin: 10px 0;
+
+
 }
 
 @media screen and (max-width: 1024px) {

@@ -19,11 +19,10 @@
 
 .column::before {
   content: counter(item);
-  width: 30px;
-  height: 30px;
-  border: 2px dashed var(--royal-blue);
-  background-color: transparent;
-  color: var(--royal-blue);
+  width: 25px;
+  height: 25px;
+  background-color: var(--royal-blue);
+  color: var(--royal-white);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -46,9 +45,9 @@
   position: absolute;
   width: 2px;
   background-color: var(--royal-blue);
-  top: 30px;
+  top: 25px;
   bottom: -20px; /* Connects to the next item */
-  left: -25px; /* Aligns with the bullet center */
+  left: -28px; /* Aligns with the bullet center */
 
   @media screen and (max-width: 768px) {
     top: 20px;

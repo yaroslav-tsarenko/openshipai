@@ -5,17 +5,37 @@ import OpenShipAIChat from "../../components/open-ai-chat/OpenShipAIChat";
 import styles from "./AIPage.module.scss";
 import Description from "../../components/landing-page-new/description/Description";
 import {Fade} from "react-awesome-reveal";
+import FullScreenImage from "../../components/full-screen-image/FullScreenImage";
+import {OpenShipImages} from "../../utils/images";
+import FAQSection from "../../components/landing-page-new/faq-section/FAQSection";
+import {faqItems} from "../../utils/faq4";
+import IntroductionContainer from "../../components/landing-page/landing-right-container/IntroductionContainer";
+import EasyShippingImage from "../../assets/images/easy-shipping-illustration.svg";
+import BenefitWrapper from "../../components/landing-page-new/benefit-wrapper/BenefitWrapper";
+import BenefitChanger from "../../components/landing-page-new/benefit-changer/BenefitChanger";
+import HelpMoneyAI from "../../assets/images/help-money-ai.svg";
+import AdaptiveWeatherPlanning from "../../assets/images/adaptive-weather-planning.svg";
+import AiScreens from "../../assets/images/ai-screens.svg";
 
 const AiPage = () => {
     return (
         <>
             <Header/>
             <Fade>
+                <FullScreenImage src={OpenShipImages[6]}/>
+            </Fade>
+            <Description
+                title="AI Revolutionizing Logistics"
+                description="Experience the future of logistics with our AI-powered platform. OpenShipAI optimizes shipping routes, reduces operational costs, and enhances delivery speed using cutting-edge artificial intelligence. Book a free demo today to see how our innovative solutions can streamline your supply chain, improve efficiency, and give your business a competitive edge in the ever-evolving logistics landscape."
+            />
+            <Description
+                title="Here is Free Demo"
+            />
+            <Fade>
                 <div className={styles.aiPage}>
-                    <OpenShipAIChat/>
+                    <OpenShipAIChat restricted={true}/>
                 </div>
             </Fade>
-            <Fade>
                 <Description
                     title="AI Transforming the World"
                     description="Artificial Intelligence (AI) is revolutionizing industries globally, driving unprecedented efficiency, accuracy, and innovation. From healthcare to finance, AI is reshaping how we live and work, fostering growth and creating new opportunities. OpenShipAI is leveraging this transformative power to redefine logistics, making it smarter, faster, and more transparent. By integrating advanced machine learning algorithms, our AI solutions optimize route planning, automate warehousing operations, and predict demand fluctuations with precision. This not only enhances productivity but also significantly reduces operational costs, contributing to a sustainable and scalable logistics ecosystem."
@@ -42,8 +62,59 @@ const AiPage = () => {
                         }
                     ]}
                 />
-
-            </Fade>
+            <BenefitWrapper>
+                <BenefitChanger
+                    backgroundColor="#e8f0fe"
+                    label="AUTOMATED DISPATCH"
+                    title="Faster Dispatch with AI"
+                    description="AI automates load dispatch to the best carriers based on location and load needs, ensuring faster and more reliable shipping."
+                    subDescription="AI continually assesses carriers and drivers for the best match, ensuring quick, efficient dispatch, reducing delays, and improving shipment reliability."
+                    subImage={AdaptiveWeatherPlanning}
+                    img={AdaptiveWeatherPlanning}
+                    variant="light-blue"
+                />
+                <BenefitChanger
+                    backgroundColor="#174ea6"
+                    label="cost savings"
+                    title="Save AI Shipping Rates"
+                    subDescription="Our AI compares transport options in real-time to find the best shipping rates, cutting costs and optimizing logistics for your business."
+                    description="Instantly compare carrier prices with AI-driven algorithms to secure the lowest rates without compromising service quality."
+                    subImage={AiScreens}
+                    img={AiScreens}
+                    variant="dark-blue"
+                    buttonType="click-to-action"
+                />
+                <BenefitChanger
+                    backgroundColor="#1a73e8"
+                    label="EFFICIENCY BOOST"
+                    title="AI Optimized Supply Chain"
+                    description="Maximize efficiency with AI insights that automatically suggest the best routes."
+                    subDescription="AI tracks shipments and vehicle availability in real-time, optimizing routes and reducing idle time, boosting your supply chain's performance."
+                    subImage={OpenShipImages[5]}
+                    img={OpenShipImages[5]}
+                    variant="blue"
+                    buttonType="click-to-action"
+                />
+                <BenefitChanger
+                    backgroundColor="#fff"
+                    label="SMART DECISIONS"
+                    title="RT Data for Smarter Decisions"
+                    description="OpenShipAI delivers real-time data on market trends, vehicle availability, and load capacities."
+                    subDescription="AI-powered dashboards provide actionable insights into market conditions, carrier availability, and shipment status, giving you a competitive edge."
+                    subImage={HelpMoneyAI}
+                    img={HelpMoneyAI}
+                    variant="white"
+                />
+            </BenefitWrapper>
+            <Description
+                title="AI Help in Logistics"
+                description="AI helping in logistics by providing real-time insights, automating processes, and optimizing routes. OpenShipAI's AI-powered platform is designed to meet the diverse needs of modern businesses, offering scalable solutions for enterprises and small businesses alike. Our AI technology reduces fuel consumption, automates warehouse operations, and optimizes routes for faster deliveries. Experience the future of logistics with OpenShipAI."
+            />
+            <IntroductionContainer title="AI-Powered Logistics"
+                                   description="AI is transforming the logistics industry, optimizing routes, reducing costs, and enhancing delivery speed. Experience the future of shipping with OpenShipAI."
+                                   image={OpenShipImages[7]}
+                                   reverse={true}/>
+            <FAQSection faqItems={faqItems} />
             <Fade>
                 <LandingPageFooter/>
             </Fade>

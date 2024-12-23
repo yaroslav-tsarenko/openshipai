@@ -1,4 +1,4 @@
-.carrier-load-bid-container{
+.carrier-load-bid-container {
     display: flex;
     flex-direction: column;
     width: 100%;
@@ -6,31 +6,43 @@
     padding: 20px;
     margin: 10px 0 0 0;
     background: none;
-    border-radius: 8px;
+    border-radius: 25px;
     border: 1px solid var(--light-grey);
     transition: 0.2s ease-in-out;
     cursor: pointer;
 }
 
-.carrier-load-bid-container:hover{
+.carrier-load-bid-container:hover {
     border: 1px solid var(--royal-blue);
 }
 
-.carrier-load-bid-container-header{
+.carrier-load-bid-container-header {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 10px;
+
+    @media screen and (max-width: 1028px) {
+        flex-direction: column;
+        align-content: flex-start;
+        justify-content: flex-start;
+        align-items: flex-start;
+        gap: 10px;
+    }
 }
 
-.carrier-load-bid-container-header section{
+.carrier-load-bid-container-header section {
     display: flex;
     align-items: center;
     justify-content: center;
     justify-items: center;
 }
 
-.carrier-load-bid-container-header h4{
+.carrier-load-bid-container-header section:last-child {
+    gap: 10px;
+}
+
+.carrier-load-bid-container-header h4 {
     font-size: 1.2rem;
     color: var(--royal-white);
     padding: 7px 10px 7px 10px;
@@ -41,7 +53,7 @@
     border-radius: 10px;
 }
 
-.carrier-load-bid-container-header h3{
+.carrier-load-bid-container-header h3 {
     font-size: 1.2rem;
     width: fit-content;
     height: fit-content;
@@ -52,7 +64,7 @@
     border-radius: 10px;
 }
 
-.carrier-load-bid-container-header h2{
+.carrier-load-bid-container-header h2 {
     font-size: 2.4rem;
     color: var(--dark-grey);
     margin: 0 0 0 10px;
@@ -60,26 +72,34 @@
 }
 
 
-.carrier-load-bid-container-body{
+.carrier-load-bid-container-body {
     display: flex;
     text-align: left;
     width: 100%;
+
+    @media screen and (max-width: 1028px) {
+        margin: 0 0 20px 0;
+    }
 }
 
-.carrier-load-bid-container-body p{
+.carrier-load-bid-container-body p {
     font-size: 1.7rem;
     color: var(--grey);
     margin: 0;
     padding: 0;
 }
 
-.carrier-load-bid-container-bottom{
+.carrier-load-bid-container-bottom {
     display: flex;
     justify-content: right;
+
+    @media screen and (max-width: 1028px) {
+        justify-content: center;
+    }
 }
 
 
-.apply-bid-button{
+.apply-bid-button {
     width: fit-content;
     padding: 10px 15px 10px 15px;
     border-radius: 50px;
@@ -93,7 +113,7 @@
     transition: 0.2s ease-in-out;
 }
 
-.apply-bid-button:hover{
+.apply-bid-button:hover {
     background: var(--royal-green-hovered);
     cursor: pointer;
 }
@@ -145,7 +165,7 @@
     flex-direction: column;
 }
 
-.carrier-bid-popup-content section{
+.carrier-bid-popup-content section {
     margin: 20px auto;
 }
 
@@ -169,7 +189,7 @@
     display: flex;
 }
 
-.carrier-submit-bid-button{
+.carrier-submit-bid-button {
     display: flex;
     margin: 0 auto;
     padding: 10px 15px 10px 15px;
@@ -182,6 +202,6 @@
     transition: 0.2s ease-in-out;
 }
 
-.carrier-submit-bid-button:hover{
+.carrier-submit-bid-button:hover {
     background: var(--royal-green-hovered);
 }

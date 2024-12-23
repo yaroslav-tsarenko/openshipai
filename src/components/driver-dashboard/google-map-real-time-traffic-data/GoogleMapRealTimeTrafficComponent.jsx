@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 const GoogleMapRealTimeTrafficComponent = ({
                                                type,
@@ -9,6 +9,25 @@ const GoogleMapRealTimeTrafficComponent = ({
                                                borderRadius = ["0px", "0px", "0px", "0px"]
                                            }) => {
     const mapRef = useRef(null);
+    const [currentLocation, setCurrentLocation] = useState({ lat: 55, lng: 56 });
+
+    useEffect(() => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setCurrentLocation({
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    });
+                },
+                (error) => {
+                    console.error("Error getting current location:", error);
+                }
+            );
+        } else {
+            console.error("Geolocation is not supported by this browser.");
+        }
+    }, []);
 
     useEffect(() => {
         if (!window.google) {
@@ -16,8 +35,8 @@ const GoogleMapRealTimeTrafficComponent = ({
             return;
         }
         const isValidCoordinate = (coordinate) => typeof coordinate === 'number' && !isNaN(coordinate);
-        const validLat = isValidCoordinate(lat) ? lat : 0;
-        const validLng = isValidCoordinate(lng) ? lng : 0;
+        const validLat = isValidCoordinate(lat) ? lat : currentLocation.lat;
+        const validLng = isValidCoordinate(lng) ? lng : currentLocation.lng;
         const map = new window.google.maps.Map(mapRef.current, {
             center: { lat: validLat, lng: validLng },
             zoom: 10,
@@ -51,7 +70,7 @@ const GoogleMapRealTimeTrafficComponent = ({
             map.setCenter({ lat: validLat, lng: validLng });
             map.setZoom(15);
         }
-    }, [type, origin, destination, lat, lng]);
+    }, [type, origin, destination, lat, lng, currentLocation]);
 
     return (
         <div

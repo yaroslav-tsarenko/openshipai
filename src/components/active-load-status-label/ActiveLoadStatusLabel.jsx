@@ -24,7 +24,7 @@ const ActiveLoadStatusLabel = ({loadStatus}) => {
     return (
         <span className={`${styles.loadStatus} ${getStatusClass(loadStatus)}`}>
       {loadStatus}
-    </span>
+        </span>
     );
 };
 

@@ -90,8 +90,9 @@
     "react-parallax": "^3.5.1",
     "react-phone-input-2": "^2.15.1",
     "react-responsive-carousel": "^3.2.23",
-    "react-router-dom": "^6.20.1",
+    "react-router-dom": "^6.28.1",
     "react-scripts": "^5.0.1",
+    "react-scroll": "^1.9.0",
     "react-signature-canvas": "^1.0.6",
     "react-slick": "^0.30.2",
     "react-speech-recognition": "^3.10.0",
@@ -143,6 +144,7 @@
     ]
   },
   "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "dotenv": "^16.3.1",
     "ora": "^7.0.1"
   }

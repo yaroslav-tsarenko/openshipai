@@ -1,0 +1,56 @@
+.rightLandingIntroductionContainer {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 80px;
+  max-width: 1920px;
+  margin: 0 auto;
+
+  &.reverse {
+    flex-direction: row-reverse;
+
+    @media screen and (max-width: 1028px) {
+      flex-direction: column-reverse;
+    }
+  }
+
+  @media screen and (max-width: 1028px) {
+    flex-direction: column;
+    padding: 0 15px;
+  }
+}
+
+.landingImage {
+  width: 100%;
+  max-width: 750px;
+  height: auto;
+}
+
+.landingIntroductionContent {
+  width: 370px;
+  align-content: flex-start;
+  justify-content: flex-start;
+  align-items: flex-start;
+  text-align: start;
+  flex-direction: column;
+  gap: 10px;
+  display: flex;
+
+  h1 {
+    color: var(--dark-grey);
+    font-size: 3.5rem;
+    font-weight: bold;
+  }
+
+  p {
+    font-size: 2rem;
+    text-align: start;
+    color: var(--grey);
+  }
+
+  .rightArrow {
+    margin-left: 10px;
+  }
+}

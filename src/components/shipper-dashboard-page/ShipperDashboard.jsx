@@ -61,6 +61,20 @@ const ShipperDashboard = () => {
             }
         };
 
+        const fetchAvatar = async () => {
+            if (shipperInfo && shipperInfo.userShipperAvatar) {
+                const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
+                try {
+                    await axios.get(avatarUrl);
+                    setPreviewSavedImage(avatarUrl);
+                } catch (error) {
+                    console.error('Image does not exist');
+                } finally {
+                }
+            }
+        };
+
+        fetchAvatar();
         getUser();
     }, [shipperInfo, shipperID]);
 
@@ -90,7 +104,7 @@ const ShipperDashboard = () => {
                         accountRole={shipperInfo ? shipperInfo.userShipperRole : <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
-                        settingsLink={`/shipper-profile/${shipperID}`}
+                        settingsLink={`/shipper-settings/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />

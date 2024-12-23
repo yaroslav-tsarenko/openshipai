@@ -139,7 +139,11 @@ const LoadContainerBid = ({
             setMessage({status: 'success', text: 'Success!', description: 'Your bid has been submitted successfully!'});
         } catch (error) {
             console.error(error);
-            setMessage({status: 'error', text: 'Error', description: "Something went wrong, try again"});
+            if (error.response && error.response.status === 400) {
+                setMessage({status: 'warning', text: 'Bid already submitted', description: 'This bid has already been submitted'});
+            } else {
+                setMessage({status: 'error', text: 'Error', description: "Something went wrong, try again"});
+            }
         } finally {
             setIsLoading(false);
         }

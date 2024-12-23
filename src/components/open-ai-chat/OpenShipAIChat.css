@@ -24,7 +24,7 @@
     margin: 5px 10px 0 0;
     border-radius: 8px;
     padding: 10px;
-    overflow-y: scroll;
+    overflow: hidden;
     justify-content: space-between;
     flex-direction: column;
     transition: 0.2s ease-in-out;
@@ -77,9 +77,8 @@
 }
 
 .chat-window {
-    width: 100%;
-    max-width: 800px;
-    height: 100%;
+    width: 90%;
+    height: 575px;
     margin: 5px 10px 0 0;
     border-radius: 8px;
     padding: 10px;
@@ -93,7 +92,7 @@
 }
 
 .chat-window::-webkit-scrollbar-track {
-    background: none; /* Background of the track */
+    background: none;
 }
 
 .chat-window::-webkit-scrollbar-thumb {
@@ -186,6 +185,7 @@
     background: var(--light-grey-hovered-2);
     max-width: 600px;
     border-radius: 50px;
+    color: var(--grey);
     gap: 10px;
     padding: 15px 25px 15px 25px;
 
@@ -193,11 +193,13 @@
         font-size: 20px;
         font-weight: bold;
         width: 100%;
+        color: var(--grey);
     }
 }
 
 .ai-chat-input-icons {
     font-size: 18px;
+    color: var(--grey);
 }
 
 .input-container button {
@@ -502,7 +504,7 @@
     }
 
     .chat-container-wrapper {
-        height: 85vh;
+        height: 80vh;
         display: flex;
         border-radius: 25px;
     }

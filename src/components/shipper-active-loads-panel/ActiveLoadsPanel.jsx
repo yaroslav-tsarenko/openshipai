@@ -1,22 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import ActiveLoadContainer from "./active-load-container/ActiveLoadContainer";
-import {BACKEND_URL} from "../../constants/constants";
+import { BACKEND_URL } from "../../constants/constants";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
-import GoogleMapRealTimeTrafficComponent
-    from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+import GoogleMapRealTimeTrafficComponent from "../driver-dashboard/google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+import Button from "../button/Button";
 
-const ActiveLoadsPanel = ({userRole, userID}) => {
+const ActiveLoadsPanel = ({ userRole, userID, type }) => {
     const [loads, setLoads] = useState([]);
     const [origin, setOrigin] = useState("");
     const [destination, setDestination] = useState("");
     const [selectedLoad, setSelectedLoad] = useState(null);
+    const [filter, setFilter] = useState('All');
 
     const handleClickLoad = (load) => {
         setSelectedLoad(load);
         console.log('Selected Load:', load); // For debugging purposes
     };
+
     const animation = useGsapAnimation('slideLeft');
+
     useEffect(() => {
         if (userRole === 'shipper') {
             axios.get(`${BACKEND_URL}/get-all-loads/${userID}`)
@@ -47,10 +50,7 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
         }
     }, [userRole, userID]);
 
-    const handleClick = (load) => {
-        setOrigin(load.loadPickupLocation);
-        setDestination(load.loadDeliveryLocation);
-    };
+    const filteredLoads = filter === 'All' ? loads : loads.filter(load => load.loadStatus === filter);
 
     return (
         <div className="shipper-dashboard-side-panel-wrapper" ref={animation}>
@@ -63,10 +63,19 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
                 />
             </div>
             <div className="shipper-dashboard-side-panel">
-                {Array.isArray(loads) && loads.length === 0 ? (
+                <div className="active-loads-panel-nav">
+                    <button onClick={() => setFilter('All')}>All</button>
+                    <button onClick={() => setFilter('Active')}>Active</button>
+                    <button onClick={() => setFilter('Booked')}>Booked</button>
+                    <button onClick={() => setFilter('Dispatched')}>Dispatched</button>
+                    <button onClick={() => setFilter('Picked Up')}>Picked</button>
+                    <button onClick={() => setFilter('Delivered')}>Delivered</button>
+                    <button onClick={() => setFilter('Completed')}>Completed</button>
+                </div>
+                {Array.isArray(filteredLoads) && filteredLoads.length === 0 ? (
                     <p className="chat-message-alert">Currently you didn't have any active loads</p>
                 ) : (
-                    Array.isArray(loads) && loads.map(load => (
+                    Array.isArray(filteredLoads) && filteredLoads.map(load => (
                         <div onClick={() => handleClickLoad(load)} key={load.loadCredentialID}>
                             <ActiveLoadContainer
                                 loadStatus={load.loadStatus}
@@ -75,25 +84,16 @@ const ActiveLoadsPanel = ({userRole, userID}) => {
                                 loadDeliveryLocation={load.loadDeliveryLocation}
                                 loadDeliveryDate={load.loadDeliveryDate}
                                 typeOfLoad={load.loadType}
+                                shipperID={load.shipperID}
+                                carrierID={load.loadCarrierID}
+                                type={type}
                                 loadMilTrip={load.loadMilesTrip}
                                 loadCredentialID={load.loadCredentialID}
+                                loadCarrierID={load.loadCarrierID}
                             />
                         </div>
                     ))
                 )}
-                {/*  {selectedLoad && (
-                    <div>
-                        <h2>Selected Load Details</h2>
-                        <p>Status: {selectedLoad.loadStatus}</p>
-                        <p>Pickup Location: {selectedLoad.loadPickupLocation}</p>
-                        <p>Pickup Date: {selectedLoad.loadPickupDate}</p>
-                        <p>Delivery Location: {selectedLoad.loadDeliveryLocation}</p>
-                        <p>Delivery Date: {selectedLoad.loadDeliveryDate}</p>
-                        <p>Type of Load: {selectedLoad.loadType}</p>
-                        <p>Miles Trip: {selectedLoad.loadMilesTrip}</p>
-                        <p>Credential ID: {selectedLoad.loadCredentialID}</p>
-                    </div>
-                )}*/}
             </div>
         </div>
     );

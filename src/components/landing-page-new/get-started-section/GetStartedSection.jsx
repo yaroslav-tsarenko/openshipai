@@ -125,11 +125,11 @@ const GetStartedSection = () => {
                 <h1>Ready Get Started?</h1>
                 <p>Start your journey with us today</p>
                 <section>
-                    <Button variant={activeButton === 'shipper' ? 'default-non-responsive' : 'neutral-non-responsive'}
+                    <Button variant={activeButton === 'shipper' ? 'default-100' : 'neutral-non-responsive'}
                             onClick={handleShipperClick}>
                         Become Shipper
                     </Button>
-                    <Button variant={activeButton === 'carrier' ? 'default-non-responsive' : 'neutral-non-responsive'}
+                    <Button variant={activeButton === 'carrier' ? 'default-100' : 'neutral-non-responsive'}
                             onClick={handleCarrierClick}>
                         Become Carrier
                     </Button>
@@ -187,7 +187,7 @@ const GetStartedSection = () => {
                                         onChange={handleChange('repeatPassword')}
                                     />
                                 </div>
-                                <Button variant="apply" onClick={handleSubmit}>
+                                <Button variant="default-100" onClick={handleSubmit}>
                                     {loading ? <RotatingLinesLoader title="Processing..."/> : 'Become Shipper'}
                                 </Button>
                             </section>
@@ -196,6 +196,8 @@ const GetStartedSection = () => {
                     ) : (
                         <div className={styles.getStartedContent}>
                             <section>
+                                <h1>Become Carrier right now!</h1>
+                                <p>Truck to earn!</p>
                                 <div className={styles.getStartedContentInputs}>
                                     <TextInput
                                         placeholder="First Name"
@@ -255,7 +257,7 @@ const GetStartedSection = () => {
                                     />
                                 </div>
                                 <Button variant="apply" onClick={handleCarrierSubmit}>
-                                    {loading ? <RotatingLinesLoader title="Processing..." /> : 'Become Carrier'}
+                                    {loading ? <RotatingLinesLoader title="Processing..."/> : 'Become Carrier'}
                                 </Button>
                             </section>
                             <img src={carrierImage} alt="Carrier Image"/>

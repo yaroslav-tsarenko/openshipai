@@ -3,8 +3,7 @@ import { ReactComponent as PlusBlue } from "../../../assets/images/fa-plus-blue.
 import { ReactComponent as MinusBlue } from "../../../assets/images/fa-minus.svg";
 import styles from "./FAQItem.module.scss";
 
-const FaqItem = ({ title, description }) => {
-    const [isOpen, setIsOpen] = useState(false);
+const FaqItem = ({ title, description, isOpen, onToggle }) => {
     const contentRef = useRef(null);
     const [height, setHeight] = useState(0);
 
@@ -18,7 +17,7 @@ const FaqItem = ({ title, description }) => {
         <div className={styles.faqItem}>
             <section>
                 <h2>{title}</h2>
-                <button onClick={() => setIsOpen(!isOpen)}>
+                <button onClick={onToggle}>
                     {isOpen ? <MinusBlue /> : <PlusBlue />}
                 </button>
             </section>

@@ -1,0 +1,52 @@
+.subArticle {
+  border: 1px solid #ddd;
+  border-radius: 25px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  text-align: center;
+  background-color: var(--light-grey-hovered-2);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+
+  &:hover {
+    transform: translateY(-5px);
+    border: 1px solid var(--royal-green);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 20px;
+}
+
+.subArticleTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--dark-grey);
+}
+
+.subArticleDescription {
+  font-size: 1.5rem;
+  color: var(--grey-darker);
+  font-weight: normal;
+}
+
+.subArticleLink {
+  display: inline-block;
+  padding: 10px 20px;
+  background-color: var(--royal-green);
+  color: #fff;
+  text-decoration: none;
+  border-radius: 55px;
+  font-size: 1.8rem;
+  transition: ease-in-out 0.3s all;
+
+  &:hover {
+    background-color: var(--royal-green-hovered);
+  }
+}

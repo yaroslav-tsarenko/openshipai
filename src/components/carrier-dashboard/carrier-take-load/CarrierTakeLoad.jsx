@@ -529,6 +529,7 @@ const CarrierTakeLoad = () => {
                                     </button>
                                 </div>
                             </section>
+                            <p className="radius-text">Radius</p>
                             <div className="slider-wrapper-miles">
                                 <input
                                     type="number"
@@ -542,7 +543,7 @@ const CarrierTakeLoad = () => {
                                     onChange={handleSliderChangePickup}
                                     aria-label="Large"
                                     valueLabelDisplay="auto"
-                                    max={10000}
+                                    max={3500}
                                     sx={{
                                         color: 'white',
                                         '& .MuiSlider-thumb': {
@@ -575,6 +576,7 @@ const CarrierTakeLoad = () => {
                                     </button>
                                 </div>
                             </div>
+                            <p className="radius-text">Radius</p>
                             <div className="slider-wrapper-miles">
                                 <input
                                     type="number"
@@ -589,7 +591,7 @@ const CarrierTakeLoad = () => {
                                     aria-label="Large"
                                     color={"warning"}
                                     valueLabelDisplay="auto"
-                                    max={10000}
+                                    max={3500}
                                     sx={{
                                         color: 'white',
                                         '& .MuiSlider-thumb': {
@@ -607,7 +609,6 @@ const CarrierTakeLoad = () => {
                                     }}
                                 />
                             </div>
-
                             <div className="additional-filters">
                                 <hr/>
                                 <div className="load-filter" onClick={toggleLoadTypePopup}>
@@ -624,7 +625,7 @@ const CarrierTakeLoad = () => {
                                             setMaxWeight(newValue[1]);
                                         }}
                                         valueLabelDisplay="auto"
-                                        max={20000}
+                                        max={10000}
                                         step={100}
                                         style={{marginTop: '10px'}}
                                         sx={{
@@ -670,10 +671,10 @@ const CarrierTakeLoad = () => {
                                     <h4>{selectedPricingTypeOption || 'All'}</h4>
                                 </div>
                                 <hr/>
-                                <div className="load-filter" onClick={toggleLocationTypePopup}>
+                            {/*    <div className="load-filter" onClick={toggleLocationTypePopup}>
                                     <label>Location Type</label>
                                     <h4>{selectedLocationTypeOption || 'All'}</h4>
-                                </div>
+                                </div>*/}
                             </div>
                         </div>
                         <div className="loads-container-wrapper">
@@ -755,7 +756,7 @@ const CarrierTakeLoad = () => {
                                             onChange={handleSliderChangePickup}
                                             aria-label="Large"
                                             valueLabelDisplay="auto"
-                                            max={10000}
+                                            max={3500}
                                             sx={{
                                                 color: 'white',
                                                 '& .MuiSlider-thumb': {
@@ -789,36 +790,36 @@ const CarrierTakeLoad = () => {
                                         </div>
                                     </section>
                                     <section className="slider-wrapper-miles">
-                                        <input
-                                            type="number"
-                                            placeholder="Miles"
-                                            value={sliderValueDelivery}
-                                            onChange={(e) => setSliderValueDelivery(e.target.value)}
-                                        />
-                                        <Slider
-                                            size="big"
-                                            value={sliderValueDelivery}
-                                            onChange={handleSliderChangeDelivery}
-                                            aria-label="Large"
-                                            color={"warning"}
-                                            valueLabelDisplay="auto"
-                                            max={10000}
-                                            sx={{
-                                                color: 'white',
-                                                '& .MuiSlider-thumb': {
+                                            <input
+                                                type="number"
+                                                placeholder="Miles"
+                                                value={sliderValueDelivery}
+                                                onChange={(e) => setSliderValueDelivery(e.target.value)}
+                                            />
+                                            <Slider
+                                                size="big"
+                                                value={sliderValueDelivery}
+                                                onChange={handleSliderChangeDelivery}
+                                                aria-label="Large"
+                                                color={"warning"}
+                                                valueLabelDisplay="auto"
+                                                max={3500}
+                                                sx={{
                                                     color: 'white',
-                                                },
-                                                '& .MuiSlider-track': {
-                                                    color: 'white',
-                                                },
-                                                '& .MuiSlider-rail': {
-                                                    color: 'white',
-                                                },
-                                                '& .MuiSlider-valueLabel': {
-                                                    color: 'white',
-                                                },
-                                            }}
-                                        />
+                                                    '& .MuiSlider-thumb': {
+                                                        color: 'white',
+                                                    },
+                                                    '& .MuiSlider-track': {
+                                                        color: 'white',
+                                                    },
+                                                    '& .MuiSlider-rail': {
+                                                        color: 'white',
+                                                    },
+                                                    '& .MuiSlider-valueLabel': {
+                                                        color: 'white',
+                                                    },
+                                                }}
+                                            />
                                     </section>
 
                                     <section className="additional-filters">
@@ -837,7 +838,7 @@ const CarrierTakeLoad = () => {
                                                     setMaxWeight(newValue[1]);
                                                 }}
                                                 valueLabelDisplay="auto"
-                                                max={20000}
+                                                max={10000}
                                                 step={100}
                                                 style={{marginTop: '10px'}}
                                                 sx={{
@@ -871,7 +872,7 @@ const CarrierTakeLoad = () => {
                                                     value={maxWeight}
                                                     onChange={handleMaxWeightChange}
                                                     min={0}
-                                                    max={20000}
+                                                    max={10000}
                                                     placeholder={'Max'}
                                                     step={100}
                                                 />

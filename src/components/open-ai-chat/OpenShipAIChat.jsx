@@ -7,14 +7,14 @@ import { ReactComponent as PlusIcon } from "../../assets/images/plus-blue-icon.s
 import { ReactComponent as BarsIcon } from "../../assets/images/fa-bars-icon.svg";
 import { ReactComponent as TimesIcon } from "../../assets/images/fa-times-icon.svg";
 import { ASSISTANT_URL, BACKEND_URL } from "../../constants/constants";
-import { ReactComponent as DefaultUserAvatar } from "../../assets/images/default-avatar.svg";
+import defaultUserAvatar from "../../assets/images/default-avatar.svg";
 import { ReactComponent as AIStar } from "../../assets/images/stars-svg.svg";
 import Typewriter from "typewriter-effect";
 import Recorder from 'recorder-js';
 import {Bars} from "react-loader-spinner";
 import useGsapAnimation from "../../hooks/useGsapAnimation";
 
-const OpenShipAIChat = ({ userID, userRole, name }) => {
+const OpenShipAIChat = ({ userID, userRole, name, restricted }) => {
     const { shipperID, aiChatID } = useParams();
     const [messages, setMessages] = useState([]);
     const [input, setInput] = useState('');
@@ -55,14 +55,27 @@ const OpenShipAIChat = ({ userID, userRole, name }) => {
             const response = await axios.post(`${ASSISTANT_URL}/create-ai-chat`, { aiChatID: chatID, userID });
             const nextSessionNumber = chatSessions.length + 1;
             setChatSessions([...chatSessions, { aiChatID: chatID, name: `Chat Session ${nextSessionNumber}`, ...response.data }]);
-            navigate(`/shipper-dashboard/${shipperID}/${chatID}`);
+
+            if (userRole === "carrier") {
+                navigate(`/carrier-dashboard/${userID}/${chatID}`);
+            } else if (userRole === "shipper") {
+                navigate(`/shipper-dashboard/${userID}/${chatID}`);
+            } else if (userRole === "driver") {
+                navigate(`/driver-dashboard/${userID}/${chatID}`);
+            }
         } catch (error) {
             console.error('Error creating AIChat entity', error);
         }
     };
 
     const handleChatSessionClick = (aiChatID) => {
-        navigate(`/shipper-dashboard/${shipperID}/${aiChatID}`);
+        if (userRole === "carrier") {
+            navigate(`/carrier-dashboard/${userID}/${aiChatID}`);
+        } else if (userRole === "shipper") {
+            navigate(`/shipper-dashboard/${userID}/${aiChatID}`);
+        } else if (userRole === "driver") {
+            navigate(`/driver-dashboard/${userID}/${aiChatID}`);
+        }
     };
 
     const questions = [
@@ -372,7 +385,7 @@ const OpenShipAIChat = ({ userID, userRole, name }) => {
                     <p>High powered AI model. Developed by openship.ai All rights are reserved</p>
                 </div>
             </div>
-            <button className={`burger-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar}>
+            <button className={`burger-button ${isSidebarOpen ? 'open' : ''}`} onClick={toggleSidebar} disabled={restricted}>
                 {isSidebarOpen ?
                     <div className="times-close-sidebar-button">
                         <TimesIcon/>
@@ -388,8 +401,8 @@ const OpenShipAIChat = ({ userID, userRole, name }) => {
                         {messages.map((msg, index) => (
                             <div key={index} className={`chat-message ${msg.sender} appear`}>
                                 <div className={`avatar ${msg.sender}-avatar`}>
-                                    {msg.sender === 'user' && shipperInfo?.userShipperAvatar ? (
-                                        <img src={previewSavedImage ? previewSavedImage : DefaultUserAvatar} alt="User Avatar" className="user-avatar" />
+                                    {msg.sender === 'user' ? (
+                                        <img src={defaultUserAvatar} alt="User Avatar" className="user-avatar"/>
                                     ) : null}
                                 </div>
                                 <div className="message-content">

@@ -149,7 +149,7 @@ const ShipperPaymentsPage = () => {
     useEffect(() => {
         const fetchSelectedCard = async () => {
             try {
-                const response = await axios.get(`${BACKEND_URL}/get-selected-card/carrier/${shipperID}`);
+                const response = await axios.get(`${BACKEND_URL}/get-selected-card/shipper/${shipperID}`);
                 if (response.data.status === 'Success') {
                     setSelectedCard(response.data.card);
                     console.log(response);
@@ -173,7 +173,6 @@ const ShipperPaymentsPage = () => {
         if (shipperInfo && shipperInfo.userShipperAvatar) {
             setLoading(true);
             const avatarUrl = `${BACKEND_URL}/${shipperInfo.userShipperAvatar}`;
-
             axios.get(avatarUrl)
                 .then(() => {
                     setPreviewSavedImage(avatarUrl);
@@ -295,7 +294,7 @@ const ShipperPaymentsPage = () => {
                             <Skeleton variant="text" width={40}/>}
                         profileLink={`/shipper-profile/${shipperID}`}
                         bellLink={`/shipper-settings/${shipperID}`}
-                        settingsLink={`/shipper-profile/${shipperID}`}
+                        settingsLink={`/shipper-settings/${shipperID}`}
                         avatar={previewSavedImage ? previewSavedImage : previewSavedImage}
                         onBurgerClick={toggleMobileSidebar}
                     />
@@ -325,7 +324,6 @@ const ShipperPaymentsPage = () => {
                                 </section>
                             </div>
                         </section>
-
                     </div>
                     <div ref={cardContentAnimation} className={styles.cardContentWrapper}>
                         <div className={styles.transactionHistoryWrapper}>
@@ -370,12 +368,12 @@ const ShipperPaymentsPage = () => {
                                 ) : (
                                     <p>No card selected</p>
                                 )}
-                                <section>
+                              {/*  <section>
                                     <Button variant="darkGrey-100"><PinCodeSettingsIcon/> Pin code settings</Button>
                                     <Button variant="darkGrey-100"><CashbackIcon/> Cashback</Button>
                                     <Button variant="darkGrey-100"><LockIcon/> Block Card</Button>
                                     <Button variant="darkGrey-100"><SettingsIcon/> Settings Limits</Button>
-                                </section>
+                                </section>*/}
                             </div>
                         </div>
 
