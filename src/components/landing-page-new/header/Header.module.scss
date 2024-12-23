@@ -8,18 +8,7 @@
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.64);
   z-index: 1000;
-  margin: 0 auto;
   box-shadow: 0px 5px 10px 0px rgba(0, 0, 0, 0.03);
-  transition: all 0.3s ease;
-
-  &.header2Scrolled {
-    width: 80%;
-    top: 1%;
-    margin: 0 auto;
-    padding: 0 20px;
-    border-radius: 55px;
-    border: 1px solid var(--light-grey-hovered);
-  }
 
   section {
     display: flex;
@@ -40,7 +29,6 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  transition: all 0.3s ease;
 
   section {
     display: flex;
