@@ -281,7 +281,7 @@ const BidLoad = () => {
                             </div>
                         )}
                         <div className={styles.bottom}>
-                            <Button variant="apply" onClick={handleOpenPopup}>Make Bid</Button>
+                            <Button variant="apply-non-responsive" onClick={handleOpenPopup}>Make Bid</Button>
                             <Button variant="outlined" onClick={handleShowMore}>
                                 {showMore ? 'Less' : 'Show More'}
                             </Button>
