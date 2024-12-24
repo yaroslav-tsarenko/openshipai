@@ -18,9 +18,14 @@ const upload = multer({ storage });
 app.use(cors());
 app.use(bodyParser.json());
 
-mongoose.connect(process.env.MONGODB_URI)
-    .then(() => console.log('Connected to MongoDB'))
-    .catch(err => console.error('Failed to connect to MongoDB:', err));
+mongoose.connect('mongodb+srv://yaroslavdev:1234567890@haul-depot-db.7lk8rg9.mongodb.net/', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
+}).then(() => {
+    console.log('✅ AI Connected to MongoDB');
+}).catch(err => {
+    console.error('Failed to connect to MongoDB:', err);
+});
 
 const openaiApiKey = process.env.OPENAI_API_KEY;
 
