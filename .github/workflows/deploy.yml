@@ -30,4 +30,5 @@ jobs:
           username: ${{ secrets.HOSTINGER_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           source: ./build/*
-          target: ${{ secrets.TARGET_DIR }}
+          target: /home/u905829569/public_html
+          debug: true
