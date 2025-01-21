@@ -102,8 +102,13 @@
 .driver-dashboard-content-assigned-load {
     height: 100%;
     display: flex;
+    padding: 20px;
     flex-direction: column;
     width: 100%;
+
+    @media screen and (max-width: 768px) {
+        padding: 5px;
+    }
 }
 
 .driver-map-direction-nav {
@@ -147,6 +152,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    max-width: 500px;
+    width: 100%;
+    gap: 10px;
 }
 
 .pick-up-button {
@@ -180,7 +188,7 @@
 }
 
 .exit-button {
-    padding: 10px 15px 10px 15px;
+    padding: 10px 20px;
     background: var(--royal-red);
     width: fit-content;
     height: fit-content;
@@ -188,8 +196,8 @@
     color: var(--royal-white);
     border-radius: 30px;
     border: none;
-    font-size: 13px;
-    font-weight: bold;
+    font-size: 16px;
+    font-weight: normal;
     transition: 0.3s ease-in-out;
 }
 
@@ -1833,6 +1841,20 @@
     height: 100%;
     padding: 10px;
     width: 100%;
+}
+
+.load-delivered-status {
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    align-items: center;
+    justify-items: center;
+    margin: 0 auto;
+    padding: 10px 20px;
+    font-size: 2rem;
+    border-radius: 10px;
+    background: var(--light-grey-hovered);
+    color: var(--royal-green);
 }
 
 .dashboard-buttons-mobile {

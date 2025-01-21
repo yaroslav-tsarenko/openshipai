@@ -106,8 +106,11 @@ const CarrierProfilePage = () => {
                 DriversAndEquip={{visible: true, route: `/carrier-drivers/${carrierID}`}}
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
-                Profile={{visible: true, route: `/carrier-profile/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                isSidebarOpen={isSidebarOpen}
+                type="carrier"
+                userID={carrierID}
+                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="carrier-dashboard-content">
                 <HeaderDashboard

@@ -380,6 +380,9 @@ const CarrierChatPage = () => {
                 Payments={{visible: true, route: `/carrier-payments/${carrierID}`}}
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
+                isSidebarOpen={isSidebarOpen}
+                type="carrier"
+                userID={carrierID}
                 isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">

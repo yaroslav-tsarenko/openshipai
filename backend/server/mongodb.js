@@ -219,6 +219,8 @@ app.post('/register-shipper', async (req, res) => {
         return res.status(400).send('Passwords do not match');
     }
 
+    sendEmail(shipperData.userShipperEmail, 'Welcome to OpenShipAI!🚛', 'Thank you for registering with us!');
+
     try {
         const newShipper = new Shipper(shipperData);
         await newShipper.save();

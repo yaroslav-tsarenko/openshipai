@@ -47,7 +47,7 @@ import SEO from "../../seo/SEO";
 import useGsapAnimation from "../../../hooks/useGsapAnimation";
 
 const ShipperLoadsPage = () => {
-    const [createLoadSection, setCreateLoadSection] = useState(true);
+    const [createLoadSection, setCreateLoadSection] = useState(localStorage.getItem("createLoad") === 'true');
     const {shipperID} = useParams();
     const [loads, setLoads] = useState([]);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
@@ -103,7 +103,7 @@ const ShipperLoadsPage = () => {
     };
 
     useEffect(() => {
-        const filtered = getFilteredLoads(); // Assuming this function applies the selectedFilter to loads
+        const filtered = getFilteredLoads();
         const sorted = filtered.sort((a, b) => {
             if (sortOrder === 'ascending') {
                 return a.loadPrice - b.loadPrice;
@@ -244,6 +244,7 @@ const ShipperLoadsPage = () => {
                     ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                     MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
                     isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
+                    type="shipper"
                 />
                 <div className="shipper-dashboard-content">
                     <HeaderDashboard

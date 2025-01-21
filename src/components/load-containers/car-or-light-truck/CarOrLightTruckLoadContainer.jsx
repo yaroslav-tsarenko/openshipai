@@ -1,4 +1,5 @@
 import React, {useRef, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
 import Switch from "../../switcher-component/Switch";
 import axios from 'axios';
 import {useParams} from "react-router-dom";
@@ -45,6 +46,7 @@ const CarOrLightTruckLoadContainer = ({
     const [showRegistrationPopup, setShowRegistrationPopup] = useState(false);
     const [requireRegistrationStatus, setRequireRegistrationStatus] = useState(requireRegistration);
     const {shipperID: paramShipperID} = useParams();
+    const navigate = useNavigate();
     const {userShipperID, registrationStatus} = useShipperStore();
     const [shipperID, setShipperID] = useState(paramShipperID || userShipperID);
     const [registeredShipperID, setRegisteredShipperID] = useState(null);
@@ -124,6 +126,7 @@ const CarOrLightTruckLoadContainer = ({
             });
 
             if (response.status === 200) {
+                navigate(`/shipper-dashboard/${shipperID}`);
                 window.location.reload();
             }
             console.log(response.data);

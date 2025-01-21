@@ -281,6 +281,7 @@ const ShipperPaymentsPage = () => {
                     ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                     MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
                     isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
+                    type="shipper"
                 />
                 <div className={styles.shipperDashboardContent}>
                     <HeaderDashboard

@@ -55,6 +55,7 @@ const RegistrationComponent = ({ onRegistrationSuccess })  => {
                 console.log(registrationData.userShipperID)
                 onRegistrationSuccess(registrationData.userShipperID);
                 setUserShipperID(registrationData.userShipperID);
+
                 setTimeout(() => {
                     setShowRegistrationPopup(false);  // Hide registration popup after success
                 }, 3000);
@@ -78,7 +79,6 @@ const RegistrationComponent = ({ onRegistrationSuccess })  => {
             setIsLoading(false);
         }
     };
-
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const phonePattern = /^[0-9]{10,15}$/;
 

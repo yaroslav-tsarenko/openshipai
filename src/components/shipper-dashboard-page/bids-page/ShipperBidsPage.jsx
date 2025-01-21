@@ -68,6 +68,7 @@ const ShipperLoadsPage = () => {
                 Payments={{visible: true, route: `/shipper-payments/${shipperID}`}}
                 ChatWithCarrier={{visible: true, route: `/shipper-chat-conversation/${shipperID}`}}
                 MyLoads={{visible: true, route: `/shipper-loads/${shipperID}`}}
+                type="shipper"
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard

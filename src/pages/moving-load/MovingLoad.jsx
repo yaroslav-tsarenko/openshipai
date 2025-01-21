@@ -15,8 +15,6 @@ import CorporateMovingIcon from '../../assets/images/corporate-moving-load-type.
 import StudentMovingIcon from '../../assets/images/student-moving-load-type.svg';
 import MilitaryMovingIcon from '../../assets/images/military-moving-load-type.svg';
 import Button from '../../components/button/Button';
-import TextInput from '../../components/text-input/TextInput';
-import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 import styles from './MovingLoad.module.scss';
 import Alert from '../../components/floating-window-success/Alert';
 import LocalMovingLoadContainer from "../../components/load-containers/local-moving/LocalMovingLoadContainer";
@@ -29,6 +27,7 @@ import MilitaryMoving from "../../components/load-containers/military-moving/Mil
 import StudentMoving from "../../components/load-containers/student-moving/StudentMoving";
 import CorporateMoving from "../../components/load-containers/corporate-moving/CorporateMoving";
 import OfficeMoving from "../../components/load-containers/office-moving/OfficeMoving";
+import LocationTimeDataForm from "../../components/location-time-data-form/LocationTimeDataForm";
 
 const loadTypes = [
     {loadType: 'Local Moving (less than 50 miles)', title: 'Local Moving (less than 50 miles)', imageSrc: LocalMovingIcon},
@@ -47,7 +46,7 @@ const MovingLoad = () => {
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
     const [distance, setDistance] = useState(null);
-    const [selectedLoadType, setSelectedLoadType] = useState(''); // Track the selected LoadFrameButton
+    const [selectedLoadType, setSelectedLoadType] = useState('');
     const [showAlert, setShowAlert] = useState(false);
 
     const [formData, setFormData] = useState({
@@ -56,6 +55,9 @@ const MovingLoad = () => {
         deliveryLocation: '',
         deliveryLocationDate: '',
         loadMilesTrip: '',
+        loadLocationStops: [],
+        stops: [],
+        loadOriginDeliveryPreference: []
     });
 
     const handleLoadChange = (input) => (e) => {
@@ -155,71 +157,16 @@ const MovingLoad = () => {
                         </section>
                     </CreateLoadContainer>
                 )}
-
                 {step === 2 && (
-                    <CreateLoadContainer step={3} title="Specify origin and delivery locations"
-                                         subTitle="We can better assist you if you provide us with the following information">
-                        <div className="load-creation-input-fields">
-                            <div className="input-fields-with-date-time">
-                                <TextInput
-                                    type="text"
-                                    id="pickupLocation"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('pickupLocation')}
-                                    value={formData.pickupLocation}
-                                    required
-                                    label="Pickup Location"
-                                />
-                                <TextInput
-                                    type="date"
-                                    id="pickupLocationDate"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('pickupLocationDate')}
-                                    value={formData.pickupLocationDate}
-                                    required
-                                    label="Pickup Date"
-                                />
-                            </div>
-                            <Button variant="slim" buttonText="+ Add Stop"/>
-                            <div className="input-fields-with-date-time">
-                                <TextInput
-                                    type="text"
-                                    id="deliveryLocation"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('deliveryLocation')}
-                                    value={formData.deliveryLocation}
-                                    required
-                                    label="Delivery Location"
-                                />
-                                <TextInput
-                                    type="date"
-                                    id="deliveryLocationDate"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('deliveryLocationDate')}
-                                    value={formData.deliveryLocationDate}
-                                    required
-                                    label="Delivery Date"
-                                />
-                            </div>
-                            <div className="load-preference-checkboxes">
-                                <CustomCheckBox id="checkbox1" label="I'm flexible"/>
-                                <CustomCheckBox id="checkbox2" label="In the next few days"/>
-                                <CustomCheckBox id="checkbox3" label="As soon as possible"/>
-                            </div>
-                            {distance !== null &&
-                                <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
-                            <div className="create-load-buttons">
-                                <Button variant="neutral" buttonText="Go Back" onClick={() => setStep(1)}/>
-                                <Button variant="default" buttonText="Next" onClick={() => setStep(3)}/>
-                            </div>
-                        </div>
-                    </CreateLoadContainer>
+                    <LocationTimeDataForm
+                        currentStep={3}
+                        formData={formData}
+                        setFormData={setFormData}
+                        handleLoadChange={handleLoadChange}
+                        handleBack={() => setStep(1)}
+                        handleNext={() => setStep(3)}
+                    />
                 )}
-
                 {step === 3 && (
                     <>
                         {selectedLoadType === 'Local Moving (less than 50 miles)' &&

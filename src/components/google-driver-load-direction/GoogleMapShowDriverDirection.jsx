@@ -78,7 +78,13 @@ const GoogleMapShowDriverDirection = React.memo(function GoogleMapShowDriverDire
                         <img
                             src={driverAvatar}
                             alt="Driver Avatar"
-                            style={{ width: '100%', height: '100%', borderRadius: '50%' }}
+                            style={{
+                                width: '100%',
+                                height: '100%',
+                                borderRadius: '50%',
+                                border: '1px solid black',
+                                objectFit: 'cover'
+                            }}
                         />
                     </CustomMarker>
                 )}

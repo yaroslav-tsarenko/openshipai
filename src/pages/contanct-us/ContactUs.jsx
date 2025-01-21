@@ -9,6 +9,7 @@ import Alert from "../../components/floating-window-success/Alert";
 import Button from "../../components/button/Button";
 import Grid from "../../components/grid-two-columns/Grid";
 import {BACKEND_URL} from "../../constants/constants";
+import Description from "../../components/landing-page-new/description/Description";
 
 const ContactUs = () => {
     const [formData, setFormData] = useState({
@@ -48,6 +49,75 @@ const ContactUs = () => {
     return (
         <>
             <Header/>
+            <Description
+                title="Contact Us"
+                description="We’re here to help. At OpenShipAI, we value communication and aim to provide excellent support for all your inquiries, feedback, and concerns. Reach out to us through any of the methods below."
+                subDescriptions={[
+                    {
+                        title: "1. Customer Support",
+                        content: "Our dedicated customer support team is available to assist you with any challenges or questions. You can contact us via:",
+                        list: [
+                            "Email: support@openshipai.com for general queries and troubleshooting.",
+                            "Phone: +1-800-555-TRANSPORT for immediate assistance during business hours.",
+                            "Live Chat: Available on our website for quick support and answers."
+                        ]
+                    },
+                    {
+                        title: "2. Business Inquiries",
+                        content: "For partnerships, collaborations, or business-related discussions, please connect with us through:",
+                        list: [
+                            "Email: partnerships@openshipai.com for proposals and strategic collaborations.",
+                            "Phone: +1-800-555-BIZDEV for direct communication with our business team.",
+                            "Contact Form: Submit your detailed inquiry through the 'Business Contact' section on our website."
+                        ]
+                    },
+                    {
+                        title: "3. Technical Support",
+                        content: "If you encounter any technical issues with our platform, our tech support team is ready to help. Contact us using the following methods:",
+                        list: [
+                            "Email: info@openshipai.com for in-depth troubleshooting assistance and openshipai@gmail.com.",
+                            "Support Portal: Access our comprehensive guides and FAQs for self-service solutions.",
+                            "Error Reporting: Use the 'Report an Issue' feature on our platform to log technical problems directly."
+                        ]
+                    },
+                    {
+                        title: "4. Feedback and Suggestions",
+                        content: "Your feedback is invaluable to us. Help us improve by sharing your suggestions or reporting concerns via:",
+                        list: [
+                            "Feedback Form: Available on our website for easy submissions.",
+                            "Email: feedback@openshipai.com to share detailed ideas and improvements.",
+                            "User Surveys: Participate in periodic surveys to help us enhance your experience."
+                        ]
+                    },
+                    {
+                        title: "5. Office Locations",
+                        content: "Visit or mail us at our office locations. We’d be happy to assist in person:",
+                        list: [
+                            "Main Office: 123 Logistics Lane, Innovation City, USA.",
+                            "Branch Office: 456 Transit Blvd, Logistics Hub, USA.",
+                            "International Office: 789 Global Freight Road, Worldwide City, UK."
+                        ]
+                    },
+                    {
+                        title: "6. Social Media Channels",
+                        content: "Connect with us on social media for updates, announcements, and support. Follow us on:",
+                        list: [
+                            "LinkedIn: OpenShipAI for professional news and insights.",
+                            "Twitter: @OpenShipAI for real-time updates and customer interaction.",
+                            "Facebook: OpenShipAI for community discussions and support."
+                        ]
+                    },
+                    {
+                        title: "7. Availability",
+                        content: "Our support team is available during the following hours:",
+                        list: [
+                            "Monday to Friday: 9:00 AM to 6:00 PM (EST).",
+                            "Saturday: 10:00 AM to 4:00 PM (EST).",
+                            "Closed on Sundays and major holidays."
+                        ]
+                    }
+                ]}
+            />
             <div className={styles.contactUsFormWrapper}>
                 <h1>Contact Us</h1>
                 {alert.show && <Alert status={alert.status} text={alert.text} description={alert.description}/>}

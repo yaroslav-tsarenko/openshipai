@@ -1,6 +1,10 @@
 .load-container-content {
     display: flex;
     padding: 35px;
+
+    @media screen and (max-width: 768px) {
+        padding: 10px;
+    }
 }
 
 .assigned-load-info {
