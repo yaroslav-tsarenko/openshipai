@@ -1099,9 +1099,14 @@
     display: flex;
     gap: 15px;
     margin: 15px auto;
-    width: 150%;
+    width: 100%;
     max-width: 100%;
+}
 
+.stops-container{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .create-load-first-step {
@@ -1136,9 +1141,9 @@
     display: flex;
     gap: 15px;
     flex-direction: column;
-    justify-content: center;
-    align-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
 }
 
 .input-fields-with-date-time {
@@ -1164,6 +1169,11 @@
     display: flex;
     justify-content: space-between;
     gap: 10px;
+    width: 100%;
+    align-content: center;
+    align-items: center;
+    justify-items: center;
+    margin: 0 auto;
 }
 
 .creation-load-buttons-nav {

@@ -27,6 +27,12 @@
     align-items: center;
 }
 
+.dashboard-main-button{
+    display: flex;
+    margin: 0 0 20px 0;
+    width: 100%;
+}
+
 .dashboard-logo {
     max-width: 200px;
     display: flex;

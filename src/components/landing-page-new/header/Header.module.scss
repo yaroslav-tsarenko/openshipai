@@ -4,6 +4,7 @@
   align-items: center;
   width: 100%;
   position: sticky;
+  flex-direction: column;
   top: 0;
   backdrop-filter: blur(10px);
   background-color: rgba(255, 255, 255, 0.64);
@@ -19,62 +20,168 @@
     padding: 0 20px;
     border-radius: 55px;
     border: 1px solid var(--light-grey-hovered);
+
+    @media screen and (max-width: 1028px) {
+      padding: 0 10px;
+      width: 95%;
+    }
   }
 
-  section {
+  .headerLogButtons {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: fit-content;
     gap: 25px;
-  }
 
-  @media screen and (max-width: 1024px) {
-    display: none;
+    @media screen and (max-width: 1028px) {
+      display: none;
+    }
   }
 }
 
-
-.header {
+.burgerMenu {
   display: none;
+  flex-direction: column;
+  height: 100%;
+  width: 97%;
+  padding: 10px 20px;
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  z-index: 9999;
+}
+
+.burgerMenuOpen {
+  display: flex;
+  transform: translateX(0);
+  opacity: 1;
+}
+
+.burgerContent {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.navIcon {
+  color: var(--royal-green-dark);
+  font-size: 2rem;
+}
+
+.navLinkBurger {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: var(--dark-grey);
+  text-decoration: none;
+  display: flex;
+  padding: 10px 0 10px 15px;
+  align-content: flex-start;
+  align-items: center;
+  justify-items: center;
+  gap: 10px;
+  justify-content: flex-start;
+  border-radius: 5px;
+  position: relative;
+  transition: all 0.3s ease-in-out;
+
+  &:hover,
+  &:focus,
+  &:active,
+  &:focus-visible {
+    background: rgba(128, 128, 128, 0.06);
+  }
+
+  &:hover::before,
+  &:focus::before,
+  &:active::before,
+  &:focus-visible::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 5px;
+    border-radius: 55px;
+    background-color: var(--royal-green);
+  }
+}
+
+.authButtons {
+  display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  transition: all 0.3s ease;
-
-  section {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: fit-content;
-    gap: 25px;
-  }
-
-  @media screen and (max-width: 1024px) {
-    display: flex;
-  }
-
+  gap: 25px;
 }
 
-.logo{
+.signIn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  border-radius: 55px;
+  border: 1px solid var(--royal-green);
+  color: var(--royal-green);
+  text-decoration: none;
+  transition: 0.3s all ease-in-out;
+
+  &:hover {
+    background: var(--royal-green);
+    color: var(--royal-white);
+  }
+}
+
+.signUp {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  font-size: 1.5rem;
+  padding: 10px 20px;
+  border-radius: 55px;
+  border: 1px solid var(--royal-green);
+  color: var(--royal-white);
+  background: var(--royal-green);
+  text-decoration: none;
+  transition: 0.3s all ease-in-out;
+
+  &:hover {
+    background: var(--royal-green);
+    color: var(--royal-white);
+  }
+}
+
+
+.sidebarIcon {
+  display: none;
+  width: 50px;
+  height: 50px;
+  align-content: center;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border-radius: 50px;
+  border: none;
+  background: none;
+  transition: all 0.3s ease-out;
+
+  @media screen and (max-width: 1028px) {
+    display: flex;
+  }
+
+  &:hover {
+    background: var(--light-grey-hovered-2);
+  }
+}
+
+.logo {
   display: flex;
 }
 
 .headerInner2 {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  max-width: 1440px;
-  margin: 0 auto;
-
-  @media screen and (max-width: 1028px) {
-    padding: 0 20px;
-  }
-}
-
-
-.headerInner {
   display: flex;
   justify-content: space-between;
   align-items: center;

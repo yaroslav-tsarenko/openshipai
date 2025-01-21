@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import "./CustomCheckBox.css";
 
 const CustomCheckBox = ({ checked, id, label, onClick = () => {}, disabled }) => {
@@ -10,13 +10,14 @@ const CustomCheckBox = ({ checked, id, label, onClick = () => {}, disabled }) =>
 
     const handleCheckboxClick = () => {
         if (!disabled) {
-            setIsChecked(!isChecked);
-            onClick();
+            const newCheckedState = !isChecked;
+            setIsChecked(newCheckedState);
+            onClick(newCheckedState);
         }
     };
 
     return (
-        <div className={`custom-checkbox-content ${disabled ? 'disabled' : ''}`} onClick={handleCheckboxClick}>
+        <div className={`custom-checkbox-content ${disabled ? "disabled" : ""}`}>
             <div className="checkbox-wrapper-4">
                 <input
                     type="checkbox"
@@ -39,7 +40,7 @@ const CustomCheckBox = ({ checked, id, label, onClick = () => {}, disabled }) =>
                     </symbol>
                 </svg>
             </div>
-            <p>{label}</p>
+            <p onClick={handleCheckboxClick}>{label}</p> {/* Ensure clicking label works */}
         </div>
     );
 };

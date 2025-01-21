@@ -131,6 +131,7 @@ const BoatLoadContainer = ({
             });
 
             if (response.status === 200) {
+                navigate(`/shipper-dashboard/${shipperID}`);
                 window.location.reload();
             }
             console.log(response.data);
@@ -389,8 +390,6 @@ const BoatLoadContainer = ({
                             "Create Load"}
                     </Button>
                 </Grid>
-
-
             </CreateLoadContainer>
 
         </>

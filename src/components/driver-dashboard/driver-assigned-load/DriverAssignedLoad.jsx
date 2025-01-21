@@ -1,4 +1,3 @@
-
 import React, {useEffect, useState} from "react";
 import '../DriverDashboard.css';
 import {Link, useParams} from 'react-router-dom';
@@ -7,11 +6,12 @@ import {ReactComponent as DefaultUserAvatar} from "../../../assets/images/defaul
 import DashboardSidebar from "../../dashboard-sidebar/DashboardSidebar";
 import HeaderDashboard from "../../header-dashboard/HeaderDashboard";
 import {useNavigate} from 'react-router-dom';
-import GoogleMapShowDriverDirection from "../../google-driver-load-direction/GoogleMapShowDriverDirection";
 import Alert from "../../floating-window-success/Alert";
-import ClipLoader from "react-spinners/ClipLoader";
 import {BACKEND_URL} from "../../../constants/constants";
 import {Skeleton} from "@mui/material";
+import GoogleMapRealTimeTrafficComponent from "../google-map-real-time-traffic-data/GoogleMapRealTimeTrafficComponent";
+import Button from "../../button/Button";
+import RotatingLinesLoader from "../../rotating-lines/RotatingLinesLoader";
 
 const DriverAssignedLoad = () => {
     const [isPickedUp, setIsPickedUp] = useState(false);
@@ -76,7 +76,7 @@ const DriverAssignedLoad = () => {
 
             const getCoordinates = (address) => {
                 return new Promise((resolve, reject) => {
-                    geocoder.geocode({ address }, (results, status) => {
+                    geocoder.geocode({address}, (results, status) => {
                         if (status === window.google.maps.GeocoderStatus.OK) {
                             resolve(results[0].geometry.location);
                         } else {
@@ -109,7 +109,7 @@ const DriverAssignedLoad = () => {
                     arrival.setMinutes(arrival.getMinutes() + durationInMinutes);
                     setDistance(distanceInMiles.toFixed(2));
                     setTripDuration(`${hours} hours ${minutes} min`);
-                    setArrivalTime(arrival.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
+                    setArrivalTime(arrival.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}));
                 } else {
                     console.error('Directions request failed due to ' + status);
                     setDistance(null);
@@ -272,7 +272,9 @@ const DriverAssignedLoad = () => {
 
     const updateLoadStatus = async (status) => {
         try {
-            const response = await axios.post(`${BACKEND_URL}/update-load-status-custom/${loadID}/${status}`);
+            const response = await axios.put(`${BACKEND_URL}/update-load-status/${loadID}`, {
+                newStatus: status
+            });
             if (response.status === 200) {
                 console.log(`Load status updated to ${status}`);
             } else {
@@ -286,16 +288,11 @@ const DriverAssignedLoad = () => {
     const handleDeliveredClick = async () => {
         setIsCompletingDelivering(true);
         try {
-            const response = await axios.put(`${BACKEND_URL}/load-update-delivered-status/${loadID}`, {
-                loadDeliveredStatus: 'Delivered'
-            });
+            updateLoadStatus('Delivered')
+            navigate(`/load-delivered-success/${driverID}`);
             if (response.status === 200) {
                 console.log('Load status updated successfully');
                 setIsLoadDeliveredStatus(true);
-                updateLoadStatus('Delivered')
-                const response = await axios.post(`${BACKEND_URL}/payment-for-carrier`, { loadID: loadID });
-                console.log('Payment response:', response.data);
-                navigate(`/load-delivered-success/${driverID}`);
             } else {
                 console.log('Error updating load status:', response);
             }
@@ -308,12 +305,9 @@ const DriverAssignedLoad = () => {
     const handleLoadPickup = async () => {
         setIsCompletingDelivering(true);
         try {
-            const response = await axios.put(`${BACKEND_URL}/update-load-picked-up/${loadID}`, {
-                loadDeliveredStatus: 'Picked Up'
-            });
+            updateLoadStatus('Picked Up')
             if (response.status === 200) {
                 console.log('Load status updated successfully');
-                updateLoadStatus('Picked Up')
             } else {
                 console.log('Error updating load status:', response);
             }
@@ -361,19 +355,20 @@ const DriverAssignedLoad = () => {
 
     useEffect(() => {
         updateLocation();
-        const intervalId = setInterval(updateLocation, 60000);
+        const intervalId = setInterval(updateLocation, 34360000);
         return () => clearInterval(intervalId);
     }, []);
 
 
     return (
         <>
-            {isLoadDeliveredStatus && <Alert text="You successfully delivered load"/>}
+            {isLoadDeliveredStatus &&
+                <Alert status="sucess" text="Success!" description="You succesfully delivered load!"/>}
             <div className="shipper-dashboard-wrapper">
                 <DashboardSidebar
-                    DashboardAI={{ visible: true, route: `/driver-dashboard/${driverID}` }}
-                    Settings={{ visible: true, route: `/driver-settings/${driverID}` }}
-                    AssignedLoad={{ visible: true, route: `/driver-assigned-loads/${driverID}` }}
+                    DashboardAI={{visible: true, route: `/driver-dashboard/${driverID}`}}
+                    Settings={{visible: true, route: `/driver-settings/${driverID}`}}
+                    AssignedLoad={{visible: true, route: `/driver-assigned-loads/${driverID}`}}
                     isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
                 />
                 <div className="shipper-dashboard-content">
@@ -393,7 +388,7 @@ const DriverAssignedLoad = () => {
                     <div className="driver-dashboard-content-assigned-load">
                         <div className="driver-map-direction-wrapper">
                             {currentLocation &&
-                                <GoogleMapShowDriverDirection
+                                <GoogleMapRealTimeTrafficComponent
                                     origin={
                                         load.loadDeliveredStatus === "Picked Up"
                                             ? position
@@ -407,6 +402,8 @@ const DriverAssignedLoad = () => {
                                     currentLocation={position}
                                     driverAvatar={previewSavedImage ? previewSavedImage : DefaultUserAvatar}
                                     isTripStarted={load.loadTripStarted}
+                                    type="driver"
+                                    borderRadius={['25px', '25px', '0', '0']}
                                 />
                             }
                         </div>
@@ -424,61 +421,57 @@ const DriverAssignedLoad = () => {
                                 <Link to={`/driver-assigned-loads/${driverID}`} className="exit-button">Exit</Link>
                             </div>
                             <div className="driver-map-direction-nav-body">
-                                <div>
-                                    {load.loadTripStarted === "Not Started" ? (
-                                        <button className="pick-up-button" onClick={handleStartTrip}>
-                                            {isStartingTrip ? (
-                                                <>
-                                                    <ClipLoader color="#fffff" loading={true} size={17}
-                                                                className="payment-loader"/>
-                                                    Processing...
-                                                </>
+                                <>
+                                    {load.loadStatus === "Delivered" ?
+                                        <p className="load-delivered-status">Load delivered</p> :
+                                        <>{load.loadTripStarted === "Not Started" ? (
+                                            <Button variant="apply-non-responsive" onClick={handleStartTrip}>
+                                                {isStartingTrip ? (
+                                                    <>
+                                                        <RotatingLinesLoader title={"Processing..."}/>
+                                                    </>
+                                                ) : (
+                                                    'Start Trip'
+                                                )}
+                                            </Button>
+                                        ) : load.loadTripStarted === "Started" ? (
+                                            load.loadDeliveredStatus === "Picked Up" ? (
+                                                <Button variant="apply-non-responsive" onClick={handleDeliveredClick}>
+                                                    {isCompletingDelivering ? (
+                                                        <>
+                                                            <RotatingLinesLoader title={"Processing..."}/>
+                                                        </>
+                                                    ) : (
+                                                        'Delivered'
+                                                    )}
+                                                </Button>
+                                            ) : isPickedUp ? (
+                                                <Button variant="apply-non-responsive" onClick={handleDeliveredClick}>
+                                                    {isCompletingDelivering ? (
+                                                        <>
+                                                            <RotatingLinesLoader title={"Processing..."}/>
+                                                        </>
+                                                    ) : (
+                                                        'Delivered'
+                                                    )}
+                                                </Button>
                                             ) : (
-                                                'Start Trip'
-                                            )}
-                                        </button>
-                                    ) : load.loadTripStarted === "Started" ? (
-                                        load.loadDeliveredStatus === "Picked Up" ? (
-                                            <button className="pick-up-button" onClick={handleDeliveredClick}>
-                                                {isCompletingDelivering ? (
-                                                    <>
-                                                        <ClipLoader color="#fffff" loading={true} size={17}
-                                                                    className="payment-loader"/>
-                                                        Processing...
-                                                    </>
-                                                ) : (
-                                                    'Delivered'
-                                                )}
-                                            </button>
-                                        ) : isPickedUp ? (
-                                            <button className="pick-up-button" onClick={handleDeliveredClick}>
-                                                {isCompletingDelivering ? (
-                                                    <>
-                                                        <ClipLoader color="#fffff" loading={true} size={17}
-                                                                    className="payment-loader"/>
-                                                        Processing...
-                                                    </>
-                                                ) : (
-                                                    'Delivered'
-                                                )}
-                                            </button>
-                                        ) : (
-                                            <button className="pick-up-button" onClick={handleLoadPickup}>
-                                                {isCompletingDelivering ? (
-                                                    <>
-                                                        <ClipLoader color="#fffff" loading={true} size={17}
-                                                                    className="payment-loader"/>
-                                                        Processing...
-                                                    </>
-                                                ) : (
-                                                    'Picked Up'
-                                                )}
-                                            </button>
-                                        )
-                                    ) : null}
-                                </div>
-                                <button className="transit-update-button" onClick={updateLocation}>Transit Update
-                                </button>
+                                                <Button variant="apply-non-responsive" onClick={handleLoadPickup}>
+                                                    {isCompletingDelivering ? (
+                                                        <>
+                                                            <RotatingLinesLoader title={"Processing..."}/>
+                                                        </>
+                                                    ) : (
+                                                        'Picked Up'
+                                                    )}
+                                                </Button>
+                                            )
+                                        ) : null}
+                                            <Button variant="outlined" onClick={updateLocation}>
+                                                Transit Update
+                                            </Button></>
+                                    }
+                                </>
                             </div>
                         </div>
                     </div>

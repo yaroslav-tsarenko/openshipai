@@ -5,23 +5,21 @@ import Header from '../../components/landing-page-new/header/Header';
 import LandingPageFooter from '../../components/landing-page/landing-footer/LandingPageFooter';
 import CreateLoadContainer from '../../components/create-load-container/CreateLoadContainer';
 import LoadFrameButton from '../../components/load-frame-button/LoadFrameButton';
-import VehicleLoadType from '../../assets/images/car-load-type-2.svg';
-import MotoLoadType from '../../assets/images/moto-load-type-2.svg';
-import PowerboatLoadType from '../../assets/images/powerboats-load-type-2.svg';
-import SailboatLoadType from '../../assets/images/sailboat-load-type-2.svg';
-import PersonalwatercraftLoadType from '../../assets/images/personal-watercrafts-load-type-2.svg';
-import ATVLoadType from '../../assets/images/atv-load-type-2.svg';
-import CommercialTruckLoadType from '../../assets/images/commercial-truck-load-type-2.svg';
-import TrailerLoadType from '../../assets/images/trailer-load-type-2.svg';
-import RVLoadType from '../../assets/images/rv-load-type-2.svg';
-import PartsLoadType from '../../assets/images/parts-load-type-2.svg';
+import VehicleLoadType from '../../assets/images/car-load-type-2.webp';
+import MotoLoadType from '../../assets/images/moto-load-type-2.webp';
+import PowerboatLoadType from '../../assets/images/powerboats-load-type-2.webp';
+import SailboatLoadType from '../../assets/images/sailboat-load-type-2.webp';
+import PersonalwatercraftLoadType from '../../assets/images/personal-watercrafts-load-type-2.webp';
+import ATVLoadType from '../../assets/images/atv-load-type-2.webp';
+import CommercialTruckLoadType from '../../assets/images/commercial-truck-load-type-2.webp';
+import TrailerLoadType from '../../assets/images/trailer-load-type-2.webp';
+import RVLoadType from '../../assets/images/rv-load-type-2.webp';
+import PartsLoadType from '../../assets/images/parts-load-type-2.webp';
 import Button from '../../components/button/Button';
 import CarOrLightTruckLoadContainer
     from '../../components/load-containers/car-or-light-truck/CarOrLightTruckLoadContainer';
 import MotoEquipmentLoadContainer from '../../components/load-containers/moto-equipment/MotoEquipmentLoadContainer';
 import SailboatLoadContainer from '../../components/load-containers/sailboat-load/SailboatLoadContainer';
-import TextInput from '../../components/text-input/TextInput';
-import CustomCheckBox from '../../components/custom-checkbox/CustomCheckBox';
 import styles from './VehicleLoad.module.scss';
 import Alert from '../../components/floating-window-success/Alert';
 import PersonalWatercraftsLoadContainer
@@ -32,6 +30,7 @@ import PartsLoadContainer from "../../components/load-containers/parts-load-cont
 import TrailerAndOtherVehicles from "../../components/load-containers/trailer-other-vehicle/TrailerAndOtherVehicles";
 import RVLoadContainer from "../../components/load-containers/rv-load-container/RVLoadContainer";
 import BoatLoadContainer from "../../components/load-containers/boat-load/BoatLoadContainer";
+import LocationTimeDataForm from "../../components/location-time-data-form/LocationTimeDataForm";
 
 const loadTypes = [
     {loadType: 'Car or Light Truck', title: 'Car or Light Truck', imageSrc: VehicleLoadType},
@@ -59,6 +58,9 @@ const VehicleLoad = () => {
         deliveryLocation: '',
         deliveryLocationDate: '',
         loadMilesTrip: '',
+        loadLocationStops: [],
+        stops: [],
+        loadOriginDeliveryPreference: []
     });
 
     const handleLoadChange = (input) => (e) => {
@@ -159,69 +161,15 @@ const VehicleLoad = () => {
                     </CreateLoadContainer>
                 )}
                 {step === 2 && (
-                    <CreateLoadContainer step={3} title="Specify origin and delivery locations"
-                                         subTitle="We can better assist you if you provide us with the following information">
-                        <div className="load-creation-input-fields">
-                            <div className="input-fields-with-date-time">
-                                <TextInput
-                                    type="text"
-                                    id="pickupLocation"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('pickupLocation')}
-                                    value={formData.pickupLocation}
-                                    required
-                                    label="Pickup Location"
-                                />
-                                <TextInput
-                                    type="date"
-                                    id="pickupLocationDate"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('pickupLocationDate')}
-                                    value={formData.pickupLocationDate}
-                                    required
-                                    label="Pickup Date"
-                                />
-                            </div>
-                            <Button variant="slim" buttonText="+ Add Stop"/>
-                            <div className="input-fields-with-date-time">
-                                <TextInput
-                                    type="text"
-                                    id="deliveryLocation"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('deliveryLocation')}
-                                    value={formData.deliveryLocation}
-                                    required
-                                    label="Delivery Location"
-                                />
-                                <TextInput
-                                    type="date"
-                                    id="deliveryLocationDate"
-                                    autoComplete="off"
-                                    className="google-style-input"
-                                    onChange={handleLoadChange('deliveryLocationDate')}
-                                    value={formData.deliveryLocationDate}
-                                    required
-                                    label="Delivery Date"
-                                />
-                            </div>
-                            <div className="load-preference-checkboxes">
-                                <CustomCheckBox id="checkbox1" label="I'm flexible"/>
-                                <CustomCheckBox id="checkbox2" label="In the next few days"/>
-                                <CustomCheckBox id="checkbox3" label="As soon as possible"/>
-                            </div>
-                            {distance !== null &&
-                                <p className="distance-in-miles">Estimated distance: {distance} miles</p>}
-                            <div className="create-load-buttons">
-                                <Button variant="neutral" buttonText="Go Back" onClick={() => setStep(1)}/>
-                                <Button variant="default-100" buttonText="Next" onClick={() => setStep(3)}/>
-                            </div>
-                        </div>
-                    </CreateLoadContainer>
+                    <LocationTimeDataForm
+                        currentStep={3}
+                        formData={formData}
+                        setFormData={setFormData}
+                        handleLoadChange={handleLoadChange}
+                        handleBack={() => setStep(1)}
+                        handleNext={() => setStep(3)}
+                    />
                 )}
-
                 {step === 3 && (
                     <>
                         {selectedLoadType === 'Car or Light Truck' &&

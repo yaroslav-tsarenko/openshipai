@@ -65,8 +65,10 @@ const CarrierDashboard = () => {
                 ChatWithShipper={{visible: true, route: `/carrier-chat-conversation/${carrierID}`}}
                 Settings={{visible: true, route: `/carrier-settings/${carrierID}`}}
                 isSidebarOpen={isSidebarOpen}
-                isMobileSidebarOpen={isMobileSidebarOpen} toggleMobileSidebar={toggleMobileSidebar}
-
+                type="carrier"
+                userID={carrierID}
+                isMobileSidebarOpen={isMobileSidebarOpen}
+                toggleMobileSidebar={toggleMobileSidebar}
             />
             <div className="shipper-dashboard-content">
                 <HeaderDashboard

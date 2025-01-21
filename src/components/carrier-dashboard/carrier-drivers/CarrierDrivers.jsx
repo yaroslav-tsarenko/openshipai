@@ -26,7 +26,7 @@ const CarrierDrivers = () => {
     const [isFail, setIsFail] = useState(false);
     const {carrierID} = useParams();
     const [isSuccessCredentials, setIsSuccessCredentials] = useState(false);
-    const [isDriverPopupOpen, setIsDriverPopupOpen] = useState(false);
+    const [isDriverPopupOpen, setIsDriverPopupOpen] = useState(localStorage.getItem("addDriver") === 'true');
     const [sendEmailDriver, setSendEmailDriver] = useState(false);
     const [sendDriverDataFailed, setSendDriverDataFailed] = useState(false);
     const [previewSavedImage, setPreviewSavedImage] = useState(null);
