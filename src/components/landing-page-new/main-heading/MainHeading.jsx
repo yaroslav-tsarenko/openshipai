@@ -4,10 +4,9 @@ import styles from './MainHeading.module.scss';
 import Button from "../../button/Button";
 import { useNavigate } from "react-router-dom";
 import ClientTrusted from "../../../assets/images/client-trusted.svg";
-import { IMAGE_URL } from "../../../constants/constants";
+import TrustedCompanies from "../../../assets/images/trusted-companies.png";
 
 const MainHeading = ({ checkmarkTexts, h3, h2, p }) => {
-    const TrustedCompanies = `${IMAGE_URL}/trusted-companies.webp`;
     const navigate = useNavigate();
 
     const handleNavigateShipper = () => {
@@ -42,7 +41,7 @@ const MainHeading = ({ checkmarkTexts, h3, h2, p }) => {
                     Become Carrier
                 </Button>
             </section>
-            <img src={TrustedCompanies} alt="Trusted Companies" className={styles.trustedCompanies} height={150} />
+            <img src={TrustedCompanies} alt="Trusted Companies" className={styles.trustedCompanies} height={70} />
         </div>
     );
 };
